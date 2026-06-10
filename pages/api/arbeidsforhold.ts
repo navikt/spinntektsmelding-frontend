@@ -11,6 +11,51 @@ import { logger } from '@navikt/next-logger';
 import isFnrNumber from '../../utils/isFnrNumber';
 import { requireEnv } from '../../utils/api/validateEnv';
 
+const requestBodySchema = z.object({
+  orgnummer: z.string().min(1),
+  fnr: z.string().min(1),
+  eldsteFom: z.string().min(1)
+});
+
+function handleMethodNotAllowed(req: NextApiRequest, res: NextApiResponse<unknown>): NextApiResponse<unknown> | void {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+}
+
+function handleDevelopmentRequest(res: NextApiResponse<unknown>): NextApiResponse<unknown> | void {
+  if (process.env.NODE_ENV !== 'development') {
+    return;
+  }
+
+  const mockdata = 'ansettelsesforhold-to-perioder';
+  const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ error: 'Mock not found' });
+  }
+
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error('Failed to parse mock data:', error);
+    return res.status(500).json({ error: 'Failed to parse mock data' });
+  }
+}
+
+function parseRequestBody(req: NextApiRequest, res: NextApiResponse<unknown>) {
+  const parsedBody = requestBodySchema.safeParse(req.body);
+  if (!parsedBody.success) {
+    logger.info('Ugyldig request body for arbeidsforhold');
+    res.status(400).json({ error: 'Ugyldig forespørsel' });
+    return null;
+  }
+
+  return parsedBody.data;
+}
+
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
   forespoerselId: string;
@@ -26,22 +71,14 @@ type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   try {
-    const env = process.env.NODE_ENV;
-    if (env === 'development') {
-      const mockdata = 'ansettelsesforhold-to-perioder';
-      const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
+    const methodNotAllowed = handleMethodNotAllowed(req, res);
+    if (methodNotAllowed) {
+      return methodNotAllowed;
+    }
 
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: 'Mock not found' });
-      }
-
-      try {
-        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-        return res.status(200).json(data);
-      } catch (error) {
-        console.error('Failed to parse mock data:', error);
-        return res.status(500).json({ error: 'Failed to parse mock data' });
-      }
+    const developmentResponse = handleDevelopmentRequest(res);
+    if (developmentResponse) {
+      return developmentResponse;
     }
 
     const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
@@ -61,7 +98,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(401);
     }
 
-    const requestBody = await req.body;
+    const requestBody = parseRequestBody(req, res);
+    if (!requestBody) {
+      return;
+    }
     const orgnr = requestBody.orgnummer;
 
     if (!isMod11Number(orgnr)) {

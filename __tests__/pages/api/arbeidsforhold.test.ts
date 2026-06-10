@@ -39,6 +39,7 @@ vi.mock('../../../utils/safelyParseJson', () => ({
 
 function createReq(body: Record<string, unknown> = {}, headers: Record<string, string> = {}) {
   return {
+    method: 'POST',
     body,
     headers
   } as unknown as NextApiRequest;
@@ -48,6 +49,7 @@ function createRes() {
   const res: Partial<NextApiResponse> = {};
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
+  res.setHeader = vi.fn();
   return res as NextApiResponse;
 }
 
@@ -61,7 +63,7 @@ describe('arbeidsforhold API', () => {
     vi.stubEnv('AUTH_SYKEPENGESOEKNAD_API', '/auth');
     vi.stubEnv('FORESPOERSEL_ID_LISTE_API', '/forespoersler');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID', 'client-id');
-    (global as any).fetch = vi.fn();
+    vi.stubGlobal('fetch', vi.fn());
   });
 
   afterEach(() => {
@@ -108,6 +110,20 @@ describe('arbeidsforhold API', () => {
     expect(res.status).toHaveBeenCalledWith(401);
   });
 
+  it('returns 405 when method is not POST', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
+    const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
+    req.method = 'GET';
+    const res = createRes();
+
+    await handler(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(405);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Method Not Allowed' });
+  });
+
   it('returns 400 for invalid orgnummer', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     (getToken as Mock).mockReturnValue('token');
@@ -115,7 +131,7 @@ describe('arbeidsforhold API', () => {
     (isMod11Number as Mock).mockReturnValue(false);
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
-    const req = createReq({ orgnummer: '123' });
+    const req = createReq({ orgnummer: '123', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
     await handler(req, res);
@@ -130,7 +146,7 @@ describe('arbeidsforhold API', () => {
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
     (isFnrNumber as Mock).mockReturnValue(false);
-    (global.fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
@@ -149,7 +165,7 @@ describe('arbeidsforhold API', () => {
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
     (isFnrNumber as Mock).mockReturnValue(true);
-    (global.fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
@@ -167,11 +183,11 @@ describe('arbeidsforhold API', () => {
     (getToken as Mock).mockReturnValue('token');
     (validateToken as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as Mock).mockReturnValue(true);
-    (global.fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as Mock).mockResolvedValue({ ok: false, error: 'obo-error' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
-    const req = createReq({ orgnummer: '810007982' });
+    const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
     await handler(req, res);
@@ -188,7 +204,7 @@ describe('arbeidsforhold API', () => {
     (isFnrNumber as Mock).mockReturnValue(true);
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    (global.fetch as Mock)
+    (fetch as Mock)
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
 
@@ -212,7 +228,7 @@ describe('arbeidsforhold API', () => {
     (isFnrNumber as Mock).mockReturnValue(true);
     (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    (global.fetch as Mock)
+    (fetch as Mock)
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });

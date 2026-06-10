@@ -4,11 +4,12 @@ const handleProxyInit = (proxy: any) => {
    * @see https://www.npmjs.com/package/http-proxy#listening-for-proxy-events
    */
   proxy.on('error', function (err: any, _req: any, res: any) {
+    console.error('Proxy error', err);
     res.writeHead(500, {
       'Content-Type': 'text/plain'
     });
 
-    res.end('Something went wrong. ' + JSON.stringify(err));
+    res.end('Something went wrong.');
   });
 
   proxy.on('proxyReq', function (proxyReq: any, _req: any, _res: any, _options: any) {

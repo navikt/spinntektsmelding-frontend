@@ -23,7 +23,18 @@ export const config = {
 
 type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
+const requestBodySchema = z.object({
+  orgnummer: z.string().min(1),
+  fnr: z.string().min(1),
+  eldsteFom: z.string().min(1)
+});
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     const mockdata = 'sp-soeknad';
@@ -52,9 +63,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
   const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
   const forespoerselIdListeApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('FORESPOERSEL_ID_LISTE_API');
-  const clientId = process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID;
+  const clientId = requireEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID');
 
-  const requestBody = await req.body;
+  const parsedBody = requestBodySchema.safeParse(req.body);
+  if (!parsedBody.success) {
+    logger.info('Ugyldig request body for sykepengesøknader');
+    return res.status(400).json({ error: 'Ugyldig forespørsel' });
+  }
+
+  const requestBody = parsedBody.data;
   const orgnr = requestBody.orgnummer;
 
   if (!isMod11Number(orgnr)) {

@@ -10,6 +10,12 @@ import path from 'node:path';
 import { logger } from '@navikt/next-logger';
 import { requireEnv } from '../../utils/api/validateEnv';
 
+const requestBodySchema = z.object({
+  orgnummer: z.string().min(9),
+  fnr: z.string().min(11),
+  eldsteFom: z.string().min(10)
+});
+
 function minDate(date1: string, date2: string): string {
   return date1 < date2 ? date1 : date2;
 }
@@ -27,6 +33,11 @@ type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST');
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
     const env = process.env.NODE_ENV;
     if (env === 'development') {
       const mockdata = 'behandlingsdager';
@@ -62,7 +73,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(401);
     }
 
-    const requestBody = await req.body;
+    const parsedBody = requestBodySchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      logger.info('Ugyldig request body for behandlingsdager');
+      return res.status(400).json({ error: 'Ugyldig forespørsel' });
+    }
+
+    const requestBody = parsedBody.data;
     const orgnr = requestBody.orgnummer;
 
     if (!isMod11Number(orgnr)) {
