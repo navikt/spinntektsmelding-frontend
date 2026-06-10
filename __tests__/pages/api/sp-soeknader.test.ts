@@ -29,6 +29,7 @@ describe('sp-soeknader API', () => {
     vi.stubEnv('FORESPOERSEL_ID_LISTE_API', '/forespoersel/id/liste');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_INGRESS', 'flex-sykepengesoknad.ingress');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_URL', '/flex/sykepengesoknad/url');
+    vi.stubEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID', 'client-id');
     fetchMocker.resetMocks();
   });
 
@@ -38,6 +39,7 @@ describe('sp-soeknader API', () => {
 
   it('should return 401 when we dont have a token', async () => {
     const req = {
+      method: 'POST',
       headers: {
         authorization: 'Bearer token'
       },
@@ -61,6 +63,7 @@ describe('sp-soeknader API', () => {
     validateToken.mockResolvedValue({ ok: false, error: 'error' });
 
     const req = {
+      method: 'POST',
       headers: {
         authorization: 'Bearer token'
       },
@@ -84,6 +87,7 @@ describe('sp-soeknader API', () => {
     validateToken.mockResolvedValue({ ok: true });
 
     const req = {
+      method: 'POST',
       headers: {
         authorization: 'Bearer token'
       },
@@ -116,6 +120,7 @@ describe('sp-soeknader API', () => {
     requestOboToken.mockResolvedValue({ ok: true });
 
     const req = {
+      method: 'POST',
       headers: {
         authorization: 'Bearer token'
       },
@@ -152,6 +157,7 @@ describe('sp-soeknader API', () => {
     requestOboToken.mockResolvedValue({ ok: true });
 
     const req = {
+      method: 'POST',
       headers: {
         authorization: 'Bearer token'
       },

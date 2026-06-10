@@ -13,7 +13,7 @@ import { BodyLong, BodyShort, Button, HStack, Skeleton } from '@navikt/ds-react'
 import Skillelinje from '../../components/Skillelinje/Skillelinje';
 import PeriodeFraTil from '../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../utils/formatCurrency';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import BortfallNaturalytelser from '../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -43,6 +43,7 @@ import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringI
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
 import { useKvitteringData } from '../../utils/useKvitteringData';
+import FaisuKvittering from '../../components/FaisuKvittering/FaisuKvittering';
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   kvittid,
@@ -278,6 +279,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   ))}
                 </>
               )}
+              <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <>
                   <Skillelinje />

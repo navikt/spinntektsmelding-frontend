@@ -40,15 +40,13 @@ vi.mock('../../../utils/redirectTilLogin', () => ({
   redirectTilLogin: vi.fn(() => ({ redirect: { destination: '/login', permanent: false } }))
 }));
 
-const { mockPush, mockGet } = vi.hoisted(() => ({
-  mockPush: vi.fn(),
-  mockGet: vi.fn()
+const { mockPush } = vi.hoisted(() => ({
+  mockPush: vi.fn()
 }));
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/router', () => ({
   default: {},
-  useRouter: () => ({ push: mockPush }),
-  useSearchParams: () => ({ get: mockGet })
+  useRouter: () => ({ push: mockPush, asPath: '/test' })
 }));
 
 const initialState = useBoundStore.getState();

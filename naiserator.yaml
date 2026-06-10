@@ -47,6 +47,7 @@ spec:
     outbound:
       external:
         - host: '{{{outbound-external-host}}}'
+        - host: helsearbeidsgiver-unleash-api.nav.cloud.nais.io
       rules:
         - application: flexjar-backend
           namespace: flex
@@ -69,3 +70,7 @@ spec:
       value: '{{{umamiWebsiteId}}}'
     - name: NEXT_PUBLIC_UMAMI_DATA_DOMAINS
       value: '{{{umamiDataDomains}}}'
+    - name: UNLEASH_SERVER_API_URL
+      value: 'https://helsearbeidsgiver-unleash-api.nav.cloud.nais.io/api'
+  envFrom:
+    - secret: spinntektsmelding-frontend-unleash-api-token

@@ -14,7 +14,7 @@ import { BodyLong, BodyShort, Button, HStack } from '@navikt/ds-react';
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import PeriodeFraTil from '../../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import BortfallNaturalytelser from '../../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -60,6 +60,7 @@ import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
+import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
@@ -100,7 +101,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [
     kvitteringData,
@@ -150,18 +150,17 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     : {
         navn: sykmeldt.navn,
-        identitetsnummer: kvitteringData?.sykmeldtFnr,
-        orgnrUnderenhet: kvitteringData?.avsender.orgnr,
+        identitetsnummer: sykmeldt.fnr,
+        orgnrUnderenhet: avsender.orgnr,
         virksomhetNavn: avsender.orgNavn,
         innsenderNavn: avsender.navn,
-        innsenderTelefonNr: kvitteringData?.avsender.tlf
+        innsenderTelefonNr: avsender.tlf
       };
 
   const clickEndre = () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
-
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(input);
+    const kvittering = prepareForInitiering(input, personData);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
@@ -195,7 +194,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     onSetNyInnsending();
-  }, [searchParams]);
+  }, [router.asPath]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;
@@ -283,7 +282,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   } else if (kvitteringData?.refusjon?.sluttdato) {
     refusjonEndringer.push({
       beloep: 0,
-      startdato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
+      startdato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)!
     });
   }
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
@@ -396,6 +395,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}
+          <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
           {visFullLonnIArbeidsgiverperioden && (
@@ -446,10 +446,15 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: unknown): KvitteringNavNoSchema {
+function prepareForInitiering(kvitteringData: unknown, personData: PersonData): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
-    sykmeldt: kvitteringData.sykmeldt,
-    avsender: kvitteringData.avsender,
+    sykmeldt: { navn: personData.navn, fnr: personData.identitetsnummer },
+    avsender: {
+      orgnr: personData.orgnrUnderenhet,
+      orgNavn: personData.virksomhetNavn,
+      navn: personData.innsenderNavn,
+      tlf: personData.innsenderTelefonNr
+    },
     sykmeldingsperioder: kvitteringData.sykmeldingsperioder ?? [],
     skjema: {
       agp: kvitteringData.agp ?? null,

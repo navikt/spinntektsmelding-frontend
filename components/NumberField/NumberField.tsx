@@ -1,5 +1,5 @@
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { TextField } from '@navikt/ds-react';
-import { useCallback, useEffect } from 'react';
 import lokalStyling from './NumberField.module.css';
 
 const sanitizeToSingleComma = (value: string): string => {
@@ -15,6 +15,19 @@ const toDisplayValue = (val: string | number | readonly string[] | undefined | n
 
 export default function NumberField({ ...props }: React.ComponentProps<typeof TextField>) {
   const isControlled = props.value != null;
+  const [displayValue, setDisplayValue] = useState(() => toDisplayValue(props.value));
+  const displayValueRef = useRef(displayValue);
+
+  useEffect(() => {
+    const newDisplay = toDisplayValue(props.value);
+    const newNumeric = Number.parseFloat(newDisplay.replace(',', '.'));
+    const currentNumeric = Number.parseFloat(displayValueRef.current.replace(',', '.'));
+
+    if (newNumeric !== currentNumeric || (Number.isNaN(newNumeric) && newDisplay !== displayValueRef.current)) {
+      setDisplayValue(newDisplay);
+      displayValueRef.current = newDisplay;
+    }
+  }, [props.value]);
 
   const formatInputDisplayIfNeeded = useCallback(() => {
     if (isControlled) return;
@@ -43,6 +56,11 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     const sanitizedComma = sanitizeToSingleComma(e.target.value.replaceAll(/[^0-9,]/g, ''));
     e.target.value = sanitizedComma.replaceAll(',', '.');
 
+    if (isControlled) {
+      setDisplayValue(sanitizedComma);
+      displayValueRef.current = sanitizedComma;
+    }
+
     if (props.onChange) {
       props.onChange(e);
     }
@@ -52,7 +70,7 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   };
 
-  const formattedValue = isControlled ? toDisplayValue(props.value) : undefined;
+  const formattedValue = isControlled ? displayValue : undefined;
   const formattedDefaultValue = isControlled ? undefined : toDisplayValue(props.defaultValue);
 
   return (

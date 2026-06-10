@@ -1,20 +1,12 @@
-// Mock next/navigation
-const router = {
+const mockedRouter = vi.hoisted(() => ({
   push: vi.fn(),
   replace: vi.fn(),
   prefetch: vi.fn()
-};
+}));
 
-vi.mock('next/navigation', () => {
-  const push = vi.fn();
-  const replace = vi.fn();
-  const prefetch = vi.fn();
-  const router = { push, replace, prefetch };
-  return {
-    useRouter: () => router,
-    __mockedRouter: router
-  };
-});
+vi.mock('next/navigation', () => ({
+  useRouter: () => mockedRouter
+}));
 
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
@@ -23,7 +15,6 @@ import InitieringAnnet from '../../../pages/initieringAnnet/index';
 import useBoundStore from '../../../state/useBoundStore';
 import useArbeidsforhold from '../../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../../utils/useSykepengesoeknader';
-import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import testFnr from '../../../mockdata/testFnr';
 
@@ -45,7 +36,8 @@ describe('InitieringAnnet page', () => {
     initEgenmeldingsperiode: vi.fn(),
     tilbakestillArbeidsgiverperiode: vi.fn(),
     setVedtaksperiodeId: vi.fn(),
-    setSelvbestemtType: vi.fn()
+    setSelvbestemtType: vi.fn(),
+    setHarGradertSykmelding: vi.fn()
   };
 
   beforeEach(() => {
@@ -53,7 +45,7 @@ describe('InitieringAnnet page', () => {
     // router mock
     mockedRouter.push.mockClear();
     // store selector returns from fakeStore
-    (useBoundStore as Mock).mockImplementation((selector: any) => selector(fakeStore));
+    (useBoundStore as unknown as Mock).mockImplementation((selector: any) => selector(fakeStore));
   });
 
   it('shows loading spinner while arbeidsforhold is loading', () => {

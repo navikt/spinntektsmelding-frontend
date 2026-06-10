@@ -6,8 +6,7 @@ import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerS
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
-
-const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
+import { requireEnv } from '../../utils/api/validateEnv';
 
 export const config = {
   api: {
@@ -39,10 +38,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(404).json({ error: 'Mock not found' });
     }
 
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    const simpleTree = extractOrgStructure(data.hierarki);
-    setTimeout(() => res.status(200).json(simpleTree), 100);
-    return;
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      const simpleTree = extractOrgStructure(data.hierarki);
+      setTimeout(() => res.status(200).json(simpleTree), 100);
+      return;
+    } catch (error) {
+      console.error('Failed to parse mock data:', error);
+      return res.status(500).json({ error: 'Failed to parse mock data' });
+    }
   }
 
   const token = getToken(req);
@@ -57,7 +61,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const obo = await requestOboToken(token, process.env.FAGER_TILGANG_CLIENT_ID!);
+  const basePath = 'http://' + requireEnv('FAGER_TILGANG_INGRESS') + requireEnv('FAGER_TILGANG_URL');
+  const clientId = requireEnv('FAGER_TILGANG_CLIENT_ID');
+
+  const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
     logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });

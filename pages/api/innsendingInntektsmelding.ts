@@ -3,8 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import handleProxyInit from '../../utils/api/handleProxyInit';
-
-const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.INNSENDING_INNTEKTSMELDING_API;
+import { requireEnv } from '../../utils/api/validateEnv';
 
 type FeilRespons = { valideringsfeil: string[]; error: string } | { status: 'OK' };
 
@@ -24,16 +23,24 @@ const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
       });
     }, 100);
   } else if (env === 'production') {
-    return httpProxyMiddleware(req, res, {
-      target: basePath,
-      onProxyInit: handleProxyInit,
-      pathRewrite: [
-        {
-          patternStr: '^/api/innsendingInntektsmelding',
-          replaceStr: ''
-        }
-      ]
-    });
+    try {
+      const basePath = 'http://' + requireEnv('IM_API_URI') + requireEnv('INNSENDING_INNTEKTSMELDING_API');
+      return httpProxyMiddleware(req, res, {
+        target: basePath,
+        onProxyInit: handleProxyInit,
+        pathRewrite: [
+          {
+            patternStr: '^/api/innsendingInntektsmelding',
+            replaceStr: ''
+          }
+        ]
+      });
+    } catch (error) {
+      console.error('Missing required environment variables:', error);
+      return res.status(500).json({ error: 'Server configuration error', valideringsfeil: [] });
+    }
+  } else {
+    return res.status(500).json({ error: 'Invalid NODE_ENV', valideringsfeil: [] });
   }
 };
 

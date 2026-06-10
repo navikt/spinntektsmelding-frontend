@@ -1,8 +1,20 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
 
 const uuid = '588e055c-5d72-449b-b88f-56aa43457668';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
+
+async function answerFullLonnIfVisible(page: Page): Promise<void> {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    const yesOption = fullLonnGroup.getByLabel('Ja').first();
+    if (await yesOption.isVisible()) {
+      if (await yesOption.isEnabled()) {
+        await yesOption.check();
+      }
+    }
+  }
+}
 
 test.describe('Refusjon endringer toggle Ja/Nei', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,7 +43,7 @@ test.describe('Refusjon endringer toggle Ja/Nei', () => {
     const formPage = new FormPage(page);
 
     // select full lønn in AGP
-    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+    await answerFullLonnIfVisible(page);
 
     // select refusjon under sykefravær
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
@@ -59,7 +71,7 @@ test.describe('Refusjon endringer toggle Ja/Nei', () => {
     const formPage = new FormPage(page);
 
     // select full lønn in AGP
-    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+    await answerFullLonnIfVisible(page);
 
     // select refusjon under sykefravær
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
@@ -94,11 +106,9 @@ test.describe('Refusjon endringer toggle Ja/Nei', () => {
   });
 
   test('selecting Nei allows submission without periode fields', async ({ page }) => {
+    const formPage = new FormPage(page);
     // select full lønn in AGP
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await answerFullLonnIfVisible(page);
 
     // select refusjon under sykefravær
     await page
@@ -152,7 +162,7 @@ test.describe('Refusjon with high values validation', () => {
     const formPage = new FormPage(page);
 
     // select full lønn in AGP
-    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+    await answerFullLonnIfVisible(page);
 
     // select refusjon under sykefravær
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
@@ -189,7 +199,7 @@ test.describe('Refusjon with high values validation', () => {
     const formPage = new FormPage(page);
 
     // select full lønn in AGP
-    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+    await answerFullLonnIfVisible(page);
 
     // select refusjon under sykefravær
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');

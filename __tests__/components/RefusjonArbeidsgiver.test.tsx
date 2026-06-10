@@ -4,7 +4,7 @@ import { axe } from 'jest-axe';
 import useBoundStore from '../../state/useBoundStore';
 import RefusjonArbeidsgiver from '../../components/RefusjonArbeidsgiver';
 import parseIsoDate from '../../utils/parseIsoDate';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
@@ -37,7 +37,14 @@ function TestWrapper({
       ...defaultValues
     }
   });
+
   return <FormProvider {...methods}>{children}</FormProvider>;
+}
+
+function BeloepValueProbe() {
+  const value = useWatch({ name: 'agp.redusertLoennIAgp.beloep' });
+
+  return <div data-testid='agp-redusert-loenn-beloep'>{String(value ?? '')}</div>;
 }
 
 function buildState(overrides: Partial<Record<string, any>> = {}) {
@@ -61,7 +68,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' } }}>
-        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1000} />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} />
       </TestWrapper>
     );
 
@@ -74,7 +81,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     render(
       <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
-        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1000} />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} />
       </TestWrapper>
     );
 
@@ -91,7 +98,7 @@ describe('RefusjonArbeidsgiver', () => {
       <TestWrapper
         defaultValues={{ fullLonn: 'Nei', agp: { redusertLoennIAgp: { begrunnelse: 'BetvilerArbeidsufoerhet' } } }}
       >
-        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1234} />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} />
       </TestWrapper>
     );
 
@@ -104,7 +111,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     render(
       <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
-        <RefusjonArbeidsgiver inntekt={25000} skalViseArbeidsgiverperiode />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode />
       </TestWrapper>
     );
 
@@ -114,13 +121,31 @@ describe('RefusjonArbeidsgiver', () => {
     expect(belopInput).toHaveValue('12345');
   });
 
+  it('should convert norwegian decimal input for utbetalt field', () => {
+    const state = buildState();
+    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+
+    render(
+      <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode />
+        <BeloepValueProbe />
+      </TestWrapper>
+    );
+
+    const belopInput = screen.getByLabelText(/Utbetalt under arbeidsgiverperiode/i);
+    fireEvent.change(belopInput, { target: { value: '123,45' } });
+
+    expect(belopInput).toHaveValue('123,45');
+    expect(screen.getByTestId('agp-redusert-loenn-beloep')).toHaveTextContent('123.45');
+  });
+
   it('handles agp.fullLonn = Ja path without showing utbetalt field', () => {
     const state = buildState();
     (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Ja' } }}>
-        <RefusjonArbeidsgiver inntekt={5000} skalViseArbeidsgiverperiode />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode />
       </TestWrapper>
     );
 
@@ -133,7 +158,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     render(
       <TestWrapper defaultValues={{ kreverRefusjon: 'Ja' }}>
-        <RefusjonArbeidsgiver inntekt={5000} skalViseArbeidsgiverperiode />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode />
       </TestWrapper>
     );
 
@@ -146,7 +171,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     render(
       <TestWrapper defaultValues={{ kreverRefusjon: 'Nei' }}>
-        <RefusjonArbeidsgiver inntekt={5000} skalViseArbeidsgiverperiode />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode />
       </TestWrapper>
     );
 
@@ -159,7 +184,7 @@ describe('RefusjonArbeidsgiver', () => {
 
     const { container } = render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' }, kreverRefusjon: 'Ja' }}>
-        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} inntekt={1000} />
+        <RefusjonArbeidsgiver skalViseArbeidsgiverperiode={true} />
       </TestWrapper>
     );
     const results = await axe(container);

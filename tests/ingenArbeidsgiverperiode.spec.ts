@@ -23,7 +23,7 @@ test.describe('Utfylling av skjema – ingen arbeidsgiverperiode', () => {
 
     // override arbeidsgiverperiode
     await page.locator('[data-cy="endre-arbeidsgiverperiode"]').click();
-    await formPage.checkCheckbox('Det er ikke arbeidsgiverperiode');
+    await formPage.checkCheckbox('Det er ikke arbeidsgiverperiode i dette sykefraværet');
     // await page.getByRole('checkbox', { name: /Det er ikke arbeidsgiverperiode/ }).check();
 
     // reason dropdown

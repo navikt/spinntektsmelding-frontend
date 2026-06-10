@@ -2,15 +2,15 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { axe } from 'jest-axe';
 
 import RefusjonUtbetalingEndring from '../../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
-import { FormProvider, useForm } from 'react-hook-form';
-import React from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import type { ReactNode } from 'react';
 
 interface TestWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
   defaultValues?: Record<string, unknown>;
 }
 
-function TestWrapper({ children, defaultValues = {} }: TestWrapperProps) {
+function TestWrapper({ children, defaultValues = {} }: Readonly<TestWrapperProps>) {
   const methods = useForm({
     defaultValues: {
       refusjon: {
@@ -20,7 +20,14 @@ function TestWrapper({ children, defaultValues = {} }: TestWrapperProps) {
       ...defaultValues
     }
   });
+
   return <FormProvider {...methods}>{children}</FormProvider>;
+}
+
+function BeloepValueProbe() {
+  const value = useWatch({ name: 'refusjon.endringer.0.beloep' });
+
+  return <div data-testid='refusjon-endring-beloep'>{String(value ?? '')}</div>;
 }
 
 describe('RefusjonUtbetalingEndring', () => {
@@ -138,6 +145,24 @@ describe('RefusjonUtbetalingEndring', () => {
     });
 
     expect(Input).toHaveValue('1234');
+  });
+
+  it('should convert norwegian decimal input for beløp', async () => {
+    render(
+      <TestWrapper defaultValues={{ refusjon: { harEndringer: 'Ja', endringer: [{}] } }}>
+        <RefusjonUtbetalingEndring />
+        <BeloepValueProbe />
+      </TestWrapper>
+    );
+
+    const Input = screen.getByLabelText(/Endret beløp\/måned/i);
+
+    fireEvent.change(Input, {
+      target: { value: '123,45' }
+    });
+
+    expect(Input).toHaveValue('123,45');
+    expect(screen.getByTestId('refusjon-endring-beloep')).toHaveTextContent('123.45');
   });
 
   it('should update dato when value is changed', async () => {

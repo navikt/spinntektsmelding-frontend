@@ -90,6 +90,10 @@ export default function useFyllAapenInnsending() {
       arbeidsforholdType = { type: 'Behandlingsdager' };
     }
 
+    const sykmeldtfraFlereArbeidsforhold =
+      skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Nei' &&
+      skjemaData.flereArbeidsforhold?.harLikLoenn === 'Nei';
+
     const innsending = validerAapenInnsending({
       sykmeldtFnr: sykmeldt.fnr,
       avsender: {
@@ -120,7 +124,19 @@ export default function useFyllAapenInnsending() {
             }
           : null,
       arbeidsforholdType: arbeidsforholdType,
-      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
+      flereArbeidsforhold: sykmeldtfraFlereArbeidsforhold
+        ? {
+            harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
+            erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
+            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+              inntekt: forhold.inntekt,
+              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+              inkludertISykefravaer: forhold.inkludertISykefravaer,
+              stillingsprosent: forhold.stillingsprosent
+            }))
+          }
+        : null
     });
 
     return innsending;

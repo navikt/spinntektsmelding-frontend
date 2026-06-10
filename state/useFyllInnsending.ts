@@ -46,7 +46,12 @@ export default function useFyllInnsending() {
   type FullInnsending = z.infer<typeof FullInnsendingSchema>;
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
-  return (forespoerselId: string, skjemaData: Skjema, erBegrensetForespoersel: boolean): FullInnsending => {
+  return (
+    forespoerselId: string,
+    skjemaData: Skjema,
+    erBegrensetForespoersel: boolean,
+    faisuEnabled?: boolean
+  ): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
     const harForespurtArbeidsgiverperiode = Boolean(
@@ -105,7 +110,9 @@ export default function useFyllInnsending() {
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
     initNaturalytelser(skjemaData.inntekt?.naturalytelser);
-
+    const sykmeldtfraFlereArbeidsforhold =
+      skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Nei' &&
+      skjemaData.flereArbeidsforhold?.harLikLoenn === 'Nei';
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
@@ -132,8 +139,24 @@ export default function useFyllInnsending() {
             }
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
-      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
+      flereArbeidsforhold: sykmeldtfraFlereArbeidsforhold
+        ? {
+            harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
+            erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
+            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+              inntekt: forhold.inntekt,
+              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+              inkludertISykefravaer: forhold.inkludertISykefravaer,
+              stillingsprosent: forhold.stillingsprosent
+            }))
+          }
+        : null
     };
+
+    if (!faisuEnabled) {
+      delete innsendingSkjema.flereArbeidsforhold;
+    }
 
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;

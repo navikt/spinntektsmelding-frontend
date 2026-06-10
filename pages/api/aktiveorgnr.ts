@@ -2,10 +2,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 import handleProxyInit from '../../utils/api/handleProxyInit';
+import { requireEnv } from '../../utils/api/validateEnv';
 import fs from 'node:fs';
 import path from 'node:path';
-
-const basePath = 'http://' + globalThis.process.env.IM_API_URI + process.env.AKTIVE_ORGNR_API;
 
 export const config = {
   api: {
@@ -24,19 +23,30 @@ const handler = (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(404).json({ error: 'Mock not found' });
     }
 
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    return res.status(200).json(data);
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error('Failed to parse mock data:', error);
+      return res.status(500).json({ error: 'Failed to parse mock data' });
+    }
   } else if (env === 'production') {
-    return httpProxyMiddleware(req, res, {
-      target: basePath,
-      onProxyInit: handleProxyInit,
-      pathRewrite: [
-        {
-          patternStr: '^/api/aktiveorgnr',
-          replaceStr: ''
-        }
-      ]
-    });
+    try {
+      const basePath = 'http://' + requireEnv('IM_API_URI') + requireEnv('AKTIVE_ORGNR_API');
+      return httpProxyMiddleware(req, res, {
+        target: basePath,
+        onProxyInit: handleProxyInit,
+        pathRewrite: [
+          {
+            patternStr: '^/api/aktiveorgnr',
+            replaceStr: ''
+          }
+        ]
+      });
+    } catch (error) {
+      console.error('Missing required environment variables:', error);
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
   }
 };
 

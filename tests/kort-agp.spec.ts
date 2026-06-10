@@ -74,7 +74,8 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
       },
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // bekreft kvitteringsside

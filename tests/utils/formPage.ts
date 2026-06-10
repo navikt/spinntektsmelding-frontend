@@ -11,23 +11,42 @@ export class FormPage {
     const radioInRadiogroup = this.page.getByRole('radiogroup', { name: groupName }).getByRole('radio', {
       name: optionLabel
     });
+    const radioInGroup = this.page.getByRole('group', { name: groupName }).getByRole('radio', { name: optionLabel });
+
+    await expect.poll(async () => (await radioInRadiogroup.count()) + (await radioInGroup.count())).toBeGreaterThan(0);
 
     if ((await radioInRadiogroup.count()) > 0) {
       return radioInRadiogroup.first();
     }
 
-    return this.page.getByRole('group', { name: groupName }).getByLabel(optionLabel).first();
+    return radioInGroup.first();
   }
 
   async checkRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<void> {
     const radioButton = await this.getRadioButton(groupName, optionLabel);
     await expect(radioButton).toBeVisible();
+    if (!(await radioButton.isEnabled())) {
+      if (await radioButton.isChecked()) {
+        return;
+      }
+
+      throw new Error(`Radio option is disabled and cannot be selected: ${String(optionLabel)}`);
+    }
+
     await radioButton.check();
   }
 
   async uncheckRadioButton(groupName: string | RegExp, optionLabel: string | RegExp): Promise<void> {
     const radioButton = await this.getRadioButton(groupName, optionLabel);
     await expect(radioButton).toBeVisible();
+    if (!(await radioButton.isEnabled())) {
+      if (!(await radioButton.isChecked())) {
+        return;
+      }
+
+      throw new Error(`Radio option is disabled and cannot be unselected: ${String(optionLabel)}`);
+    }
+
     await radioButton.uncheck();
   }
 
@@ -73,13 +92,13 @@ export class FormPage {
   }
 
   async checkCheckbox(label: string): Promise<void> {
-    const checkbox = this.page.getByLabel(label);
+    const checkbox = this.page.getByLabel(label, { exact: true });
     await expect(checkbox).toBeVisible();
     await checkbox.check();
   }
 
   async uncheckCheckbox(label: string): Promise<void> {
-    const checkbox = this.page.getByLabel(label);
+    const checkbox = this.page.getByLabel(label, { exact: true });
     await expect(checkbox).toBeVisible();
     await checkbox.uncheck();
   }

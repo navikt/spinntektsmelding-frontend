@@ -8,6 +8,13 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { requireEnv } from '../../utils/api/validateEnv';
+
+const requestBodySchema = z.object({
+  orgnummer: z.string().min(9),
+  fnr: z.string().min(11),
+  eldsteFom: z.string().min(10)
+});
 
 function minDate(date1: string, date2: string): string {
   return date1 < date2 ? date1 : date2;
@@ -15,10 +22,6 @@ function minDate(date1: string, date2: string): string {
 function maxDate(date1: string, date2: string): string {
   return date1 > date2 ? date1 : date2;
 }
-
-const basePath =
-  'http://' + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-const authApi = 'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.AUTH_SYKEPENGESOEKNAD_API;
 
 export const config = {
   api: {
@@ -29,111 +32,136 @@ export const config = {
 type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  const env = process.env.NODE_ENV;
-  if (env === 'development') {
-    const mockdata = 'behandlingsdager';
-    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
-
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'Mock not found' });
+  try {
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST');
+      return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    setTimeout(() => res.status(200).json(data), 100);
-    return;
-  }
+    const env = process.env.NODE_ENV;
+    if (env === 'development') {
+      const mockdata = 'behandlingsdager';
+      const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
-  const token = getToken(req);
-  if (!token) {
-    logger.info('Mangler token i header');
-    return res.status(401);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok) {
-    logger.info('Validering feilet: ' + JSON.stringify(validation.error));
-    return res.status(401);
-  }
-
-  const requestBody = await req.body;
-  const orgnr = requestBody.orgnummer;
-
-  if (!isMod11Number(orgnr)) {
-    logger.info('Ugyldig orgnr: ' + orgnr);
-    return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
-  }
-
-  const tokenResponse = await fetch(authApi + '/' + orgnr, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  if (!tokenResponse.ok) {
-    logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText + ', url: ' + tokenResponse.url);
-    return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
-  }
-
-  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
-  if (!obo.ok) {
-    logger.info('OBO-feil: ' + JSON.stringify(obo.error));
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const soeknadResponse = await fetch(basePath, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${obo.token}`
-    },
-    body: JSON.stringify({
-      orgnummer: requestBody.orgnummer,
-      fnr: requestBody.fnr,
-      eldsteFom: requestBody.eldsteFom
-    })
-  });
-
-  if (!soeknadResponse.ok) {
-    logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
-    return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-  }
-
-  const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-  const aktiveSoeknader = [...(soeknadData ?? [])].filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
-
-  if (aktiveSoeknader.length === 0) {
-    logger.info(
-      `Ingen aktive behandlingsdager funnet for orgnr: ${orgnr}, selv om antall poster var: ${soeknadData?.length ?? 0}`
-    );
-    return res.status(200).json([]);
-  }
-
-  let sykmeldingPerioder = [aktiveSoeknader[0]];
-
-  aktiveSoeknader.forEach((soeknad) => {
-    if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
-      sykmeldingPerioder.push(soeknad);
-    }
-    sykmeldingPerioder = sykmeldingPerioder.map((periode) => {
-      if (periode.sykmeldingId === soeknad.sykmeldingId) {
-        return {
-          ...periode,
-          behandlingsdager: [...new Set([...(periode.behandlingsdager ?? []), ...(soeknad.behandlingsdager ?? [])])],
-          fom: minDate(periode.fom, soeknad.fom),
-          tom: maxDate(periode.tom, soeknad.tom)
-        };
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'Mock not found' });
       }
-      return periode;
+
+      try {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        setTimeout(() => res.status(200).json(data), 100);
+        return;
+      } catch (error) {
+        console.error('Failed to parse mock data:', error);
+        return res.status(500).json({ error: 'Failed to parse mock data' });
+      }
+    }
+
+    const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
+    const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
+    const clientId = requireEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID');
+
+    const token = getToken(req);
+    if (!token) {
+      logger.info('Mangler token i header');
+      return res.status(401);
+    }
+
+    const validation = await validateToken(token);
+    if (!validation.ok) {
+      logger.info('Validering feilet: ' + JSON.stringify(validation.error));
+      return res.status(401);
+    }
+
+    const parsedBody = requestBodySchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      logger.info('Ugyldig request body for behandlingsdager');
+      return res.status(400).json({ error: 'Ugyldig forespørsel' });
+    }
+
+    const requestBody = parsedBody.data;
+    const orgnr = requestBody.orgnummer;
+
+    if (!isMod11Number(orgnr)) {
+      logger.info('Ugyldig orgnr: ' + orgnr);
+      return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+    }
+
+    const tokenResponse = await fetch(authApi + '/' + orgnr, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
     });
-  });
 
-  logger.info(
-    `Hentet aktive behandlingsdager for orgnr: ${orgnr}, antall: ${sykmeldingPerioder.length}, fra: ${aktiveSoeknader.length}`
-  );
+    if (!tokenResponse.ok) {
+      logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText + ', url: ' + tokenResponse.url);
+      return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+    }
 
-  return res.status(soeknadResponse.status).json(sykmeldingPerioder);
+    const obo = await requestOboToken(token, clientId);
+    if (!obo.ok) {
+      logger.info('OBO-feil: ' + JSON.stringify(obo.error));
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const soeknadResponse = await fetch(basePath, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${obo.token}`
+      },
+      body: JSON.stringify({
+        orgnummer: requestBody.orgnummer,
+        fnr: requestBody.fnr,
+        eldsteFom: requestBody.eldsteFom
+      })
+    });
+
+    if (!soeknadResponse.ok) {
+      logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
+      return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
+    }
+
+    const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
+    const aktiveSoeknader = [...(soeknadData ?? [])].filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
+
+    if (aktiveSoeknader.length === 0) {
+      logger.info(
+        `Ingen aktive behandlingsdager funnet for orgnr: ${orgnr}, selv om antall poster var: ${soeknadData?.length ?? 0}`
+      );
+      return res.status(200).json([]);
+    }
+
+    let sykmeldingPerioder = [aktiveSoeknader[0]];
+
+    aktiveSoeknader.forEach((soeknad) => {
+      if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
+        sykmeldingPerioder.push(soeknad);
+      }
+      sykmeldingPerioder = sykmeldingPerioder.map((periode) => {
+        if (periode.sykmeldingId === soeknad.sykmeldingId) {
+          return {
+            ...periode,
+            behandlingsdager: [...new Set([...(periode.behandlingsdager ?? []), ...(soeknad.behandlingsdager ?? [])])],
+            fom: minDate(periode.fom, soeknad.fom),
+            tom: maxDate(periode.tom, soeknad.tom)
+          };
+        }
+        return periode;
+      });
+    });
+
+    logger.info(
+      `Hentet aktive behandlingsdager for orgnr: ${orgnr}, antall: ${sykmeldingPerioder.length}, fra: ${aktiveSoeknader.length}`
+    );
+
+    return res.status(soeknadResponse.status).json(sykmeldingPerioder);
+  } catch (error) {
+    console.error('Missing required environment variables or error:', error);
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
 };
 
 export default handler;

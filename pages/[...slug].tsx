@@ -1,4 +1,5 @@
 import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import { evaluateFlags, flagsClient, getDefinitions } from '@unleash/nextjs';
 import type { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
@@ -41,7 +42,7 @@ import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
 import Heading3 from '../components/Heading3';
 import forespoerselType from '../config/forespoerselType';
-import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { HovedskjemaSchema, createHovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { countTrue } from '../utils/countTrue';
 import { harEndringAarsak } from '../utils/harEndringAarsak';
 import { Behandlingsdager } from '../components/Behandlingsdager/Behandlingsdager';
@@ -53,6 +54,147 @@ import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
+import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
+import Faisu from '../components/Faisu/Faisu';
+import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
+import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
+
+const RequestStatus = {
+  fulfilled: 'fulfilled',
+  rejected: 'rejected',
+  pending: 'pending'
+} as const;
+
+function createInvalidUuidProps(uuid: string, erEndring: boolean, faisuEnabled: boolean) {
+  return {
+    props: {
+      slug: uuid,
+      erEndring,
+      forespurt: null,
+      forespurtStatus: 404,
+      dataFraBackend: false,
+      harGradertSykmelding: false,
+      harFlereArbeidsforhold: false,
+      ansettelsesforhold: null,
+      faisuEnabled
+    }
+  };
+}
+
+function resolveForespurtStatus(
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  hasEndreQuery: boolean
+) {
+  if (forespurtResult.status === RequestStatus.fulfilled) {
+    return 200;
+  }
+
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
+    return forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
+  }
+
+  return undefined;
+}
+
+function handleRejectedForespurtResult(
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  context: GetServerSidePropsContext<{ slug: string[] }>
+) {
+  if (forespurtResult.status !== RequestStatus.rejected) {
+    return null;
+  }
+
+  logger.warn('Feil ved innhenting av forespurt data: %j', forespurtResult.reason);
+
+  if (forespurtResult.reason?.status === 401) {
+    return redirectTilLogin(context);
+  }
+
+  if (forespurtResult.reason?.status === 404) {
+    return {
+      notFound: true
+    };
+  }
+
+  return null;
+}
+
+function createKvitteringRedirect(context: GetServerSidePropsContext<{ slug: string[] }>, uuid: string) {
+  const ingress = context.req.headers.host + environment.baseUrl;
+  const isLocalhost =
+    context.req.headers.host?.startsWith('localhost') || context.req.headers.host?.startsWith('127.0.0.1');
+  const protocol = isLocalhost ? 'http' : 'https';
+  const destination = `${protocol}://${ingress}/kvittering/${uuid}`;
+
+  return {
+    redirect: {
+      destination,
+      permanent: false
+    }
+  };
+}
+
+async function getValidatedTokenOrRedirect(
+  context: GetServerSidePropsContext<{ slug: string[] }>,
+  isDevelopment: boolean
+) {
+  const token = getToken(context.req);
+
+  if (!token && !isDevelopment) {
+    logger.warn('Mangler token i header ved innhenting av forespurt data');
+    return {
+      token: null,
+      redirect: redirectTilLogin(context)
+    };
+  }
+
+  const validation = await validateToken(token ?? '');
+  if (!validation.ok && !isDevelopment) {
+    logger.warn('Validering av token feilet ved innhenting av forespurt data');
+    return {
+      token: null,
+      redirect: redirectTilLogin(context)
+    };
+  }
+
+  return {
+    token: token ?? '',
+    redirect: null
+  };
+}
+
+function hasMultipleArbeidsforhold(arbeidsforhold: Ansettelsesforhold | null) {
+  return Boolean(arbeidsforhold?.ansettelsesforhold && arbeidsforhold.ansettelsesforhold.length > 1);
+}
+
+function shouldRedirectToKvittering(
+  forespurt: { erBesvart?: boolean } | null,
+  overskriv: boolean,
+  hasEndreQuery: boolean
+) {
+  return Boolean(forespurt?.erBesvart && !overskriv && !hasEndreQuery);
+}
+
+function logFetchResults(
+  uuid: string,
+  forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
+  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
+  forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null
+) {
+  logger.info(
+    'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
+    uuid,
+    forespurtResult.status,
+    arbeidsforholdResult.status
+  );
+
+  logger.info('Forespurt data: %j', forespurt);
+
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
+  }
+}
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
@@ -61,13 +203,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   erEndring,
   forespurt,
   forespurtStatus,
-  dataFraBackend
+  dataFraBackend,
+  harFlereArbeidsforhold: harFlereArbeidsforholdInitial,
+  ansettelsesforhold,
+  faisuEnabled
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
   const [ingenTilgangOpen, setIngenTilgangOpen] = useState<boolean>(false);
 
   const [isDirtyForm, setIsDirtyForm] = useState<boolean>(false);
+  const [harFlereArbeidsforhold, setHarFlereArbeidsforhold] = useState<boolean>(harFlereArbeidsforholdInitial);
 
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
@@ -119,19 +265,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const initState = useStateInit();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema', faisuEnabled);
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
     'HovedskjemaArbeidsgiverInitiert',
     skjemastatus
   );
 
-  const opplysningstyper = hentPaakrevdOpplysningstyper();
+  let opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
+
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
+
+  console.log('opplysningstyper status:', opplysningstyper);
 
   const lukkHentingFeiletModal = () => {
     if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
@@ -147,8 +296,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
+  const skalValidereFaisu = harFlereArbeidsforhold;
+
   const methods = useForm<Skjema>({
-    resolver: zodResolver(HovedskjemaSchema),
+    resolver: zodResolver(createHovedskjemaSchema(skalValidereFaisu)),
     defaultValues: {
       inntekt: {
         beloep: bruttoinntekt.bruttoInntekt,
@@ -186,8 +337,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const onForespurtInit = useEffectEvent(() => {
     if (dataFraBackend && forespurt && !storeInitialized.current) {
-      if (forespurt.data !== null) {
-        initState(forespurt.data);
+      if (forespurt !== null) {
+        initState(forespurt);
       }
 
       removeQueryParam('fromSubmit');
@@ -224,6 +375,59 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setValue(...args);
   });
 
+  const avsenderOrgnummer = useEffectEvent(() => {
+    return avsender.orgnr;
+  });
+
+  const sykmeldtFnr = useEffectEvent(() => {
+    return sykmeldt.fnr;
+  });
+
+  useEffect(() => {
+    if (!dataFraBackend) {
+      const orgnr = avsenderOrgnummer();
+      const fnr = sykmeldtFnr();
+      const fom = sykmeldingsperioder?.at(0)?.fom;
+      const tom = sykmeldingsperioder?.at(-1)?.tom;
+
+      if (!orgnr || !fnr || !fom || !tom) {
+        return;
+      }
+
+      fetchArbeidsforhold(orgnr, fnr, fom, tom)
+        .then((response) => {
+          setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
+
+          const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
+            inntekt: undefined,
+            yrkesbeskrivelse: periode.yrkesbeskrivelse,
+            stillingsprosent: periode.stillingsprosent,
+            inkludertISykefravaer: undefined
+          }));
+          setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
+            shouldDirty: true,
+            shouldValidate: true
+          });
+        })
+        .catch(() => undefined);
+    }
+  }, [setValue, dataFraBackend, sykmeldingsperioder]);
+
+  useEffect(() => {
+    if (ansettelsesforhold) {
+      const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
+        inntekt: undefined,
+        yrkesbeskrivelse: periode.yrkesbeskrivelse,
+        stillingsprosent: periode.stillingsprosent,
+        inkludertISykefravaer: undefined
+      }));
+      setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
+        shouldDirty: true,
+        shouldValidate: true
+      });
+    }
+  }, [ansettelsesforhold, setValue]);
+
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
       onSetValue('inntekt.beloep', bruttoinntekt.bruttoInntekt);
@@ -258,10 +462,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       onSetValue('refusjon.beloepPerMaaned', kvitteringData?.refusjon?.beloepPerMaaned ?? 0);
       onSetValue('kreverRefusjon', 'Ja');
       if (kvitteringData?.refusjon?.endringer && kvitteringData.refusjon.endringer.length > 0) {
-        const endringer = kvitteringData.refusjon.endringer.map((endring) => ({
-          beloep: endring.beloep,
-          startdato: parseIsoDate(endring.startdato)!
-        }));
+        const endringer = kvitteringData.refusjon.endringer
+          .map((endring) => {
+            const startdato = parseIsoDate(endring.startdato);
+            if (!startdato) {
+              return null;
+            }
+
+            return {
+              beloep: endring.beloep,
+              startdato
+            };
+          })
+          .filter((endring): endring is { beloep: number; startdato: Date } => endring !== null);
         onSetValue('refusjon.endringer', endringer);
         onSetValue('refusjon.harEndringer', 'Ja');
       } else {
@@ -271,6 +484,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     } else if (!dataFraBackend && kvitteringData && !kvitteringData.refusjon?.endringer) {
       onSetValue('refusjon.beloepPerMaaned', 0);
       onSetValue('kreverRefusjon', 'Nei');
+    }
+    if (!dataFraBackend && kvitteringData?.flereArbeidsforhold) {
+      onSetValue('flereArbeidsforhold', kvitteringData.flereArbeidsforhold);
     }
   }, [kvitteringData, dataFraBackend]);
 
@@ -311,11 +527,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
     if (selvbestemtInnsending) {
-      sendInnArbeidsgiverInitiertSkjema(true, slug, isDirtyForm || isDirty, formData, begrensetForespoersel).finally(
-        () => {
-          setSenderInn(false);
-        }
-      );
+      sendInnArbeidsgiverInitiertSkjema(
+        true,
+        slug,
+        isDirtyForm || isDirty,
+        formData,
+        begrensetForespoersel,
+        faisuEnabled
+      ).finally(() => {
+        setSenderInn(false);
+      });
 
       return;
     }
@@ -376,10 +597,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beregnetBestemmendeFraværsdag]);
 
   useEffect(() => {
-    if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-      return;
-    }
-    if (!isValidUUID(slug)) {
+    if (!isValidUUID(slug) && !selvbestemtInnsending) {
       return;
     }
 
@@ -412,9 +630,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
 
   const { data, error } = useTidligereInntektsdata(
-    sykmeldt.fnr!,
-    avsender.orgnr!,
-    inntektsdato!,
+    sykmeldt.fnr ?? '',
+    avsender.orgnr ?? '',
+    inntektsdato,
     skjemastatus === SkjemaStatus.SELVBESTEMT && Boolean(inntektsdato)
   );
 
@@ -432,7 +650,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <FormProvider {...methods}>
-          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
+          <form
+            className={styles.padded}
+            onSubmit={handleSubmit(submitForm, (errors) => console.log('Submit feil:', errors))}
+          >
             <Person />
             <Skillelinje />
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />
@@ -493,10 +714,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
+            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={harFlereArbeidsforhold} />
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}
-              inntekt={inntektBeloep!}
               behandlingsdager={behandlingsdagerInnsending}
             />
             <Skillelinje />
@@ -532,68 +753,80 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
-  const { slug, endre } = context.query;
-  const uuid = slug?.[0];
   const isDevelopment = process.env.NODE_ENV === 'development';
-  let forespurt = null;
-  let forespurtStatus = null;
-  const overskriv = slug?.[1] && slug?.[1] === 'overskriv';
+  let faisuEnabled = true;
 
-  if (isValidUUID(uuid) && !endre) {
-    forespurtStatus = 200;
+  if (!isDevelopment) {
+    const sessionId = context.req.cookies['unleash-session-id'] || `${Math.floor(Math.random() * 1_000_000_000)}`;
+    context.res.setHeader('set-cookie', `unleash-session-id=${sessionId}; path=/;`);
+    const definitions = await getDefinitions();
+    const unleashContext = { sessionId };
+    const { toggles } = evaluateFlags(definitions, unleashContext);
+    const flags = flagsClient(toggles);
 
-    const token = getToken(context.req);
-    if (!token && !isDevelopment) {
-      /* håndter manglende token */
-      logger.warn('Mangler token i header ved innhenting av forespurt data');
-      return redirectTilLogin(context);
-    }
+    faisuEnabled = flags.isEnabled('faisu-inntektsmelding');
+    flags.sendMetrics().catch(() => {});
+  }
 
-    const validation = await validateToken(token ?? '');
-    if (!validation.ok && !isDevelopment) {
-      /* håndter valideringsfeil */
-      logger.warn('Validering av token feilet ved innhenting av forespurt data');
-      return redirectTilLogin(context);
-    }
+  const { slug, endre } = context.query;
+  const uuid = slug?.[0] ?? '';
+  const action = slug?.[1];
+  const erEndring = action === 'overskriv';
+  const hasEndreQuery = Boolean(endre);
+  let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
+  let forespurtStatus: number | undefined;
+  const overskriv = erEndring;
+  let harGradertSykmelding = false;
+  let ansettelsesforhold: Ansettelsesforhold | null = null;
 
-    try {
-      forespurt = await hentForespoerselSSR(uuid, token ?? '');
+  if (!isValidUUID(uuid)) {
+    return createInvalidUuidProps(uuid, erEndring, faisuEnabled);
+  }
 
-      if (forespurt.data?.erBesvart && !overskriv) {
-        const ingress = context.req.headers.host + environment.baseUrl;
-        const destination = `https://${ingress}/kvittering/${uuid}`;
-        return {
-          redirect: {
-            destination: destination,
-            permanent: false
-          }
-        };
-      }
-    } catch (error) {
-      const err = error instanceof Error ? error : new Error(String(error));
-      logger.error('Error fetching forespurt data: %j', err);
-      forespurt = { data: null };
+  const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
+  if (auth.redirect) {
+    return auth.redirect;
+  }
 
-      const hasErrorStatus = err instanceof Error && 'status' in err;
-      const defaultStatusCode = endre ? 200 : 500;
-      const statusCode = hasErrorStatus ? (err as any).status : defaultStatusCode;
-      forespurtStatus = statusCode;
+  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
+    hentForespoerselSSR(uuid, auth.token),
+    hentArbeidsforholdSSR(uuid, auth.token)
+  ]);
 
-      if (err instanceof Error && 'status' in err && (err as any).status === 404) {
-        return {
-          notFound: true
-        };
-      }
-    }
+  forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
+  ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
+
+  forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, forespurt);
+
+  const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
+  if (rejectedForespurtResponse) {
+    return rejectedForespurtResponse;
+  }
+
+  const harFlereArbeidsforhold = faisuEnabled && hasMultipleArbeidsforhold(ansettelsesforhold);
+  if (harFlereArbeidsforhold) {
+    logger.info(
+      'Forespurt data inneholder flere ansettelsesforhold: %j',
+      ansettelsesforhold?.ansettelsesforhold ?? null
+    );
+  }
+
+  if (shouldRedirectToKvittering(forespurt, overskriv, hasEndreQuery)) {
+    return createKvitteringRedirect(context, uuid);
   }
 
   return {
     props: {
-      slug: slug?.[0],
-      erEndring: Boolean(slug?.[1] && slug?.[1] === 'overskriv'),
-      forespurt: forespurt,
+      slug: uuid,
+      erEndring,
+      forespurt: hasEndreQuery ? null : forespurt,
       forespurtStatus: forespurtStatus,
-      dataFraBackend: !!forespurt && !endre
+      dataFraBackend: !!forespurt && !hasEndreQuery,
+      harGradertSykmelding,
+      harFlereArbeidsforhold,
+      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null,
+      faisuEnabled
     }
   };
 }
