@@ -322,20 +322,30 @@ const InitieringBehandlingsdager: NextPage = () => {
                   </div>
                   {spIsLoading && <Loading />}
                   {spData && organisasjonsnummer && (
-                    <RadioGroup
-                      legend='Velg periode for behandlingsdager'
-                      id='sykmeldingId'
-                      error={errors.sykmeldingId?.message as string}
-                      onChange={handleSykmeldingIdRadio}
-                    >
-                      {sykepengePerioder.map((periode) => (
-                        <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
-                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                          {formaterBehandlingsdager(periode.antallBehandlingsdager)}
-                        </Radio>
-                      ))}
-                    </RadioGroup>
+                    <>
+                      <RadioGroup
+                        legend='Velg periode for behandlingsdager'
+                        id='sykmeldingId'
+                        error={errors.sykmeldingId?.message as string}
+                        onChange={handleSykmeldingIdRadio}
+                      >
+                        {sykepengePerioder.map((periode) => (
+                          <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
+                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                            {formaterBehandlingsdager(periode.antallBehandlingsdager)}
+                          </Radio>
+                        ))}
+                      </RadioGroup>
+                      {sykepengePerioder.length > 0 && sykepengePerioder.every((periode) => periode.antallBehandlingsdager <= 12) && (
+                        <Alert variant='warning'>
+                          Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
+                          kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                          inntektsmelding for behandlingsdager.
+                        </Alert>
+                      )}
+                    </>
                   )}
+                  
                   {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
                     <Alert variant='error'>
                       Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
