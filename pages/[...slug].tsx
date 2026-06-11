@@ -189,8 +189,6 @@ function logFetchResults(
     arbeidsforholdResult.status
   );
 
-  logger.info('Forespurt data: %j', forespurt);
-
   if (arbeidsforholdResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
   }
@@ -279,8 +277,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const harForespurtArbeidsgiverperiode = opplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
   const harForespurtInntekt = opplysningstyper.includes(forespoerselType.inntekt);
-
-  console.log('opplysningstyper status:', opplysningstyper);
 
   const lukkHentingFeiletModal = () => {
     if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
