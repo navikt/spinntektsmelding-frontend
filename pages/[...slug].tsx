@@ -180,7 +180,6 @@ function logFetchResults(
   uuid: string,
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
   arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
-  forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null,
   faisuEnabled: boolean
 ) {
   logger.info(
@@ -794,7 +793,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
   forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
-  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, forespurt, faisuEnabled);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, faisuEnabled);
 
   const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
   if (rejectedForespurtResponse) {
