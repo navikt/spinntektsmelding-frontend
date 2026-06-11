@@ -180,7 +180,7 @@ function logFetchResults(
   uuid: string,
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
   arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
-  forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null
+  faisuEnabled: boolean
 ) {
   logger.info(
     'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
@@ -189,7 +189,7 @@ function logFetchResults(
     arbeidsforholdResult.status
   );
 
-  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+  if (faisuEnabled && arbeidsforholdResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
   }
 }
@@ -786,14 +786,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
   const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
     hentForespoerselSSR(uuid, auth.token),
-    hentArbeidsforholdSSR(uuid, auth.token)
+    faisuEnabled ? hentArbeidsforholdSSR(uuid, auth.token) : Promise.reject(new Error('faisu disabled'))
   ]);
 
   forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
   forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
-  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, forespurt);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, faisuEnabled);
 
   const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
   if (rejectedForespurtResponse) {
