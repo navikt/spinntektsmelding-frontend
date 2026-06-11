@@ -97,6 +97,30 @@ describe('postInnsending', () => {
     expect(errs[0].error).toContain('akkurat nå en feil');
   });
 
+  it('returnerer valideringsfeil ved 400 BadRequest', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: 'Feltet er ugyldig'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+    expect(warnSpy).toHaveBeenCalled();
+  });
+
   it('returnerer valideringsfeil ved 400-lignende default case med backend error-format', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(418, {
