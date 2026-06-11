@@ -29,6 +29,15 @@ interface PostInnsendingOptions<B, S> {
   setShowErrorList: (v: boolean) => void;
 }
 
+interface PostInnsendingRuntimeOptions<S> {
+  analyticsComponent: string;
+  onUnauthorized: () => void;
+  onSuccess: (json: S | null) => void | Promise<void>;
+  mapValidationErrors: (feil: BackendValidationError, errors: ErrorResponse[]) => ErrorResponse[];
+  setErrorResponse: (errors: ErrorResponse[]) => void;
+  setShowErrorList: (v: boolean) => void;
+}
+
 /**
  * Felles POST innsending med standard feilhåndtering.
  * Returnerer Promise<void> (kan avbrytes tidlig ved 401 der onUnauthorized kalles).
@@ -48,117 +57,144 @@ export async function postInnsending<B = unknown, S = unknown>({
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
   })
-    .then(async (data) => {
-      switch (data.status) {
-        case 200:
-        case 201: {
-          // Noen endepunkt trenger body (JSON) andre ikke – prøver å parse, men tåler feil.
-          let json: S | null = null;
-          try {
-            json = (await data.json()) as S;
-          } catch {
-            // Ignorer manglende body
-          }
-          await onSuccess(json);
-          break;
-        }
-        case 500: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-              property: 'server'
-            }
-          ];
-          setErrorResponse(errors);
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - serverfeil',
-            component: analyticsComponent
-          });
-          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
-          break;
-        }
-        case 400: {
-          // Forventer backend-valideringsfeil i JSON
-          try {
-            const resultat = (await data.json()) as unknown;
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet - valideringsfeil',
-              component: analyticsComponent
-            });
-            if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
-              const feilResultat = badRequestResponse.safeParse(resultat);
-              if (feilResultat.success === true) {
-                const feil = feilResultat.data;
-                let mappedErrors: Array<ErrorResponse> = [];
-                mappedErrors = mapValidationErrors({ error: feil.error, valideringsfeil: [feil.error] }, mappedErrors);
-                setErrorResponse(mappedErrors);
-                setShowErrorList(true);
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
-              }
-            }
-          } catch (err) {
-            logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
-          }
-          break;
-        }
-        case 404: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Fant ikke endepunktet for innsending',
-              property: 'server'
-            }
-          ];
-          setErrorResponse(errors);
-          logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
-          break;
-        }
-        case 401: {
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - ingen tilgang',
-            component: analyticsComponent
-          });
-          onUnauthorized();
-          break;
-        }
-        default: {
-          // Forventer backend-valideringsfeil i JSON
-          try {
-            const resultat = (await data.json()) as unknown;
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: analyticsComponent
-            });
-            if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
-              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
-              if (feilResultat.success === true) {
-                const feil = feilResultat.data;
-                let mappedErrors: Array<ErrorResponse> = [];
-                mappedErrors = mapValidationErrors(feil, mappedErrors);
-                setErrorResponse(mappedErrors);
-                setShowErrorList(true);
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
-              }
-            }
-          } catch (err) {
-            logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
-          }
-        }
-      }
-    })
-    .catch((err) => {
-      const errors: Array<ErrorResponse> = [
-        {
-          value: 'Innsending av skjema feilet',
-          error: 'Det oppstod et nettverksproblem ved innsending. Vennligst prøv igjen.',
-          property: 'server'
-        }
-      ];
-      setErrorResponse(errors);
-      setShowErrorList(true);
-      logger.warn('Feil ved innsending av skjema - network error ' + err);
+    .then((data) =>
+      handleResponse<S>(data, {
+        analyticsComponent,
+        onUnauthorized,
+        onSuccess,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      })
+    )
+    .catch((err) => handleNetworkError(err, { setErrorResponse, setShowErrorList }));
+}
+
+async function handleResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>): Promise<void> {
+  switch (data.status) {
+    case 200:
+    case 201:
+      await handleSuccessResponse<S>(data, options.onSuccess);
+      return;
+    case 500:
+      await handle500Response(data, options);
+      return;
+    case 400:
+      await handle400Response(data, options);
+      return;
+    case 404:
+      handle404Response(data, options.setErrorResponse);
+      return;
+    case 401:
+      handle401Response(options.analyticsComponent, options.onUnauthorized);
+      return;
+    default:
+      await handleDefaultResponse(data, options);
+      return;
+  }
+}
+
+async function handleSuccessResponse<S>(data: Response, onSuccess: (json: S | null) => void | Promise<void>) {
+  let json: S | null = null;
+  try {
+    json = (await data.json()) as S;
+  } catch {
+    // Ignorer manglende body
+  }
+  await onSuccess(json);
+}
+
+async function handle500Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+      property: 'server'
+    }
+  ]);
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet - serverfeil',
+    component: options.analyticsComponent
+  });
+  logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
+}
+
+async function handle400Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+  try {
+    const resultat = (await data.json()) as unknown;
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet - valideringsfeil',
+      component: options.analyticsComponent
     });
+    if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
+      const feilResultat = badRequestResponse.safeParse(resultat);
+      if (feilResultat.success === true) {
+        const feil = feilResultat.data;
+        const mappedErrors = options.mapValidationErrors({ error: feil.error, valideringsfeil: [feil.error] }, []);
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+      }
+    }
+  } catch (err) {
+    logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
+  }
+}
+
+function handle404Response(data: Response, setErrorResponse: (errors: ErrorResponse[]) => void) {
+  setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Fant ikke endepunktet for innsending',
+      property: 'server'
+    }
+  ]);
+  logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
+}
+
+function handle401Response(analyticsComponent: string, onUnauthorized: () => void) {
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet - ingen tilgang',
+    component: analyticsComponent
+  });
+  onUnauthorized();
+}
+
+async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+  try {
+    const resultat = (await data.json()) as unknown;
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet',
+      component: options.analyticsComponent
+    });
+    if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
+      const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+      if (feilResultat.success === true) {
+        const feil = feilResultat.data;
+        const mappedErrors = options.mapValidationErrors(feil, []);
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+      }
+    }
+  } catch (err) {
+    logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
+  }
+}
+
+function handleNetworkError(
+  err: unknown,
+  options: Pick<PostInnsendingRuntimeOptions<unknown>, 'setErrorResponse' | 'setShowErrorList'>
+) {
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Det oppstod et nettverksproblem ved innsending. Vennligst prøv igjen.',
+      property: 'server'
+    }
+  ]);
+  options.setShowErrorList(true);
+  logger.warn('Feil ved innsending av skjema - network error ' + err);
 }
 
 async function safeText(resp: Response): Promise<string> {
