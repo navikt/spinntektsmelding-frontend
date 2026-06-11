@@ -6,6 +6,10 @@ import { z } from 'zod';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
+const badRequestResponse = z.object({
+  error: z.string()
+});
+
 interface PostInnsendingOptions<B, S> {
   /** Absolutt eller relativ URL til innsending-endepunkt */
   url: string;
@@ -72,6 +76,30 @@ export async function postInnsending<B = unknown, S = unknown>({
             component: analyticsComponent
           });
           logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
+          break;
+        }
+        case 400: {
+          // Forventer backend-valideringsfeil i JSON
+          try {
+            const resultat = (await data.json()) as unknown;
+            logEvent('skjema innsending feilet', {
+              tittel: 'Innsending feilet - valideringsfeil',
+              component: analyticsComponent
+            });
+            if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
+              const feilResultat = badRequestResponse.safeParse(resultat);
+              if (feilResultat.success === true) {
+                const feil = feilResultat.data;
+                let mappedErrors: Array<ErrorResponse> = [];
+                mappedErrors = mapValidationErrors({ error: feil.error, valideringsfeil: [feil.error] }, mappedErrors);
+                setErrorResponse(mappedErrors);
+                setShowErrorList(true);
+                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
+              }
+            }
+          } catch (err) {
+            logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
+          }
           break;
         }
         case 404: {
