@@ -186,7 +186,7 @@ function logFetchResults(
     'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
     uuid,
     forespurtResult.status,
-    arbeidsforholdResult.status
+    faisuEnabled ? arbeidsforholdResult.status : 'disabled'
   );
 
   if (faisuEnabled && arbeidsforholdResult.status === RequestStatus.rejected) {
