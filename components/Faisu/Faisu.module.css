@@ -43,6 +43,14 @@
   margin-left: var(--ax-space-12);
 }
 
+.periodeHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ax-space-8);
+  margin-bottom: var(--ax-space-8);
+  margin-top: var(--ax-space-16);
+}
+
 @media (min-width: 769px) {
   .arbeidsforholdRad :global(.aksel-form-field__label) {
     display: none;

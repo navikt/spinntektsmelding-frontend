@@ -77,6 +77,19 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     [arbeidsforholdListe]
   );
 
+  const perioderGroupert = useMemo(
+    () =>
+      Object.entries(rawArbeidsforholdMap ?? {}).map(([startdatoKey, arbeidsforholdArray]) => ({
+        startdatoKey,
+        arbeidsforhold: (arbeidsforholdArray ?? []).map((arbeidsforhold, arbeidsforholdIndex) => ({
+          startdatoKey,
+          arbeidsforholdIndex,
+          arbeidsforhold
+        }))
+      })),
+    [rawArbeidsforholdMap]
+  );
+
   if (!harGradertSykmeldingOgFlereArbeidsforhold) {
     return null;
   }
@@ -191,6 +204,15 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     );
   };
 
+  const handleSlettPeriode = (startdatoKey: string) => {
+    const eksisterende = rawArbeidsforholdMap ? { ...rawArbeidsforholdMap } : {};
+    delete eksisterende[startdatoKey];
+    setValue('flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato', eksisterende, {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+  };
+
   const leggTilNyPeriode = () => {
     const eksisterende = rawArbeidsforholdMap ? { ...rawArbeidsforholdMap } : {};
     const eksisterendeNokler = Object.keys(eksisterende);
@@ -284,93 +306,53 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                       <BodyLong>Månedslønn av beregnet inntekt</BodyLong>
                       <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
                     </div>
-                    {arbeidsforholdListe.map((entry, index) => {
-                      const arbeidsforhold = entry.arbeidsforhold;
-                      const label = arbeidsforhold.yrkesbeskrivelse ?? arbeidsforhold.yrkesKode;
-                      const forrigeEntry = index > 0 ? arbeidsforholdListe[index - 1] : undefined;
-                      const visDatovelger = forrigeEntry?.startdatoKey !== entry.startdatoKey;
-
-                      return (
-                        <Fragment key={`${entry.startdatoKey}-${entry.arbeidsforholdIndex}`}>
-                          {visDatovelger && (
-                            <Datovelger
-                              label='Sykmelding startdato'
-                              defaultSelected={
-                                isValid(parseISO(entry.startdatoKey)) ? parseISO(entry.startdatoKey) : undefined
+                    {perioderGroupert.map(({ startdatoKey, arbeidsforhold: arbeidsforholdIGruppe }) => (
+                      <Fragment key={startdatoKey}>
+                        <div className={localStyles.periodeHeader}>
+                          <Datovelger
+                            label='Sykmelding startdato'
+                            defaultSelected={isValid(parseISO(startdatoKey)) ? parseISO(startdatoKey) : undefined}
+                            onDateChange={(date) => {
+                              if (date) {
+                                handleNokkelEndring(startdatoKey, format(date, 'yyyy-MM-dd'));
                               }
-                              onDateChange={(date) => {
-                                if (date) {
-                                  handleNokkelEndring(entry.startdatoKey, format(date, 'yyyy-MM-dd'));
-                                }
-                              }}
-                            />
-                          )}
-                          <div
+                            }}
+                          />
+                          <ButtonSlette
+                            title='Slett periode'
+                            onClick={() => handleSlettPeriode(startdatoKey)}
+                            disabled={perioderGroupert.length <= 1}
+                          />
+                        </div>
+                        {arbeidsforholdIGruppe.map((entry) => (
+                          <ArbeidsforholdRad
                             key={`${entry.startdatoKey}-${entry.arbeidsforholdIndex}`}
-                            className={localStyles.arbeidsforholdRad}
-                          >
-                            <Checkbox
-                              className={localStyles.arbeidsforholdCheckbox}
-                              value={`${entry.startdatoKey}:${entry.arbeidsforholdIndex}`}
-                              onChange={(e) =>
-                                handleCheckboxChange(entry.startdatoKey, entry.arbeidsforholdIndex, e.target.checked)
-                              }
-                            >
-                              {label}
-                            </Checkbox>
-                            <NumberField
-                              className={localStyles.inputInntekt}
-                              label={`Månedslønn for ${label}`}
-                              value={arbeidsforhold.inntekt}
-                              error={fieldStateErrorMessage(
-                                errors,
-                                `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${entry.startdatoKey}.${entry.arbeidsforholdIndex}.inntekt`
-                              )}
-                              onChange={(event) => {
-                                handleFeltChange(
-                                  entry.startdatoKey,
-                                  entry.arbeidsforholdIndex,
-                                  'inntekt',
-                                  event.target.value
-                                );
-                              }}
-                            />
-                            <NumberField
-                              className={localStyles.inputInntekt}
-                              label={`Stillingsprosent for ${label}`}
-                              value={arbeidsforhold.stillingsprosent}
-                              error={fieldStateErrorMessage(
-                                errors,
-                                `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${entry.startdatoKey}.${entry.arbeidsforholdIndex}.stillingsprosent`
-                              )}
-                              onChange={(event) => {
-                                handleFeltChange(
-                                  entry.startdatoKey,
-                                  entry.arbeidsforholdIndex,
-                                  'stillingsprosent',
-                                  event.target.value
-                                );
-                              }}
-                            />
+                            entry={entry}
+                            errors={errors}
+                            onCheckboxChange={handleCheckboxChange}
+                            onFeltChange={handleFeltChange}
+                          />
+                        ))}
+                        <div className={localStyles.arbeidsforholdRad}>
+                          <div className={localStyles.arbeidsforholdCheckbox}></div>
+                          <div className={localStyles.outputInntekt}>
+                            {formatCurrency(
+                              arbeidsforholdIGruppe.reduce((acc, entry) => acc + (entry.arbeidsforhold.inntekt ?? 0), 0)
+                            )}
                           </div>
-                        </Fragment>
-                      );
-                    })}
-                    <ButtonSlette title='Slett periode' />
+                          <div className={localStyles.outputInntekt}>
+                            {arbeidsforholdIGruppe.reduce(
+                              (acc, entry) => acc + (entry.arbeidsforhold.stillingsprosent ?? 0),
+                              0
+                            )}{' '}
+                            %
+                          </div>
+                        </div>
+                      </Fragment>
+                    ))}
                   </CheckboxGroup>
                 )}
               />
-              <div className={localStyles.arbeidsforholdRad}>
-                <div className={localStyles.arbeidsforholdCheckbox}></div>
-                <div className={localStyles.outputInntekt}>
-                  {formatCurrency(
-                    arbeidsforholdListe.reduce((acc, entry) => acc + (entry.arbeidsforhold.inntekt ?? 0), 0)
-                  )}
-                </div>
-                <div className={localStyles.outputInntekt}>
-                  {arbeidsforholdListe.reduce((acc, entry) => acc + (entry.arbeidsforhold.stillingsprosent ?? 0), 0)} %
-                </div>
-              </div>
               <Button variant='secondary' className={localStyles.legtilbutton} onClick={leggTilNyPeriode} type='button'>
                 Legg til periode
               </Button>
@@ -385,4 +367,48 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
 function fieldStateErrorMessage(errors: FieldErrors, path: string): string | undefined {
   const error = findErrorInRHFErrors(path, errors);
   return typeof error === 'string' ? error : undefined;
+}
+
+interface ArbeidsforholdRadProps {
+  entry: { startdatoKey: string; arbeidsforholdIndex: number; arbeidsforhold: FaisuArbeidsforholdSkjema };
+  errors: FieldErrors;
+  onCheckboxChange: (startdatoKey: string, index: number, value: boolean) => void;
+  onFeltChange: (startdatoKey: string, index: number, felt: 'inntekt' | 'stillingsprosent', value: string) => void;
+}
+
+function ArbeidsforholdRad({ entry, errors, onCheckboxChange, onFeltChange }: Readonly<ArbeidsforholdRadProps>) {
+  const { startdatoKey, arbeidsforholdIndex, arbeidsforhold } = entry;
+  const label = arbeidsforhold.yrkesbeskrivelse ?? arbeidsforhold.yrkesKode;
+
+  return (
+    <div className={localStyles.arbeidsforholdRad}>
+      <Checkbox
+        className={localStyles.arbeidsforholdCheckbox}
+        value={`${startdatoKey}:${arbeidsforholdIndex}`}
+        onChange={(e) => onCheckboxChange(startdatoKey, arbeidsforholdIndex, e.target.checked)}
+      >
+        {label}
+      </Checkbox>
+      <NumberField
+        className={localStyles.inputInntekt}
+        label={`Månedslønn for ${label}`}
+        value={arbeidsforhold.inntekt}
+        error={fieldStateErrorMessage(
+          errors,
+          `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${startdatoKey}.${arbeidsforholdIndex}.inntekt`
+        )}
+        onChange={(event) => onFeltChange(startdatoKey, arbeidsforholdIndex, 'inntekt', event.target.value)}
+      />
+      <NumberField
+        className={localStyles.inputInntekt}
+        label={`Stillingsprosent for ${label}`}
+        value={arbeidsforhold.stillingsprosent}
+        error={fieldStateErrorMessage(
+          errors,
+          `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${startdatoKey}.${arbeidsforholdIndex}.stillingsprosent`
+        )}
+        onChange={(event) => onFeltChange(startdatoKey, arbeidsforholdIndex, 'stillingsprosent', event.target.value)}
+      />
+    </div>
+  );
 }
