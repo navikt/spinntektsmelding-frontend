@@ -36,7 +36,7 @@ import { SkjemaStatus } from '../state/useSkjemadataStore';
 import useSendInnArbeidsgiverInitiertSkjema from '../utils/useSendInnArbeidsgiverInitiertSkjema';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
-import { isEqual, startOfMonth } from 'date-fns';
+import { isEqual, startOfMonth, format, isDate } from 'date-fns';
 import { finnFravaersperioder } from '../state/useEgenmeldingStore';
 import useTidligereInntektsdata from '../utils/useTidligereInntektsdata';
 import isValidUUID from '../utils/isValidUUID';
@@ -195,6 +195,77 @@ function logFetchResults(
 }
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
+
+function normalizeArbeidsforholdKeys(flereArbeidsforhold?: any) {
+  if (!flereArbeidsforhold?.arbeidsforholdPerSykmeldingStartdato) {
+    return flereArbeidsforhold;
+  }
+
+  const normalized: Record<string, any[]> = {};
+
+  Object.entries(flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato).forEach(([key, value]) => {
+    let normalizedKey = key;
+
+    // If key looks like a Date.toString() output, try to parse it
+    if (
+      key.startsWith('Wed') ||
+      key.startsWith('Thu') ||
+      key.startsWith('Fri') ||
+      key.startsWith('Sat') ||
+      key.startsWith('Sun') ||
+      key.startsWith('Mon') ||
+      key.startsWith('Tue')
+    ) {
+      try {
+        const parsedDate = new Date(key);
+        if (!isNaN(parsedDate.getTime())) {
+          normalizedKey = format(parsedDate, 'yyyy-MM-dd');
+        }
+      } catch (error) {
+        logger.warn(`Kunne ikke normalisere arbeidsforhold-dato-key: ${key}, error: ${String(error)}`);
+      }
+    }
+
+    // Merge arbeidsforhold for the same date - prefer items with inntekt/inkludertISykefravaer
+    if (normalized[normalizedKey]) {
+      const existing = normalized[normalizedKey];
+      const incoming = (value as any[]) || [];
+
+      // Merge by keeping entries that have complete data
+      const merged = [...existing];
+      incoming.forEach((incomingItem) => {
+        const hasInntekt = incomingItem.inntekt !== undefined && incomingItem.inntekt !== null;
+        const existingIndex = merged.findIndex(
+          (e) =>
+            e.yrkesbeskrivelse === incomingItem.yrkesbeskrivelse && e.stillingsprosent === incomingItem.stillingsprosent
+        );
+
+        if (existingIndex >= 0) {
+          // Merge with existing entry, keeping complete data
+          const existingItem = merged[existingIndex];
+          if (hasInntekt) {
+            merged[existingIndex] = incomingItem;
+          } else if (existingItem.inntekt === undefined) {
+            // Both incomplete, keep incoming for other fields
+            merged[existingIndex] = { ...existingItem, ...incomingItem };
+          }
+        } else {
+          // New entry
+          merged.push(incomingItem);
+        }
+      });
+
+      normalized[normalizedKey] = merged;
+    } else {
+      normalized[normalizedKey] = (value as any[]) || [];
+    }
+  });
+
+  return {
+    ...flereArbeidsforhold,
+    arbeidsforholdPerSykmeldingStartdato: normalized
+  };
+}
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
@@ -381,10 +452,42 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   useEffect(() => {
     if (!dataFraBackend) {
+      const convertToIsoString = (value: any): string | undefined => {
+        if (typeof value === 'string') return value;
+        if (isDate(value)) return format(value, 'yyyy-MM-dd');
+        return undefined;
+      };
+
+      const startOgSluttdato = sykmeldingsperioder?.reduce<{ fom: string | undefined; tom: string | undefined }>(
+        (acc, periode) => {
+          const fom = convertToIsoString(periode.fom);
+          const tom = convertToIsoString(periode.tom);
+
+          if (!fom || !tom) {
+            return acc;
+          }
+
+          const fomDate = parseIsoDate(fom);
+          const accFomDate = acc.fom ? parseIsoDate(acc.fom) : null;
+          if (fomDate && (!accFomDate || fomDate < accFomDate)) {
+            acc.fom = fom;
+          }
+
+          const tomDate = parseIsoDate(tom);
+          const accTomDate = acc.tom ? parseIsoDate(acc.tom) : null;
+          if (tomDate && (!accTomDate || tomDate > accTomDate)) {
+            acc.tom = tom;
+          }
+
+          return acc;
+        },
+        { fom: undefined, tom: undefined }
+      );
+
+      const fom = startOgSluttdato?.fom ? parseIsoDate(startOgSluttdato.fom) : undefined;
+      const tom = startOgSluttdato?.tom ? parseIsoDate(startOgSluttdato.tom) : undefined;
       const orgnr = avsenderOrgnummer();
       const fnr = sykmeldtFnr();
-      const fom = sykmeldingsperioder?.at(0)?.fom;
-      const tom = sykmeldingsperioder?.at(-1)?.tom;
 
       if (!orgnr || !fnr || !fom || !tom) {
         return;
@@ -393,36 +496,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       fetchArbeidsforhold(orgnr, fnr, fom, tom)
         .then((response) => {
           setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
-
-          const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
-            inntekt: undefined,
-            yrkesbeskrivelse: periode.yrkesbeskrivelse,
-            stillingsprosent: periode.stillingsprosent,
-            inkludertISykefravaer: undefined
-          }));
-          setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
-            shouldDirty: true,
-            shouldValidate: true
-          });
         })
         .catch(() => undefined);
     }
   }, [setValue, dataFraBackend, sykmeldingsperioder]);
-
-  useEffect(() => {
-    if (ansettelsesforhold) {
-      const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
-        inntekt: undefined,
-        yrkesbeskrivelse: periode.yrkesbeskrivelse,
-        stillingsprosent: periode.stillingsprosent,
-        inkludertISykefravaer: undefined
-      }));
-      setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
-        shouldDirty: true,
-        shouldValidate: true
-      });
-    }
-  }, [ansettelsesforhold, setValue]);
 
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
@@ -482,7 +559,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       onSetValue('kreverRefusjon', 'Nei');
     }
     if (!dataFraBackend && kvitteringData?.flereArbeidsforhold) {
-      onSetValue('flereArbeidsforhold', kvitteringData.flereArbeidsforhold);
+      const normalizedFlereArbeidsforhold = normalizeArbeidsforholdKeys(kvitteringData.flereArbeidsforhold);
+      onSetValue('flereArbeidsforhold', normalizedFlereArbeidsforhold);
     }
   }, [kvitteringData, dataFraBackend]);
 
@@ -521,6 +599,20 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    console.log('✅ Form submitted successfully');
+    console.log('Full formData:', JSON.stringify(formData, null, 2));
+    console.log('flereArbeidsforhold:', JSON.stringify(formData.flereArbeidsforhold, null, 2));
+    if (formData.flereArbeidsforhold?.arbeidsforholdPerSykmeldingStartdato) {
+      console.log(
+        'arbeidsforholdPerSykmeldingStartdato keys:',
+        Object.keys(formData.flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato)
+      );
+      Object.entries(formData.flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato).forEach(
+        ([key, forholdList]) => {
+          console.log(`Period ${key}:`, JSON.stringify(forholdList, null, 2));
+        }
+      );
+    }
     setSenderInn(true);
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(
@@ -593,6 +685,29 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [beregnetBestemmendeFraværsdag]);
 
   useEffect(() => {
+    if (ansettelsesforhold && beregnetBestemmendeFraværsdag) {
+      const inntektsdatoFormatert = format(beregnetBestemmendeFraværsdag, 'yyyy-MM-dd');
+      const eksisterendePeriode = methods.getValues(
+        `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${inntektsdatoFormatert}`
+      );
+
+      // Only set if period doesn't exist or is empty
+      if (!eksisterendePeriode || eksisterendePeriode.length === 0) {
+        const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
+          inntekt: undefined,
+          yrkesbeskrivelse: periode.yrkesbeskrivelse,
+          stillingsprosent: periode.stillingsprosent,
+          inkludertISykefravaer: undefined
+        }));
+        setValue(`flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${inntektsdatoFormatert}`, arbeidsforhold, {
+          shouldDirty: true,
+          shouldValidate: true
+        });
+      }
+    }
+  }, [ansettelsesforhold, setValue, inntektsdato, methods]);
+
+  useEffect(() => {
     if (!isValidUUID(slug) && !selvbestemtInnsending) {
       return;
     }
@@ -648,7 +763,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <FormProvider {...methods}>
           <form
             className={styles.padded}
-            onSubmit={handleSubmit(submitForm, (errors) => console.log('Submit feil:', errors))}
+            onSubmit={handleSubmit(submitForm, (errors) => {
+              console.log('❌ Submit validation failed:', errors);
+              console.log('Form values at validation failure:', methods.getValues());
+              console.log('flereArbeidsforhold value:', methods.getValues('flereArbeidsforhold'));
+            })}
           >
             <Person />
             <Skillelinje />

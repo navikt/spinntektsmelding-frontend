@@ -1,5 +1,9 @@
+import { Fragment } from 'react/jsx-runtime';
 import formatCurrency from '../../utils/formatCurrency';
 import localStyles from './FaisuKvittering.module.css';
+import { Table } from '@navikt/ds-react';
+import parseIsoDate from '../../utils/parseIsoDate';
+import formatDate from '../../utils/formatDate';
 
 type FaisuArbeidsforhold = {
   yrkesbeskrivelse?: string;
@@ -11,7 +15,7 @@ type FaisuArbeidsforhold = {
 type FlereArbeidsforhold = {
   harLikLoenn: boolean;
   erSykmeldtFraAlle: boolean;
-  arbeidsforhold?: FaisuArbeidsforhold[];
+  arbeidsforholdPerSykmeldingStartdato?: FaisuArbeidsforhold[];
 };
 
 type FaisuKvitteringProps = {
@@ -19,32 +23,48 @@ type FaisuKvitteringProps = {
 };
 
 export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps>) {
-  if (!arbeidsforhold?.arbeidsforhold) {
+  console.log('FaisuKvittering - arbeidsforhold:', arbeidsforhold);
+  if (!arbeidsforhold?.arbeidsforholdPerSykmeldingStartdato) {
     return null;
   }
 
+  const keys = Object.keys(arbeidsforhold.arbeidsforholdPerSykmeldingStartdato);
+  if (keys.length === 0) {
+    return null;
+  }
+  // arbeidsforhold.arbeidsforholdPerSykmeldingStartdato
   return (
-    <table className={localStyles.table}>
-      <thead>
-        <tr>
-          <th>Syk</th>
-          <th>Yrkestittel</th>
-          <th>Månedslønn</th>
-          <th>Stillingsprosent</th>
-        </tr>
-      </thead>
+    <Table className={localStyles.table}>
       <tbody>
-        {arbeidsforhold.arbeidsforhold.map((forhold, index) => {
+        {keys.map((key, index) => {
+          const perioder = arbeidsforhold.arbeidsforholdPerSykmeldingStartdato[key];
+          console.log(`FaisuKvittering - arbeidsforhold for startdato ${parseIsoDate(key)}:`, perioder);
+          if (!perioder || perioder.length === 0) {
+            return null;
+          }
           return (
-            <tr key={'fk' + index}>
-              <td>{forhold.inkludertISykefravaer ? 'Ja' : 'Nei'}</td>
-              <td>{forhold.yrkesbeskrivelse}</td>
-              <td>{formatCurrency(forhold.inntekt)}</td>
-              <td>{forhold.stillingsprosent} %</td>
-            </tr>
+            <Fragment key={key}>
+              <Table.Row>
+                <Table.HeaderCell scope='row'>Sykmelding startdato {formatDate(parseIsoDate(key))}</Table.HeaderCell>
+              </Table.Row>
+              <Table.Row>
+                <Table.HeaderCell>Syk</Table.HeaderCell>
+                <Table.HeaderCell>Yrkestittel</Table.HeaderCell>
+                <Table.HeaderCell>Månedslønn</Table.HeaderCell>
+                <Table.HeaderCell>Stillingsprosent</Table.HeaderCell>
+              </Table.Row>
+              {perioder.map((forhold, forholdindex) => (
+                <Table.Row key={'fk' + index + '-' + forholdindex}>
+                  <Table.DataCell>{forhold.inkludertISykefravaer ? 'Ja' : 'Nei'}</Table.DataCell>
+                  <Table.DataCell>{forhold.yrkesbeskrivelse}</Table.DataCell>
+                  <Table.DataCell>{formatCurrency(forhold.inntekt)}</Table.DataCell>
+                  <Table.DataCell>{forhold.stillingsprosent} %</Table.DataCell>
+                </Table.Row>
+              ))}
+            </Fragment>
           );
         })}
       </tbody>
-    </table>
+    </Table>
   );
 }

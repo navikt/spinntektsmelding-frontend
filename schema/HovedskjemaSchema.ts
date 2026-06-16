@@ -16,12 +16,15 @@ type HovedskjemaInput = {
   flereArbeidsforhold?: {
     harLikLoenn?: 'Ja' | 'Nei';
     erSykmeldtFraAlle?: 'Ja' | 'Nei';
-    arbeidsforhold?: Array<{
-      inntekt?: number;
-      stillingsprosent?: number;
-      inkludertISykefravaer?: boolean;
-      yrkesbeskrivelse: string;
-    }>;
+    arbeidsforholdPerSykmeldingStartdato?: Record<
+      string,
+      Array<{
+        inntekt?: number;
+        stillingsprosent?: number;
+        inkludertISykefravaer?: boolean;
+        yrkesbeskrivelse: string;
+      }>
+    >;
   };
   opplysningstyper?: string[];
 };
@@ -142,13 +145,20 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     return;
   }
 
-  const arbeidsforhold = val.flereArbeidsforhold.arbeidsforhold ?? [];
+  const arbeidsforholdPerSykmeldingStartdato = val.flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato ?? {};
+  if (Object.keys(arbeidsforholdPerSykmeldingStartdato).length === 0) {
+    return;
+  }
+
+  const arbeidsforhold = Object.entries(arbeidsforholdPerSykmeldingStartdato).flatMap(([key, forholdListe]) =>
+    (forholdListe ?? []).map((forhold, index) => ({ key, index, ...forhold }))
+  );
 
   if (!arbeidsforhold.some((item) => item.inkludertISykefravaer)) {
     ctx.issues.push({
       code: 'custom',
       message: 'Vennligst velg minst ett arbeidsforhold.',
-      path: ['flereArbeidsforhold', 'arbeidsforhold'],
+      path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'],
       input: arbeidsforhold
     });
     return;
@@ -158,7 +168,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     ctx.issues.push({
       code: 'custom',
       message: 'Du svart "Nei" på om personen er sykmeldt fra alle arbeidsforhold. ',
-      path: ['flereArbeidsforhold', 'arbeidsforhold'],
+      path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'],
       input: arbeidsforhold
     });
     return;
@@ -166,12 +176,12 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
 
   const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.inkludertISykefravaer);
 
-  valgteArbeidsforhold.forEach((item, index) => {
+  valgteArbeidsforhold.forEach((item) => {
     if (item.inntekt === undefined || item.inntekt === null) {
       ctx.issues.push({
         code: 'custom',
         message: 'Vennligst oppgi spesifisert månedslønn.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold', index, 'inntekt'],
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato', item.key, item.index, 'inntekt'],
         input: item.inntekt
       });
       return;
@@ -181,7 +191,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       ctx.issues.push({
         code: 'custom',
         message: 'Månedslønn må være større enn eller lik 0.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold', index, 'inntekt'],
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato', item.key, item.index, 'inntekt'],
         input: item.inntekt
       });
     }
@@ -190,7 +200,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       ctx.issues.push({
         code: 'custom',
         message: 'Vennligst oppgi spesifisert stillingsprosent.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold', index, 'stillingsprosent'],
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato', item.key, item.index, 'stillingsprosent'],
         input: item.stillingsprosent
       });
       return;
@@ -200,29 +210,33 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       ctx.issues.push({
         code: 'custom',
         message: 'Stillingsprosent må være større enn eller lik 0.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold', index, 'stillingsprosent'],
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato', item.key, item.index, 'stillingsprosent'],
         input: item.stillingsprosent
       });
     }
   });
 
   if (val.inntekt?.beloep !== undefined) {
-    const totalMaanedsloenn = arbeidsforhold.reduce((sum, item) => {
-      if (item.inntekt === undefined || item.inntekt === null) {
-        return sum;
+    const beloep = val.inntekt.beloep;
+    const perioder = Object.entries(arbeidsforholdPerSykmeldingStartdato);
+
+    perioder.forEach(([periodeKey, forholdListe]) => {
+      const totalMaanedsloenn = (forholdListe ?? []).reduce((sum, item) => {
+        if (item.inntekt === undefined || item.inntekt === null) {
+          return sum;
+        }
+        return sum + item.inntekt;
+      }, 0);
+
+      if (totalMaanedsloenn !== beloep) {
+        ctx.issues.push({
+          code: 'custom',
+          message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
+          path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato', periodeKey],
+          input: totalMaanedsloenn
+        });
       }
-
-      return sum + item.inntekt;
-    }, 0);
-
-    if (totalMaanedsloenn !== val.inntekt.beloep) {
-      ctx.issues.push({
-        code: 'custom',
-        message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold'],
-        input: totalMaanedsloenn
-      });
-    }
+    });
   }
 }
 
@@ -280,7 +294,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 return z.NEVER;
               }
               val?.forEach((v, index) => {
-                if (v.aarsak === '' || v.aarsak === undefined) {
+                if (v.aarsak === undefined) {
                   ctx.issues.push({
                     code: 'custom',
                     message: 'Vennligst angi årsak til endringen.',
@@ -338,31 +352,34 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
             .object({
               harLikLoenn: z.enum(['Ja', 'Nei']).or(z.undefined()),
               erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).or(z.undefined()),
-              arbeidsforhold: z
-                .array(
-                  z.object({
-                    inntekt: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
-                      })
-                      .min(0, 'Månedslønn må være større enn eller lik 0.')
-                      .or(z.undefined()),
-                    stillingsprosent: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
-                      })
-                      .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-                      .or(z.undefined()),
-                    yrkesKode: z.string().or(z.undefined()),
-                    yrkesbeskrivelse: z.string().or(z.undefined()),
-                    inkludertISykefravaer: z.boolean().optional()
-                  })
+              arbeidsforholdPerSykmeldingStartdato: z
+                .record(
+                  z.string(),
+                  z.array(
+                    z.object({
+                      inntekt: z
+                        .number({
+                          error: (issue) =>
+                            issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
+                        })
+                        .min(0, 'Månedslønn må være større enn eller lik 0.')
+                        .or(z.undefined()),
+                      stillingsprosent: z
+                        .number({
+                          error: (issue) =>
+                            issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+                        })
+                        .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+                        .or(z.undefined()),
+                      yrkesKode: z.string().or(z.undefined()),
+                      yrkesbeskrivelse: z.string().or(z.undefined()),
+                      inkludertISykefravaer: z.boolean().optional()
+                    })
+                  )
                 )
-                .or(z.undefined())
+                .default({})
             })
-            .or(z.undefined())
+            .optional()
         : z.any(),
       avsenderTlf: TelefonNummerSchema,
       opplysningstyper: z.array(OpplysningstypeSchema).optional()

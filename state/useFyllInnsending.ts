@@ -144,12 +144,8 @@ export default function useFyllInnsending() {
         ? {
             harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
             erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
-            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
-              inntekt: forhold.inntekt,
-              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
-              inkludertISykefravaer: forhold.inkludertISykefravaer,
-              stillingsprosent: forhold.stillingsprosent
-            }))
+            arbeidsforholdPerSykmeldingStartdato:
+              skjemaData?.flereArbeidsforhold?.arbeidsforholdPerSykmeldingStartdato ?? {}
           }
         : null
     };

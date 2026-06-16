@@ -1,12 +1,15 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { BodyLong, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
+import { Fragment, useEffect, useMemo, useRef } from 'react';
+import { BodyLong, Button, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
 import Heading1 from '../Heading1/Heading1';
 import Skillelinje from '../Skillelinje/Skillelinje';
 import localStyles from './Faisu.module.css';
 import NumberField from '../NumberField/NumberField';
+import Datovelger from '../Datovelger';
+import { addDays, format, parseISO, isValid } from 'date-fns';
 import { Controller, FieldErrors, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import formatCurrency from '../../utils/formatCurrency';
+import ButtonSlette from '../ButtonSlette';
 
 interface FaisuArbeidsforholdSkjema {
   inntekt?: number;
@@ -19,7 +22,7 @@ interface FaisuArbeidsforholdSkjema {
 interface FaisuSkjema {
   harLikLoenn?: 'Ja' | 'Nei';
   erSykmeldtFraAlle?: 'Ja' | 'Nei';
-  arbeidsforhold?: Array<FaisuArbeidsforholdSkjema>;
+  arbeidsforholdPerSykmeldingStartdato?: Record<string, Array<FaisuArbeidsforholdSkjema>>;
 }
 
 interface FaisuProps {
@@ -38,23 +41,38 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     control,
     name: 'flereArbeidsforhold.erSykmeldtFraAlle'
   });
-  const rawArbeidsforholdListe = useWatch({ control, name: 'flereArbeidsforhold.arbeidsforhold' });
-  const arbeidsforholdListe = useMemo<FaisuArbeidsforholdSkjema[]>(
-    () => rawArbeidsforholdListe ?? [],
-    [rawArbeidsforholdListe]
+  const rawArbeidsforholdMap = useWatch({
+    control,
+    name: 'flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato'
+  });
+
+  const arbeidsforholdListe = useMemo<
+    Array<{ startdatoKey: string; arbeidsforholdIndex: number; arbeidsforhold: FaisuArbeidsforholdSkjema }>
+  >(
+    () =>
+      Object.entries(rawArbeidsforholdMap ?? {}).flatMap(([startdatoKey, arbeidsforholdArray]) =>
+        (arbeidsforholdArray ?? []).map((arbeidsforhold, arbeidsforholdIndex) => ({
+          startdatoKey,
+          arbeidsforholdIndex,
+          arbeidsforhold
+        }))
+      ),
+    [rawArbeidsforholdMap]
   );
 
-  const originalArbeidsforhold = useRef<FaisuArbeidsforholdSkjema[]>([]);
+  const originalArbeidsforhold = useRef<Record<string, Array<FaisuArbeidsforholdSkjema>>>({});
   useEffect(() => {
-    if (arbeidsforholdListe.length > 0 && originalArbeidsforhold.current.length === 0) {
-      originalArbeidsforhold.current = arbeidsforholdListe;
+    if (arbeidsforholdListe.length > 0 && Object.keys(originalArbeidsforhold.current).length === 0) {
+      originalArbeidsforhold.current = rawArbeidsforholdMap ?? {};
     }
-  }, [arbeidsforholdListe]);
+  }, [arbeidsforholdListe, rawArbeidsforholdMap]);
 
   const checkedArbeidsforholdIder = useMemo(
     () =>
       arbeidsforholdListe
-        .map((af, index) => (af.inkludertISykefravaer ? String(index) : null))
+        .map((entry) =>
+          entry.arbeidsforhold.inkludertISykefravaer ? `${entry.startdatoKey}:${entry.arbeidsforholdIndex}` : null
+        )
         .filter((value): value is string => value !== null),
     [arbeidsforholdListe]
   );
@@ -70,16 +88,30 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
         shouldDirty: true,
         shouldValidate: true
       });
-      setValue('flereArbeidsforhold.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
+      setValue(
+        'flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato',
+        {},
+        {
+          shouldDirty: true,
+          shouldValidate: true
+        }
+      );
     }
   };
 
   const handleAlleArbeidsforholdCheckboxChange = (value: 'Ja' | 'Nei') => {
     setValue('flereArbeidsforhold.erSykmeldtFraAlle', value, { shouldDirty: true, shouldValidate: true });
     if (value === 'Ja') {
-      setValue('flereArbeidsforhold.arbeidsforhold', [], { shouldDirty: true, shouldValidate: true });
+      setValue(
+        'flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato',
+        {},
+        {
+          shouldDirty: true,
+          shouldValidate: true
+        }
+      );
     } else {
-      setValue('flereArbeidsforhold.arbeidsforhold', originalArbeidsforhold.current, {
+      setValue('flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato', originalArbeidsforhold.current, {
         shouldDirty: true,
         shouldValidate: true
       });
@@ -87,10 +119,10 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
   };
 
   const handleArbeidsforholdCheckboxCheck = (values: string[]) => {
-    arbeidsforholdListe.forEach((_, index) => {
+    arbeidsforholdListe.forEach((entry) => {
       setValue(
-        `flereArbeidsforhold.arbeidsforhold.${index}.inkludertISykefravaer` as any,
-        values.includes(String(index)),
+        `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${entry.startdatoKey}.${entry.arbeidsforholdIndex}.inkludertISykefravaer` as any,
+        values.includes(`${entry.startdatoKey}:${entry.arbeidsforholdIndex}`),
         {
           shouldDirty: true,
           shouldValidate: true
@@ -109,17 +141,86 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     return Number.isNaN(parsedValue) ? undefined : parsedValue;
   };
 
-  const handleFeltChange = (index: number, felt: 'inntekt' | 'stillingsprosent', rawValue: string) => {
+  const handleFeltChange = (
+    startdatoKey: string,
+    arbeidsforholdIndex: number,
+    felt: 'inntekt' | 'stillingsprosent',
+    rawValue: string
+  ) => {
     const parsedValue = parseNumberInput(rawValue);
 
-    setValue(`flereArbeidsforhold.arbeidsforhold.${index}.${felt}` as any, parsedValue, {
+    setValue(
+      `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${startdatoKey}.${arbeidsforholdIndex}.${felt}` as any,
+      parsedValue,
+      {
+        shouldDirty: true,
+        shouldValidate: true
+      }
+    );
+  };
+
+  const handleNokkelEndring = (gammelNokkel: string, nyNokkel: string) => {
+    if (!nyNokkel || gammelNokkel === nyNokkel) {
+      return;
+    }
+
+    const eksisterende = rawArbeidsforholdMap ? { ...rawArbeidsforholdMap } : {};
+    const verdi = eksisterende[gammelNokkel];
+
+    if (!verdi) {
+      return;
+    }
+
+    delete eksisterende[gammelNokkel];
+    eksisterende[nyNokkel] = verdi;
+
+    setValue('flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato', eksisterende, {
       shouldDirty: true,
       shouldValidate: true
     });
   };
 
-  const handleCheckboxChange = (index: number, value: boolean) => {
-    setValue(`flereArbeidsforhold.arbeidsforhold.${index}.inkludertISykefravaer` as any, value, {
+  const handleCheckboxChange = (startdatoKey: string, arbeidsforholdIndex: number, value: boolean) => {
+    setValue(
+      `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${startdatoKey}.${arbeidsforholdIndex}.inkludertISykefravaer` as any,
+      value,
+      {
+        shouldDirty: true,
+        shouldValidate: true
+      }
+    );
+  };
+
+  const leggTilNyPeriode = () => {
+    const eksisterende = rawArbeidsforholdMap ? { ...rawArbeidsforholdMap } : {};
+    const eksisterendeNokler = Object.keys(eksisterende);
+    const forrigeNokkel = eksisterendeNokler.at(-1);
+    const forrigeDato = forrigeNokkel ? parseISO(forrigeNokkel) : undefined;
+    const basisDato = forrigeDato && isValid(forrigeDato) ? addDays(forrigeDato, 1) : new Date();
+    const opptatteNokler = new Set(eksisterendeNokler);
+
+    let nyStartdato = basisDato;
+    let nyNokkel = format(nyStartdato, 'yyyy-MM-dd');
+    while (opptatteNokler.has(nyNokkel)) {
+      nyStartdato = addDays(nyStartdato, 1);
+      nyNokkel = format(nyStartdato, 'yyyy-MM-dd');
+    }
+
+    const forrigePeriode = Object.values(eksisterende).at(-1);
+
+    eksisterende[nyNokkel] = forrigePeriode?.map((arbeidsforhold) => ({
+      ...arbeidsforhold,
+      inkludertISykefravaer: false
+    })) ?? [
+      {
+        inntekt: undefined,
+        stillingsprosent: undefined,
+        yrkesbeskrivelse: undefined,
+        inkludertISykefravaer: false
+      }
+    ];
+
+    setValue('flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato', eksisterende, {
       shouldDirty: true,
       shouldValidate: true
     });
@@ -169,7 +270,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
           {erSykmeldtFraAlle === 'Nei' && (
             <>
               <Controller
-                name='flereArbeidsforhold.arbeidsforhold'
+                name='flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato'
                 control={control}
                 render={({ fieldState }) => (
                   <CheckboxGroup
@@ -183,45 +284,79 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                       <BodyLong>Månedslønn av beregnet inntekt</BodyLong>
                       <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
                     </div>
-                    {arbeidsforholdListe.map((arbeidsforhold, index) => {
+                    {arbeidsforholdListe.map((entry, index) => {
+                      const arbeidsforhold = entry.arbeidsforhold;
                       const label = arbeidsforhold.yrkesbeskrivelse ?? arbeidsforhold.yrkesKode;
+                      const forrigeEntry = index > 0 ? arbeidsforholdListe[index - 1] : undefined;
+                      const visDatovelger = forrigeEntry?.startdatoKey !== entry.startdatoKey;
 
                       return (
-                        <div key={'yk' + index} className={localStyles.arbeidsforholdRad}>
-                          <Checkbox
-                            className={localStyles.arbeidsforholdCheckbox}
-                            value={String(index)}
-                            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                        <Fragment key={`${entry.startdatoKey}-${entry.arbeidsforholdIndex}`}>
+                          {visDatovelger && (
+                            <Datovelger
+                              label='Sykmelding startdato'
+                              defaultSelected={
+                                isValid(parseISO(entry.startdatoKey)) ? parseISO(entry.startdatoKey) : undefined
+                              }
+                              onDateChange={(date) => {
+                                if (date) {
+                                  handleNokkelEndring(entry.startdatoKey, format(date, 'yyyy-MM-dd'));
+                                }
+                              }}
+                            />
+                          )}
+                          <div
+                            key={`${entry.startdatoKey}-${entry.arbeidsforholdIndex}`}
+                            className={localStyles.arbeidsforholdRad}
                           >
-                            {label}
-                          </Checkbox>
-                          <NumberField
-                            className={localStyles.inputInntekt}
-                            label={`Månedslønn for ${label}`}
-                            value={arbeidsforhold.inntekt}
-                            error={fieldStateErrorMessage(
-                              errors,
-                              `flereArbeidsforhold.arbeidsforhold.${index}.inntekt`
-                            )}
-                            onChange={(event) => {
-                              handleFeltChange(index, 'inntekt', event.target.value);
-                            }}
-                          />
-                          <NumberField
-                            className={localStyles.inputInntekt}
-                            label={`Stillingsprosent for ${label}`}
-                            value={arbeidsforhold.stillingsprosent}
-                            error={fieldStateErrorMessage(
-                              errors,
-                              `flereArbeidsforhold.arbeidsforhold.${index}.stillingsprosent`
-                            )}
-                            onChange={(event) => {
-                              handleFeltChange(index, 'stillingsprosent', event.target.value);
-                            }}
-                          />
-                        </div>
+                            <Checkbox
+                              className={localStyles.arbeidsforholdCheckbox}
+                              value={`${entry.startdatoKey}:${entry.arbeidsforholdIndex}`}
+                              onChange={(e) =>
+                                handleCheckboxChange(entry.startdatoKey, entry.arbeidsforholdIndex, e.target.checked)
+                              }
+                            >
+                              {label}
+                            </Checkbox>
+                            <NumberField
+                              className={localStyles.inputInntekt}
+                              label={`Månedslønn for ${label}`}
+                              value={arbeidsforhold.inntekt}
+                              error={fieldStateErrorMessage(
+                                errors,
+                                `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${entry.startdatoKey}.${entry.arbeidsforholdIndex}.inntekt`
+                              )}
+                              onChange={(event) => {
+                                handleFeltChange(
+                                  entry.startdatoKey,
+                                  entry.arbeidsforholdIndex,
+                                  'inntekt',
+                                  event.target.value
+                                );
+                              }}
+                            />
+                            <NumberField
+                              className={localStyles.inputInntekt}
+                              label={`Stillingsprosent for ${label}`}
+                              value={arbeidsforhold.stillingsprosent}
+                              error={fieldStateErrorMessage(
+                                errors,
+                                `flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato.${entry.startdatoKey}.${entry.arbeidsforholdIndex}.stillingsprosent`
+                              )}
+                              onChange={(event) => {
+                                handleFeltChange(
+                                  entry.startdatoKey,
+                                  entry.arbeidsforholdIndex,
+                                  'stillingsprosent',
+                                  event.target.value
+                                );
+                              }}
+                            />
+                          </div>
+                        </Fragment>
                       );
                     })}
+                    <ButtonSlette title='Slett periode' />
                   </CheckboxGroup>
                 )}
               />
@@ -229,14 +364,16 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                 <div className={localStyles.arbeidsforholdCheckbox}></div>
                 <div className={localStyles.outputInntekt}>
                   {formatCurrency(
-                    arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.inntekt ?? 0), 0)
+                    arbeidsforholdListe.reduce((acc, entry) => acc + (entry.arbeidsforhold.inntekt ?? 0), 0)
                   )}
                 </div>
                 <div className={localStyles.outputInntekt}>
-                  {arbeidsforholdListe.reduce((acc, arbeidsforhold) => acc + (arbeidsforhold.stillingsprosent ?? 0), 0)}{' '}
-                  %
+                  {arbeidsforholdListe.reduce((acc, entry) => acc + (entry.arbeidsforhold.stillingsprosent ?? 0), 0)} %
                 </div>
               </div>
+              <Button variant='secondary' className={localStyles.legtilbutton} onClick={leggTilNyPeriode} type='button'>
+                Legg til periode
+              </Button>
             </>
           )}
         </>
