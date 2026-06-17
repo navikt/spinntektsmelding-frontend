@@ -123,13 +123,13 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
       - name: deploy new Unleash Apikey to dev
-        uses: nais/deploy/actions/deploy@8a6fb62e73f837af6287d5db84a46ea96aa6c30d
+        uses: nais/deploy/actions/deploy@5fdd91aaf69bb0d6dd5e5118cdacb639f487b93b
         env:
           CLUSTER: dev-gcp
           RESOURCE: nais/unleash-apitoken-dev.yaml
 
       - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@8a6fb62e73f837af6287d5db84a46ea96aa6c30d
+        uses: nais/deploy/actions/deploy@5fdd91aaf69bb0d6dd5e5118cdacb639f487b93b
         env:
           CLUSTER: dev-gcp
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.
