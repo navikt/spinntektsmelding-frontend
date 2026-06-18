@@ -59,6 +59,8 @@ spec:
           namespace: flex
         - application: arbeidsgiver-altinn-tilganger
           namespace: fager
+        - application: logging
+          namespace: nais-system
   env:
     - name: API_URL
       value: '{{{api-url}}}'
