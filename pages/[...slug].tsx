@@ -705,7 +705,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         });
       }
     }
-  }, [ansettelsesforhold, setValue, inntektsdato, methods]);
+  }, [ansettelsesforhold, setValue, beregnetBestemmendeFraværsdag, methods]);
 
   useEffect(() => {
     if (!isValidUUID(slug) && !selvbestemtInnsending) {
@@ -829,7 +829,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
                 <BodyLong>Vi trenger ikke informasjon om inntekt for dette sykefraværet.</BodyLong>
               </>
             )}
-            <Faisu harGradertSykmeldingOgFlereArbeidsforhold={harFlereArbeidsforhold} />
+            <Faisu
+              harGradertSykmeldingOgFlereArbeidsforhold={harFlereArbeidsforhold}
+              inntektsdato={beregnetBestemmendeFraværsdag}
+            />
             <Skillelinje />
             <RefusjonArbeidsgiver
               skalViseArbeidsgiverperiode={skalViseArbeidsgiverperiode}

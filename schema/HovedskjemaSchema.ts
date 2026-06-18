@@ -167,12 +167,36 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
   if (arbeidsforhold.every((item) => item.inkludertISykefravaer)) {
     ctx.issues.push({
       code: 'custom',
-      message: 'Du svart "Nei" på om personen er sykmeldt fra alle arbeidsforhold. ',
+      message:
+        'Du svart "Nei" på om personen er sykmeldt fra alle arbeidsforhold. Vennligst velg minst ett arbeidsforhold.',
       path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'],
       input: arbeidsforhold
     });
     return;
   }
+
+  const soeknadsDatoer = Object.keys(arbeidsforholdPerSykmeldingStartdato);
+  const unikeSoeknadsDatoer = new Set(soeknadsDatoer);
+  if (soeknadsDatoer.length !== unikeSoeknadsDatoer.size) {
+    ctx.issues.push({
+      code: 'custom',
+      message: 'Det kan ikke være flere like søknadsdatoer.',
+      path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'],
+      input: arbeidsforholdPerSykmeldingStartdato
+    });
+    return;
+  }
+
+  [...unikeSoeknadsDatoer].forEach((soeknadsDato) => {
+    if (soeknadsDato < (val.inntekt?.inntektsdato ?? '')) {
+      ctx.issues.push({
+        code: 'custom',
+        message: 'Søknadsdato kan ikke være før inntektsdato.',
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'],
+        input: soeknadsDato
+      });
+    }
+  });
 
   const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.inkludertISykefravaer);
 

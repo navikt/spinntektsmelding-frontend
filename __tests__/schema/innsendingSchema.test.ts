@@ -1274,9 +1274,11 @@ describe('InnsendingSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: false,
         erSykmeldtFraAlle: true,
-        arbeidsforhold: [
-          { inntekt: 50000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier', inkludertISykefravaer: true }
-        ]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '01-02-2024': [
+            { inntekt: 50000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier', inkludertISykefravaer: true }
+          ]
+        }
       }
     };
 
@@ -1312,7 +1314,9 @@ describe('InnsendingSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: false,
         erSykmeldtFraAlle: true,
-        arbeidsforhold: [{ inntekt: -1000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier' }]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '01-02-2024': [{ inntekt: -1000, stillingsprosent: 100, yrkesbeskrivelse: 'Sykepleier' }]
+        }
       }
     };
 
@@ -1334,7 +1338,9 @@ describe('InnsendingSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: false,
         erSykmeldtFraAlle: true,
-        arbeidsforhold: [{ inntekt: 50000, stillingsprosent: -10, yrkesbeskrivelse: 'Sykepleier' }]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '01-02-2024': [{ inntekt: 50000, stillingsprosent: -10, yrkesbeskrivelse: 'Sykepleier' }]
+        }
       }
     };
 
@@ -1356,7 +1362,9 @@ describe('InnsendingSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: true,
         erSykmeldtFraAlle: false,
-        arbeidsforhold: [{ inntekt: undefined, stillingsprosent: undefined, yrkesbeskrivelse: undefined }]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '01-02-2024': [{ inntekt: undefined, stillingsprosent: undefined, yrkesbeskrivelse: undefined }]
+        }
       }
     };
 
@@ -1376,10 +1384,12 @@ describe('InnsendingSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: false,
         erSykmeldtFraAlle: false,
-        arbeidsforhold: [
-          { inntekt: 0, stillingsprosent: 0, yrkesbeskrivelse: 'Lege', inkludertISykefravaer: false },
-          { inntekt: 50000, stillingsprosent: 50, yrkesbeskrivelse: 'Konsulent', inkludertISykefravaer: true }
-        ]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '01-02-2024': [
+            { inntekt: 0, stillingsprosent: 0, yrkesbeskrivelse: 'Lege', inkludertISykefravaer: false },
+            { inntekt: 50000, stillingsprosent: 50, yrkesbeskrivelse: 'Konsulent', inkludertISykefravaer: true }
+          ]
+        }
       }
     };
 

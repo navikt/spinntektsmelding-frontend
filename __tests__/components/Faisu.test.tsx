@@ -15,7 +15,7 @@ type TestFormValues = {
   flereArbeidsforhold?: {
     harLikLoenn?: 'Ja' | 'Nei';
     erSykmeldtFraAlle?: 'Ja' | 'Nei';
-    arbeidsforhold?: Array<FaisuArbeidsforholdSkjema>;
+    arbeidsforholdPerSykmeldingStartdato?: Record<string, Array<FaisuArbeidsforholdSkjema>>;
   };
 };
 
@@ -38,22 +38,24 @@ function FormStateProbe() {
   return <pre data-testid='faisu-form-state'>{JSON.stringify(value ?? null)}</pre>;
 }
 
-const arbeidsforhold = [
-  {
-    yrkesbeskrivelse: 'Utvikler',
-    yrkesKode: '1234',
-    inntekt: 10000,
-    stillingsprosent: 40,
-    inkludertISykefravaer: true
-  },
-  {
-    yrkesbeskrivelse: 'Designer',
-    yrkesKode: '5678',
-    inntekt: 20000,
-    stillingsprosent: 60,
-    inkludertISykefravaer: false
-  }
-];
+const arbeidsforhold = {
+  '01-02-2024': [
+    {
+      yrkesbeskrivelse: 'Utvikler',
+      yrkesKode: '1234',
+      inntekt: 10000,
+      stillingsprosent: 40,
+      inkludertISykefravaer: true
+    },
+    {
+      yrkesbeskrivelse: 'Designer',
+      yrkesKode: '5678',
+      inntekt: 20000,
+      stillingsprosent: 60,
+      inkludertISykefravaer: false
+    }
+  ]
+};
 
 describe('Faisu', () => {
   it('renders nothing when harGradertSykmeldingOgFlereArbeidsforhold is false', () => {
@@ -102,7 +104,7 @@ describe('Faisu', () => {
       <TestWrapper
         defaultValues={{
           flereArbeidsforhold: {
-            arbeidsforhold
+            arbeidsforholdPerSykmeldingStartdato: arbeidsforhold
           }
         }}
       >
@@ -130,7 +132,7 @@ describe('Faisu', () => {
           flereArbeidsforhold: {
             harLikLoenn: 'Nei',
             erSykmeldtFraAlle: 'Nei',
-            arbeidsforhold
+            arbeidsforholdPerSykmeldingStartdato: arbeidsforhold
           }
         }}
       >
@@ -148,7 +150,7 @@ describe('Faisu', () => {
       const state = JSON.parse(screen.getByTestId('faisu-form-state').textContent || 'null');
       expect(state.harLikLoenn).toBe('Ja');
       expect(state.erSykmeldtFraAlle).toBeUndefined();
-      expect(state.arbeidsforhold).toEqual([]);
+      expect(state.arbeidsforholdPerSykmeldingStartdato).toEqual({});
     });
   });
 
@@ -159,7 +161,7 @@ describe('Faisu', () => {
           flereArbeidsforhold: {
             harLikLoenn: 'Nei',
             erSykmeldtFraAlle: 'Nei',
-            arbeidsforhold
+            arbeidsforholdPerSykmeldingStartdato: arbeidsforhold
           }
         }}
       >
@@ -173,7 +175,7 @@ describe('Faisu', () => {
 
     await waitFor(() => {
       const state = JSON.parse(screen.getByTestId('faisu-form-state').textContent || 'null');
-      expect(state.arbeidsforhold[0].inntekt).toBe(123.45);
+      expect(state.arbeidsforholdPerSykmeldingStartdato['01-02-2024'][0].inntekt).toBe(123.45);
     });
   });
 });

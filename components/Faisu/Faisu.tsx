@@ -27,9 +27,10 @@ interface FaisuSkjema {
 
 interface FaisuProps {
   harGradertSykmeldingOgFlereArbeidsforhold?: boolean;
+  inntektsdato?: Date | string;
 }
 
-export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Readonly<FaisuProps>) {
+export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold, inntektsdato }: Readonly<FaisuProps>) {
   const {
     control,
     setValue,
@@ -317,6 +318,13 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                                 handleNokkelEndring(startdatoKey, format(date, 'yyyy-MM-dd'));
                               }
                             }}
+                            fromDate={
+                              inntektsdato
+                                ? typeof inntektsdato === 'string'
+                                  ? parseISO(inntektsdato)
+                                  : inntektsdato
+                                : undefined
+                            }
                           />
                           <ButtonSlette
                             title='Slett periode'
