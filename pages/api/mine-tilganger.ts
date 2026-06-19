@@ -92,7 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
 
-  teamLogger.info(accessData, 'Tilganger for inntektsmelding mottatt for ');
+  teamLogger.info(accessData, 'Forespørsel om mine-tilganger');
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };
