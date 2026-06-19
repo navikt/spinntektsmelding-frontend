@@ -55,7 +55,7 @@ RUN --mount=type=cache,target=/app/.next/cache \
 # self-contained copy (matching the version pnpm resolved) into the standalone
 # node_modules so the transport can be resolved at runtime.
 RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version") \
-    && npm install --prefix /tmp/pino-socket "pino-socket@${PS_VER}" --omit=dev --no-audit --no-fund \
+    && npm install --prefix /tmp/pino-socket "pino-socket@${PS_VER}" --omit=dev --ignore-scripts --no-audit --no-fund \
     && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
 
 # Production image, copy all the files and run next
