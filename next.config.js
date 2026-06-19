@@ -54,6 +54,9 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@navikt/aksel-icons', '@navikt/ds-react', 'date-fns', '@grafana/faro-web-sdk']
   },
+  outputFileTracingIncludes: {
+    '/*': ['./node_modules/pino-socket/**/*', './node_modules/.pnpm/pino-socket@*/node_modules/pino-socket/**/*']
+  },
   env: {
     NEXT_PUBLIC_APP_VERSION: version
   },
