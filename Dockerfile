@@ -48,6 +48,16 @@ RUN npm install -g --force --ignore-scripts corepack && corepack enable
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
 
+# pino loads its transports (here pino-socket, used by @navikt/next-logger's
+# team-logger) in a worker thread via a dynamic string target. Next.js' output
+# file tracing can't see this dynamic require, so pino-socket and its transitive
+# dependencies are never copied into .next/standalone. We install a flat,
+# self-contained copy (matching the version pnpm resolved) into the standalone
+# node_modules so the transport can be resolved at runtime.
+RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version") \
+    && npm install --prefix /tmp/pino-socket "pino-socket@${PS_VER}" --omit=dev --no-audit --no-fund \
+    && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
+
 # Production image, copy all the files and run next
 FROM gcr.io/distroless/nodejs24-debian12@sha256:61f4f4341db81820c24ce771b83d202eb6452076f58628cd536cc7d94a10978b AS runner
 WORKDIR /app
