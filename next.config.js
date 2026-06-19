@@ -57,15 +57,10 @@ const nextConfig = {
   outputFileTracingIncludes: {
     '/*': [
       './node_modules/pino-socket/**/*',
-      './node_modules/.pnpm/pino-socket@*/node_modules/pino-socket/**/*',
       './node_modules/backoff/**/*',
-      './node_modules/.pnpm/backoff@*/node_modules/backoff/**/*',
       './node_modules/nopt/**/*',
-      './node_modules/.pnpm/nopt@*/node_modules/nopt/**/*',
       './node_modules/pump/**/*',
-      './node_modules/.pnpm/pump@*/node_modules/pump/**/*',
-      './node_modules/through2/**/*',
-      './node_modules/.pnpm/through2@*/node_modules/through2/**/*'
+      './node_modules/through2/**/*'
     ]
   },
   env: {
