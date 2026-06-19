@@ -6,6 +6,7 @@ import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerS
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
 import { requireEnv } from '../../utils/api/validateEnv';
 
 export const config = {
@@ -90,6 +91,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
+
+  teamLogger.info(accessData, 'Forespørsel om mine-tilganger');
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };
