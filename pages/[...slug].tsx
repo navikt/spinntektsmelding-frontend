@@ -599,20 +599,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    console.log('✅ Form submitted successfully');
-    console.log('Full formData:', JSON.stringify(formData, null, 2));
-    console.log('flereArbeidsforhold:', JSON.stringify(formData.flereArbeidsforhold, null, 2));
-    if (formData.flereArbeidsforhold?.arbeidsforholdPerSykmeldingStartdato) {
-      console.log(
-        'arbeidsforholdPerSykmeldingStartdato keys:',
-        Object.keys(formData.flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato)
-      );
-      Object.entries(formData.flereArbeidsforhold.arbeidsforholdPerSykmeldingStartdato).forEach(
-        ([key, forholdList]) => {
-          console.log(`Period ${key}:`, JSON.stringify(forholdList, null, 2));
-        }
-      );
-    }
     setSenderInn(true);
     if (selvbestemtInnsending) {
       sendInnArbeidsgiverInitiertSkjema(
@@ -761,14 +747,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
       <PageContent title='Inntektsmelding'>
         <FormProvider {...methods}>
-          <form
-            className={styles.padded}
-            onSubmit={handleSubmit(submitForm, (errors) => {
-              console.log('❌ Submit validation failed:', errors);
-              console.log('Form values at validation failure:', methods.getValues());
-              console.log('flereArbeidsforhold value:', methods.getValues('flereArbeidsforhold'));
-            })}
-          >
+          <form className={styles.padded} onSubmit={handleSubmit(submitForm)}>
             <Person />
             <Skillelinje />
             <Fravaersperiode lasterData={lasterData} setIsDirtyForm={setIsDirtyForm} skjemastatus={skjemastatus} />

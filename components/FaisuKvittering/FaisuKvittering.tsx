@@ -23,7 +23,6 @@ type FaisuKvitteringProps = {
 };
 
 export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitteringProps>) {
-  console.log('FaisuKvittering - arbeidsforhold:', arbeidsforhold);
   if (!arbeidsforhold?.arbeidsforholdPerSykmeldingStartdato) {
     return null;
   }
@@ -37,8 +36,7 @@ export default function FaisuKvittering({ arbeidsforhold }: Readonly<FaisuKvitte
     <Table className={localStyles.table}>
       <tbody>
         {keys.map((key, index) => {
-          const perioder = arbeidsforhold.arbeidsforholdPerSykmeldingStartdato[key];
-          console.log(`FaisuKvittering - arbeidsforhold for startdato ${parseIsoDate(key)}:`, perioder);
+          const perioder = arbeidsforhold.arbeidsforholdPerSykmeldingStartdato?.[key];
           if (!perioder || perioder.length === 0) {
             return null;
           }
