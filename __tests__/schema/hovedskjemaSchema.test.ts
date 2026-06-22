@@ -869,20 +869,22 @@ describe('HovedskjemaSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: 'Nei',
         erSykmeldtFraAlle: 'Nei',
-        arbeidsforhold: [
-          {
-            inntekt: 2500,
-            stillingsprosent: 100,
-            inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Utvikler'
-          },
-          {
-            inntekt: 2500,
-            stillingsprosent: 100,
-            inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Designer'
-          }
-        ]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '2024-02-01': [
+            {
+              inntekt: 2500,
+              stillingsprosent: 100,
+              inkludertISykefravaer: false,
+              yrkesbeskrivelse: 'Utvikler'
+            },
+            {
+              inntekt: 2500,
+              stillingsprosent: 100,
+              inkludertISykefravaer: false,
+              yrkesbeskrivelse: 'Designer'
+            }
+          ]
+        }
       }
     };
 
@@ -892,7 +894,7 @@ describe('HovedskjemaSchema', () => {
       expect.objectContaining({
         code: 'custom',
         message: 'Vennligst velg minst ett arbeidsforhold.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold']
+        path: ['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato']
       })
     );
   });
@@ -916,31 +918,35 @@ describe('HovedskjemaSchema', () => {
       flereArbeidsforhold: {
         harLikLoenn: 'Nei',
         erSykmeldtFraAlle: 'Nei',
-        arbeidsforhold: [
-          {
-            inntekt: 2000,
-            stillingsprosent: 100,
-            inkludertISykefravaer: true,
-            yrkesbeskrivelse: 'Utvikler'
-          },
-          {
-            inntekt: 500,
-            stillingsprosent: 100,
-            inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Designer'
-          }
-        ]
+        arbeidsforholdPerSykmeldingStartdato: {
+          '2024-02-01': [
+            {
+              inntekt: 2000,
+              stillingsprosent: 100,
+              inkludertISykefravaer: true,
+              yrkesbeskrivelse: 'Utvikler'
+            },
+            {
+              inntekt: 500,
+              stillingsprosent: 100,
+              inkludertISykefravaer: false,
+              yrkesbeskrivelse: 'Designer'
+            }
+          ]
+        }
       }
     };
 
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.issues).toContainEqual(
-      expect.objectContaining({
-        code: 'custom',
-        message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
-        path: ['flereArbeidsforhold', 'arbeidsforhold']
-      })
+    expect(result.error?.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: 'custom',
+          message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
+          path: expect.arrayContaining(['flereArbeidsforhold', 'arbeidsforholdPerSykmeldingStartdato'])
+        })
+      ])
     );
   });
 
@@ -963,7 +969,7 @@ describe('HovedskjemaSchema', () => {
       fullLonn: 'Ja',
       avsenderTlf: '12345678',
       flereArbeidsforhold: {
-        arbeidsforhold: []
+        arbeidsforholdPerSykmeldingStartdato: {}
       }
     };
 
