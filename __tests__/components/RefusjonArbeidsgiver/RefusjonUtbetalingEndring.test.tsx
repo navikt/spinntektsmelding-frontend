@@ -175,9 +175,9 @@ describe('RefusjonUtbetalingEndring', () => {
     const Input = screen.getByLabelText(/Dato for endring/i);
 
     fireEvent.change(Input, {
-      target: { value: '11.11.2022' }
+      target: { value: '11.11.2025' }
     });
 
-    expect(Input).toHaveValue('11.11.2022');
+    expect(Input).toHaveValue('11.11.2025');
   });
 });

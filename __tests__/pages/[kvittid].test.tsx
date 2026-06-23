@@ -96,8 +96,8 @@ describe('kvittering', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];
@@ -120,8 +120,8 @@ describe('kvittering', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];
@@ -237,8 +237,8 @@ describe('kvittering', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];

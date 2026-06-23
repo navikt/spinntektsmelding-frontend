@@ -9,8 +9,8 @@ describe('LonnUnderSykefravaeret', () => {
   it('renders a title text', async () => {
     const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 1234 };
     const refusjonEndringer: Array<EndringsBeloep> = [
-      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
-      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+      { dato: parseIsoDate('2025-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2025-03-03'), beloep: 432 }
     ];
 
     const { container } = render(
@@ -30,8 +30,8 @@ describe('LonnUnderSykefravaeret', () => {
     const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBeloep> = [
-      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
-      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+      { dato: parseIsoDate('2025-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2025-03-03'), beloep: 432 }
     ];
 
     const { container } = render(
@@ -63,8 +63,8 @@ describe('LonnUnderSykefravaeret', () => {
     const loenn: LonnISykefravaeret = { beloep: 2345, status: 'Nei' };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBeloep> = [
-      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
-      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+      { dato: parseIsoDate('2025-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2025-03-03'), beloep: 432 }
     ];
 
     const { container } = render(
@@ -88,8 +88,8 @@ describe('LonnUnderSykefravaeret', () => {
     const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const harRefusjonEndringer: YesNo = 'Nei';
     const refusjonEndringer: Array<EndringsBeloep> = [
-      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
-      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+      { dato: parseIsoDate('2025-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2025-03-03'), beloep: 432 }
     ];
 
     const { container } = render(
@@ -113,8 +113,8 @@ describe('LonnUnderSykefravaeret', () => {
     const loenn: LonnISykefravaeret = { status: 'Ja', beloep: 2345 };
     const harRefusjonEndringer: YesNo = 'Ja';
     const refusjonEndringer: Array<EndringsBeloep> = [
-      { dato: parseIsoDate('2022-02-02'), beloep: 1234 },
-      { dato: parseIsoDate('2022-03-03'), beloep: 432 }
+      { dato: parseIsoDate('2025-02-02'), beloep: 1234 },
+      { dato: parseIsoDate('2025-03-03'), beloep: 432 }
     ];
 
     const { container } = render(

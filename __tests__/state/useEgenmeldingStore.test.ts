@@ -4,9 +4,9 @@ import { MottattPeriode } from '../../schema/ForespurtDataSchema';
 import { vi } from 'vitest';
 
 const egenmeldingsperioder: Array<MottattPeriode> = [
-  { fom: '2022-06-06', tom: '2022-07-06' },
-  { fom: '2022-08-06', tom: '2022-09-06' },
-  { fom: '2022-10-06', tom: '2022-11-06' }
+  { fom: '2025-06-06', tom: '2025-07-06' },
+  { fom: '2025-08-06', tom: '2025-09-06' },
+  { fom: '2025-10-06', tom: '2025-11-06' }
 ];
 
 const initialState = useBoundStore.getState();
@@ -31,8 +31,8 @@ describe('useEgenmeldingStore', () => {
       result.current.initEgenmeldingsperiode(egenmeldingsperioder);
     });
 
-    expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
-    expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
+    expect(result.current.egenmeldingsperioder?.[0].fom).toEqual(new Date(2025, 5, 6));
+    expect(result.current.egenmeldingsperioder?.[0].tom).toEqual(new Date(2025, 6, 6));
     expect(result.current.egenmeldingsperioder?.length).toBe(3);
   });
 

@@ -76,8 +76,8 @@ describe('useForespurtDataStore', () => {
         paakrevd: true,
         forslag: {
           type: 'ForslagInntektGrunnlag',
-          beregningsmaaneder: ['2022-10', '2022-11', '2022-09'],
-          forrigeInntekt: { skjæringstidspunkt: '2022-01-02', kilde: 'INNTEKTSMELDING', beløp: 48000.0 }
+          beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
+          forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 48000.0 }
         }
       },
       refusjon: {
@@ -95,7 +95,7 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData, '2022-01-02', 48000, undefined);
+      result.current.initForespurtData(forespurtData, '2025-01-02', 48000, undefined);
     });
     let typer;
     act(() => {
@@ -104,7 +104,7 @@ describe('useForespurtDataStore', () => {
 
     expect(typer).toEqual(input);
     // expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
-    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
+    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2025-01-02'));
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(48000);
   });
 
@@ -117,8 +117,8 @@ describe('useForespurtDataStore', () => {
         paakrevd: true,
         forslag: {
           type: 'ForslagInntektGrunnlag',
-          beregningsmaaneder: ['2022-10', '2022-11', '2022-09'],
-          forrigeInntekt: { skjæringstidspunkt: '2022-01-02', kilde: 'INNTEKTSMELDING', beløp: 0 }
+          beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
+          forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 0 }
         }
       },
       refusjon: {
@@ -136,7 +136,7 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData, '2022-01-02', 0, undefined);
+      result.current.initForespurtData(forespurtData, '2025-01-02', 0, undefined);
     });
     let typer;
     act(() => {
@@ -145,7 +145,7 @@ describe('useForespurtDataStore', () => {
 
     expect(typer).toEqual(input);
 
-    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2022-01-02'));
+    expect(result.current.gammeltSkjaeringstidspunkt).toEqual(parseISO('2025-01-02'));
     expect(result.current.bruttoinntekt.bruttoInntekt).toBe(0);
   });
 

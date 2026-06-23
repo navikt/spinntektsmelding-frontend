@@ -78,9 +78,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
@@ -166,9 +166,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
@@ -299,9 +299,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
