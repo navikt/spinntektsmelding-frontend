@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { subYears } from 'date-fns';
+import { startOfDay, subYears } from 'date-fns';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
@@ -89,7 +89,7 @@ export default function FravaerEnkeltAnsattforhold({
               kanSlettes={periodeIndex > 0}
               periodeId={periode.id}
               onSlettRad={() => slettFravaersperiode?.(periode.id)}
-              fromDate={subYears(new Date(), 4)}
+              fromDate={startOfDay(subYears(new Date(), 4))}
               toDate={new Date()}
             />
           )}
