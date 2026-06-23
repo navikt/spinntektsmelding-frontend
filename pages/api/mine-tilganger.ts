@@ -29,6 +29,10 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   }));
 }
 
+function tellOrganisasjoner(hierarki: any[]): number {
+  return (hierarki ?? []).reduce((sum, node) => sum + 1 + tellOrganisasjoner(node.underenheter ?? []), 0);
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
@@ -92,7 +96,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
 
-  teamLogger.info(accessData, 'Forespørsel om mine-tilganger');
+  try {
+    teamLogger.info(
+      {
+        antallOrganisasjoner: tellOrganisasjoner(accessData.hierarki),
+        altinn3Tilganger: accessData.hierarki.altinn3Tilganger ?? []
+      },
+      'Forespørsel om mine-tilganger'
+    );
+  } catch (e) {
+    logger.warn('teamLogger feilet: ' + (e as Error).message);
+  }
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };
