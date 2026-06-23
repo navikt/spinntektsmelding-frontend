@@ -14,7 +14,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import logEvent from '../../utils/logEvent';
-import { addDays, differenceInCalendarDays, differenceInDays } from 'date-fns';
+import { addDays, differenceInCalendarDays, differenceInDays, subYears } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
@@ -304,7 +304,7 @@ export default function Arbeidsgiverperiode({
         ? addDays(sykmeldingsperioder[0].fom!, 1)
         : undefined;
     }
-    return undefined;
+    return subYears(new Date(), 4);
   }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);
 
   const maxTomDate = useMemo(() => {

@@ -15,9 +15,9 @@ const mocked_nanoid = vi.mocked(nanoid);
 vi.mock('next/router', () => require('next-router-mock'));
 
 const arbeidsgiverperioder: Array<MottattPeriode> = [
-  { fom: '2022-06-06', tom: '2022-07-06' },
-  { fom: '2022-08-06', tom: '2022-09-06' },
-  { fom: '2022-10-06', tom: '2022-11-06' }
+  { fom: '2025-06-06', tom: '2025-07-06' },
+  { fom: '2025-08-06', tom: '2025-09-06' },
+  { fom: '2025-10-06', tom: '2025-11-06' }
 ];
 
 const initialState = useBoundStore.getState();
@@ -42,8 +42,8 @@ describe('useBoundStore', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];
@@ -62,16 +62,16 @@ describe('useBoundStore', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];
 
     const expected: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       },
       {
@@ -97,21 +97,21 @@ describe('useBoundStore', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       },
       {
-        fom: new Date(2022, 6, 14),
-        tom: new Date(2022, 7, 15),
+        fom: new Date(2025, 6, 14),
+        tom: new Date(2025, 7, 15),
         id: '2'
       }
     ];
 
     const expected: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       }
     ];
@@ -136,26 +136,26 @@ describe('useBoundStore', () => {
 
     const datoSpenn: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       },
       {
-        fom: new Date(2022, 6, 14),
-        tom: new Date(2022, 7, 15),
+        fom: new Date(2025, 6, 14),
+        tom: new Date(2025, 7, 15),
         id: '2'
       }
     ];
 
     const expected: Periode[] = [
       {
-        fom: new Date(2022, 4, 14),
-        tom: new Date(2022, 5, 15),
+        fom: new Date(2025, 4, 14),
+        tom: new Date(2025, 5, 15),
         id: '1'
       },
       {
-        fom: new Date(2022, 8, 14),
-        tom: new Date(2022, 9, 15),
+        fom: new Date(2025, 8, 14),
+        tom: new Date(2025, 9, 15),
         id: '2'
       }
     ];
@@ -169,8 +169,8 @@ describe('useBoundStore', () => {
     act(() => {
       result.current.setArbeidsgiverperiodeDato(
         {
-          fom: new Date(2022, 8, 14),
-          tom: new Date(2022, 9, 15)
+          fom: new Date(2025, 8, 14),
+          tom: new Date(2025, 9, 15)
         },
         '2'
       );
@@ -196,12 +196,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -211,14 +211,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -230,12 +230,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -245,14 +245,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -264,12 +264,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -279,14 +279,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
@@ -296,9 +296,9 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       }
     ]);
   });
@@ -310,12 +310,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -325,14 +325,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
@@ -342,9 +342,9 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       }
     ]);
 
@@ -354,14 +354,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -373,12 +373,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -388,20 +388,20 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
     const PeriodeParam: PeriodeParam = {
-      fom: new Date(2022, 10, 1),
-      tom: new Date(2022, 10, 4)
+      fom: new Date(2025, 10, 1),
+      tom: new Date(2025, 10, 4)
     };
 
     act(() => {
@@ -410,14 +410,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 10, 1),
+        fom: new Date(2025, 10, 1),
         id: '2',
-        tom: new Date(2022, 10, 4)
+        tom: new Date(2025, 10, 4)
       }
     ]);
   });
@@ -429,23 +429,23 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-03',
-        tom: '2022-10-05'
+        fom: '2025-10-03',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
     const mottattFravaer: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -459,14 +459,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-03'),
+        fom: parseIsoDate('2025-10-03'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
 
@@ -476,14 +476,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -495,23 +495,23 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-03',
-        tom: '2022-10-05'
+        fom: '2025-10-03',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
     const mottattFravaer: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -525,14 +525,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-03'),
+        fom: parseIsoDate('2025-10-03'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
 
@@ -542,14 +542,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-01'),
+        fom: parseIsoDate('2025-10-01'),
         id: '3',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '4',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
   });
@@ -561,12 +561,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -576,14 +576,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
@@ -593,9 +593,9 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       }
     ]);
   });
@@ -607,12 +607,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -622,14 +622,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
@@ -639,9 +639,9 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       }
     ]);
 
@@ -651,14 +651,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -670,12 +670,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -685,20 +685,20 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
 
     const PeriodeParam: PeriodeParam = {
-      fom: new Date(2022, 10, 1),
-      tom: new Date(2022, 10, 4)
+      fom: new Date(2025, 10, 1),
+      tom: new Date(2025, 10, 4)
     };
 
     act(() => {
@@ -707,14 +707,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 1),
+        fom: new Date(2025, 9, 1),
         id: '1',
-        tom: new Date(2022, 9, 5)
+        tom: new Date(2025, 9, 5)
       },
       {
-        fom: new Date(2022, 10, 1),
+        fom: new Date(2025, 10, 1),
         id: '2',
-        tom: new Date(2022, 10, 4)
+        tom: new Date(2025, 10, 4)
       }
     ]);
   });
@@ -726,23 +726,23 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-03',
-        tom: '2022-10-05'
+        fom: '2025-10-03',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
     const mottattFravaer: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -756,14 +756,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-03'),
+        fom: parseIsoDate('2025-10-03'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
 
@@ -773,14 +773,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-01'),
+        fom: parseIsoDate('2025-10-01'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
   });
@@ -792,23 +792,23 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-03',
-        tom: '2022-10-05'
+        fom: '2025-10-03',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
     const mottattFravaer: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -822,14 +822,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-03'),
+        fom: parseIsoDate('2025-10-03'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
 
@@ -839,14 +839,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-01'),
+        fom: parseIsoDate('2025-10-01'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
   });
@@ -858,12 +858,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -873,14 +873,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-01'),
+        fom: parseIsoDate('2025-10-01'),
         id: '1',
-        tom: parseIsoDate('2022-10-05')
+        tom: parseIsoDate('2025-10-05')
       },
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
 
@@ -890,9 +890,9 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: parseIsoDate('2022-10-10'),
+        fom: parseIsoDate('2025-10-10'),
         id: '2',
-        tom: parseIsoDate('2022-10-15')
+        tom: parseIsoDate('2025-10-15')
       }
     ]);
   });
@@ -904,12 +904,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -920,8 +920,8 @@ describe('useBoundStore', () => {
     act(() => {
       result.current.setArbeidsgiverperiodeDato(
         {
-          fom: new Date(2022, 9, 4),
-          tom: new Date(2022, 9, 6)
+          fom: new Date(2025, 9, 4),
+          tom: new Date(2025, 9, 6)
         },
         '1'
       );
@@ -929,14 +929,14 @@ describe('useBoundStore', () => {
 
     expect(result.current.arbeidsgiverperioder).toEqual([
       {
-        fom: new Date(2022, 9, 4),
+        fom: new Date(2025, 9, 4),
         id: '1',
-        tom: new Date(2022, 9, 6)
+        tom: new Date(2025, 9, 6)
       },
       {
-        fom: new Date(2022, 9, 10),
+        fom: new Date(2025, 9, 10),
         id: '2',
-        tom: new Date(2022, 9, 15)
+        tom: new Date(2025, 9, 15)
       }
     ]);
   });
@@ -948,12 +948,12 @@ describe('useBoundStore', () => {
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
-        fom: '2022-10-01',
-        tom: '2022-10-05'
+        fom: '2025-10-01',
+        tom: '2025-10-05'
       },
       {
-        fom: '2022-10-10',
-        tom: '2022-10-15'
+        fom: '2025-10-10',
+        tom: '2025-10-15'
       }
     ];
 
@@ -1053,9 +1053,9 @@ describe('useBoundStore', () => {
     expect(result.current.foreslaattBestemmendeFravaersdag).toBeUndefined();
 
     act(() => {
-      result.current.setForeslaattBestemmendeFravaersdag(parseIsoDate('2022-10-01'));
+      result.current.setForeslaattBestemmendeFravaersdag(parseIsoDate('2025-10-01'));
     });
 
-    expect(result.current.foreslaattBestemmendeFravaersdag).toEqual(parseIsoDate('2022-10-01'));
+    expect(result.current.foreslaattBestemmendeFravaersdag).toEqual(parseIsoDate('2025-10-01'));
   });
 });

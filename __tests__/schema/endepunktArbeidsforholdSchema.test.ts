@@ -57,8 +57,8 @@ describe('EndepunktArbeidsforholdSchema', () => {
           id: 'periode-1'
         },
         {
-          fom: '2022-02-01',
-          tom: '2022-02-28',
+          fom: '2025-02-01',
+          tom: '2025-02-28',
           id: 'periode-2'
         }
       ]

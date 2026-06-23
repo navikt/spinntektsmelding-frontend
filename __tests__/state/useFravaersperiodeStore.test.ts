@@ -8,9 +8,9 @@ import { PeriodeParam } from '../../components/Bruttoinntekt/Periodevelger';
 vi.mock('next/router', () => require('next-router-mock'));
 
 const fravaersperiode: Array<MottattPeriode> = [
-  { fom: '2022-06-06', tom: '2022-07-06' },
-  { fom: '2022-08-06', tom: '2022-09-06' },
-  { fom: '2022-10-06', tom: '2022-11-06' }
+  { fom: '2025-06-06', tom: '2025-07-06' },
+  { fom: '2025-08-06', tom: '2025-09-06' },
+  { fom: '2025-10-06', tom: '2025-11-06' }
 ];
 
 const initialState = useBoundStore.getState();
@@ -33,8 +33,8 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(fravaersperiode);
     });
 
-    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2022, 5, 6));
-    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2022, 6, 6));
+    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2025, 5, 6));
+    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2025, 6, 6));
     expect(result.current.sykmeldingsperioder?.length).toBe(3);
   });
 
@@ -91,8 +91,8 @@ describe('useBoundStore', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     const datoSpenn: PeriodeParam = {
-      fom: new Date(2022, 4, 14),
-      tom: new Date(2022, 5, 15)
+      fom: new Date(2025, 4, 14),
+      tom: new Date(2025, 5, 15)
     };
 
     act(() => {
@@ -105,7 +105,7 @@ describe('useBoundStore', () => {
       result.current.setFravaersperiodeDato(periodeId || '1', datoSpenn);
     });
 
-    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2022, 5, 15));
-    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2022, 4, 14));
+    expect(result.current.sykmeldingsperioder?.[0].tom).toEqual(new Date(2025, 5, 15));
+    expect(result.current.sykmeldingsperioder?.[0].fom).toEqual(new Date(2025, 4, 14));
   });
 });

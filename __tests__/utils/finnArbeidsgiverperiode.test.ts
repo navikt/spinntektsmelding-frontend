@@ -7,20 +7,20 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-16')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-16')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-22')
       }
     ]);
   });
@@ -29,25 +29,25 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-15')
+        fom: parseISO('2025-11-10'),
+        tom: parseISO('2025-11-12')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-14'),
+        tom: parseISO('2025-11-20')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-15')
+        fom: parseISO('2025-11-10'),
+        tom: parseISO('2025-11-12')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-14'),
+        tom: parseISO('2025-11-20')
       }
     ]);
   });
@@ -56,20 +56,20 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-16')
+        fom: parseISO('2025-12-10'),
+        tom: parseISO('2025-12-12')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-19'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-15'),
+        tom: parseISO('2025-12-18')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-10'),
+        tom: parseISO('2025-12-18')
       }
     ]);
   });
@@ -78,20 +78,20 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-17')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-17')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-22')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-22')
       }
     ]);
   });
@@ -100,20 +100,20 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-25')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-22')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-25')
       }
     ]);
   });
@@ -122,20 +122,20 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-25')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-25')
       },
       {
         id: '2',
-        fom: parseISO('2022-06-01'),
-        tom: parseISO('2022-06-23')
+        fom: parseISO('2025-06-01'),
+        tom: parseISO('2025-06-23')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-16')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-16')
       }
     ]);
   });
@@ -171,15 +171,15 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-25')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-25')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-16')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-16')
       }
     ]);
   });
@@ -188,15 +188,15 @@ describe.concurrent('finnArbeidsgiverperiode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-01')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-01')
       }
     ];
     expect(finnArbeidsgiverperiode(periode)).toEqual([
       {
         id: '1',
-        fom: parseISO('2022-05-01'),
-        tom: parseISO('2022-05-01')
+        fom: parseISO('2025-05-01'),
+        tom: parseISO('2025-05-01')
       }
     ]);
   });
