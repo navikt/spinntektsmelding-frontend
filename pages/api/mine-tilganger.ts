@@ -33,6 +33,13 @@ function tellOrganisasjoner(hierarki: any[]): number {
   return (hierarki ?? []).reduce((sum, node) => sum + 1 + tellOrganisasjoner(node.underenheter ?? []), 0);
 }
 
+function samleAltinn3Tilganger(hierarki: any[]): { orgnr: string; altinn3Tilganger: string[] }[] {
+  return (hierarki ?? []).flatMap((node) => [
+    { orgnr: node.orgnr, altinn3Tilganger: node.altinn3Tilganger ?? [] },
+    ...samleAltinn3Tilganger(node.underenheter ?? [])
+  ]);
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
@@ -100,7 +107,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     teamLogger.info(
       {
         antallOrganisasjoner: tellOrganisasjoner(accessData.hierarki),
-        altinn3Tilganger: accessData.hierarki.altinn3Tilganger ?? []
+        altinn3Tilganger: samleAltinn3Tilganger(accessData.hierarki)
       },
       'Forespørsel om mine-tilganger'
     );
