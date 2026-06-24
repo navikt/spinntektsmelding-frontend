@@ -13,12 +13,29 @@ vi.mock('../../../utils/safelyParseJson', () => ({
   default: vi.fn()
 }));
 
+// Mock loggers - define inline
+vi.mock('@navikt/next-logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn()
+  }
+}));
+
+vi.mock('@navikt/next-logger/team-log', () => ({
+  teamLogger: {
+    info: vi.fn()
+  }
+}));
+
 // Mock fetch
 global.fetch = vi.fn();
 
 // Import after mocks
 import { getToken, validateToken, requestOboToken } from '@navikt/oasis';
 import safelyParseJSON from '../../../utils/safelyParseJson';
+import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
 import testdata from '../../../mockdata/endepunktAltinnTilganger.json';
 
 // Get typed mocks
@@ -26,6 +43,8 @@ const mockGetToken = vi.mocked(getToken);
 const mockValidateToken = vi.mocked(validateToken);
 const mockRequestOboToken = vi.mocked(requestOboToken);
 const mockSafelyParseJSON = vi.mocked(safelyParseJSON);
+const mockTeamLoggerInfo = vi.mocked(teamLogger.info);
+const mockLoggerWarn = vi.mocked(logger.warn);
 
 describe('API Route: /api/mine-tilganger', () => {
   let mockReq: Partial<NextApiRequest>;
@@ -614,6 +633,109 @@ describe('API Route: /api/mine-tilganger', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(statusMock).toHaveBeenCalledWith(201);
+    });
+  });
+
+  describe('Team logging', () => {
+    beforeEach(() => {
+      process.env.NODE_ENV = 'production';
+      process.env.FAGER_TILGANG_INGRESS = 'api.com';
+      process.env.FAGER_TILGANG_URL = '/path';
+      process.env.FAGER_TILGANG_CLIENT_ID = 'client';
+      vi.resetModules();
+    });
+
+    const setupSuccess = (hierarki: any) => {
+      mockGetToken.mockReturnValue('token');
+      mockValidateToken.mockResolvedValue({ ok: true });
+      mockRequestOboToken.mockResolvedValue({ ok: true, token: 'obo' });
+      (global.fetch as any).mockResolvedValue({ ok: true, status: 200 });
+      mockSafelyParseJSON.mockResolvedValue({ hierarki });
+    };
+
+    it('should log total organisation count including underenheter', async () => {
+      setupSuccess([
+        { orgnr: '1', altinn3Tilganger: [], underenheter: [{ orgnr: '2', altinn3Tilganger: [], underenheter: [] }] },
+        { orgnr: '3', altinn3Tilganger: [], underenheter: [] }
+      ]);
+
+      const { default: handler } = await import('../../../pages/api/mine-tilganger');
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockTeamLoggerInfo).toHaveBeenCalledWith(
+        expect.objectContaining({ antallOrganisasjoner: 3 }),
+        'Forespørsel om mine-tilganger'
+      );
+    });
+
+    it('should log altinn3Tilganger per organisation including underenheter', async () => {
+      setupSuccess([
+        {
+          orgnr: '1',
+          altinn3Tilganger: ['nav_sykepenger_inntektsmelding'],
+          underenheter: [{ orgnr: '2', altinn3Tilganger: ['annen_tilgang'], underenheter: [] }]
+        }
+      ]);
+
+      const { default: handler } = await import('../../../pages/api/mine-tilganger');
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockTeamLoggerInfo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          altinn3Tilganger: [
+            { orgnr: '1', altinn3Tilganger: ['nav_sykepenger_inntektsmelding'] },
+            { orgnr: '2', altinn3Tilganger: ['annen_tilgang'] }
+          ]
+        }),
+        'Forespørsel om mine-tilganger'
+      );
+    });
+
+    it('should default missing altinn3Tilganger to empty array', async () => {
+      setupSuccess([{ orgnr: '1', underenheter: [] }]);
+
+      const { default: handler } = await import('../../../pages/api/mine-tilganger');
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockTeamLoggerInfo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          altinn3Tilganger: [{ orgnr: '1', altinn3Tilganger: [] }]
+        }),
+        'Forespørsel om mine-tilganger'
+      );
+    });
+
+    it('should not fail the request when teamLogger throws an Error', async () => {
+      setupSuccess([{ orgnr: '1', altinn3Tilganger: [], underenheter: [] }]);
+      mockTeamLoggerInfo.mockImplementationOnce(() => {
+        throw new Error('logg feilet');
+      });
+
+      const { default: handler } = await import('../../../pages/api/mine-tilganger');
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockLoggerWarn).toHaveBeenCalledWith(
+        expect.objectContaining({ err: expect.any(Error) }),
+        expect.stringContaining('logg feilet')
+      );
+      expect(statusMock).toHaveBeenCalledWith(200);
+    });
+
+    it('should handle non-Error thrown values robustly', async () => {
+      setupSuccess([{ orgnr: '1', altinn3Tilganger: [], underenheter: [] }]);
+      mockTeamLoggerInfo.mockImplementationOnce(() => {
+        // eslint-disable-next-line no-throw-literal, @typescript-eslint/only-throw-error
+        throw 'string-feil';
+      });
+
+      const { default: handler } = await import('../../../pages/api/mine-tilganger');
+      await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
+
+      expect(mockLoggerWarn).toHaveBeenCalledWith(
+        expect.objectContaining({ err: 'string-feil' }),
+        expect.stringContaining('string-feil')
+      );
+      expect(statusMock).toHaveBeenCalledWith(200);
     });
   });
 });
