@@ -383,8 +383,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (!dataFraBackend) {
       const orgnr = avsenderOrgnummer();
       const fnr = sykmeldtFnr();
-      const fom = sykmeldingsperioder?.at(0)?.fom;
-      const tom = sykmeldingsperioder?.at(-1)?.tom;
+      const sortertePerioder = sykmeldingsperioder?.toSorted(
+        (a, b) => new Date(a.fom!).getTime() - new Date(b.fom!).getTime()
+      );
+      const fom = sortertePerioder?.at(0)?.fom;
+      const tom = sortertePerioder?.at(-1)?.tom;
 
       if (!orgnr || !fnr || !fom || !tom) {
         return;
