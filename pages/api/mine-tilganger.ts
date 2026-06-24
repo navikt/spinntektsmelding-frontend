@@ -112,7 +112,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       'Forespørsel om mine-tilganger'
     );
   } catch (e) {
-    logger.warn('teamLogger feilet: ' + (e as Error).message);
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
   }
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
