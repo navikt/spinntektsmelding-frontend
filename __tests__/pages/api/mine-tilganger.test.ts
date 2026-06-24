@@ -723,9 +723,9 @@ describe('API Route: /api/mine-tilganger', () => {
 
     it('should handle non-Error thrown values robustly', async () => {
       setupSuccess([{ orgnr: '1', altinn3Tilganger: [], underenheter: [] }]);
+      const nonError: unknown = 'string-feil';
       mockTeamLoggerInfo.mockImplementationOnce(() => {
-        // eslint-disable-next-line no-throw-literal, @typescript-eslint/only-throw-error
-        throw 'string-feil';
+        throw nonError;
       });
 
       const { default: handler } = await import('../../../pages/api/mine-tilganger');

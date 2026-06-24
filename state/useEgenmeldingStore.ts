@@ -7,6 +7,8 @@ import { MottattPeriode } from '../schema/ForespurtDataSchema';
 import { CompleteState } from './useBoundStore';
 import sorterFomStigende from '../utils/sorterFomStigende';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
+import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
+import { logger } from '@navikt/next-logger';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
@@ -23,10 +25,15 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
     set(
       produce((state) => {
         state.egenmeldingsperioder = [];
+        const validerte = ApiPeriodeSchema.array().safeParse(egenmeldingsperioder);
+        if (!validerte.success && egenmeldingsperioder.length > 0) {
+          logger.error('Feil i initEgenmeldingsperiode', validerte.error);
+        }
 
+        const sorterte = egenmeldingsperioder.toSorted((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
         if (egenmeldingsperioder && egenmeldingsperioder.length > 0) {
           state.kanEndreEgenmeldingPeriode = false;
-          state.egenmeldingsperioder = egenmeldingsperioder.map((periode) => ({
+          state.egenmeldingsperioder = sorterte.map((periode) => ({
             fom: parseIsoDate(periode.fom),
             tom: parseIsoDate(periode.tom),
             id: nanoid()
