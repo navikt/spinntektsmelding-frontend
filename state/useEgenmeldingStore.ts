@@ -26,7 +26,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
       produce((state) => {
         state.egenmeldingsperioder = [];
         const validerte = ApiPeriodeSchema.safeParse(egenmeldingsperioder);
-        if (!validerte.success) {
+        if (!validerte.success && egenmeldingsperioder.length > 0) {
           logger.error('Feil i initEgenmeldingsperiode', validerte.error);
         }
 
