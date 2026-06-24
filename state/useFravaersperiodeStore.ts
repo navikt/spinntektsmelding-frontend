@@ -12,7 +12,7 @@ import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { z } from 'zod';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
-import logger from '../pages/api/logger';
+import { logger } from '@navikt/next-logger';
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 

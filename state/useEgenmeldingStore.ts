@@ -8,7 +8,7 @@ import { CompleteState } from './useBoundStore';
 import sorterFomStigende from '../utils/sorterFomStigende';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
-import logger from '../pages/api/logger';
+import { logger } from '@navikt/next-logger';
 
 export interface EgenmeldingState {
   egenmeldingsperioder?: Array<Periode>;
