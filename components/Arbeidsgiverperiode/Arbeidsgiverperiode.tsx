@@ -63,7 +63,8 @@ export default function Arbeidsgiverperiode({
     arbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeKort,
-    sykmeldingsperioder
+    sykmeldingsperioder,
+    egenmeldingsperioder
   } = useBoundStore(
     useShallow((state) => ({
       leggTilArbeidsgiverperiode: state.leggTilArbeidsgiverperiode,
@@ -84,7 +85,8 @@ export default function Arbeidsgiverperiode({
       arbeidsgiverperiodeDisabled: state.arbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeDisabled: state.setArbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort,
-      sykmeldingsperioder: state.sykmeldingsperioder
+      sykmeldingsperioder: state.sykmeldingsperioder,
+      egenmeldingsperioder: state.egenmeldingsperioder
     }))
   );
 
@@ -301,10 +303,20 @@ export default function Arbeidsgiverperiode({
   const minFomDate = useMemo(() => {
     const fireAarSiden = startOfDay(subYears(new Date(), 4));
     if (skalViseArbeidsgiverperiode && sykmeldingsperioder && sykmeldingsperioder.length > 0) {
-      return addDays(sykmeldingsperioder[0].fom!, 1);
+      const perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
+      const minFom = perioder.reduce<Date | undefined>((acc, periode) => {
+        if (!periode.fom) {
+          return acc;
+        }
+        if (!acc || periode.fom < acc) {
+          return periode.fom;
+        }
+        return acc;
+      }, undefined);
+      return addDays(minFom ?? fireAarSiden, 1);
     }
     return fireAarSiden;
-  }, [skalViseArbeidsgiverperiode, sykmeldingsperioder]);
+  }, [skalViseArbeidsgiverperiode, sykmeldingsperioder, egenmeldingsperioder]);
 
   const maxTomDate = useMemo(() => {
     if (skalViseArbeidsgiverperiode) {
