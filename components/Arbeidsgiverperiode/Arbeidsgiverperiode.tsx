@@ -14,7 +14,7 @@ import ButtonTilbakestill from '../ButtonTilbakestill/ButtonTilbakestill';
 import LenkeEksternt from '../LenkeEksternt/LenkeEksternt';
 import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import logEvent from '../../utils/logEvent';
-import { differenceInCalendarDays, differenceInDays, startOfDay, subYears } from 'date-fns';
+import { addDays, differenceInCalendarDays, differenceInDays, startOfDay, subYears } from 'date-fns';
 import PeriodeType from '../../config/PeriodeType';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import SelectBegrunnelseKortArbeidsgiverperiode from './SelectBegrunnelseKortArbeidsgiverperiode';
@@ -313,7 +313,7 @@ export default function Arbeidsgiverperiode({
         }
         return acc;
       }, undefined);
-      return minFom ?? fireAarSiden;
+      return addDays(minFom ?? fireAarSiden, 1);
     }
     return fireAarSiden;
   }, [skalViseArbeidsgiverperiode, sykmeldingsperioder, egenmeldingsperioder]);

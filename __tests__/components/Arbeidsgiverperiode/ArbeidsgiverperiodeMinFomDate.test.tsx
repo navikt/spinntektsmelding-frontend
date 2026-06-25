@@ -70,7 +70,7 @@ describe('Arbeidsgiverperiode minFomDate', () => {
 
     renderArbeidsgiverperiode(true);
 
-    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 5, 1));
+    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 5, 2));
   });
 
   it('should use the earliest sykmeldingsperiode fom when there are no egenmeldingsperioder', () => {
@@ -83,7 +83,7 @@ describe('Arbeidsgiverperiode minFomDate', () => {
 
     renderArbeidsgiverperiode(true);
 
-    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 4, 1));
+    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 4, 2));
   });
 
   it('should ignore perioder without fom', () => {
@@ -96,7 +96,7 @@ describe('Arbeidsgiverperiode minFomDate', () => {
 
     renderArbeidsgiverperiode(true);
 
-    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 5, 5));
+    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(new Date(2025, 5, 6));
   });
 
   it('should fall back to four years ago when arbeidsgiverperiode is not shown', () => {
