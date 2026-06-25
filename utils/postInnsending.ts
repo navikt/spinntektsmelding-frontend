@@ -169,12 +169,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
     );
     options.setErrorResponse(mappedErrors);
     options.setShowErrorList(true);
-    logger.warn(
-      'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
-        err +
-        ' ' +
-        JSON.stringify(await safeText(data))
-    );
+    logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
   }
 }
 
