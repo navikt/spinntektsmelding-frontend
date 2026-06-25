@@ -134,10 +134,47 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+      } else {
+        const mappedErrors = options.mapValidationErrors(
+          { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+          []
+        );
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn(
+          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(await safeText(data))
+        );
       }
+    } else {
+      const mappedErrors = options.mapValidationErrors(
+        { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+        []
+      );
+      options.setErrorResponse(mappedErrors);
+      options.setShowErrorList(true);
+      logger.warn(
+        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+          data.statusText +
+          ' ' +
+          JSON.stringify(await safeText(data))
+      );
     }
   } catch (err) {
-    logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
+    const mappedErrors = options.mapValidationErrors(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    options.setErrorResponse(mappedErrors);
+    options.setShowErrorList(true);
+    logger.warn(
+      'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+        err +
+        ' ' +
+        JSON.stringify(await safeText(data))
+    );
   }
 }
 
