@@ -38,7 +38,7 @@
 
   "forespurtData": {
     "arbeidsgiverperiode": {
-      "paakrevd": false
+      "paakrevd": true
     },
     "inntekt": {
       "paakrevd": true,
