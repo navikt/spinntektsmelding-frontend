@@ -121,6 +121,89 @@ describe('postInnsending', () => {
     expect(warnSpy).toHaveBeenCalled();
   });
 
+  it('setter generisk feil ved 400 når error har feil type', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: 123
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('setter generisk feil ved 400 når error-feltet mangler', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        feilmelding: 'noe gikk galt'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('setter generisk feil ved 400 når JSON er ugyldig', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 400,
+      json: async () => {
+        throw new Error('ugyldig json');
+      },
+      text: async () => 'ikke json'
+    } as any);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
   it('returnerer valideringsfeil ved 400-lignende default case med backend error-format', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(418, {
