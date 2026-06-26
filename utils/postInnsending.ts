@@ -3,6 +3,7 @@ import logEvent from './logEvent';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { ErrorResponse } from './useErrorResponse';
 import { z } from 'zod';
+import { teamLogger } from '@navikt/next-logger/team-log';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
@@ -58,19 +59,27 @@ export async function postInnsending<B = unknown, S = unknown>({
     headers: { 'Content-Type': 'application/json' }
   })
     .then((data) =>
-      handleResponse<S>(data, {
-        analyticsComponent,
-        onUnauthorized,
-        onSuccess,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      })
+      handleResponse<S>(
+        data,
+        {
+          analyticsComponent,
+          onUnauthorized,
+          onSuccess,
+          mapValidationErrors,
+          setErrorResponse,
+          setShowErrorList
+        },
+        body
+      )
     )
     .catch((err) => handleNetworkError(err, { setErrorResponse, setShowErrorList }));
 }
 
-async function handleResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>): Promise<void> {
+async function handleResponse<S>(
+  data: Response,
+  options: PostInnsendingRuntimeOptions<S>,
+  body: unknown
+): Promise<void> {
   switch (data.status) {
     case 200:
     case 201:
@@ -80,7 +89,7 @@ async function handleResponse<S>(data: Response, options: PostInnsendingRuntimeO
       await handle500Response(data, options);
       return;
     case 400:
-      await handle400Response(data, options);
+      await handle400Response(data, options, body);
       return;
     case 404:
       handle404Response(data, options.setErrorResponse);
@@ -89,7 +98,7 @@ async function handleResponse<S>(data: Response, options: PostInnsendingRuntimeO
       handle401Response(options.analyticsComponent, options.onUnauthorized);
       return;
     default:
-      await handleDefaultResponse(data, options);
+      await handleDefaultResponse(data, options, body);
       return;
   }
 }
@@ -119,7 +128,7 @@ async function handle500Response<S>(data: Response, options: PostInnsendingRunti
   logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
 }
 
-async function handle400Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+async function handle400Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
   try {
     const resultat = (await data.json()) as unknown;
     logEvent('skjema innsending feilet', {
@@ -134,6 +143,14 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+        teamLogger.warn(
+          'Feil ved innsending av skjema - 400 - BadRequest ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(feil) +
+            ' ' +
+            JSON.stringify(body)
+        );
       } else {
         const mappedErrors = options.mapValidationErrors(
           { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
@@ -146,6 +163,12 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
             data.statusText +
             ' ' +
             JSON.stringify(await safeText(data))
+        );
+        teamLogger.warn(
+          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify((await safeText(data)) + ' ' + JSON.stringify(body))
         );
       }
     } else {
@@ -161,6 +184,14 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
           ' ' +
           JSON.stringify(await safeText(data))
       );
+      teamLogger.warn(
+        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+          data.statusText +
+          ' ' +
+          JSON.stringify(await safeText(data)) +
+          ' ' +
+          JSON.stringify(body)
+      );
     }
   } catch (err) {
     const mappedErrors = options.mapValidationErrors(
@@ -170,6 +201,14 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
     options.setErrorResponse(mappedErrors);
     options.setShowErrorList(true);
     logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
+    teamLogger.warn(
+      'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+        err +
+        ' ' +
+        JSON.stringify(await safeText(data)) +
+        ' ' +
+        JSON.stringify(body)
+    );
   }
 }
 
@@ -192,7 +231,7 @@ function handle401Response(analyticsComponent: string, onUnauthorized: () => voi
   onUnauthorized();
 }
 
-async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
   try {
     const resultat = (await data.json()) as unknown;
     logEvent('skjema innsending feilet', {
@@ -207,10 +246,26 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+        teamLogger.warn(
+          'Feil ved innsending av skjema - 400 - BadRequest ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(feil) +
+            ' ' +
+            JSON.stringify(body)
+        );
       }
     }
   } catch (err) {
-    logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
+    logger.warn('Feil ved innsending av skjema - uventet respons ' + err + ' ' + JSON.stringify(await safeText(data)));
+    teamLogger.warn(
+      'Feil ved innsending av skjema - uventet respons ' +
+        err +
+        ' ' +
+        JSON.stringify(await safeText(data)) +
+        ' ' +
+        JSON.stringify(body)
+    );
   }
 }
 
