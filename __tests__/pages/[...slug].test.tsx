@@ -206,6 +206,7 @@ function createServerSideContext(overrides: any = {}) {
     },
     res: {
       setHeader: vi.fn(),
+      appendHeader: vi.fn(),
       ...res
     },
     ...rest
