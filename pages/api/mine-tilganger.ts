@@ -15,6 +15,23 @@ export const config = {
   }
 };
 
+let teamLoggerGuardRegistrert = false;
+function registrerTeamLoggerGuard() {
+  if (teamLoggerGuardRegistrert) {
+    return;
+  }
+  teamLoggerGuardRegistrert = true;
+  process.on('uncaughtException', (err) => {
+    if (err instanceof Error && err.message.includes('the worker has exited')) {
+      logger.warn('teamLogger-worker avsluttet, ignorerer for å unngå nedetid');
+      return;
+    }
+    throw err;
+  });
+}
+
+registrerTeamLoggerGuard();
+
 type OrgNode = {
   orgnr: string;
   navn: string;
@@ -103,11 +120,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
 
+  const antallOrganisasjoner = tellOrganisasjoner(accessData.hierarki);
+  const altinn3Tilganger = samleAltinn3Tilganger(accessData.hierarki);
+  const antallTilganger = altinn3Tilganger.filter((t) => t.altinn3Tilganger.length > 0).length;
+  logger.info({ antallOrganisasjoner, antallTilganger }, 'Mine-tilganger hentet');
   try {
     teamLogger.info(
       {
-        antallOrganisasjoner: tellOrganisasjoner(accessData.hierarki),
-        altinn3Tilganger: samleAltinn3Tilganger(accessData.hierarki)
+        antallOrganisasjoner,
+        altinn3Tilganger
       },
       'Forespørsel om mine-tilganger'
     );
