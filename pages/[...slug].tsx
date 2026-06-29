@@ -761,10 +761,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 
   if (!isDevelopment) {
     const existingSessionId = context.req.cookies['unleash-session-id'];
-    const sessionId = existingSessionId || `${Math.floor(Math.random() * 1_000_000_000)}`;
-    if (!existingSessionId) {
-      context.res.appendHeader('set-cookie', `unleash-session-id=${sessionId}; path=/; HttpOnly; Secure; SameSite=Lax`);
-    }
+    const isValidSessionId = typeof existingSessionId === 'string' && /^[0-9a-f-]{36}$/i.test(existingSessionId);
+    const sessionId = isValidSessionId ? existingSessionId : crypto.randomUUID();
+
+    context.res.appendHeader('set-cookie', `unleash-session-id=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax`);
     const definitions = await getDefinitions();
     const unleashContext = { sessionId };
     const { toggles } = evaluateFlags(definitions, unleashContext);
