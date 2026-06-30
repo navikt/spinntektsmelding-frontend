@@ -253,7 +253,8 @@ export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementC
     val.inntekt?.beloep &&
     val.refusjon?.beloepPerMaaned &&
     val.inntekt?.beloep < val.refusjon?.beloepPerMaaned &&
-    val.inntekt?.beloep !== 0
+    val.inntekt?.beloep !== 0 &&
+    val.opplysningstyper?.includes('inntekt')
   ) {
     ctx.issues.push({
       code: 'custom',
