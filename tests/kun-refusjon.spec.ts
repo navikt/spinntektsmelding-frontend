@@ -140,10 +140,6 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Dato for endring', '01.06.25');
     await fillKortAgpIfVisible(page);
 
-    // await formPage.clickButton('Send');
-    // await formPage.assertNotVisibleText('Refusjonsbeløpet kan ikke være høyere enn inntekten.');
-    // submit
-
     // await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '51333');
     await formPage.fillInput('Endret beløp/måned', '50000');
     await setIngenArbeidsgiverperiodeIfVisible(page);
