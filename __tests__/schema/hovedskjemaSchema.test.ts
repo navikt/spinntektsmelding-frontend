@@ -404,7 +404,8 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: ['inntekt', 'refusjon']
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);

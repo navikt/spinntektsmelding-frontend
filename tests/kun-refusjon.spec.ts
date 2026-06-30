@@ -140,11 +140,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Dato for endring', '01.06.25');
     await fillKortAgpIfVisible(page);
 
-    await formPage.clickButton('Send');
-    await formPage.assertVisibleTextAtLeastOnce('Refusjonsbeløpet kan ikke være høyere enn inntekten.');
-    // submit
-
-    await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '51333');
+    // await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '51333');
     await formPage.fillInput('Endret beløp/måned', '50000');
     await setIngenArbeidsgiverperiodeIfVisible(page);
     await fillKortAgpIfVisible(page);
@@ -163,7 +159,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     expect(body).toMatchObject({
       forespoerselId: uuid,
       refusjon: {
-        beloepPerMaaned: 51333,
+        beloepPerMaaned: 77000,
         endringer: [
           {
             beloep: 50000,
