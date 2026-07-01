@@ -35,7 +35,7 @@ jobs:
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
 
       - name: Cache pnpm files
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ~/.pnpm-store
@@ -47,7 +47,7 @@ jobs:
       - run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Cache Next.js build cache
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('pnpm-lock.yaml', 'next.config.js', 'tsconfig.json') }}
