@@ -428,7 +428,7 @@ const InitieringAnnet: NextPage = () => {
                       onChange={handleSykepengePeriodeIdRadio}
                     >
                       {sykepengePerioder.map((periode) => (
-                        <Checkbox key={periode.id} value={periode.id} disabled={!!periode.forespoerselId}>
+                        <Checkbox key={periode.id} value={periode.id}>
                           {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                           {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
                           {!!periode.forespoerselId && ' (Inntektsmelding er allerede forespurt)'}
@@ -511,7 +511,7 @@ const InitieringAnnet: NextPage = () => {
               hver av periodene.
             </Alert>
           )}
-          Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
+          Inntektsmeldinger som allerede er forespurt, kan også finnes i{' '}
           <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
           <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
         </div>
