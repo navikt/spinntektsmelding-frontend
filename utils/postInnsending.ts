@@ -243,8 +243,11 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
       if (feilResultat.success === true) {
         const feil = feilResultat.data;
         let mappedErrors = [];
-        if (feil.error) {
-          mappedErrors = options.mapValidationErrors({ error: feil.error, valideringsfeil: [feil.error] }, []);
+        if (feil.error && feil.error.length > 0) {
+          mappedErrors = options.mapValidationErrors(
+            { error: feil.error, valideringsfeil: feil.valideringsfeil ?? [feil.error] },
+            []
+          );
         } else {
           mappedErrors = options.mapValidationErrors(feil, []);
         }

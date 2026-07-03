@@ -316,7 +316,7 @@ describe('postInnsending', () => {
       global.fetch = vi.fn().mockResolvedValue(
         buildResponse(422, {
           error: 'Backend feilet',
-          valideringsfeil: ['ignoreres til fordel for error']
+          valideringsfeil: ['Felt er ugyldig']
         })
       );
 
@@ -332,11 +332,10 @@ describe('postInnsending', () => {
       });
 
       expect(mapValidationErrors).toHaveBeenCalledWith(
-        { error: 'Backend feilet', valideringsfeil: ['Backend feilet'] },
+        { error: 'Backend feilet', valideringsfeil: ['Felt er ugyldig'] },
         []
       );
-      expect(setErrorResponse).toHaveBeenCalledTimes(1);
-      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Backend feilet');
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Felt er ugyldig');
       expect(setShowErrorList).toHaveBeenCalledWith(true);
       expect(warnSpy).toHaveBeenCalled();
     });
@@ -370,7 +369,7 @@ describe('postInnsending', () => {
       expect(setShowErrorList).toHaveBeenCalledWith(true);
     });
 
-    it('setter ingen feil når respons har error-felt men bryter schema', async () => {
+    it('bruker error som valideringsfeil når valideringsfeil mangler', async () => {
       global.fetch = vi.fn().mockResolvedValue(
         buildResponse(422, {
           error: 'Mangler valideringsfeil'
@@ -388,9 +387,12 @@ describe('postInnsending', () => {
         setShowErrorList
       });
 
-      expect(mapValidationErrors).not.toHaveBeenCalled();
-      expect(setErrorResponse).not.toHaveBeenCalled();
-      expect(setShowErrorList).not.toHaveBeenCalled();
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: 'Mangler valideringsfeil', valideringsfeil: ['Mangler valideringsfeil'] },
+        []
+      );
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Mangler valideringsfeil');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
     });
 
     it('setter ingen feil når respons mangler error-felt', async () => {
