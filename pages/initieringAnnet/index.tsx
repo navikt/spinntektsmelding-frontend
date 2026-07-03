@@ -48,7 +48,7 @@ import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import { differenceInDays } from 'date-fns/differenceInDays';
 import { isValid } from 'date-fns/isValid';
 
-type SykepengePeriode = {
+export type SykepengePeriode = {
   id: string;
   fom: Date;
   tom: Date;
@@ -61,7 +61,7 @@ type SykepengePeriode = {
   }[];
 };
 
-function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
+export function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
   return perioder.reduce((acc, current) => {
     if (acc.length === 0) {
       acc.push(current);
@@ -520,7 +520,7 @@ const InitieringAnnet: NextPage = () => {
   );
 };
 
-function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
+export function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
   if (antallEgenmeldingsdager === 0) {
     return null;
   }

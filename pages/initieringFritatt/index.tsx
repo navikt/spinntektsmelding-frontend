@@ -1,7 +1,7 @@
-import { Button } from '@navikt/ds-react';
+import { Alert, Button, Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -12,7 +12,7 @@ import lokalStyling from '../initieringAnnet/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -29,6 +29,14 @@ import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import getEgenmeldingsperioderFromSykmelding from '../../utils/getEgenmeldingsperioderFromSykmelding';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
+import { isValid, subYears } from 'date-fns';
+import formatIsoDate from '../../utils/formatIsoDate';
+import { addForlengelseAvInfo, formaterEgenmeldingsdager, SykepengePeriode } from '../initieringAnnet';
+import { differenceInDays } from 'date-fns/differenceInDays';
+import { logger } from '@navikt/next-logger';
+import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
+import formatDate from '../../utils/formatDate';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -83,7 +91,8 @@ const InitieringFritatt: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
-
+    console.log('mottatteData', mottatteData);
+    console.log('formData', formData);
     if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, []);
     }
@@ -116,12 +125,88 @@ const InitieringFritatt: NextPage = () => {
     router.push('/unntattAaRegisteret');
   };
 
+  const handleSykepengePeriodeIdRadio = (val: string[]) => {
+    methods.setValue('sykepengePeriodeId', val);
+  };
+
   const getFravaersperioder = (sykmeldingsperiode: any) => {
     return sykmeldingsperiode.map((periode: any) => ({
       fom: periode.fom,
       tom: periode.tom
     }));
   };
+
+  const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+
+  const organisasjonsnummer = orgnr;
+
+  const fomDato = formatIsoDate(subYears(new Date(), 1));
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spIsLoading
+  } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+
+  const harArbeidsforhold = spData && spData.length > 0;
+
+  const sykepengePerioder: SykepengePeriode[] = useMemo(() => {
+    if (!spData) return [];
+
+    const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
+
+    if (!mottatteSykepengesoknader.success) {
+      logger.error('Feil ved validering av sykepengesøknader: %j', mottatteSykepengesoknader.error.issues);
+      return [];
+    }
+
+    let perioder =
+      mottatteSykepengesoknader.data.length > 0
+        ? mottatteSykepengesoknader.data.map((periode) => {
+            const sorterteEgenmeldingsdager =
+              Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
+                ? [...periode.egenmeldingsdagerFraSykmelding].sort(
+                    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+                  )
+                : [];
+
+            const egenmeldingsperiode =
+              sorterteEgenmeldingsdager.length === 0
+                ? []
+                : sorterteEgenmeldingsdager
+                    .reduce(
+                      (accumulator: any, currentValue: any) => {
+                        const tom = new Date(currentValue);
+                        const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+
+                        if (differenceInDays(tom, currentTom) <= 1) {
+                          accumulator[accumulator.length - 1].tom = new Date(currentValue);
+                        } else {
+                          accumulator.push({ fom: new Date(currentValue), tom: new Date(currentValue) });
+                        }
+                        return accumulator;
+                      },
+                      [
+                        {
+                          fom: new Date(sorterteEgenmeldingsdager[0]),
+                          tom: new Date(sorterteEgenmeldingsdager[0])
+                        }
+                      ]
+                    )
+                    .filter((element: any) => isValid(element.fom) && isValid(element.tom));
+
+            return {
+              fom: new Date(periode.fom),
+              tom: new Date(periode.tom),
+              id: periode.sykepengesoknadUuid,
+              antallEgenmeldingsdager: periode.egenmeldingsdagerFraSykmelding.length,
+              forespoerselId: periode.forespoerselId,
+              egenmeldingsperiode: egenmeldingsperiode
+            };
+          })
+        : [];
+
+    return addForlengelseAvInfo(perioder);
+  }, [spData]);
 
   return (
     <div className={styles.container}>
@@ -160,7 +245,35 @@ const InitieringFritatt: NextPage = () => {
                   />
                 </div>
               )}
-
+              {harArbeidsforhold && (
+                <>
+                  <Alert variant='warning' className={lokalStyling.alert}>
+                    Det er registert sykmeldingsperioder på denne ansatte. Velg perioden du ønsker å sende
+                    inntektsmelding for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger
+                    du &quot;Send inntektsmelding uten kobling til periode&quot;
+                  </Alert>
+                  {orgnr && (
+                    <CheckboxGroup
+                      legend='Velg sykmeldingsperiode'
+                      id='sykepengePeriodeId'
+                      error={errors.sykepengePeriodeId?.message as string}
+                      onChange={handleSykepengePeriodeIdRadio}
+                    >
+                      {sykepengePerioder.map((periode) => (
+                        <Checkbox key={periode.id} value={periode.id}>
+                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                          {!!periode.forespoerselId && <strong> (Inntektsmelding er allerede forespurt)</strong>}
+                          {periode.forlengelseAv && <strong> (forlengelse)</strong>}
+                        </Checkbox>
+                      ))}
+                      <Checkbox key='utenKobling' value='utenKobling'>
+                        Send inntektsmelding uten kobling til periode
+                      </Checkbox>
+                    </CheckboxGroup>
+                  )}
+                </>
+              )}
               <div className={lokalStyling.knapperad}>
                 <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
                   Tilbake
