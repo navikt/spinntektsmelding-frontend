@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, CheckboxGroup } from '@navikt/ds-react';
+import { Alert, Button, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
@@ -248,13 +248,26 @@ const InitieringFritatt: NextPage = () => {
               {harArbeidsforhold && (
                 <>
                   <Alert variant='warning' className={lokalStyling.alert}>
-                    Det er registert sykmeldingsperioder på denne ansatte. Velg perioden du ønsker å sende
-                    inntektsmelding for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger
-                    du &quot;Send inntektsmelding uten kobling til periode&quot;
+                    Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding for.
+                    Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
+                    inntektsmelding for annen periode&quot;.
                   </Alert>
+                  <RadioGroup
+                    legend='Nav har bedt om inntektsmelding for disse periodene:'
+                    id='sykepengePeriodeId'
+                    error={errors.sykepengePeriodeId?.message as string}
+                  >
+                    <Radio
+                      value='utenKobling'
+                      id='utenKobling'
+                      onChange={() => handleSykepengePeriodeIdRadio(['utenKobling'])}
+                    >
+                      11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)
+                    </Radio>
+                  </RadioGroup>
                   {orgnr && (
                     <CheckboxGroup
-                      legend='Velg sykmeldingsperiode'
+                      legend='Eller velg periode:'
                       id='sykepengePeriodeId'
                       error={errors.sykepengePeriodeId?.message as string}
                       onChange={handleSykepengePeriodeIdRadio}
@@ -263,12 +276,11 @@ const InitieringFritatt: NextPage = () => {
                         <Checkbox key={periode.id} value={periode.id}>
                           {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                           {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                          {!!periode.forespoerselId && <strong> (Inntektsmelding er allerede forespurt)</strong>}
-                          {periode.forlengelseAv && <strong> (forlengelse)</strong>}
+                          {periode.forlengelseAv && ' (forlengelse)'}
                         </Checkbox>
                       ))}
                       <Checkbox key='utenKobling' value='utenKobling'>
-                        Send inntektsmelding uten kobling til periode
+                        Send inntektsmelding for annen periode
                       </Checkbox>
                     </CheckboxGroup>
                   )}
