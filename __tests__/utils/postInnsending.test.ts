@@ -121,6 +121,37 @@ describe('postInnsending', () => {
     expect(warnSpy).toHaveBeenCalled();
   });
 
+  it('viser alle valideringsfeil ved 400 med valideringsfeil-array', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        type: 'Validering',
+        kontekstId: 'd7922581-c742-4691-aa40-77f4498b944a',
+        valideringsfeil: ['livet er for kjipt', 'det regner hele året'],
+        error: 'Feil under validering.',
+        errorId: 'd7922581'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Feil under validering.', valideringsfeil: ['livet er for kjipt', 'det regner hele året'] },
+      []
+    );
+    const errs = setErrorResponse.mock.calls[0][0];
+    expect(errs.map((e: ErrorResponse) => e.error)).toEqual(['livet er for kjipt', 'det regner hele året']);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
   it('setter generisk feil ved 400 når error har feil type', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(400, {

@@ -7,10 +7,6 @@ import { teamLogger } from '@navikt/next-logger/team-log';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
-const badRequestResponse = z.object({
-  error: z.string()
-});
-
 interface PostInnsendingOptions<B, S> {
   /** Absolutt eller relativ URL til innsending-endepunkt */
   url: string;
@@ -136,10 +132,14 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       component: options.analyticsComponent
     });
     if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
-      const feilResultat = badRequestResponse.safeParse(resultat);
+      const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
       if (feilResultat.success === true) {
         const feil = feilResultat.data;
-        const mappedErrors = options.mapValidationErrors({ error: feil.error, valideringsfeil: [feil.error] }, []);
+        const harValideringsfeil = Array.isArray(feil.valideringsfeil) && feil.valideringsfeil.length > 0;
+        const mappedErrors = options.mapValidationErrors(
+          { error: feil.error, valideringsfeil: harValideringsfeil ? feil.valideringsfeil! : [feil.error] },
+          []
+        );
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
