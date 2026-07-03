@@ -340,6 +340,33 @@ describe('postInnsending', () => {
       expect(warnSpy).toHaveBeenCalled();
     });
 
+    it('bruker error som valideringsfeil når valideringsfeil er tom array', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          error: 'Backend feilet',
+          valideringsfeil: []
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: 'Backend feilet', valideringsfeil: ['Backend feilet'] },
+        []
+      );
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Backend feilet');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+    });
+
     it('mapper valideringsfeil direkte når error-felt er tomt', async () => {
       global.fetch = vi.fn().mockResolvedValue(
         buildResponse(422, {

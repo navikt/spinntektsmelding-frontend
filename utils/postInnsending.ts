@@ -242,15 +242,14 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
       const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
       if (feilResultat.success === true) {
         const feil = feilResultat.data;
-        let mappedErrors = [];
-        if (feil.error && feil.error.length > 0) {
-          mappedErrors = options.mapValidationErrors(
-            { error: feil.error, valideringsfeil: feil.valideringsfeil ?? [feil.error] },
-            []
-          );
-        } else {
-          mappedErrors = options.mapValidationErrors(feil, []);
-        }
+        const harValideringsfeil = Array.isArray(feil.valideringsfeil) && feil.valideringsfeil.length > 0;
+        const mappedErrors =
+          feil.error && feil.error.length > 0
+            ? options.mapValidationErrors(
+                { error: feil.error, valideringsfeil: harValideringsfeil ? feil.valideringsfeil! : [feil.error] },
+                []
+              )
+            : options.mapValidationErrors(feil, []);
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn(
