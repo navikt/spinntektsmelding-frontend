@@ -135,11 +135,17 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
       if (feilResultat.success === true) {
         const feil = feilResultat.data;
-        const harValideringsfeil = Array.isArray(feil.valideringsfeil) && feil.valideringsfeil.length > 0;
-        const mappedErrors = options.mapValidationErrors(
-          { error: feil.error, valideringsfeil: harValideringsfeil ? feil.valideringsfeil! : [feil.error] },
-          []
-        );
+        const mappedErrors =
+          feil.error && feil.error.length > 0
+            ? options.mapValidationErrors(
+                {
+                  error: feil.error,
+                  valideringsfeil:
+                    feil.valideringsfeil && feil.valideringsfeil.length > 0 ? feil.valideringsfeil : [feil.error]
+                },
+                []
+              )
+            : options.mapValidationErrors(feil, []);
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));

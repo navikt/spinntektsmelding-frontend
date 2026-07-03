@@ -152,6 +152,34 @@ describe('postInnsending', () => {
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
+  it('bruker ikke tom error som valideringsfeil ved 400 med tom error', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: '',
+        valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler']
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: '', valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler'] },
+      []
+    );
+    const errs = setErrorResponse.mock.calls[0][0];
+    expect(errs.map((e: ErrorResponse) => e.error)).toEqual(['Felt 1 er ugyldig', 'Felt 2 mangler']);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
   it('setter generisk feil ved 400 når error har feil type', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(400, {
