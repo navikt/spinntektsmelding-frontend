@@ -526,8 +526,8 @@ export function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
   }
 
   return antallEgenmeldingsdager === 1
-    ? '(pluss 1 egenmeldingsdag)'
-    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
+    ? '(pluss 1 egenmeldingsdag fra sykmelding)'
+    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager fra sykmelding)`;
 }
 
 function OrganisasjonInfo({

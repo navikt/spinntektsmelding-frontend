@@ -1,7 +1,7 @@
 import { Alert, Button, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -55,7 +55,16 @@ const InitieringFritatt: NextPage = () => {
   let blokkerInnsending = false;
 
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
-    sykepengePeriodeId: z.array(z.uuid()).optional()
+    sykepengePeriodeId: z.array(z.uuid()).optional(),
+    forespurtSykepengePeriodeId: z.string().optional()
+  }).superRefine((data, ctx) => {
+    if (data.sykepengePeriodeId && data.forespurtSykepengePeriodeId) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Du må velge enten foresporte eller andre perioder, ikke begge deler',
+        path: ['forespurtSykepengePeriodeId']
+      });
+    }
   });
 
   type Skjema = z.infer<typeof skjemaSchema>;
@@ -90,6 +99,7 @@ const InitieringFritatt: NextPage = () => {
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    console.log('formData', formData);
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
     console.log('mottatteData', mottatteData);
     console.log('formData', formData);
@@ -123,10 +133,6 @@ const InitieringFritatt: NextPage = () => {
     tilbakestillArbeidsgiverperiode();
     setSelvbestemtType('UtenArbeidsforhold');
     router.push('/unntattAaRegisteret');
-  };
-
-  const handleSykepengePeriodeIdRadio = (val: string[]) => {
-    methods.setValue('sykepengePeriodeId', val);
   };
 
   const getFravaersperioder = (sykmeldingsperiode: any) => {
@@ -207,6 +213,8 @@ const InitieringFritatt: NextPage = () => {
 
     return addForlengelseAvInfo(perioder);
   }, [spData]);
+  const forespurtePerioder = [...sykepengePerioder].filter((periode) => !!periode.forespoerselId);
+  const ikkeForespurtePerioder = [...sykepengePerioder].filter((periode) => !periode.forespoerselId);
 
   return (
     <div className={styles.container}>
@@ -252,37 +260,58 @@ const InitieringFritatt: NextPage = () => {
                     Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
                     inntektsmelding for annen periode&quot;.
                   </Alert>
-                  <RadioGroup
-                    legend='Nav har bedt om inntektsmelding for disse periodene:'
-                    id='sykepengePeriodeId'
-                    error={errors.sykepengePeriodeId?.message as string}
-                  >
-                    <Radio
-                      value='utenKobling'
-                      id='utenKobling'
-                      onChange={() => handleSykepengePeriodeIdRadio(['utenKobling'])}
-                    >
-                      11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)
-                    </Radio>
-                  </RadioGroup>
+                  {forespurtePerioder.length > 0 && (
+                    <Controller
+                      name='forespurtSykepengePeriodeId'
+                      control={methods.control}
+                      render={({ field }) => (
+                        <RadioGroup
+                          legend='Nav har bedt om inntektsmelding for disse periodene:'
+                          id='forespurtSykepengePeriodeId'
+                          error={errors.forespurtSykepengePeriodeId?.message as string}
+                          value={field.value ?? ''}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          ref={field.ref}
+                        >
+                          {forespurtePerioder.map((periode) => (
+                            <Radio key={periode.id} value={periode.id}>
+                              {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                              {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                              {periode.forlengelseAv && ' (forlengelse)'}
+                            </Radio>
+                          ))}
+                        </RadioGroup>
+                      )}
+                    />
+                  )}
                   {orgnr && (
-                    <CheckboxGroup
-                      legend='Eller velg periode:'
-                      id='sykepengePeriodeId'
-                      error={errors.sykepengePeriodeId?.message as string}
-                      onChange={handleSykepengePeriodeIdRadio}
-                    >
-                      {sykepengePerioder.map((periode) => (
-                        <Checkbox key={periode.id} value={periode.id}>
-                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                          {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                          {periode.forlengelseAv && ' (forlengelse)'}
-                        </Checkbox>
-                      ))}
-                      <Checkbox key='utenKobling' value='utenKobling'>
-                        Send inntektsmelding for annen periode
-                      </Checkbox>
-                    </CheckboxGroup>
+                    <Controller
+                      name='sykepengePeriodeId'
+                      control={methods.control}
+                      render={({ field }) => (
+                        <CheckboxGroup
+                          legend='Eller velg periode:'
+                          id='sykepengePeriodeId'
+                          error={errors.sykepengePeriodeId?.message as string}
+                          value={field.value ?? []}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          ref={field.ref}
+                        >
+                          {ikkeForespurtePerioder.map((periode) => (
+                            <Checkbox key={periode.id} value={periode.id}>
+                              {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                              {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                              {periode.forlengelseAv && ' (forlengelse)'}
+                            </Checkbox>
+                          ))}
+                          <Checkbox key='utenKobling' value='utenKobling'>
+                            Send inntektsmelding for annen periode
+                          </Checkbox>
+                        </CheckboxGroup>
+                      )}
+                    />
                   )}
                 </>
               )}
