@@ -8,6 +8,7 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
 import { requireEnv } from '../../utils/api/validateEnv';
 
 const requestBodySchema = z.object({
@@ -29,7 +30,60 @@ export const config = {
   }
 };
 
+let teamLoggerGuardRegistrert = false;
+function registrerTeamLoggerGuard() {
+  if (teamLoggerGuardRegistrert) {
+    return;
+  }
+  teamLoggerGuardRegistrert = true;
+  process.on('uncaughtException', (err) => {
+    if (err instanceof Error && err.message.includes('the worker has exited')) {
+      logger.warn('teamLogger-worker avsluttet, ignorerer for å unngå nedetid');
+      return;
+    }
+    throw err;
+  });
+}
+
+registrerTeamLoggerGuard();
+
 type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+
+function loggBehandlingsdagerTilTeam(
+  orgnr: string,
+  fnr: string,
+  antallSoeknader: number,
+  perioder: Sykepengesoeknader
+) {
+  const dagerPerPeriode = perioder.map((periode) => periode.behandlingsdager?.length ?? 0);
+
+  logger.info(
+    `Hentet aktive behandlingsdager for orgnr: ${orgnr}, antall: ${perioder.length}, fra: ${antallSoeknader}, dager per periode: ${dagerPerPeriode.join(
+      ', '
+    )}`
+  );
+
+  try {
+    teamLogger.info(
+      {
+        orgnr,
+        fnr,
+        antallPerioder: perioder.length,
+        antallSoeknader,
+        perioder: perioder.map((periode) => ({
+          sykmeldingId: periode.sykmeldingId,
+          fom: periode.fom,
+          tom: periode.tom,
+          antallBehandlingsdager: periode.behandlingsdager?.length ?? 0,
+          behandlingsdager: periode.behandlingsdager ?? []
+        }))
+      },
+      'Hentet aktive behandlingsdager'
+    );
+  } catch (e) {
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
+  }
+}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   try {
@@ -153,9 +207,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       });
     });
 
-    logger.info(
-      `Hentet aktive behandlingsdager for orgnr: ${orgnr}, antall: ${sykmeldingPerioder.length}, fra: ${aktiveSoeknader.length}`
-    );
+    loggBehandlingsdagerTilTeam(orgnr, requestBody.fnr, aktiveSoeknader.length, sykmeldingPerioder);
 
     return res.status(soeknadResponse.status).json(sykmeldingPerioder);
   } catch (error) {

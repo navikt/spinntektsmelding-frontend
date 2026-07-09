@@ -336,16 +336,17 @@ const InitieringBehandlingsdager: NextPage = () => {
                           </Radio>
                         ))}
                       </RadioGroup>
-                      {sykepengePerioder.length > 0 && sykepengePerioder.every((periode) => periode.antallBehandlingsdager <= 12) && (
-                        <Alert variant='warning'>
-                          Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
-                          kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
-                          inntektsmelding for behandlingsdager.
-                        </Alert>
-                      )}
+                      {sykepengePerioder.length > 0 &&
+                        sykepengePerioder.every((periode) => periode.antallBehandlingsdager <= 12) && (
+                          <Alert variant='warning'>
+                            Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
+                            kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                            inntektsmelding for behandlingsdager.
+                          </Alert>
+                        )}
                     </>
                   )}
-                  
+
                   {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
                     <Alert variant='error'>
                       Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
