@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
+import { Alert, Button, Checkbox, CheckboxGroup, Link, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch, Controller } from 'react-hook-form';
@@ -12,7 +12,7 @@ import lokalStyling from '../initieringAnnet/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -35,8 +35,14 @@ import formatIsoDate from '../../utils/formatIsoDate';
 import { addForlengelseAvInfo, formaterEgenmeldingsdager, SykepengePeriode } from '../initieringAnnet';
 import { differenceInDays } from 'date-fns/differenceInDays';
 import { logger } from '@navikt/next-logger';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
+import {
+  EndepunktSykepengesoeknaderSchema,
+  type EndepunktSykepengesoeknad
+} from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
+import ButtonTilbakestill from '../../components/ButtonTilbakestill';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import environment from '../../config/environment';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -46,6 +52,9 @@ const InitieringFritatt: NextPage = () => {
   const initEgenmeldingsperiode = useBoundStore((state) => state.initEgenmeldingsperiode);
   const tilbakestillArbeidsgiverperiode = useBoundStore((state) => state.tilbakestillArbeidsgiverperiode);
   const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
+  const setVedtaksperiodeId = useBoundStore((state) => state.setVedtaksperiodeId);
+  const setHarGradertSykmelding = useBoundStore((state) => state.setHarGradertSykmelding);
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -55,7 +64,7 @@ const InitieringFritatt: NextPage = () => {
   let blokkerInnsending = false;
 
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
-    sykepengePeriodeId: z.array(z.uuid()).optional(),
+    sykepengePeriodeId: z.array(z.uuid().or(z.literal('utenKobling'))).optional(),
     forespurtSykepengePeriodeId: z.string().optional()
   }).superRefine((data, ctx) => {
     if (data.sykepengePeriodeId && data.forespurtSykepengePeriodeId) {
@@ -77,6 +86,7 @@ const InitieringFritatt: NextPage = () => {
     register,
     setError,
     handleSubmit,
+    reset,
     formState: { errors }
   } = methods;
 
@@ -101,14 +111,68 @@ const InitieringFritatt: NextPage = () => {
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     console.log('formData', formData);
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
-    console.log('mottatteData', mottatteData);
+    console.log('mottatteData', spData);
     console.log('formData', formData);
     if (mottatteData?.success) {
-      handleValidData(formData, mottatteData.data, []);
+      handleValidData(formData, mottatteData.data, spData);
     }
   };
 
   const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
+    if (
+      formData.sykepengePeriodeId &&
+      formData.sykepengePeriodeId.length > 0 &&
+      formData.sykepengePeriodeId[0] !== 'utenKobling'
+    ) {
+      // arbeidsgiverInitiertInnsending
+      const skjemaData = {
+        organisasjonsnummer: formData.organisasjonsnummer,
+        fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
+        personnummer: sykmeldt.fnr
+      };
+
+      const validationResult = InitieringSchema.safeParse(skjemaData);
+      // const sykmeldingsperiode = getSykmeldingsperiode(formData, mottatteSykepengesoeknader);
+      const sykmeldingsperiode = formData.sykepengePeriodeId.map((id) =>
+        mottatteSykepengesoeknader.find((periode: any) => periode.sykepengesoknadUuid === id)
+      );
+      // const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
+      debugger;
+      if (sykmeldingsperiode.length === 0) {
+        setError('sykepengePeriodeId', {
+          message: 'Ingen sykmeldingsperioder valgt',
+          type: 'manual'
+        });
+      } else {
+        const orgNavn = arbeidsforhold.find(
+          (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === skjemaData.organisasjonsnummer
+        )?.virksomhetsnavn!;
+        initPerson(skjemaData.fulltNavn, skjemaData.personnummer!, skjemaData.organisasjonsnummer, orgNavn);
+        setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
+        initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
+        initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
+        tilbakestillArbeidsgiverperiode();
+        setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
+        setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
+        const harGradert = sykmeldingsperiode.some((periode: EndepunktSykepengesoeknad) =>
+          periode?.soknadsperioder?.some((sp) => sp.grad < 100 || (sp.faktiskGrad != null && sp.faktiskGrad > 0))
+        );
+        setHarGradertSykmelding(harGradert);
+        router.push('/arbeidsgiverInitiertInnsending');
+        return;
+      }
+
+      if (validationResult.success) {
+        setIsLoading(true);
+        handleValidFormData(validationResult.data, sykmeldingsperiode);
+      }
+      return;
+    }
+
+    if (formData.forespurtSykepengePeriodeId) {
+      router.push(`/${formData.forespurtSykepengePeriodeId}`);
+      return;
+    }
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
@@ -143,19 +207,16 @@ const InitieringFritatt: NextPage = () => {
   };
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
 
   const organisasjonsnummer = orgnr;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const {
-    data: spData,
-    error: spError,
-    isLoading: spIsLoading
-  } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+  const { data: spData } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
 
   const harArbeidsforhold = spData && spData.length > 0;
 
-  const sykepengePerioder: SykepengePeriode[] = useMemo(() => {
+  const sykepengePerioder: SykepengePeriode[] = ((): SykepengePeriode[] => {
     if (!spData) return [];
 
     const mottatteSykepengesoknader = EndepunktSykepengesoeknaderSchema.safeParse(spData);
@@ -165,12 +226,22 @@ const InitieringFritatt: NextPage = () => {
       return [];
     }
 
-    let perioder =
+    useEffect(() => {
+      const forlengelser = sykepengePerioder
+        ?.filter((periode) => periode.forlengelseAv)
+        .filter((periode) => sykepengePeriodeId?.includes(periode.id));
+
+      if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
+        resetField('endreRefusjon');
+      }
+    }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
+
+    const perioder =
       mottatteSykepengesoknader.data.length > 0
         ? mottatteSykepengesoknader.data.map((periode) => {
             const sorterteEgenmeldingsdager =
               Array.isArray(periode.egenmeldingsdagerFraSykmelding) && periode.egenmeldingsdagerFraSykmelding.length > 0
-                ? [...periode.egenmeldingsdagerFraSykmelding].sort(
+                ? periode.egenmeldingsdagerFraSykmelding.toSorted(
                     (a, b) => new Date(a).getTime() - new Date(b).getTime()
                   )
                 : [];
@@ -181,15 +252,13 @@ const InitieringFritatt: NextPage = () => {
                 : sorterteEgenmeldingsdager
                     .reduce(
                       (accumulator: any, currentValue: any) => {
-                        const tom = new Date(currentValue);
-                        const currentTom = new Date(accumulator[accumulator.length - 1].tom);
+                        const currentDate = new Date(currentValue);
+                        const last = accumulator[accumulator.length - 1];
 
-                        if (differenceInDays(tom, currentTom) <= 1) {
-                          accumulator[accumulator.length - 1].tom = new Date(currentValue);
-                        } else {
-                          accumulator.push({ fom: new Date(currentValue), tom: new Date(currentValue) });
+                        if (differenceInDays(currentDate, new Date(last.tom)) <= 1) {
+                          return [...accumulator.slice(0, -1), { ...last, tom: currentDate }];
                         }
-                        return accumulator;
+                        return [...accumulator, { fom: currentDate, tom: currentDate }];
                       },
                       [
                         {
@@ -212,7 +281,7 @@ const InitieringFritatt: NextPage = () => {
         : [];
 
     return addForlengelseAvInfo(perioder);
-  }, [spData]);
+  })();
   const forespurtePerioder = [...sykepengePerioder].filter((periode) => !!periode.forespoerselId);
   const ikkeForespurtePerioder = [...sykepengePerioder].filter((periode) => !periode.forespoerselId);
 
@@ -327,9 +396,19 @@ const InitieringFritatt: NextPage = () => {
                 >
                   Neste
                 </Button>
+                <ButtonTilbakestill onClick={() => reset()} />
               </div>
             </form>
           </FormProvider>
+          {antallDagerMellomSykmeldingsperioder > 16 && (
+            <Alert variant='error' className={lokalStyling.alertPadding}>
+              <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
+              Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
+              hver av periodene.
+            </Alert>
+          )}
+          Inntektsmeldinger som allerede er forespurt, kan også finnes i{' '}
+          <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
           <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
         </div>
       </PageContent>
