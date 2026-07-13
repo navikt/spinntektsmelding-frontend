@@ -36,9 +36,7 @@ export function deriveBegrunnelseKeys({
 
   const alreadyChosen = new Set((valgteBegrunnelser ?? []).map((b) => b.aarsak));
 
-  const baseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter(
-    (key) => !alreadyChosen.has(key) && (nyInnsending ? key !== 'Tariffendring' : true)
-  );
+  const baseKeys = Object.keys(begrunnelseEndringBruttoinntekt).filter((key) => !alreadyChosen.has(key));
 
   return Array.from(
     new Set([...baseKeys, ...(currentBegrunnelse && currentBegrunnelse !== '' ? [currentBegrunnelse] : [])])
