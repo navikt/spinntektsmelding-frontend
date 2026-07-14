@@ -9,9 +9,9 @@ function sort(arr: string[]) {
 }
 
 describe('deriveBegrunnelseKeys', () => {
-  it('returnerer alle nøkler minus Tariffendring ved ny innsending når ingen er valgt', () => {
+  it('returnerer alle nøkler ved ny innsending når ingen er valgt', () => {
     const result = deriveBegrunnelseKeys({ nyInnsending: true });
-    expect(sort(result)).toEqual(sort(ALL.filter((k) => k !== 'Tariffendring')));
+    expect(sort(result)).toEqual(sort(ALL));
   });
 
   it('inkluderer Tariffendring når ikke ny innsending', () => {
