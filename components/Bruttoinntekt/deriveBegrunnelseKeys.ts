@@ -14,14 +14,13 @@ interface DeriveBegrunnelseKeysParams {
   valgteBegrunnelser?: EndringAarsakLike[] | null;
   /** Nåværende (lokalt) valgt begrunnelse-verdi i dette select-feltet */
   currentBegrunnelse?: string | null;
-  /** Om dette er en ny innsending (styrer fjerning av Tariffendring) */
+  /** Om dette er en ny innsending */
   nyInnsending: boolean;
 }
 
 /**
  * Lager listen av tilgjengelige begrunnelse-nøkler:
  *  - Fjerner allerede valgte nøkler
- *  - Fjerner 'Tariffendring' dersom nyInnsending === true
  *  - Sørger for at nåværende valgt verdi alltid er med (for å vise den i select selv om den ellers ville blitt filtrert bort)
  *  - Fjerner duplikater og returnerer som array
  */
