@@ -95,8 +95,9 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    await userEvent.click(screen.getByLabelText(/Organisasjon/));
-    await userEvent.click(
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
 
@@ -177,8 +178,9 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    await userEvent.click(screen.getByLabelText(/Organisasjon/));
-    await userEvent.click(
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
 
@@ -251,8 +253,9 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    await userEvent.click(screen.getByLabelText(/Organisasjon/));
-    await userEvent.click(
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
 
