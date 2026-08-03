@@ -106,7 +106,12 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
+    const manedslonn = page.getByLabel('Månedslønn 10.09.2024');
+    await expect(manedslonn).not.toHaveValue('');
+    await expect(async () => {
+      await manedslonn.fill('7500');
+      await expect(manedslonn).toHaveValue('7500');
+    }).toPass();
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder
@@ -250,10 +255,14 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // select both periods
     // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
     // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    await formPage.selectOption(
-      'Hvilken underenhet er personen sykmeldt fra',
-      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    );
+    // await formPage.selectOption(
+    //   'Hvilken underenhet er personen sykmeldt fra',
+    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    // );
+
+    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
+    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
+
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
@@ -344,10 +353,15 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // select both periods
     // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
     // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    await formPage.selectOption(
-      'Hvilken underenhet er personen sykmeldt fra',
-      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    );
+    // await formPage.selectOption(
+    //   'Hvilken underenhet er personen sykmeldt fra',
+    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    // );
+
+    // await page.getByLabel(/Organisasjon/).click();
+    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
+    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
+
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
@@ -446,7 +460,12 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
+    const manedslonn = page.getByLabel('Månedslønn 10.09.2024');
+    await expect(manedslonn).not.toHaveValue('');
+    await expect(async () => {
+      await manedslonn.fill('7500');
+      await expect(manedslonn).toHaveValue('7500');
+    }).toPass();
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder

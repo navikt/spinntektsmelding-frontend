@@ -11,6 +11,7 @@ vi.mock('next/navigation', () => ({
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import InitieringAnnet from '../../../pages/initieringAnnet/index';
 import useBoundStore from '../../../state/useBoundStore';
 import useArbeidsforhold from '../../../utils/useArbeidsforhold';
@@ -94,9 +95,11 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    fireEvent.change(screen.getByLabelText(/Organisasjon/), {
-      target: { value: testOrganisasjoner[0].organizationNumber }
-    });
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
+      await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
+    );
 
     // wait for sykmeldingsperiode checkbox
     await waitFor(() => expect(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ })).toBeInTheDocument());
@@ -175,9 +178,11 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    fireEvent.change(screen.getByLabelText(/Organisasjon/), {
-      target: { value: testOrganisasjoner[0].organizationNumber }
-    });
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
+      await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
+    );
 
     // wait for sykmeldingsperiode checkbox
     await waitFor(() => expect(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ })).toBeInTheDocument());
@@ -248,9 +253,11 @@ describe('InitieringAnnet page', () => {
     await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
 
     // select the underenhet
-    fireEvent.change(screen.getByLabelText(/Organisasjon/), {
-      target: { value: testOrganisasjoner[0].organizationNumber }
-    });
+    const user = userEvent.setup();
+    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(
+      await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
+    );
 
     // wait for arbeidsgiver select to appear
     await waitFor(() => expect(screen.getByLabelText(/3 egenmeldingsdager/)).toBeInTheDocument());

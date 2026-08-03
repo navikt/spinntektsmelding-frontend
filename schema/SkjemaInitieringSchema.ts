@@ -6,10 +6,15 @@ const SkjemaInitieringSchema = z
   .object({
     organisasjonsnummer: z
       .string({
-        error: (issue) =>
-          issue.input === undefined
-            ? 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren.'
-            : undefined
+        error: (issue) => {
+          if (issue.input === undefined) {
+            return 'Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren.';
+          }
+          if (issue.input === null) {
+            return 'Organisasjon er ikke valgt.';
+          }
+          return undefined;
+        }
       })
       .transform((val) => val.replaceAll(/\s/g, ''))
       .pipe(
