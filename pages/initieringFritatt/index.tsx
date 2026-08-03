@@ -87,6 +87,7 @@ const InitieringFritatt: NextPage = () => {
     setError,
     handleSubmit,
     reset,
+    resetField,
     formState: { errors }
   } = methods;
 
@@ -226,16 +227,6 @@ const InitieringFritatt: NextPage = () => {
       return [];
     }
 
-    useEffect(() => {
-      const forlengelser = sykepengePerioder
-        ?.filter((periode) => periode.forlengelseAv)
-        .filter((periode) => sykepengePeriodeId?.includes(periode.id));
-
-      if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
-        resetField('endreRefusjon');
-      }
-    }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
-
     const perioder =
       mottatteSykepengesoknader.data.length > 0
         ? mottatteSykepengesoknader.data.map((periode) => {
@@ -282,6 +273,17 @@ const InitieringFritatt: NextPage = () => {
 
     return addForlengelseAvInfo(perioder);
   })();
+
+  useEffect(() => {
+    const forlengelser = sykepengePerioder
+      ?.filter((periode) => periode.forlengelseAv)
+      .filter((periode) => sykepengePeriodeId?.includes(periode.id));
+
+    if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
+      resetField('endreRefusjon');
+    }
+  }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
+
   const forespurtePerioder = [...sykepengePerioder].filter((periode) => !!periode.forespoerselId);
   const ikkeForespurtePerioder = [...sykepengePerioder].filter((periode) => !periode.forespoerselId);
 
