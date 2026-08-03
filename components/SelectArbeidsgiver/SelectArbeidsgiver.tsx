@@ -1,5 +1,6 @@
-import { Select } from '@navikt/ds-react';
+import { UNSAFE_Combobox as UnsafeCombobox } from '@navikt/ds-react';
 import TextLabel from '../TextLabel';
+import { Controller } from 'react-hook-form';
 
 export interface ArbeidsgiverSelect {
   orgnrUnderenhet: string;
@@ -37,14 +38,35 @@ export default function SelectArbeidsgiver({
     );
   }
 
+  const sortedArbeidsforhold = [...arbeidsforhold].sort((a, b) => a.virksomhetsnavn.localeCompare(b.virksomhetsnavn));
+
+  const options = sortedArbeidsforhold.map((arbeidsgiver) => ({
+    value: arbeidsgiver.orgnrUnderenhet,
+    label: `Orgnr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`
+  }));
+
   return (
-    <Select label={selectLabel} error={error} description={description} {...register(id)}>
-      <option value='-'>Velg organisasjon</option>
-      {arbeidsforhold.map((arbeidsgiver) => (
-        <option value={arbeidsgiver.orgnrUnderenhet} key={arbeidsgiver.orgnrUnderenhet}>
-          {`Orgnr. ${arbeidsgiver.orgnrUnderenhet} - ${arbeidsgiver.virksomhetsnavn}`}
-        </option>
-      ))}
-    </Select>
+    <Controller
+      name={id}
+      defaultValue={null}
+      render={({ field }) => (
+        <UnsafeCombobox
+          label={selectLabel}
+          error={error}
+          description={description}
+          options={options}
+          ref={field.ref}
+          name={field.name}
+          onBlur={field.onBlur}
+          onToggleSelected={(option, isSelected) => {
+            if (isSelected) {
+              field.onChange(option);
+            } else {
+              field.onChange(null);
+            }
+          }}
+        />
+      )}
+    />
   );
 }
