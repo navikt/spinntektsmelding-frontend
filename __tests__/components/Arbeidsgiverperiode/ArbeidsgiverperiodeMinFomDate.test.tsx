@@ -106,6 +106,6 @@ describe('Arbeidsgiverperiode minFomDate', () => {
 
     renderArbeidsgiverperiode(false);
 
-    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(startOfDay(subYears(new Date(), 4)));
+    expect(periodevelgerProps.at(-1)?.fromDate).toEqual(startOfDay(subYears(new Date(), 10)));
   });
 });
