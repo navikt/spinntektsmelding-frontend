@@ -89,7 +89,7 @@ export default function FravaerEnkeltAnsattforhold({
               kanSlettes={periodeIndex > 0}
               periodeId={periode.id}
               onSlettRad={() => slettFravaersperiode?.(periode.id)}
-              fromDate={startOfDay(subYears(new Date(), 4))}
+              fromDate={startOfDay(subYears(new Date(), 10))}
               toDate={new Date()}
             />
           )}
