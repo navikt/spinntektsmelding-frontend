@@ -8,8 +8,9 @@ RUN npm install -g --force corepack && corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-    NODE_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) \
-    pnpm install --frozen-lockfile  --ignore-scripts
+    printf '//npm.pkg.github.com/:_authToken=%s\n' "$(cat /run/secrets/NODE_AUTH_TOKEN)" > /root/.npmrc && \
+    pnpm install --frozen-lockfile --ignore-scripts && \
+    rm -f /root/.npmrc
 
 # Rebuild the source code only when needed
 FROM node:26-bookworm-slim@sha256:2d49d876e96237d76de412761cf05dbfe5aee325cc4406a4d41d5824c5bb8beb AS builder
