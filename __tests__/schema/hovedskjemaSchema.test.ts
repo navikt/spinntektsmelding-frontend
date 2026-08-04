@@ -418,6 +418,28 @@ describe('HovedskjemaSchema', () => {
     );
   });
 
+  it('should pass validation when refusjonsbeløpet is higher than inntekt but kreverRefusjon is Nei', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 1000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 2000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Nei',
+      avsenderTlf: '12345678',
+      opplysningstyper: ['inntekt', 'refusjon']
+    };
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.error).toBeUndefined();
+    expect(result.success).toBe(true);
+  });
+
   it('should pass validation when inntekt is 0 and refusjonsbeløpet is higher', () => {
     const schemaData = {
       bekreft_opplysninger: true,

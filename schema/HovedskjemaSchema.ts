@@ -32,7 +32,8 @@ function validateRefusjonBeloep(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     val.refusjon?.beloepPerMaaned !== undefined &&
     val.inntekt?.beloep < val.refusjon?.beloepPerMaaned &&
     val.inntekt?.beloep !== 0 &&
-    val.opplysningstyper?.includes('inntekt')
+    val.opplysningstyper?.includes('inntekt') &&
+    val.kreverRefusjon === 'Ja'
   ) {
     ctx.issues.push({
       code: 'custom',
