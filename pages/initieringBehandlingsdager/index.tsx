@@ -127,7 +127,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
-  const fomDato = formatIsoDate(subYears(new Date(), 1));
+  const fomDato = formatIsoDate(subYears(new Date(), 3));
   const {
     data: spData,
     error: spError,

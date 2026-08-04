@@ -301,7 +301,7 @@ export default function Arbeidsgiverperiode({
   const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
 
   const minFomDate = useMemo(() => {
-    const fireAarSiden = startOfDay(subYears(new Date(), 4));
+    const fireAarSiden = startOfDay(subYears(new Date(), 10));
     if (skalViseArbeidsgiverperiode && sykmeldingsperioder && sykmeldingsperioder.length > 0) {
       const perioder = sykmeldingsperioder.concat(egenmeldingsperioder ?? []);
       const minFom = perioder.reduce<Date | undefined>((acc, periode) => {
