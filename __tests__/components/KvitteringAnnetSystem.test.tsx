@@ -10,7 +10,7 @@ describe('KvitteringAnnetSystem', () => {
       lenkeTilKvittering: 'Kvittering',
       lenkeTilKvitteringHref: 'https://example.com/kvittering',
       eksterntSystem: 'Eksternt system',
-      mottattDato: '2022-01-01'
+      mottattDato: '2025-01-01'
     };
 
     const { getByText } = render(<KvitteringAnnetSystem {...props} />);
@@ -42,7 +42,7 @@ describe('KvitteringAnnetSystem', () => {
       lenkeTilKvittering: 'Kvittering',
       lenkeTilKvitteringHref: 'https://example.com/kvittering',
       eksterntSystem: 'Eksternt system',
-      mottattDato: '2022-01-01'
+      mottattDato: '2025-01-01'
     };
     const { container } = render(<KvitteringAnnetSystem {...props} />);
     const results = await axe(container);

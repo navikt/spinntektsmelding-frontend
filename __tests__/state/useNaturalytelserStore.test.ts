@@ -5,10 +5,10 @@ import { Naturalytelse } from '../../state/state';
 import parseIsoDate from '../../utils/parseIsoDate';
 
 const inputNaturalytelser: Array<Naturalytelse> = [
-  { naturalytelse: 'ANNET', sluttdato: parseIsoDate('2022-07-06')!, verdiBeloep: 300 },
-  { naturalytelse: 'TILSKUDDBARNEHAGEPLASS', sluttdato: parseIsoDate('2022-07-06')!, verdiBeloep: 3000 },
-  { naturalytelse: 'BIL', sluttdato: parseIsoDate('2022-07-06')!, verdiBeloep: 700 },
-  { naturalytelse: 'RENTEFORDELLAAN', sluttdato: parseIsoDate('2022-07-06')!, verdiBeloep: 350 }
+  { naturalytelse: 'ANNET', sluttdato: parseIsoDate('2025-07-06')!, verdiBeloep: 300 },
+  { naturalytelse: 'TILSKUDDBARNEHAGEPLASS', sluttdato: parseIsoDate('2025-07-06')!, verdiBeloep: 3000 },
+  { naturalytelse: 'BIL', sluttdato: parseIsoDate('2025-07-06')!, verdiBeloep: 700 },
+  { naturalytelse: 'RENTEFORDELLAAN', sluttdato: parseIsoDate('2025-07-06')!, verdiBeloep: 350 }
 ];
 
 const initialState = useBoundStore.getState();
@@ -32,7 +32,7 @@ describe('useBoundStore', () => {
     });
 
     expect(result.current.naturalytelser?.[0].naturalytelse).toBe('ANNET');
-    expect(result.current.naturalytelser?.[0].sluttdato).toEqual(new Date(2022, 6, 6));
+    expect(result.current.naturalytelser?.[0].sluttdato).toEqual(new Date(2025, 6, 6));
     expect(result.current.naturalytelser?.length).toBe(4);
   });
 });

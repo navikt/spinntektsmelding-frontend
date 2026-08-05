@@ -1,0 +1,24 @@
+{
+  "sykmeldt": {
+    "navn": "ULTRAFIOLETT DAMESYKKEL",
+    "fnr": "10486535275"
+  },
+  "avsender": {
+    "orgnr": "810007842",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "navn": "BERØMT FLYTTELASS"
+  },
+
+  "sykmeldingsperioder": [{ "fom": "2023-09-04", "tom": "2023-09-24" }],
+  "egenmeldingsperioder": [],
+  "bestemmendeFravaersdag": "2023-09-04",
+  "forespurtData": {
+    "arbeidsgiverperiode": { "paakrevd": true },
+    "inntekt": {
+      "paakrevd": true
+    },
+    "refusjon": {
+      "paakrevd": true
+    }
+  }
+}

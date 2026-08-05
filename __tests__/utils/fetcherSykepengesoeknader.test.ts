@@ -6,7 +6,7 @@ describe('fetcherSykepengesoeknader', () => {
   const url = 'https://example.com/api';
   const identitetsnummer = '123456789';
   const orgnrUnderenhet = '987654321';
-  const eldsteFom = '2022-02-02';
+  const eldsteFom = '2025-02-02';
 
   beforeEach(() => {
     global.fetch = vi.fn();

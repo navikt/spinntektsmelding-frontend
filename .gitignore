@@ -49,6 +49,7 @@ cypress/downloads
 .dccache
 
 .vscode
+.idea/
 
 # Playwright
 playwright-report

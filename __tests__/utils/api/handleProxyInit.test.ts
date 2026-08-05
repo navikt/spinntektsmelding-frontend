@@ -14,7 +14,7 @@ describe('handleProxyInit', () => {
           const err = new Error('Test error');
           callback(err, null, res);
           expect(res.writeHead).toHaveBeenCalledWith(500, { 'Content-Type': 'text/plain' });
-          expect(res.end).toHaveBeenCalledWith('Something went wrong. ' + JSON.stringify(err));
+          expect(res.end).toHaveBeenCalledWith('Something went wrong.');
         }
       })
     };

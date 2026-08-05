@@ -1,9 +1,13 @@
 {
-  "navn": "ULTRAFIOLETT DAMESYKKEL",
-  "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
-  "innsenderNavn": "Muskuløs Vals",
-  "identitetsnummer": "10486535275",
-  "orgnrUnderenhet": "810007842",
+  "sykmeldt": {
+    "fnr": "10486535275",
+    "navn": "ULTRAFIOLETT DAMESYKKEL"
+  },
+  "avsender": {
+    "orgnr": "810007842",
+    "orgNavn": "ANSTENDIG PIGGSVIN BARNEHAGE",
+    "navn": "Muskuløs Vals"
+  },
   "sykmeldingsperioder": [
     { "fom": "2023-08-25", "tom": "2023-08-28" },
     { "fom": "2023-08-29", "tom": "2023-09-11" },
@@ -11,11 +15,15 @@
   ],
   "egenmeldingsperioder": [],
   "bruttoinntekt": 13806.27,
-  "tidligereinntekter": [
-    { "maaned": "2023-05", "inntekt": 12028.25 },
-    { "maaned": "2023-06", "inntekt": 11730.69 },
-    { "maaned": "2023-07", "inntekt": 17659.88 }
-  ],
+  "inntekt": {
+    "gjennomsnitt": 13806.27,
+    "historikk": {
+      "2023-05": 12028.25,
+      "2023-06": 11730.69,
+      "2023-07": 17659.88
+    }
+  },
+  "bestemmendeFravaersdag": "2023-08-25",
   "eksternInntektsdato": "2023-08-23",
   "forespurtData": {
     "arbeidsgiverperiode": { "paakrevd": true },
@@ -30,5 +38,8 @@
       "paakrevd": true,
       "forslag": { "perioder": [], "opphoersdato": null }
     }
-  }
+  },
+  "erBesvart": false,
+  "opprettetUpresisIkkeBruk": "2023-08-25",
+  "telefonnummer": "12345678"
 }

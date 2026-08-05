@@ -10,7 +10,7 @@ import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from './initiering.module.css';
+import lokalStyling from './initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
 
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -81,16 +81,16 @@ const Initiering: NextPage = () => {
               mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
             </Alert>
             <FormProvider {...methods}>
-              <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+              <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
                 <VelgAarsak legend='Årsak til at du vil opprette inntektsmelding.' name='aarsakInnsending' />
                 <TextField
                   label='Ansattes fødselsnummer'
                   description='(ddmmååxxxxx)'
-                  className={lokalStyles.personnummer}
+                  className={lokalStyling.personnummer}
                   {...register('identitetsnummer')}
                   error={errors.identitetsnummer?.message as string}
                 />
-                <Button variant='primary' className={lokalStyles.primaryKnapp}>
+                <Button variant='primary' className={lokalStyling.primaryKnapp}>
                   Neste
                 </Button>
               </form>

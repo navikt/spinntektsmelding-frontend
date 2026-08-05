@@ -8,17 +8,12 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { requireEnv } from '../../utils/api/validateEnv';
 
 type forespoerselIdListeEnhet = {
   vedtaksperiodeId: string;
   forespoerselId: string;
 };
-
-const basePath =
-  'http://' + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_INGRESS + globalThis.process.env.FLEX_SYKEPENGESOEKNAD_URL;
-const authApi = 'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.AUTH_SYKEPENGESOEKNAD_API;
-const forespoerselIdListeApi =
-  'http://' + globalThis.process.env.IM_API_URI + globalThis.process.env.FORESPOERSEL_ID_LISTE_API;
 
 export const config = {
   api: {
@@ -28,7 +23,18 @@ export const config = {
 
 type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
 
+const requestBodySchema = z.object({
+  orgnummer: z.string().min(1),
+  fnr: z.string().min(1),
+  eldsteFom: z.string().min(1)
+});
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     const mockdata = 'sp-soeknad';
@@ -54,7 +60,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(401);
   }
 
-  const requestBody = await req.body;
+  const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
+  const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
+  const forespoerselIdListeApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('FORESPOERSEL_ID_LISTE_API');
+  const clientId = requireEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID');
+
+  const parsedBody = requestBodySchema.safeParse(req.body);
+  if (!parsedBody.success) {
+    logger.info('Ugyldig request body for sykepengesøknader');
+    return res.status(400).json({ error: 'Ugyldig forespørsel' });
+  }
+
+  const requestBody = parsedBody.data;
   const orgnr = requestBody.orgnummer;
 
   if (!isMod11Number(orgnr)) {
@@ -75,7 +92,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
-  const obo = await requestOboToken(token, process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID!);
+  const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
     logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });

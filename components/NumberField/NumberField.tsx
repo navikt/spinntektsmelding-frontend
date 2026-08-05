@@ -1,4 +1,6 @@
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { TextField } from '@navikt/ds-react';
+import lokalStyling from './NumberField.module.css';
 
 const sanitizeToSingleComma = (value: string): string => {
   const parts = value.split(',');
@@ -13,10 +15,51 @@ const toDisplayValue = (val: string | number | readonly string[] | undefined | n
 
 export default function NumberField({ ...props }: React.ComponentProps<typeof TextField>) {
   const isControlled = props.value != null;
+  const [displayValue, setDisplayValue] = useState(() => toDisplayValue(props.value));
+  const displayValueRef = useRef(displayValue);
+
+  useEffect(() => {
+    const newDisplay = toDisplayValue(props.value);
+    const newNumeric = Number.parseFloat(newDisplay.replace(',', '.'));
+    const currentNumeric = Number.parseFloat(displayValueRef.current.replace(',', '.'));
+
+    if (newNumeric !== currentNumeric || (Number.isNaN(newNumeric) && newDisplay !== displayValueRef.current)) {
+      setDisplayValue(newDisplay);
+      displayValueRef.current = newDisplay;
+    }
+  }, [props.value]);
+
+  const formatInputDisplayIfNeeded = useCallback(() => {
+    if (isControlled) return;
+
+    let input: HTMLInputElement | null = null;
+    if (typeof props.id === 'string') {
+      input = document.getElementById(props.id) as HTMLInputElement | null;
+    } else if (typeof props.name === 'string') {
+      const namedElements = document.getElementsByName(props.name);
+      input = namedElements.length > 0 ? (namedElements[0] as HTMLInputElement) : null;
+    }
+
+    if (!input) return;
+
+    const formatted = toDisplayValue(input.value);
+    if (formatted !== input.value) {
+      input.value = formatted;
+    }
+  }, [isControlled, props.id, props.name]);
+
+  useEffect(() => {
+    formatInputDisplayIfNeeded();
+  }, [formatInputDisplayIfNeeded, props.defaultValue]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const sanitizedComma = sanitizeToSingleComma(e.target.value.replaceAll(/[^0-9,]/g, ''));
     e.target.value = sanitizedComma.replaceAll(',', '.');
+
+    if (isControlled) {
+      setDisplayValue(sanitizedComma);
+      displayValueRef.current = sanitizedComma;
+    }
 
     if (props.onChange) {
       props.onChange(e);
@@ -27,7 +70,17 @@ export default function NumberField({ ...props }: React.ComponentProps<typeof Te
     }
   };
 
-  const formattedValue = isControlled ? toDisplayValue(props.value) : undefined;
+  const formattedValue = isControlled ? displayValue : undefined;
+  const formattedDefaultValue = isControlled ? undefined : toDisplayValue(props.defaultValue);
 
-  return <TextField inputMode='decimal' {...props} value={formattedValue} onChange={onChange} />;
+  return (
+    <TextField
+      inputMode='decimal'
+      {...props}
+      value={formattedValue}
+      defaultValue={formattedDefaultValue}
+      onChange={onChange}
+      className={[props.className, lokalStyling.numberField].filter(Boolean).join(' ')}
+    />
+  );
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import { HovedskjemaSchema, createHovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
 describe('HovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
@@ -55,34 +55,48 @@ describe('HovedskjemaSchema', () => {
     ]);
   });
 
-  it('should fail validation when beloep is missing', () => {
+  it('should fail validation when beloep is missing and opplysningstyper includes inntekt', () => {
     const schemaData = {
       bekreft_opplysninger: true,
       inntekt: {
-        endringAarsaker: null
+        endringAarsaker: null,
+        harBortfallAvNaturalytelser: false
       },
+      opplysningstyper: ['inntekt'],
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 1234.5
+        beloepPerMaaned: 1234.5,
+        harEndringer: 'Nei'
       },
+      kreverRefusjon: 'Ja',
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
-    expect(result.error?.issues).toEqual([
-      {
-        code: 'invalid_type',
-        expected: 'number',
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
         message: 'Vennligst fyll inn beløpet for inntekt.',
         path: ['inntekt', 'beloep']
+      })
+    );
+  });
+
+  it('should pass validation when beloep is missing and opplysningstyper does not include inntekt', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 1234.5,
+        harEndringer: 'Nei'
       },
-      {
-        code: 'invalid_type',
-        expected: 'boolean',
-        message: 'Invalid input: expected boolean, received undefined',
-        path: ['inntekt', 'harBortfallAvNaturalytelser']
-      }
-    ]);
+      kreverRefusjon: 'Ja',
+      opplysningstyper: ['refusjon'],
+      avsenderTlf: '12345678'
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(true);
   });
 
   it('should fail validation when beloep is negative', () => {
@@ -390,7 +404,8 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678'
+      avsenderTlf: '12345678',
+      opplysningstyper: ['inntekt', 'refusjon']
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -401,6 +416,28 @@ describe('HovedskjemaSchema', () => {
         path: ['refusjon', 'beloepPerMaaned']
       })
     );
+  });
+
+  it('should pass validation when refusjonsbeløpet is higher than inntekt but kreverRefusjon is Nei', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 1000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 2000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Nei',
+      avsenderTlf: '12345678',
+      opplysningstyper: ['inntekt', 'refusjon']
+    };
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.error).toBeUndefined();
+    expect(result.success).toBe(true);
   });
 
   it('should pass validation when inntekt is 0 and refusjonsbeløpet is higher', () => {
@@ -803,6 +840,157 @@ describe('HovedskjemaSchema', () => {
       avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(true);
+  });
+
+  it('should fail validation when harLikLoenn is missing and Faisu validation is enabled', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {}
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Vennligst svar på om den ansatte har lik eller tilnærmet lik lønn i arbeidsforholdene.',
+        path: ['flereArbeidsforhold', 'harLikLoenn']
+      })
+    );
+  });
+
+  it('should fail validation when no arbeidsforhold is selected in Faisu', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        harLikLoenn: 'Nei',
+        erSykmeldtFraAlle: 'Nei',
+        arbeidsforhold: [
+          {
+            inntekt: 2500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Utvikler'
+          },
+          {
+            inntekt: 2500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Designer'
+          }
+        ]
+      }
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Vennligst velg minst ett arbeidsforhold.',
+        path: ['flereArbeidsforhold', 'arbeidsforhold']
+      })
+    );
+  });
+
+  it('should fail validation when sum of arbeidsforhold inntekt differs from beregnet inntekt in Faisu', () => {
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        harLikLoenn: 'Nei',
+        erSykmeldtFraAlle: 'Nei',
+        arbeidsforhold: [
+          {
+            inntekt: 2000,
+            stillingsprosent: 100,
+            inkludertISykefravaer: true,
+            yrkesbeskrivelse: 'Utvikler'
+          },
+          {
+            inntekt: 500,
+            stillingsprosent: 100,
+            inkludertISykefravaer: false,
+            yrkesbeskrivelse: 'Designer'
+          }
+        ]
+      }
+    };
+
+    const result = HovedskjemaSchema.safeParse(schemaData);
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'custom',
+        message: 'Summen av månedslønn i arbeidsforholdene må være lik beregnet månedslønn.',
+        path: ['flereArbeidsforhold', 'arbeidsforhold']
+      })
+    );
+  });
+
+  it('should skip Faisu validation when createHovedskjemaSchema is used with false', () => {
+    const schemaWithoutFaisuValidation = createHovedskjemaSchema(false);
+
+    const schemaData = {
+      bekreft_opplysninger: true,
+      inntekt: {
+        beloep: 5000,
+        harBortfallAvNaturalytelser: false,
+        endringAarsaker: null
+      },
+      refusjon: {
+        isEditing: false,
+        beloepPerMaaned: 3000,
+        harEndringer: 'Nei'
+      },
+      kreverRefusjon: 'Ja',
+      fullLonn: 'Ja',
+      avsenderTlf: '12345678',
+      flereArbeidsforhold: {
+        arbeidsforhold: []
+      }
+    };
+
+    const result = schemaWithoutFaisuValidation.safeParse(schemaData);
     expect(result.success).toBe(true);
   });
 });

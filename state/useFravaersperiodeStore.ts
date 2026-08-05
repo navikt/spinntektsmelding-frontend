@@ -12,6 +12,7 @@ import { finnAktuelleInntekter } from './useBruttoinntektStore';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { z } from 'zod';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
+import { logger } from '@navikt/next-logger';
 
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
 
@@ -110,7 +111,14 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   },
 
   initFravaersperiode: (mottatt) => {
-    const konverterte = mottatt.map(({ fom, tom }) => ({
+    const validerte = ApiPeriodeSchema.array().safeParse(mottatt);
+    if (!validerte.success) {
+      logger.error('Feil i initFravaersperiode', validerte.error);
+    }
+
+    const sorterte = mottatt.toSorted((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());
+
+    const konverterte = sorterte.map(({ fom, tom }) => ({
       id: nanoid(),
       fom: parseIsoDate(fom),
       tom: parseIsoDate(tom)

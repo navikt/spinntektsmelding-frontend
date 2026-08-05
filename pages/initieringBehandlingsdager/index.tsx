@@ -8,7 +8,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from '../initieringAnnet/initiering.module.css';
+import lokalStyling from '../initieringAnnet/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -127,7 +127,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
-  const fomDato = formatIsoDate(subYears(new Date(), 1));
+  const fomDato = formatIsoDate(subYears(new Date(), 3));
   const {
     data: spData,
     error: spError,
@@ -293,10 +293,10 @@ const InitieringBehandlingsdager: NextPage = () => {
         <div className={styles.padded}>
           <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
           <FormProvider {...methods}>
-            <form className={lokalStyles.form} onSubmit={handleSubmit(submitForm)}>
+            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
               <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyles.persondata}>
-                <div className={lokalStyles.navn}>
+              <div className={lokalStyling.persondata}>
+                <div className={lokalStyling.navn}>
                   <TextLabel>Navn</TextLabel>
                   <p>{fulltNavn}</p>
                 </div>
@@ -322,20 +322,31 @@ const InitieringBehandlingsdager: NextPage = () => {
                   </div>
                   {spIsLoading && <Loading />}
                   {spData && organisasjonsnummer && (
-                    <RadioGroup
-                      legend='Velg periode for behandlingsdager'
-                      id='sykmeldingId'
-                      error={errors.sykmeldingId?.message as string}
-                      onChange={handleSykmeldingIdRadio}
-                    >
-                      {sykepengePerioder.map((periode) => (
-                        <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
-                          {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                          {formaterBehandlingsdager(periode.antallBehandlingsdager)}
-                        </Radio>
-                      ))}
-                    </RadioGroup>
+                    <>
+                      <RadioGroup
+                        legend='Velg periode for behandlingsdager'
+                        id='sykmeldingId'
+                        error={errors.sykmeldingId?.message as string}
+                        onChange={handleSykmeldingIdRadio}
+                      >
+                        {sykepengePerioder.map((periode) => (
+                          <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
+                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                            {formaterBehandlingsdager(periode.antallBehandlingsdager)}
+                          </Radio>
+                        ))}
+                      </RadioGroup>
+                      {sykepengePerioder.length > 0 &&
+                        sykepengePerioder.every((periode) => periode.antallBehandlingsdager <= 12) && (
+                          <Alert variant='warning'>
+                            Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
+                            kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                            inntektsmelding for behandlingsdager.
+                          </Alert>
+                        )}
+                    </>
                   )}
+
                   {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
                     <Alert variant='error'>
                       Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
@@ -345,18 +356,18 @@ const InitieringBehandlingsdager: NextPage = () => {
                   )}
                 </>
               )}
-              <div className={lokalStyles.knapperad}>
+              <div className={lokalStyling.knapperad}>
                 <Button
                   type='button'
                   variant='tertiary'
-                  className={lokalStyles.primaryKnapp}
+                  className={lokalStyling.primaryKnapp}
                   onClick={() => history.back()}
                 >
                   Tilbake
                 </Button>
                 <Button
                   variant='primary'
-                  className={lokalStyles.primaryKnapp}
+                  className={lokalStyling.primaryKnapp}
                   loading={isLoading}
                   disabled={blokkerInnsending}
                 >
@@ -366,7 +377,7 @@ const InitieringBehandlingsdager: NextPage = () => {
             </form>
           </FormProvider>
           {antallDagerMellomSykmeldingsperioder > 16 && (
-            <Alert variant='error' className={lokalStyles.alertPadding}>
+            <Alert variant='error' className={lokalStyling.alertPadding}>
               <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
               Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
               hver av periodene.

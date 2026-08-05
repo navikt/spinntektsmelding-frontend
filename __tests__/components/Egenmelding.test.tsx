@@ -21,20 +21,20 @@ describe('Egenmelding', () => {
 
   it('should show perioder when egenmeldingsperioder exist', async () => {
     const perioder = [
-      { fom: parseIsoDate('2022-06-06'), tom: parseIsoDate('2022-07-06'), id: '1' },
-      { fom: parseIsoDate('2022-08-06'), tom: parseIsoDate('2022-09-06'), id: '2' },
-      { fom: parseIsoDate('2022-10-06'), tom: parseIsoDate('2022-11-06'), id: '3' }
+      { fom: parseIsoDate('2025-06-06'), tom: parseIsoDate('2025-07-06'), id: '1' },
+      { fom: parseIsoDate('2025-08-06'), tom: parseIsoDate('2025-09-06'), id: '2' },
+      { fom: parseIsoDate('2025-10-06'), tom: parseIsoDate('2025-11-06'), id: '3' }
     ];
 
     const { container } = render(<Egenmelding egenmeldingsperioder={perioder} />);
 
     expect(screen.getByText('Egenmelding')).toBeInTheDocument();
-    expect(screen.getByText('06.06.2022')).toBeInTheDocument();
-    expect(screen.getByText('06.07.2022')).toBeInTheDocument();
-    expect(screen.getByText('06.08.2022')).toBeInTheDocument();
-    expect(screen.getByText('06.09.2022')).toBeInTheDocument();
-    expect(screen.getByText('06.10.2022')).toBeInTheDocument();
-    expect(screen.getByText('06.11.2022')).toBeInTheDocument();
+    expect(screen.getByText('06.06.2025')).toBeInTheDocument();
+    expect(screen.getByText('06.07.2025')).toBeInTheDocument();
+    expect(screen.getByText('06.08.2025')).toBeInTheDocument();
+    expect(screen.getByText('06.09.2025')).toBeInTheDocument();
+    expect(screen.getByText('06.10.2025')).toBeInTheDocument();
+    expect(screen.getByText('06.11.2025')).toBeInTheDocument();
 
     const results = await axe(container);
 

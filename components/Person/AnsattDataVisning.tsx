@@ -1,7 +1,7 @@
 import Heading3 from '../Heading3';
 import { SkeletonLoader } from '../SkeletonLoader/SkeletonLoader';
 import TextLabel from '../TextLabel';
-import lokalStyles from './Person.module.css';
+import lokalStyling from './Person.module.css';
 
 interface Sykmeldt {
   fnr?: string;
@@ -16,18 +16,18 @@ export default function AnsattDataVisning({ sykmeldt }: Readonly<AnsattDataVisni
   const skjemadataErLastet = !!sykmeldt.fnr;
   const hentingAvPersondataFeilet = sykmeldt.navn === null;
   return (
-    <div className={lokalStyles.denAnsatte}>
+    <div className={lokalStyling.denAnsatte}>
       <Heading3>Den ansatte</Heading3>
-      <div className={lokalStyles.ytreAnsattWrapper}>
+      <div className={lokalStyling.ytreAnsattWrapper}>
         {!hentingAvPersondataFeilet && (
-          <div className={lokalStyles.ansattWrapper}>
+          <div className={lokalStyling.ansattWrapper}>
             <TextLabel>Navn</TextLabel>
             <div data-cy='navn'>
               <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={sykmeldt.navn} />
             </div>
           </div>
         )}
-        <div className={lokalStyles.ansattWrapper}>
+        <div className={lokalStyling.ansattWrapper}>
           <TextLabel>Fødselsnummer</TextLabel>
           <div data-cy='identitetsnummer'>
             <SkeletonLoader ferdigLastet={skjemadataErLastet} tekst={sykmeldt.fnr} />

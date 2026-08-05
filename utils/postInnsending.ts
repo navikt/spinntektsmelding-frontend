@@ -3,6 +3,7 @@ import logEvent from './logEvent';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { ErrorResponse } from './useErrorResponse';
 import { z } from 'zod';
+import { teamLogger } from '@navikt/next-logger/team-log';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
@@ -25,6 +26,15 @@ interface PostInnsendingOptions<B, S> {
   setShowErrorList: (v: boolean) => void;
 }
 
+interface PostInnsendingRuntimeOptions<S> {
+  analyticsComponent: string;
+  onUnauthorized: () => void;
+  onSuccess: (json: S | null) => void | Promise<void>;
+  mapValidationErrors: (feil: BackendValidationError, errors: ErrorResponse[]) => ErrorResponse[];
+  setErrorResponse: (errors: ErrorResponse[]) => void;
+  setShowErrorList: (v: boolean) => void;
+}
+
 /**
  * Felles POST innsending med standard feilhåndtering.
  * Returnerer Promise<void> (kan avbrytes tidlig ved 401 der onUnauthorized kalles).
@@ -44,93 +54,251 @@ export async function postInnsending<B = unknown, S = unknown>({
     body: JSON.stringify(body),
     headers: { 'Content-Type': 'application/json' }
   })
-    .then(async (data) => {
-      switch (data.status) {
-        case 200:
-        case 201: {
-          // Noen endepunkt trenger body (JSON) andre ikke – prøver å parse, men tåler feil.
-          let json: S | null = null;
-          try {
-            json = (await data.json()) as S;
-          } catch {
-            // Ignorer manglende body
-          }
-          await onSuccess(json);
-          break;
-        }
-        case 500: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
-              property: 'server'
-            }
-          ];
-          setErrorResponse(errors);
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - serverfeil',
-            component: analyticsComponent
-          });
-          logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
-          break;
-        }
-        case 404: {
-          const errors: Array<ErrorResponse> = [
-            {
-              value: 'Innsending av skjema feilet',
-              error: 'Fant ikke endepunktet for innsending',
-              property: 'server'
-            }
-          ];
-          setErrorResponse(errors);
-          logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
-          break;
-        }
-        case 401: {
-          logEvent('skjema innsending feilet', {
-            tittel: 'Innsending feilet - ingen tilgang',
-            component: analyticsComponent
-          });
-          onUnauthorized();
-          break;
-        }
-        default: {
-          // Forventer backend-valideringsfeil i JSON
-          try {
-            const resultat = (await data.json()) as unknown;
-            logEvent('skjema innsending feilet', {
-              tittel: 'Innsending feilet',
-              component: analyticsComponent
-            });
-            if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
-              const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
-              if (feilResultat.success === true) {
-                const feil = feilResultat.data;
-                let mappedErrors: Array<ErrorResponse> = [];
-                mappedErrors = mapValidationErrors(feil, mappedErrors);
-                setErrorResponse(mappedErrors);
-                setShowErrorList(true);
-                logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText);
-              }
-            }
-          } catch (err) {
-            logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
-          }
-        }
-      }
-    })
-    .catch((err) => {
-      const errors: Array<ErrorResponse> = [
+    .then((data) =>
+      handleResponse<S>(
+        data,
         {
-          value: 'Innsending av skjema feilet',
-          error: 'Det oppstod et nettverksproblem ved innsending. Vennligst prøv igjen.',
-          property: 'server'
-        }
-      ];
-      setErrorResponse(errors);
-      setShowErrorList(true);
-      logger.warn('Feil ved innsending av skjema - network error ' + err);
+          analyticsComponent,
+          onUnauthorized,
+          onSuccess,
+          mapValidationErrors,
+          setErrorResponse,
+          setShowErrorList
+        },
+        body
+      )
+    )
+    .catch((err) => handleNetworkError(err, { setErrorResponse, setShowErrorList }));
+}
+
+async function handleResponse<S>(
+  data: Response,
+  options: PostInnsendingRuntimeOptions<S>,
+  body: unknown
+): Promise<void> {
+  switch (data.status) {
+    case 200:
+    case 201:
+      await handleSuccessResponse<S>(data, options.onSuccess);
+      return;
+    case 500:
+      await handle500Response(data, options);
+      return;
+    case 400:
+      await handle400Response(data, options, body);
+      return;
+    case 404:
+      handle404Response(data, options.setErrorResponse);
+      return;
+    case 401:
+      handle401Response(options.analyticsComponent, options.onUnauthorized);
+      return;
+    default:
+      await handleDefaultResponse(data, options, body);
+      return;
+  }
+}
+
+async function handleSuccessResponse<S>(data: Response, onSuccess: (json: S | null) => void | Promise<void>) {
+  let json: S | null = null;
+  try {
+    json = (await data.json()) as S;
+  } catch {
+    // Ignorer manglende body
+  }
+  await onSuccess(json);
+}
+
+async function handle500Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>) {
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+      property: 'server'
+    }
+  ]);
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet - serverfeil',
+    component: options.analyticsComponent
+  });
+  logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
+}
+
+async function handle400Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
+  try {
+    const resultat = (await data.json()) as unknown;
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet - valideringsfeil',
+      component: options.analyticsComponent
     });
+    if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
+      const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+      if (feilResultat.success === true) {
+        const feil = feilResultat.data;
+        const mappedErrors =
+          feil.error && feil.error.length > 0
+            ? options.mapValidationErrors(
+                {
+                  error: feil.error,
+                  valideringsfeil:
+                    feil.valideringsfeil && feil.valideringsfeil.length > 0 ? feil.valideringsfeil : [feil.error]
+                },
+                []
+              )
+            : options.mapValidationErrors(feil, []);
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
+        safeTeamLoggerWarn(
+          'Feil ved innsending av skjema - 400 - BadRequest ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(feil) +
+            ' ' +
+            JSON.stringify(body)
+        );
+      } else {
+        const mappedErrors = options.mapValidationErrors(
+          { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+          []
+        );
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn(
+          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(await safeText(data))
+        );
+        safeTeamLoggerWarn(
+          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify((await safeText(data)) + ' ' + JSON.stringify(body))
+        );
+      }
+    } else {
+      const mappedErrors = options.mapValidationErrors(
+        { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+        []
+      );
+      options.setErrorResponse(mappedErrors);
+      options.setShowErrorList(true);
+      logger.warn(
+        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+          data.statusText +
+          ' ' +
+          JSON.stringify(await safeText(data))
+      );
+      safeTeamLoggerWarn(
+        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+          data.statusText +
+          ' ' +
+          JSON.stringify(await safeText(data)) +
+          ' ' +
+          JSON.stringify(body)
+      );
+    }
+  } catch (err) {
+    const mappedErrors = options.mapValidationErrors(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    options.setErrorResponse(mappedErrors);
+    options.setShowErrorList(true);
+    logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
+    safeTeamLoggerWarn(
+      'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
+        err +
+        ' ' +
+        JSON.stringify(await safeText(data)) +
+        ' ' +
+        JSON.stringify(body)
+    );
+  }
+}
+
+function handle404Response(data: Response, setErrorResponse: (errors: ErrorResponse[]) => void) {
+  setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Fant ikke endepunktet for innsending',
+      property: 'server'
+    }
+  ]);
+  logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
+}
+
+function handle401Response(analyticsComponent: string, onUnauthorized: () => void) {
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet - ingen tilgang',
+    component: analyticsComponent
+  });
+  onUnauthorized();
+}
+
+async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
+  try {
+    const resultat = (await data.json()) as unknown;
+    logEvent('skjema innsending feilet', {
+      tittel: 'Innsending feilet',
+      component: options.analyticsComponent
+    });
+    if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
+      const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
+      if (feilResultat.success === true) {
+        const feil = feilResultat.data;
+        const harValideringsfeil = Array.isArray(feil.valideringsfeil) && feil.valideringsfeil.length > 0;
+        const mappedErrors =
+          feil.error && feil.error.length > 0
+            ? options.mapValidationErrors(
+                { error: feil.error, valideringsfeil: harValideringsfeil ? feil.valideringsfeil! : [feil.error] },
+                []
+              )
+            : options.mapValidationErrors(feil, []);
+        options.setErrorResponse(mappedErrors);
+        options.setShowErrorList(true);
+        logger.warn(
+          'Feil ved innsending av skjema - ' + data.status + ' - ' + data.statusText + ' ' + JSON.stringify(feil)
+        );
+        safeTeamLoggerWarn(
+          'Feil ved innsending av skjema - ' +
+            data.status +
+            ' - ' +
+            data.statusText +
+            ' ' +
+            JSON.stringify(feil) +
+            ' ' +
+            JSON.stringify(body)
+        );
+      }
+    }
+  } catch (err) {
+    logger.warn('Feil ved innsending av skjema - uventet respons ' + err + ' ' + JSON.stringify(await safeText(data)));
+    safeTeamLoggerWarn(
+      'Feil ved innsending av skjema - uventet respons ' +
+        err +
+        ' ' +
+        JSON.stringify(await safeText(data)) +
+        ' ' +
+        JSON.stringify(body)
+    );
+  }
+}
+
+function handleNetworkError(
+  err: unknown,
+  options: Pick<PostInnsendingRuntimeOptions<unknown>, 'setErrorResponse' | 'setShowErrorList'>
+) {
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Det oppstod et nettverksproblem ved innsending. Vennligst prøv igjen.',
+      property: 'server'
+    }
+  ]);
+  options.setShowErrorList(true);
+  logger.warn('Feil ved innsending av skjema - network error ' + err);
 }
 
 async function safeText(resp: Response): Promise<string> {
@@ -138,5 +306,13 @@ async function safeText(resp: Response): Promise<string> {
     return await resp.text();
   } catch {
     return '';
+  }
+}
+
+function safeTeamLoggerWarn(message: string) {
+  try {
+    teamLogger.warn(message);
+  } catch (e) {
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
   }
 }

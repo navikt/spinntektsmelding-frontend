@@ -38,7 +38,12 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     // select refusjon=yes
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?' })
+      .getByLabel('Ja')
+      .check();
+
+    await page
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Ja')
       .check();
 
@@ -73,7 +78,8 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
       },
       refusjon: { beloepPerMaaned: 50000, sluttdato: null, endringer: [] },
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page

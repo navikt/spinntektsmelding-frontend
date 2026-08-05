@@ -12,80 +12,80 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-16')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-16')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-11-12');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-11-12');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode with one workday between', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-15')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-13')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-11-17');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-11-17');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode with weekend between', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-16')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-19')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-19'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-22'),
+        tom: parseISO('2025-12-24')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-12-12');
   });
 
   it('should return the correct bestemmende fraværsdag for two overlapping periode', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-17')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-17')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-12-12');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode with one in the other', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-25')
       },
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-12-12');
   });
 
   it('should return the undefined bestemmende fraværsdag for two periode with one in the other', () => {
@@ -98,16 +98,16 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     const periode: Array<Periode> = [
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-22')
       },
       {
         id: '1',
-        fom: parseISO('2022-12-12'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-12'),
+        tom: parseISO('2025-12-25')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode)).toBe('2022-12-12');
+    expect(finnBestemmendeFravaersdag(periode)).toBe('2025-12-12');
   });
 
   it('should return the correct arbeidsgiverperiode periode for short periods and a jump. Gap after 16 days periode.', () => {
@@ -234,132 +234,132 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
     const periode: Array<Periode> = [
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-25')
       }
     ];
 
     const arbeidsgiverPeriode: Array<Periode> = [
       {
         id: 'a1',
-        fom: parseISO('2022-12-20'),
-        tom: parseISO('2022-12-22')
+        fom: parseISO('2025-12-20'),
+        tom: parseISO('2025-12-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-20');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2025-12-20');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past', () => {
     const periode: Array<Periode> = [
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-25')
       }
     ];
 
     const arbeidsgiverPeriode: Array<Periode> = [
       {
         id: 'a1',
-        fom: parseISO('2022-12-02'),
-        tom: parseISO('2022-12-18')
+        fom: parseISO('2025-12-02'),
+        tom: parseISO('2025-12-18')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-02');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2025-12-02');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the last day is the same', () => {
     const periode: Array<Periode> = [
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-25')
       }
     ];
 
     const arbeidsgiverPeriode: Array<Periode> = [
       {
         id: 'a1',
-        fom: parseISO('2022-12-02'),
-        tom: parseISO('2022-12-16')
+        fom: parseISO('2025-12-02'),
+        tom: parseISO('2025-12-16')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-02');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2025-12-02');
   });
 
   it('should return the correct bestemmende fraværsdag when arbeidsgiverperioden is in the past and the first day is the same', () => {
     const periode: Array<Periode> = [
       {
         id: '2',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-25')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-25')
       }
     ];
 
     const arbeidsgiverPeriode: Array<Periode> = [
       {
         id: 'a1',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-18')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-18')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2022-12-16');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode)).toBe('2025-12-16');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the past', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-16')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-16')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
 
     const arbeidsgiverPeriode: Array<Periode> = [
       {
         id: 'a1',
-        fom: parseISO('2022-12-16'),
-        tom: parseISO('2022-12-18')
+        fom: parseISO('2025-12-16'),
+        tom: parseISO('2025-12-18')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode, '2022-11-05')).toBe('2022-11-05');
+    expect(finnBestemmendeFravaersdag(periode, arbeidsgiverPeriode, '2025-11-05')).toBe('2025-11-05');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the future', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-16')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-16')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-17')).toBe('2022-11-12');
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2025-11-17')).toBe('2025-11-12');
   });
 
   it('should return the correct bestemmende fraværsdag for two periode directly following each other and forespurtBestemmende is in the future 2', () => {
     const periode: Array<Periode> = [
       {
         id: '1',
-        fom: parseISO('2022-11-12'),
-        tom: parseISO('2022-11-16')
+        fom: parseISO('2025-11-12'),
+        tom: parseISO('2025-11-16')
       },
       {
         id: '2',
-        fom: parseISO('2022-11-17'),
-        tom: parseISO('2022-11-22')
+        fom: parseISO('2025-11-17'),
+        tom: parseISO('2025-11-22')
       }
     ];
-    expect(finnBestemmendeFravaersdag(periode, undefined, '2022-11-18')).toBe('2022-11-12');
+    expect(finnBestemmendeFravaersdag(periode, undefined, '2025-11-18')).toBe('2025-11-12');
   });
 
   it('should return null for tilstøtende perioder, uten helg, manuell', () => {

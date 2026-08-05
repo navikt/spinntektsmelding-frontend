@@ -27,9 +27,7 @@ export default function DatoVelger({
   defaultMonth,
   name
 }: Readonly<DatoVelgerProps>) {
-  if (!defaultSelected || !isValid(defaultSelected)) {
-    defaultSelected = undefined;
-  }
+  const normalizedDefaultSelected = defaultSelected && isValid(defaultSelected) ? defaultSelected : undefined;
 
   const { control } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
@@ -84,7 +82,7 @@ export default function DatoVelger({
     toDate: toDate,
     fromDate: fromDate,
     onDateChange: handleDateChange,
-    defaultSelected: defaultSelected ?? field.value,
+    defaultSelected: normalizedDefaultSelected ?? field.value,
     defaultMonth: defaultMonth
   });
 
@@ -93,10 +91,10 @@ export default function DatoVelger({
   });
 
   useEffect(() => {
-    if (defaultSelected === undefined) {
+    if (normalizedDefaultSelected === undefined) {
       onReset();
     }
-  }, [defaultSelected]);
+  }, [normalizedDefaultSelected]);
 
   return (
     <div onMouseDownCapture={handleMouseDownCapture}>

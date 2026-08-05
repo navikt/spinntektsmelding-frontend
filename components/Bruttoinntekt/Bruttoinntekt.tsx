@@ -2,7 +2,7 @@ import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
 import { useEffect, useMemo, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 import formatCurrency from '../../utils/formatCurrency';
 import Heading3 from '../Heading3/Heading3';
 import TextLabel from '../TextLabel/TextLabel';
@@ -118,18 +118,18 @@ export default function Bruttoinntekt({
       )}
       <AvvikAdvarselInntekt tidligereInntekter={sisteTreMndTidligereinntekt} />
       {!endreMaanedsinntekt && (
-        <TextLabel className={lokalStyles.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
+        <TextLabel className={lokalStyling.tbmargin}>Dette gir en beregnet månedslønn på:</TextLabel>
       )}
-      <div className={lokalStyles.beloepwrapper}>
+      <div className={lokalStyling.beloepwrapper}>
         {!endreMaanedsinntekt && (
           <>
-            <TextLabel className={lokalStyles.maanedsinntekt} id='bruttoinntekt-beloep'>
+            <TextLabel className={lokalStyling.maanedsinntekt} id='bruttoinntekt-beloep'>
               {formatCurrency(gjennomsnittligInntekt ?? 0)} kr/måned
             </TextLabel>
             <ButtonEndre
               data-cy='endre-beloep'
               onClick={handleStartEditingMaanedsinntekt}
-              className={lokalStyles.endrePadding}
+              className={lokalStyling.endrePadding}
             />
           </>
         )}
@@ -144,7 +144,7 @@ export default function Bruttoinntekt({
           />
         )}
       </div>
-      <BodyShort className={lokalStyles.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
+      <BodyShort className={lokalStyling.bruttoinntektBelopBeskrivelse}>Stemmer dette?</BodyShort>
       <BodyLong>
         Månedinntekten du oppgir i inntektsmeldingen skal reflektere den ansatte sitt inntektstap i sykefraværsperioden.
         Du må derfor sjekke at vårt forslag stemmer. Hvis den ansatte i løpet av beregningsperioden har fått en varig

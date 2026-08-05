@@ -33,7 +33,7 @@ describe('VelgAarsak', () => {
     render(<VelgAarsak legend={legend} name={name} />);
 
     // RadioGroup should have the correct accessible name
-    expect(screen.getByRole('group', { name: legend })).toBeInTheDocument();
+    expect(screen.getByRole('radiogroup', { name: legend })).toBeInTheDocument();
 
     // Each radio option by its label
     expect(

@@ -1,5 +1,5 @@
 import DatoVelger from '../DatoVelger/DatoVelger';
-import lokalStyles from './Bruttoinntekt.module.css';
+import lokalStyling from './Bruttoinntekt.module.css';
 
 interface TariffendringDatoProps {
   defaultEndringsdato?: Date;
@@ -16,7 +16,7 @@ export default function TariffendringDato({
 }: Readonly<TariffendringDatoProps>) {
   const tilDato = new Date();
   return (
-    <div className={lokalStyles.endremaaanedsinntekt}>
+    <div className={lokalStyling.endremaaanedsinntekt}>
       <DatoVelger
         // onDateChange={changeTariffEndretDato}
         label='Tariffendring gjelder fra'

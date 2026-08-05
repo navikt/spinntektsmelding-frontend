@@ -39,6 +39,11 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   output: 'standalone',
+  // pino (and the @navikt loggers built on it) must stay external so they are
+  // required from node_modules at runtime instead of being bundled. pino loads
+  // its transports (e.g. pino-socket for team-logs) in a worker thread via a
+  // dynamic string target, which only works when the package exists on disk.
+  serverExternalPackages: ['@navikt/next-logger', 'pino', 'pino-socket', 'pino-pretty'],
   basePath: '/im-dialog',
   typescript: {
     // !! WARN !!

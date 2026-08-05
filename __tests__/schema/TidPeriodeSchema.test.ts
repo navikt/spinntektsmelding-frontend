@@ -11,7 +11,7 @@ describe('TidPeriodeSchema', () => {
   });
 
   it('parses when only fom is provided', () => {
-    const input = { fom: new Date('2022-02-02') };
+    const input = { fom: new Date('2025-02-02') };
     const result = TidPeriodeSchema.parse(input);
     const expected: TidPeriode = { fom: input.fom };
     expect(result).toEqual(expected);

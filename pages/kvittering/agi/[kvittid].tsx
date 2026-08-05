@@ -5,7 +5,7 @@ import Head from 'next/head';
 import BannerUtenVelger from '../../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../../components/PageContent/PageContent';
 
-import lokalStyles from '../Kvittering.module.css';
+import lokalStyling from '../Kvittering.module.css';
 import styles from '../../../styles/Home.module.css';
 
 import Heading2 from '../../../components/Heading2/Heading2';
@@ -14,7 +14,7 @@ import { BodyLong, BodyShort, Button, HStack } from '@navikt/ds-react';
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
 import PeriodeFraTil from '../../../components/PeriodeFraTil/PeriodeFraTil';
 import formatCurrency from '../../../utils/formatCurrency';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import BortfallNaturalytelser from '../../../components/BortfallNaturalytelser/BortfallNaturalytelser';
 import FullLonnIArbeidsgiverperioden from '../../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import LonnUnderSykefravaeret from '../../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
@@ -59,6 +59,8 @@ import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
 import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
+import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
+import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
@@ -99,7 +101,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   dataFraBackend = false
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [
     kvitteringData,
@@ -149,7 +150,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       }
     : {
         navn: sykmeldt.navn,
-        identitetsnummer: sykmeldt?.fnr,
+        identitetsnummer: sykmeldt.fnr,
         orgnrUnderenhet: avsender.orgnr,
         virksomhetNavn: avsender.orgNavn,
         innsenderNavn: avsender.navn,
@@ -158,7 +159,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const clickEndre = () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
-
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
@@ -194,7 +194,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   useEffect(() => {
     onSetNyInnsending();
-  }, [searchParams]);
+  }, [router.asPath]);
 
   const visNaturalytelser = true;
   const visArbeidsgiverperiode = true;
@@ -215,8 +215,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       : [];
   }
 
-  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyles.fravaerswrapperwrapper : '';
-  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyles.infoboks : '';
+  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyling.fravaerswrapperwrapper : '';
+  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyling.infoboks : '';
 
   let fullLoennIArbeidsgiverPerioden: LonnIArbeidsgiverperioden;
 
@@ -282,7 +282,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   } else if (kvitteringData?.refusjon?.sluttdato) {
     refusjonEndringer.push({
       beloep: 0,
-      startdato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)
+      startdato: parseIsoDate(kvitteringData?.refusjon?.sluttdato)!
     });
   }
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
@@ -316,6 +316,12 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     onsetSkjemaStatus();
   }, []);
 
+  const lukkHentingFeiletModal = () => {
+    if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
+      globalThis.window.location.href = environment.saksoversiktUrl;
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -345,18 +351,18 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             )}
 
             <div className={classNameWrapperSkjaeringstidspunkt}>
-              <div className={lokalStyles.ytterstefravaerwrapper}>
-                <div className={lokalStyles.ytrefravaerswrapper}>
-                  <Heading2 className={lokalStyles.fravaerstyper}>Bestemmende fraværsdag</Heading2>
+              <div className={lokalStyling.ytterstefravaerwrapper}>
+                <div className={lokalStyling.ytrefravaerswrapper}>
+                  <Heading2 className={lokalStyling.fravaerstyper}>Bestemmende fraværsdag</Heading2>
                   <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                  <div className={lokalStyles.fravaerwrapper}>
-                    <div className={lokalStyles.fravaertid}>Dato</div>
+                  <div className={lokalStyling.fravaerwrapper}>
+                    <div className={lokalStyling.fravaertid}>Dato</div>
                     <div data-cy='bestemmendefravaersdag'>{formatDate(visningBestemmendeFravaersdag)} </div>
                   </div>
                 </div>
                 {visArbeidsgiverperiode && (
-                  <div className={lokalStyles.arbeidsgiverperiode}>
-                    <Heading2 className={lokalStyles.fravaerstyper}>Arbeidsgiverperiode</Heading2>
+                  <div className={lokalStyling.arbeidsgiverperiode}>
+                    <Heading2 className={lokalStyling.fravaerstyper}>Arbeidsgiverperiode</Heading2>
                     {!ingenArbeidsgiverperioder && (
                       <BodyLong>
                         Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
@@ -378,22 +384,23 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           </div>
           <Skillelinje />
           <Heading2>Beregnet månedslønn</Heading2>
-          <BodyShort className={lokalStyles.uthevet}>Registrert inntekt</BodyShort>
+          <BodyShort className={lokalStyling.uthevet}>Registrert inntekt</BodyShort>
           <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
 
           {visningEndringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
             <Fragment key={endring?.aarsak + endringIndex}>
-              <div className={lokalStyles.uthevet}>Endret med årsak</div>
+              <div className={lokalStyling.uthevet}>Endret med årsak</div>
 
               {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak as string)}
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}
+          <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
           <Skillelinje />
           <Heading2>Refusjon</Heading2>
           {visFullLonnIArbeidsgiverperioden && (
             <>
-              <div className={lokalStyles.uthevet}>
+              <div className={lokalStyling.uthevet}>
                 Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
               </div>
               <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLoennIArbeidsgiverPerioden} />
@@ -414,16 +421,22 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <Skillelinje />
 
           <BodyShort>Kvittering - innsendt inntektsmelding{innsendingstidspunkt}</BodyShort>
-          <HStack justify='space-between' className={lokalStyles.buttonWrapper + ' skjul-fra-print'}>
+          <HStack justify='space-between' className={lokalStyling.buttonWrapper + ' skjul-fra-print'}>
             <HStack gap='space-64'>
               <ButtonEndre onClick={clickEndre} />
               <Button variant='tertiary' as='a' href={environment.saksoversiktUrl}>
                 Lukk
               </Button>
             </HStack>
-            <ButtonPrint className={lokalStyles.skrivutknapp}>Skriv ut</ButtonPrint>
+            <ButtonPrint className={lokalStyling.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
+        <HentingAvDataFeilet
+          open={kvitteringStatus === 500}
+          handleCloseModal={lukkHentingFeiletModal}
+          title='Henting av kvitteringen feilet'
+          ariaLabel='Henting av kvittering feilet'
+        />
       </PageContent>
     </div>
   );

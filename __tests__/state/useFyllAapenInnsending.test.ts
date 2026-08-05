@@ -78,9 +78,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
@@ -100,6 +100,19 @@ describe('useFyllAapenInnsending', () => {
       });
 
       result.current.setBareNyMaanedsinntekt(500000);
+    });
+
+    act(() => {
+      result.current.initFravaersperiode([
+        {
+          fom: '2023-02-20',
+          tom: '2023-03-03'
+        },
+        {
+          fom: '2023-03-05',
+          tom: '2023-03-06'
+        }
+      ]);
     });
 
     const { result: fyller } = renderHook(() => useFyllAapenInnsending());
@@ -134,7 +147,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });
@@ -152,9 +166,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
@@ -247,7 +261,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });
@@ -284,9 +299,9 @@ describe('useFyllAapenInnsending', () => {
       result.current.initBruttoinntekt(
         500000,
         {
-          '2022-10': 500000,
-          '2022-11': 500000,
-          '2022-12': 500000
+          '2025-10': 500000,
+          '2025-11': 500000,
+          '2025-12': 500000
         },
         new Date()
       );
@@ -357,7 +372,8 @@ describe('useFyllAapenInnsending', () => {
           type: 'MedArbeidsforhold',
           vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375'
         },
-        naturalytelser: []
+        naturalytelser: [],
+        flereArbeidsforhold: null
       });
     }
   });

@@ -2,7 +2,7 @@ import { Button, Checkbox } from '@navikt/ds-react';
 import ButtonSlette from '../ButtonSlette';
 import Heading3 from '../Heading3';
 import SelectNaturalytelser from './SelectNaturalytelser/SelectNaturalytelser';
-import lokalStyles from './Naturalytelser.module.css';
+import lokalStyling from './Naturalytelser.module.css';
 
 import styles from '../../styles/Home.module.css';
 import { useFieldArray, useFormContext } from 'react-hook-form';
@@ -62,7 +62,7 @@ export default function Naturalytelser() {
       </Checkbox>
       {harBortfallAvNaturalytelser && (
         <>
-          <table className={lokalStyles.tablenaturalytelse}>
+          <table className={lokalStyling.tablenaturalytelse}>
             <thead>
               <tr>
                 <th scope='col'>Naturalytelse</th>
@@ -78,7 +78,7 @@ export default function Naturalytelser() {
                     <SelectNaturalytelser name={`inntekt.naturalytelser.${index}.naturalytelse`} />
                   </td>
 
-                  <td className={lokalStyles.tddatepickernatural}>
+                  <td className={lokalStyling.tddatepickernatural}>
                     <DatoVelger
                       name={`inntekt.naturalytelser.${index}.sluttdato`}
                       label='Dato naturalytelse faller bort'
@@ -106,7 +106,7 @@ export default function Naturalytelser() {
               ))}
             </tbody>
           </table>
-          <div className={lokalStyles.naturalytelserknapp}>
+          <div className={lokalStyling.naturalytelserknapp}>
             <Button variant='secondary' className={styles.legtilbutton} onClick={handleButtonLeggTilClick}>
               Legg til naturalytelse
             </Button>

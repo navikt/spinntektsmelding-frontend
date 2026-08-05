@@ -1,6 +1,6 @@
 import formatDate from '../../utils/formatDate';
 
-import lokalStyles from '../../pages/kvittering/Kvittering.module.css';
+import lokalStyling from '../../pages/kvittering/Kvittering.module.css';
 
 interface PeriodeFraTilProps {
   fom?: Date;
@@ -15,12 +15,12 @@ export default function PeriodeFraTil(props: PeriodeFraTilProps) {
   if (props.fom || props.tom) {
     return (
       <>
-        <div className={lokalStyles.fravaerwrapper}>
-          <div className={lokalStyles.fravaertid}>{visningFom}</div>
+        <div className={lokalStyling.fravaerwrapper}>
+          <div className={lokalStyling.fravaertid}>{visningFom}</div>
           <div>{props.fom ? formatDate(props.fom) : '&nbsp;'}</div>
         </div>
-        <div className={lokalStyles.fravaerwrapper}>
-          <div className={lokalStyles.fravaertid}>{visningTom}</div>
+        <div className={lokalStyling.fravaerwrapper}>
+          <div className={lokalStyling.fravaertid}>{visningTom}</div>
           <div>{props.tom ? formatDate(props.tom) : '&nbsp;'}</div>
         </div>
       </>

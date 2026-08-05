@@ -1,5 +1,4 @@
 import { isValid } from 'date-fns';
-// import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
 import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import formatIsoDate from '../utils/formatIsoDate';
 import { LonnIArbeidsgiverperioden, Naturalytelse, Periode, YesNo } from './state';
@@ -15,7 +14,6 @@ import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 import { NaturalytelseEnumSchema } from '../schema/NaturalytelseEnumSchema';
 import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
-import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 
 export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
@@ -50,14 +48,16 @@ export default function useFyllInnsending() {
 
   return (
     forespoerselId: string,
-    forespurteOpplysningstyper: Opplysningstype[],
     skjemaData: Skjema,
-    erBegrensetForespoersel: boolean
+    erBegrensetForespoersel: boolean,
+    faisuEnabled?: boolean
   ): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
-    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
-    const harForespurtInntekt = forespurteOpplysningstyper.includes(forespoerselType.inntekt);
+    const harForespurtArbeidsgiverperiode = Boolean(
+      skjemaData.opplysningstyper?.includes(forespoerselType.arbeidsgiverperiode)
+    );
+    const harForespurtInntekt = Boolean(skjemaData.opplysningstyper?.includes(forespoerselType.inntekt));
 
     const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
 
@@ -110,7 +110,9 @@ export default function useFyllInnsending() {
     setInnsenderTelefon(skjemaData.avsenderTlf);
 
     initNaturalytelser(skjemaData.inntekt?.naturalytelser);
-
+    const sykmeldtfraFlereArbeidsforhold =
+      skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Nei' &&
+      skjemaData.flereArbeidsforhold?.harLikLoenn === 'Nei';
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
@@ -118,7 +120,7 @@ export default function useFyllInnsending() {
           skjemaData.agp?.redusertLoennIAgp as LonnIArbeidsgiverperioden,
           arbeidsgiverperioder
         ),
-        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
+        redusertLoennIAgp: skjemaData.fullLonn === 'Ja' ? null : (skjemaData.agp?.redusertLoennIAgp ?? null)
       },
       inntekt: harForespurtInntekt
         ? {
@@ -137,8 +139,24 @@ export default function useFyllInnsending() {
             }
           : null,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
-      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser)
+      naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
+      flereArbeidsforhold: sykmeldtfraFlereArbeidsforhold
+        ? {
+            harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
+            erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
+            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+              inntekt: forhold.inntekt,
+              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+              inkludertISykefravaer: forhold.inkludertISykefravaer,
+              stillingsprosent: forhold.stillingsprosent
+            }))
+          }
+        : null
     };
+
+    if (!faisuEnabled) {
+      delete innsendingSkjema.flereArbeidsforhold;
+    }
 
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;

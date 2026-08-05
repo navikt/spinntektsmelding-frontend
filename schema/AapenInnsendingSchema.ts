@@ -12,7 +12,7 @@ const AapenInnsendingSchema = InnsendingSchema.extend({
     orgnr: OrganisasjonsnummerSchema,
     tlf: TelefonNummerSchema
   }),
-  sykmeldingsperioder: PeriodeListeSchema,
+  sykmeldingsperioder: PeriodeListeSchema.min(1, { message: 'Det må være minst én sykmeldingsperiode.' }),
   arbeidsforholdType: TypeArbeidsforholdSchema
 }).superRefine(superRefineInnsending);
 

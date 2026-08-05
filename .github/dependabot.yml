@@ -5,12 +5,16 @@
 
 version: 2
 updates:
-  # Maintain dependencies for pnpm
+  # Maintain public npm dependencies for pnpm
   - package-ecosystem: 'npm' # See documentation for possible values
     directory: '/' # Location of package manifests
-    registries: '*'
+    registries:
+      - npm-github
     open-pull-requests-limit: 20
+    allow:
+      - dependency-type: direct
     ignore:
+      - dependency-name: '@rollup/*'
       - dependency-name: 'eslint'
         versions: ['9.x', '10.x']
     schedule:
@@ -61,4 +65,6 @@ registries:
   npm-github:
     type: npm-registry
     url: https://npm.pkg.github.com
+    replaces-base: false
     token: ${{ secrets.READER_TOKEN }}
+

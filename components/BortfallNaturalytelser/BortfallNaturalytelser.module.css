@@ -1,9 +1,9 @@
-.naturalytelser td,
-.naturalytelser th {
-  padding-left: 0;
-  padding-right: 2rem;
+.naturalytelser {
+  margin-top: var(--ax-space-16);
+  width: 100%;
 }
 
-.naturalytelser .verdi {
-  float: left;
+.naturalytelser td,
+.naturalytelser th {
+  text-align: left;
 }

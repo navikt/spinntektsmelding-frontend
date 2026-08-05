@@ -7,6 +7,16 @@ import useSendInnSkjema from '../../utils/useSendInnSkjema';
 import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsgiverInitiertSkjema';
 import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
+import forespoerselType from '../../config/forespoerselType';
+
+vi.mock('@unleash/nextjs', () => ({
+  getDefinitions: vi.fn(() => Promise.resolve({})),
+  evaluateFlags: vi.fn(() => ({ toggles: {} })),
+  flagsClient: vi.fn(() => ({
+    isEnabled: vi.fn((flagName: string) => flagName === 'faisu-inntektsmelding'),
+    sendMetrics: vi.fn(() => Promise.resolve())
+  }))
+}));
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -16,6 +26,10 @@ vi.mock('@navikt/oasis', () => ({
 
 vi.mock('../../utils/hentForespoerselSSR', () => ({
   default: vi.fn(() => Promise.resolve({ data: { some: 'data' } }))
+}));
+
+vi.mock('../../utils/hentArbeidsforholdSSR', () => ({
+  default: vi.fn(() => Promise.resolve(null))
 }));
 
 vi.mock('../../utils/redirectTilLogin', () => ({
@@ -61,6 +75,11 @@ vi.mock('../../utils/useTidligereInntektsdata', () => ({
   default: vi.fn(() => ({ data: null, error: null }))
 }));
 
+vi.mock('../../utils/fetchArbeidsforhold', () => ({
+  __esModule: true,
+  default: vi.fn(() => Promise.resolve({ ansettelsesforhold: [] }))
+}));
+
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
   default: vi.fn(),
@@ -73,7 +92,7 @@ const createMockState = (overrides = {}) => ({
   slettFeilmelding: vi.fn(),
   leggTilFeilmelding: vi.fn(),
   foreslaattBestemmendeFravaersdag: '2023-01-01',
-  sykmeldingsperioder: [],
+  sykmeldingsperioder: [{ id: 'periode-1', fom: parseIsoDate('2023-02-20'), tom: parseIsoDate('2023-03-03') }],
   egenmeldingsperioder: [],
   skjemaFeilet: false,
   skjemastatus: SkjemaStatus.UNDER_UTFYLLING,
@@ -95,6 +114,7 @@ const createMockState = (overrides = {}) => ({
   behandlingsdager: [],
   selvbestemtType: null,
   begrensetForespoersel: false,
+  setArbeidsgiverperiodeDisabled: vi.fn(),
   ...overrides
 });
 
@@ -153,6 +173,11 @@ vi.mock('../../components/Heading3', () => ({
   default: ({ children }: { children: React.ReactNode }) => <h3 data-testid='heading3'>{children}</h3>
 }));
 
+vi.mock('../../components/Faisu/Faisu', () => ({
+  __esModule: true,
+  default: () => <div data-testid='faisu'>Faisu Component</div>
+}));
+
 vi.mock('../../utils/fetchInntektsdata', () => ({
   default: vi.fn(() =>
     Promise.resolve({
@@ -163,6 +188,30 @@ vi.mock('../../utils/fetchInntektsdata', () => ({
     })
   )
 }));
+
+function createServerSideContext(overrides: any = {}) {
+  const { query, req, res, ...rest } = overrides;
+
+  return {
+    query: {
+      slug: ['550e8400-e29b-41d4-a716-446655440000'],
+      ...query
+    },
+    req: {
+      cookies: {},
+      headers: {
+        host: 'localhost:3000'
+      },
+      ...req
+    },
+    res: {
+      setHeader: vi.fn(),
+      appendHeader: vi.fn(),
+      ...res
+    },
+    ...rest
+  };
+}
 
 describe('Home Page', () => {
   beforeEach(() => {
@@ -233,6 +282,39 @@ describe('Home Page', () => {
     });
   });
 
+  it('adds arbeidsgiverperiode to opplysningstyper when overstyrt and submits updated payload', async () => {
+    const mockSendInnSkjema = vi.fn().mockResolvedValue({});
+    const mockSetPaakrevdeOpplysninger = vi.fn();
+
+    (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn(
+        createMockState({
+          hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue([forespoerselType.inntekt]),
+          setPaakrevdeOpplysninger: mockSetPaakrevdeOpplysninger
+        })
+      )
+    );
+
+    render(<Home slug='123' erEndring={false} />);
+
+    fireEvent.click(screen.getByText('Endre'));
+    fireEvent.click(screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'));
+    fireEvent.click(screen.getByText('Send'));
+
+    await waitFor(() => {
+      expect(mockSendInnSkjema).toHaveBeenCalled();
+    });
+
+    const submittedFormData = mockSendInnSkjema.mock.calls[0][3];
+    expect(submittedFormData.opplysningstyper).toEqual(
+      expect.arrayContaining([forespoerselType.inntekt, forespoerselType.arbeidsgiverperiode])
+    );
+    expect(mockSetPaakrevdeOpplysninger).toHaveBeenCalledWith(
+      expect.arrayContaining([forespoerselType.inntekt, forespoerselType.arbeidsgiverperiode])
+    );
+  });
+
   it('renders Behandlingsdager component when slug is behandlingsdager', () => {
     (useBoundStore as Mock).mockImplementation((stateFn) =>
       stateFn(
@@ -280,6 +362,36 @@ describe('Home Page', () => {
     const endreButton = screen.getByText('Endre');
     fireEvent.click(endreButton);
 
+    await waitFor(() => {
+      expect(screen.getByTestId('arbeidsgiverperiode')).toBeInTheDocument();
+    });
+  });
+
+  it('calls setArbeidsgiverperiodeDisabled(false) and shows Arbeidsgiverperiode when Endre button is clicked', async () => {
+    const mockSetArbeidsgiverperiodeDisabled = vi.fn();
+
+    (useBoundStore as Mock).mockImplementation((stateFn) =>
+      stateFn(
+        createMockState({
+          hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt']),
+          setArbeidsgiverperiodeDisabled: mockSetArbeidsgiverperiodeDisabled
+        })
+      )
+    );
+
+    render(<Home slug='123' erEndring={false} />);
+
+    // Verify the "Endre" button is visible when arbeidsgiverperiode is not required
+    expect(screen.getByText('Endre')).toBeInTheDocument();
+
+    // Click the "Endre" button
+    const endreButton = screen.getByText('Endre');
+    fireEvent.click(endreButton);
+
+    // Verify that setArbeidsgiverperiodeDisabled(false) was called
+    expect(mockSetArbeidsgiverperiodeDisabled).toHaveBeenCalledWith(false);
+
+    // Verify that Arbeidsgiverperiode component is now shown
     await waitFor(() => {
       expect(screen.getByTestId('arbeidsgiverperiode')).toBeInTheDocument();
     });
@@ -564,12 +676,7 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props with valid UUID slug', async () => {
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -579,12 +686,11 @@ describe('getServerSideProps', () => {
   });
 
   it('returns erEndring true when slug[1] is overskriv', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -592,12 +698,11 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props without fetching when UUID is invalid', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['invalid-slug']
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -606,13 +711,12 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props without fetching when endre is set', async () => {
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000'],
         endre: 'true'
-      },
-      req: {}
-    };
+      }
+    });
 
     const result = await getServerSideProps(context);
 
@@ -626,12 +730,7 @@ describe('getServerSideProps', () => {
     const { getToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce(null as unknown as string);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -648,12 +747,7 @@ describe('getServerSideProps', () => {
     vi.mocked(getToken).mockReturnValueOnce('mock-token');
     vi.mocked(validateToken).mockResolvedValueOnce({ ok: false });
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -668,12 +762,7 @@ describe('getServerSideProps', () => {
     (error as Error & { status: number }).status = 404;
     vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -686,12 +775,7 @@ describe('getServerSideProps', () => {
     (error as Error & { status: number }).status = 500;
     vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
-      req: {}
-    };
+    const context = createServerSideContext();
 
     const result = await getServerSideProps(context);
 
@@ -702,36 +786,65 @@ describe('getServerSideProps', () => {
   it('redirects to kvittering when forespurt.data.erBesvart is true', async () => {
     const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
     vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
-      data: { erBesvart: true }
-    });
+      erBesvart: true
+    } as any);
 
-    const context = {
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000']
-      },
+    const context = createServerSideContext({
       req: {
         headers: {
           host: 'localhost:3000'
         }
       }
-    } as any;
+    });
 
     const result = await getServerSideProps(context);
 
     expect(result).toHaveProperty('redirect');
     expect((result as any).redirect.destination).toBe(
-      'https://localhost:3000/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
+      'http://localhost:3000/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
     );
     expect((result as any).redirect.permanent).toBe(false);
+  });
+
+  it('redirects to kvittering with https when erBesvart is true in production environment', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+
+    const { getToken, validateToken } = await import('@navikt/oasis');
+    vi.mocked(getToken).mockReturnValueOnce('mock-token');
+    vi.mocked(validateToken).mockResolvedValueOnce({ ok: true });
+
+    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+    vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
+      erBesvart: true
+    } as any);
+
+    const context = createServerSideContext({
+      req: {
+        headers: {
+          host: 'arbeidsgiver.nav.no'
+        }
+      }
+    });
+
+    const result = await getServerSideProps(context);
+
+    expect(result).toHaveProperty('redirect');
+    expect((result as any).redirect.destination).toBe(
+      'https://arbeidsgiver.nav.no/im-dialog/kvittering/550e8400-e29b-41d4-a716-446655440000'
+    );
+    expect((result as any).redirect.permanent).toBe(false);
+
+    process.env.NODE_ENV = originalEnv;
   });
 
   it('does not redirect to kvittering when erBesvart is true but overskriv slug exists', async () => {
     const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
     vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
-      data: { erBesvart: true }
-    });
+      erBesvart: true
+    } as any);
 
-    const context = {
+    const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
       },
@@ -740,7 +853,7 @@ describe('getServerSideProps', () => {
           host: 'localhost:3000'
         }
       }
-    } as any;
+    });
 
     const result = await getServerSideProps(context);
 

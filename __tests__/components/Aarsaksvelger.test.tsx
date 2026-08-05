@@ -26,7 +26,7 @@ const IntersectionObserverMock = vi.fn(() => ({
 vi.stubGlobal('IntersectionObserver', IntersectionObserverMock);
 vi.stubGlobal('ResizeObserver', IntersectionObserverMock);
 
-const perioder = [{ fom: new Date('2022-01-01'), tom: new Date('2022-01-05') }];
+const perioder = [{ fom: new Date('2025-01-01'), tom: new Date('2025-01-05') }];
 
 vi.mock('react-hook-form', () => ({
   useController: () => ({
@@ -179,7 +179,7 @@ describe('Aarsaksvelger', () => {
         bruttoinntekt={{
           bruttoInntekt: 1000,
           endringAarsaker: [
-            { aarsak: 'Tariffendring', gjelderFra: parseIsoDate('2022-01-01')!, bleKjent: parseIsoDate('2022-01-01')! }
+            { aarsak: 'Tariffendring', gjelderFra: parseIsoDate('2025-01-01')!, bleKjent: parseIsoDate('2025-01-01')! }
           ],
           manueltKorrigert: false
         }}
@@ -191,13 +191,13 @@ describe('Aarsaksvelger', () => {
 
     const inputGjelderFra = screen.getByLabelText(/Tariffendring gjelder fra/);
     await user.clear(inputGjelderFra);
-    await user.type(inputGjelderFra, '10.01.2022');
-    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-10'));
+    await user.type(inputGjelderFra, '10.01.2025');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2025-01-10'));
 
     const input = screen.getByLabelText('Dato tariffendring ble kjent');
     await user.clear(input);
-    await user.type(input, '01.01.2022');
-    expect(setEndringAarsakBleKjent).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+    await user.type(input, '01.01.2025');
+    expect(setEndringAarsakBleKjent).toHaveBeenCalledWith(parseIsoDate('2025-01-01'));
   });
 
   it.skip('calls the setPerioder function when the endringAarsak is ferie', async () => {
@@ -218,17 +218,17 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText('Ferie fra');
     await user.clear(input);
-    await user.type(input, '02.01.2022');
+    await user.type(input, '02.01.2025');
 
     const input2 = screen.getByLabelText('Ferie fra');
     await user.clear(input2);
-    await user.type(input2, '05.01.2022');
+    await user.type(input2, '05.01.2025');
 
     expect(setPerioder).toHaveBeenCalledWith([
       {
-        fom: parseIsoDate('2022-01-02'),
-        id: '2022-01-01-2022-01-05',
-        tom: parseIsoDate('2022-01-05')
+        fom: parseIsoDate('2025-01-02'),
+        id: '2025-01-01-2025-01-05',
+        tom: parseIsoDate('2025-01-05')
       }
     ]);
   });
@@ -241,7 +241,7 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: parseIsoDate('2022-01-01')! }],
+          endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: parseIsoDate('2025-01-01')! }],
           manueltKorrigert: false
         }}
         handleResetMaanedsinntekt={handleResetMaanedsinntekt}
@@ -253,8 +253,8 @@ describe('Aarsaksvelger', () => {
     const input = screen.getByLabelText(/Lønnsendring gjelder fra/);
     expect(input).toBeInTheDocument();
     await user.clear(input);
-    await user.type(input, '02.01.2022');
-    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+    await user.type(input, '02.01.2025');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2025-01-02'));
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is Permisjon', async () => {
@@ -275,12 +275,12 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText('Permisjon fra');
     await user.clear(input);
-    await user.type(input, '02.01.2022');
+    await user.type(input, '02.01.2025');
     expect(setPerioderMock).toHaveBeenCalledWith([
       {
-        fom: parseIsoDate('2022-01-02'),
-        id: '2022-01-01-2022-01-05',
-        tom: parseIsoDate('2022-01-05')
+        fom: parseIsoDate('2025-01-02'),
+        id: '2025-01-01-2025-01-05',
+        tom: parseIsoDate('2025-01-05')
       }
     ]);
   });
@@ -303,12 +303,12 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText('Permittering fra');
     await user.clear(input);
-    await user.type(input, '02.01.2022');
+    await user.type(input, '02.01.2025');
     expect(setPerioder).toHaveBeenCalledWith([
       {
-        fom: parseIsoDate('2022-01-02'),
-        id: '2022-01-01-2022-01-05',
-        tom: parseIsoDate('2022-01-05')
+        fom: parseIsoDate('2025-01-02'),
+        id: '2025-01-01-2025-01-05',
+        tom: parseIsoDate('2025-01-05')
       }
     ]);
   });
@@ -321,7 +321,7 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsaker: [{ aarsak: 'NyStilling', gjelderFra: new Date('2022-01-01') }],
+          endringAarsaker: [{ aarsak: 'NyStilling', gjelderFra: new Date('2025-01-01') }],
           manueltKorrigert: false
         }}
         handleResetMaanedsinntekt={handleResetMaanedsinntekt}
@@ -332,8 +332,8 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText(/Ny stilling fra/);
     await user.clear(input);
-    await user.type(input, '02.01.2022');
-    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+    await user.type(input, '02.01.2025');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2025-01-02'));
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is NyStillingsprosent', async () => {
@@ -343,7 +343,7 @@ describe('Aarsaksvelger', () => {
       <Aarsaksvelger
         bruttoinntekt={{
           bruttoInntekt: 1000,
-          endringAarsaker: [{ aarsak: 'NyStillingsprosent', gjelderFra: new Date('2022-01-01') }],
+          endringAarsaker: [{ aarsak: 'NyStillingsprosent', gjelderFra: new Date('2025-01-01') }],
           manueltKorrigert: false
         }}
         handleResetMaanedsinntekt={handleResetMaanedsinntekt}
@@ -354,8 +354,8 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText(/Ny stillingsprosent fra/);
     await user.clear(input);
-    await user.type(input, '02.01.2022');
-    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2022-01-02'));
+    await user.type(input, '02.01.2025');
+    expect(setEndringAarsakGjelderFra).toHaveBeenCalledWith(parseIsoDate('2025-01-02'));
   });
 
   it.skip('calls the setPerioder function when the endringsaarsak is Sykefravaer', async () => {
@@ -376,12 +376,12 @@ describe('Aarsaksvelger', () => {
 
     const input = screen.getByLabelText('Sykefravær fra');
     await user.clear(input);
-    await user.type(input, '02.01.2022');
+    await user.type(input, '02.01.2025');
     expect(setPerioder).toHaveBeenCalledWith([
       {
-        fom: parseIsoDate('2022-01-02'),
-        id: '2022-01-01-2022-01-05',
-        tom: parseIsoDate('2022-01-05')
+        fom: parseIsoDate('2025-01-02'),
+        id: '2025-01-01-2025-01-05',
+        tom: parseIsoDate('2025-01-05')
       }
     ]);
   });

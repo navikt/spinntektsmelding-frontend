@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { startOfDay, subYears } from 'date-fns';
 import formatDate from '../../utils/formatDate';
 import TextLabel from '../TextLabel';
 import styles from '../../styles/Home.module.css';
-import lokalStyles from './FravaerEnkeltAnsattforhold.module.css';
+import lokalStyling from './FravaerEnkeltAnsattforhold.module.css';
 import { Button } from '@navikt/ds-react';
 import useBoundStore from '../../state/useBoundStore';
 import { Periode } from '../../state/state';
@@ -64,14 +65,14 @@ export default function FravaerEnkeltAnsattforhold({
   return (
     <>
       {sortertePerioder?.map((periode, periodeIndex) => (
-        <div className={lokalStyles.periodewrapper} key={periode.id}>
+        <div className={lokalStyling.periodewrapper} key={periode.id}>
           {!endreSykemelding && (
             <>
-              <div className={lokalStyles.datepickerEscape}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`sykmelding-${periodeIndex}-fra`}>Fra</TextLabel>
                 <div data-cy={`sykmelding-${periodeIndex}-fra-dato`}>{formatDate?.(periode.fom)}</div>
               </div>
-              <div className={lokalStyles.datepickerEscape}>
+              <div className={lokalStyling.datepickerEscape}>
                 <TextLabel data-cy={`sykmelding-${periodeIndex}-til`}>Til</TextLabel>
                 <div data-cy={`sykmelding-${periodeIndex}-til-dato`}>{formatDate?.(periode.tom)}</div>
               </div>
@@ -88,6 +89,7 @@ export default function FravaerEnkeltAnsattforhold({
               kanSlettes={periodeIndex > 0}
               periodeId={periode.id}
               onSlettRad={() => slettFravaersperiode?.(periode.id)}
+              fromDate={startOfDay(subYears(new Date(), 10))}
               toDate={new Date()}
             />
           )}

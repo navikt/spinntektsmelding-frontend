@@ -64,7 +64,8 @@ const skjemaData: Skjema = {
       }
     ],
     harEndringer: 'Ja'
-  }
+  },
+  opplysningstyper: ['refusjon', 'inntekt', 'arbeidsgiverperiode']
 };
 
 describe('useFyllInnsending', () => {
@@ -97,12 +98,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData,
-        false
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
     });
 
     if (innsending) {
@@ -112,6 +108,11 @@ describe('useFyllInnsending', () => {
   });
 
   it('should fill the state without arbeidsgiverperiode', async () => {
+    const skjemaDataUtenArbeidsgiverperiode: Skjema = {
+      ...skjemaData,
+      opplysningstyper: ['refusjon', 'inntekt']
+    };
+
     const { result: kvittInit } = renderHook(() => useKvitteringInit());
 
     const kvitteringInit = kvittInit.current;
@@ -127,15 +128,11 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['inntekt', 'refusjon'], // Uten 'arbeidsgiverperiode'
-        skjemaData
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaDataUtenArbeidsgiverperiode, false);
     });
 
     if (innsending) {
-      // AGP skal fortsatt ha perioder, men vil bruke foreslaattBestemmendeFravaersdag
+      expect(innsending.agp).toBeNull();
       expect(innsending.inntekt?.beloep).toBe(12345);
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
     }
@@ -159,12 +156,7 @@ describe('useFyllInnsending', () => {
     let innsending: InnsendingSkjema = {} as InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        ['arbeidsgiverperiode', 'inntekt', 'refusjon'],
-        skjemaData,
-        false
-      );
+      innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
     });
 
     if (innsending) {

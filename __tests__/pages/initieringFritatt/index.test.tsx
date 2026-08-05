@@ -19,6 +19,7 @@ vi.mock('next/navigation', () => {
 import React from 'react';
 import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import InitieringFritatt from '../../../pages/initieringFritatt/index';
 import useMineTilganger from '../../../utils/useMineTilganger';
 import useBoundStore from '../../../state/useBoundStore';
@@ -131,12 +132,16 @@ describe('InitieringFritatt page', () => {
       }
     ];
     (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const user = userEvent.setup();
     render(<InitieringFritatt />);
     // choose the nested unit
     await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
-    fireEvent.change(screen.getByLabelText(/Hvilken underenhet/), {
-      target: { value: testOrganisasjoner[0].organizationNumber }
-    });
+    await user.click(screen.getByLabelText(/Hvilken underenhet/));
+    await user.click(
+      await screen.findByRole('option', {
+        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+      })
+    );
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 

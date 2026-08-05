@@ -1,5 +1,5 @@
 import { Button } from '@navikt/ds-react';
-import lokalStyles from './PeriodeListevelger.module.css';
+import lokalStyling from './PeriodeListevelger.module.css';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import DatoVelger from '../DatoVelger/DatoVelger';
 import ButtonSlette from '../ButtonSlette';
@@ -76,7 +76,7 @@ export default function PeriodeListevelger({
   return (
     <>
       {fields.map((range, key) => (
-        <div className={lokalStyles.endremaaanedsinntekt} key={range.id}>
+        <div className={lokalStyling.endremaaanedsinntekt} key={range.id}>
           <DatoVelger name={`${name}.${key}.fom`} toDate={toDate} label={fomTekst} defaultMonth={defaultMonth} />
           <DatoVelger
             name={`${name}.${key}.tom`}
@@ -85,11 +85,15 @@ export default function PeriodeListevelger({
             defaultMonth={defaultMonth}
           />
           {key > 0 && (
-            <ButtonSlette title='Slett periode' onClick={() => slettPeriode(key)} className={lokalStyles.sletteknapp} />
+            <ButtonSlette
+              title='Slett periode'
+              onClick={() => slettPeriode(key)}
+              className={lokalStyling.sletteknapp}
+            />
           )}
         </div>
       ))}
-      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyles.leggtilperiodeknapp}>
+      <Button variant='secondary' onClick={handleLeggTilPeriode} className={lokalStyling.leggtilperiodeknapp}>
         Legg til periode
       </Button>
     </>

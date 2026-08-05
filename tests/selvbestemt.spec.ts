@@ -1,5 +1,24 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
+
+async function answerFullLonnIfVisible(page: Page) {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    const yesOption = fullLonnGroup.getByLabel('Ja');
+    if (await yesOption.isEnabled()) {
+      await yesOption.check();
+    }
+  }
+}
+
+async function answerFaisuIfVisible(page: Page) {
+  const faisuGroup = page.getByRole('radiogroup', {
+    name: 'Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?'
+  });
+  if (await faisuGroup.count()) {
+    await faisuGroup.getByLabel('Ja').check();
+  }
+}
 
 const spSoeknader = [
   {
@@ -87,7 +106,12 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
+    const manedslonn = page.getByLabel('Månedslønn 10.09.2024');
+    await expect(manedslonn).not.toHaveValue('');
+    await expect(async () => {
+      await manedslonn.fill('7500');
+      await expect(manedslonn).toHaveValue('7500');
+    }).toPass();
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder
@@ -95,6 +119,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await formPage.fillInputLast('Ferie fra', '01.07.24');
     // select refusjon under sykefraværet = Nei
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    await answerFullLonnIfVisible(page);
+    await answerFaisuIfVisible(page);
     // fill phone and confirm
     await formPage.fillInputLast('Telefon innsender', '12345678');
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
@@ -134,7 +160,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page
@@ -172,6 +199,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
     // refusjon = Nei
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    await answerFullLonnIfVisible(page);
+    await answerFaisuIfVisible(page);
     // confirm + send
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
@@ -207,7 +236,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -225,10 +255,14 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // select both periods
     // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
     // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    await formPage.selectOption(
-      'Hvilken underenhet er personen sykmeldt fra',
-      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    );
+    // await formPage.selectOption(
+    //   'Hvilken underenhet er personen sykmeldt fra',
+    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    // );
+
+    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
+    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
+
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
@@ -255,6 +289,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
     // refusjon = Nei
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    await answerFullLonnIfVisible(page);
+    await answerFaisuIfVisible(page);
     // confirm + send
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
@@ -295,7 +331,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       arbeidsforholdType: {
         type: 'Fisker'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -316,10 +353,15 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // select both periods
     // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
     // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    await formPage.selectOption(
-      'Hvilken underenhet er personen sykmeldt fra',
-      'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    );
+    // await formPage.selectOption(
+    //   'Hvilken underenhet er personen sykmeldt fra',
+    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
+    // );
+
+    // await page.getByLabel(/Organisasjon/).click();
+    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
+    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
+
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
@@ -346,6 +388,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByLabel('Lønnsendring gjelder fra').fill('30.06.24');
     // refusjon = Nei
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
+    await answerFullLonnIfVisible(page);
+    await answerFaisuIfVisible(page);
     // confirm + send
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
@@ -386,7 +430,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       arbeidsforholdType: {
         type: 'UtenArbeidsforhold'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
@@ -415,7 +460,12 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.getByRole('button', { name: 'Endre' }).last().click();
 
     // clear and fill new inntekt
-    await page.getByLabel('Månedslønn 10.09.2024').fill('7500');
+    const manedslonn = page.getByLabel('Månedslønn 10.09.2024');
+    await expect(manedslonn).not.toHaveValue('');
+    await expect(async () => {
+      await manedslonn.fill('7500');
+      await expect(manedslonn).toHaveValue('7500');
+    }).toPass();
     // select endringsårsak Ferie
     await page.getByLabel('Velg endringsårsak').selectOption({ label: 'Ferie' });
     // fill ferie-perioder
@@ -428,6 +478,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Nei'
     );
+    await answerFullLonnIfVisible(page);
+    await answerFaisuIfVisible(page);
     // fill phone and confirm
     await formPage.fillInputLast('Telefon innsender', '12345678');
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
@@ -471,7 +523,8 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
         type: 'MedArbeidsforhold',
         vedtaksperiodeId: '8396932c-9656-3f65-96b2-3e37eacff584'
       },
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // confirm receipt page

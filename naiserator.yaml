@@ -35,18 +35,27 @@ spec:
     limits:
       memory: 224Mi
     requests:
-      cpu: 10m
+      cpu: 50m
       memory: 224Mi
   idporten:
     enabled: true
     sidecar:
       enabled: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
   tokenx:
     enabled: true
   accessPolicy:
     outbound:
       external:
         - host: '{{{outbound-external-host}}}'
+        - host: helsearbeidsgiver-unleash-api.nav.cloud.nais.io
       rules:
         - application: flexjar-backend
           namespace: flex
@@ -58,6 +67,8 @@ spec:
           namespace: flex
         - application: arbeidsgiver-altinn-tilganger
           namespace: fager
+        - application: logging
+          namespace: nais-system
   env:
     - name: API_URL
       value: '{{{api-url}}}'
@@ -69,3 +80,7 @@ spec:
       value: '{{{umamiWebsiteId}}}'
     - name: NEXT_PUBLIC_UMAMI_DATA_DOMAINS
       value: '{{{umamiDataDomains}}}'
+    - name: UNLEASH_SERVER_API_URL
+      value: 'https://helsearbeidsgiver-unleash-api.nav.cloud.nais.io/api'
+  envFrom:
+    - secret: spinntektsmelding-frontend-unleash-api-token

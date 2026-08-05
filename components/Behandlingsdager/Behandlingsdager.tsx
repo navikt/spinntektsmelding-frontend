@@ -17,7 +17,8 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
   const {
     control,
     formState: { errors },
-    setError
+    setError,
+    clearErrors
   } = useFormContext();
 
   const agpDatoer = arbeidsgiverperioder?.flatMap((periode) => periode.fom);
@@ -53,6 +54,8 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     if (agpFraSkjema && agpFraSkjema.length !== 12) {
       const feil = 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.';
       setError('agp.perioder', { type: 'manual', message: feil });
+    } else {
+      clearErrors('agp.perioder');
     }
   }, [agpFraSkjema, setError]);
 
@@ -71,7 +74,7 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     <div className={styling.behandlingsdager}>
       <CheckboxGroup legend='Behandlingsdager med arbeidsgiverperiode' value={selectedDates} onChange={handleChange}>
         <div className={styling.behandlingsdagerListe}>
-          {sorterteDager.map((dag) => (
+          {behandlingsdager.map((dag) => (
             <Checkbox key={dag} value={dag}>
               {formatDate(parseIsoDate(dag))}
             </Checkbox>

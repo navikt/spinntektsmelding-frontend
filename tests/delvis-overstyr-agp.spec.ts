@@ -1,6 +1,38 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
-import trengerDelvis from '../mockdata/trenger-delvis-enkel-variant.json';
+
+async function answerFullLonnIfVisible(page: Page) {
+  const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
+  if (await fullLonnGroup.count()) {
+    await fullLonnGroup.getByLabel('Ja').check();
+  }
+}
+
+async function openArbeidsgiverperiodeIfNeeded(page: Page) {
+  const fraInput = page.getByRole('textbox', { name: 'Fra' }).first();
+
+  if (await fraInput.isVisible().catch(() => false)) {
+    return;
+  }
+
+  const endreButton = page.getByRole('button', { name: 'Endre' }).first();
+  await expect(endreButton).toBeVisible();
+  await endreButton.click();
+  await expect(fraInput).toBeVisible();
+}
+
+async function openInntektEditingIfNeeded(page: Page) {
+  const inntektInput = page.getByLabel(/Månedslønn \d{2}\.\d{2}\.\d{4}/).first();
+
+  if (await inntektInput.isVisible().catch(() => false)) {
+    return;
+  }
+
+  const endreButtons = page.getByRole('button', { name: 'Endre' });
+  await expect(endreButtons.first()).toBeVisible();
+  await endreButtons.last().click();
+  await expect(inntektInput).toBeVisible();
+}
 
 const uuid = 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e';
 const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
@@ -21,24 +53,21 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   // const apiResponse = page.waitForResponse('*/**/api/hent-forespoersel/*');
   // Visit the page
   await page.goto(baseUrl);
-  // await apiResponse;
 
   // Simulate interaction
-  await page.waitForTimeout(5000);
-  await page.locator('button:has-text("Endre")').first().click();
+  await openArbeidsgiverperiodeIfNeeded(page);
 
   await formPage.fillInput('Fra', '06.12.2024');
   await formPage.fillInput('Til', '21.12.2024');
 
-  const endreKnapp2 = page.locator('button:has-text("Endre")').nth(0);
-  await endreKnapp2.click();
+  await openInntektEditingIfNeeded(page);
 
-  const maanedslonn = page.locator('label:has-text("Månedslønn 06.12.2024")');
-  await expect(maanedslonn).toHaveValue('36000');
-
-  await formPage.fillInput('Månedslønn 06.12.2024', '50000');
+  const inntekt = page.getByLabel(/Månedslønn \d{2}\.\d{2}\.\d{4}/).first();
+  await expect(inntekt).toHaveValue('36000');
+  await inntekt.fill('50000');
 
   await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
+  await answerFullLonnIfVisible(page);
 
   await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
@@ -93,7 +122,8 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
       ]
     },
     avsenderTlf: '12345678',
-    naturalytelser: []
+    naturalytelser: [],
+    flereArbeidsforhold: null
   });
 
   // Check final page

@@ -1,23 +1,24 @@
 # Install dependencies only when needed
-FROM node:26-bookworm-slim@sha256:d2ec0a1766c01dad04a185c2d5558b0adace167a7f1758ce80f0017698431d06 AS deps
+FROM node:26-bookworm-slim@sha256:2d49d876e96237d76de412761cf05dbfe5aee325cc4406a4d41d5824c5bb8beb AS deps
 WORKDIR /app
 
 RUN npm install -g --force corepack && corepack enable
 
 # Copy only dependency-related files for better layer caching
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
-    NODE_AUTH_TOKEN=$(cat /run/secrets/NODE_AUTH_TOKEN) \
-    pnpm install --frozen-lockfile  --ignore-scripts
+    printf '//npm.pkg.github.com/:_authToken=%s\n' "$(cat /run/secrets/NODE_AUTH_TOKEN)" > /root/.npmrc && \
+    pnpm install --frozen-lockfile --ignore-scripts && \
+    rm -f /root/.npmrc
 
 # Rebuild the source code only when needed
-FROM node:26-bookworm-slim@sha256:d2ec0a1766c01dad04a185c2d5558b0adace167a7f1758ce80f0017698431d06 AS builder
+FROM node:26-bookworm-slim@sha256:2d49d876e96237d76de412761cf05dbfe5aee325cc4406a4d41d5824c5bb8beb AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copy source files (tests excluded via .dockerignore)
-COPY package.json pnpm-lock.yaml next.config.js tsconfig.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml next.config.js tsconfig.json ./
 COPY public ./public
 COPY pages ./pages
 COPY components ./components
@@ -27,7 +28,7 @@ COPY validators ./validators
 COPY schema ./schema
 COPY config ./config
 COPY styles ./styles
-COPY next-logger.config.js ./
+COPY next-logger.config.mjs ./
 
 ARG BUILDMODE
 ENV BUILDMODE=${BUILDMODE}
@@ -47,6 +48,16 @@ RUN npm install -g --force --ignore-scripts corepack && corepack enable
 
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
+
+# pino loads its transports (here pino-socket, used by @navikt/next-logger's
+# team-logger) in a worker thread via a dynamic string target. Next.js' output
+# file tracing can't see this dynamic require, so pino-socket and its transitive
+# dependencies are never copied into .next/standalone. We install a flat,
+# self-contained copy (matching the version pnpm resolved) into the standalone
+# node_modules so the transport can be resolved at runtime.
+RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version") \
+    && npm install --prefix /tmp/pino-socket "pino-socket@${PS_VER}" --omit=dev --ignore-scripts --no-audit --no-fund \
+    && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
 
 # Production image, copy all the files and run next
 FROM gcr.io/distroless/nodejs24-debian12@sha256:61f4f4341db81820c24ce771b83d202eb6452076f58628cd536cc7d94a10978b AS runner

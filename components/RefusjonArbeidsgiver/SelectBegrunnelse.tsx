@@ -1,6 +1,6 @@
 import { Select } from '@navikt/ds-react';
 import begrunnelseIngenEllerRedusertUtbetalingListe from './begrunnelseIngenEllerRedusertUtbetalingListe';
-import localStyles from './RefusjonArbeidsgiver.module.css';
+import lokalStyling from './RefusjonArbeidsgiver.module.css';
 
 interface SelectBegrunnelseProps {
   onChangeBegrunnelse: (verdi: string) => void;
@@ -17,7 +17,7 @@ export default function SelectBegrunnelse(props: Readonly<SelectBegrunnelseProps
       label={label}
       onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
       id={'agp.redusertLoennIAgp.begrunnelse'}
-      className={localStyles.selectbegrunnelse}
+      className={lokalStyling.selectbegrunnelse}
       value={props.value ?? ''}
       error={props.error}
     >

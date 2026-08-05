@@ -43,7 +43,7 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
 
     // velg "Nei" for refusjon under sykefraværet
     await page
-      .getByRole('group', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
+      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
       .getByLabel('Nei')
       .check();
 
@@ -74,7 +74,8 @@ test.describe('Utfylling og innsending av skjema – kort arbeidsgiverperiode', 
       },
       refusjon: null,
       avsenderTlf: '12345678',
-      naturalytelser: []
+      naturalytelser: [],
+      flereArbeidsforhold: null
     });
 
     // bekreft kvitteringsside

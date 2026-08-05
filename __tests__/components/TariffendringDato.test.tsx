@@ -74,16 +74,16 @@ describe('TariffendringDato', () => {
     render(<TariffendringDato name='test' />);
 
     const firstDatePicker = screen.getAllByRole('textbox')[0];
-    fireEvent.change(firstDatePicker, { target: { value: '01.01.2022' } });
-    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+    fireEvent.change(firstDatePicker, { target: { value: '01.01.2025' } });
+    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2025-01-01'));
   });
 
   it('should call changeTariffKjentDato when the second date picker is changed', () => {
     render(<TariffendringDato name='test' />);
 
     const secondDatePicker = screen.getAllByRole('textbox')[1];
-    fireEvent.change(secondDatePicker, { target: { value: '01.01.2022' } });
-    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2022-01-01'));
+    fireEvent.change(secondDatePicker, { target: { value: '01.01.2025' } });
+    expect(onChangeMock).toHaveBeenCalledWith(parseIsoDate('2025-01-01'));
   });
 
   it('should have no accessibility violations', async () => {

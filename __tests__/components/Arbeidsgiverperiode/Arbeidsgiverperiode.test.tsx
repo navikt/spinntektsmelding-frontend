@@ -39,7 +39,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should have no violations', async () => {
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     const { container } = render(
       <TestWrapper>
@@ -65,7 +65,7 @@ describe('TidligereInntekt', () => {
       default: () => <div>Datovelger</div>
     }));
 
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     const { container } = render(
       <TestWrapper>
@@ -96,7 +96,7 @@ describe('TidligereInntekt', () => {
       default: () => <div>Datovelger</div>
     }));
 
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 24), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 24), id: '123' }];
 
     const { container } = render(
       <TestWrapper>
@@ -188,7 +188,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should show egenmelding text when skalViseEgenmelding is true and skalViseArbeidsgiverperiode is false', async () => {
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     render(
       <TestWrapper>
@@ -211,7 +211,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should not show egenmelding text when skalViseEgenmelding is false', async () => {
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     render(
       <TestWrapper>
@@ -234,7 +234,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should not show egenmelding text when skalViseArbeidsgiverperiode is true regardless of skalViseEgenmelding', async () => {
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     render(
       <TestWrapper>
@@ -257,7 +257,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should always show external link when arbeidsgiverperiode is not shown', async () => {
-    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2022, 6, 6), tom: new Date(2022, 6, 16), id: '123' }];
+    const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     render(
       <TestWrapper>

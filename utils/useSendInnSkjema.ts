@@ -9,7 +9,6 @@ import { logger } from '@navikt/next-logger';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
-import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import forespoerselType from '../config/forespoerselType';
 import { postInnsending } from './postInnsending';
 import {
@@ -26,7 +25,8 @@ type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  analyticsComponent: string
+  analyticsComponent: string,
+  faisuEnabled: boolean
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
@@ -44,7 +44,6 @@ export default function useSendInnSkjema(
 
   return async (
     opplysningerBekreftet: boolean,
-    forespurteOpplysningstyper: Opplysningstype[],
     pathSlug: string,
     isDirtyForm: boolean,
     formData: Skjema,
@@ -70,13 +69,10 @@ export default function useSendInnSkjema(
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-    const skjemaData: FullInnsending = fyllInnsending(
-      pathSlug,
-      forespurteOpplysningstyper,
-      formData,
-      erBegrensetForespoersel
+    const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel, faisuEnabled);
+    const harForespurtArbeidsgiverperiode = (formData.opplysningstyper ?? []).includes(
+      forespoerselType.arbeidsgiverperiode
     );
-    const harForespurtArbeidsgiverperiode = forespurteOpplysningstyper.includes(forespoerselType.arbeidsgiverperiode);
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
     if (validerteData.success === false) {
       logEvent('skjema validering feilet', {

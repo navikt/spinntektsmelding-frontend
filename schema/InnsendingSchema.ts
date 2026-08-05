@@ -217,7 +217,33 @@ export const InnsendingSchema = z.object({
         .nullable()
     })
   ),
-  naturalytelser: ApiNaturalytelserSchema
+  naturalytelser: ApiNaturalytelserSchema,
+  flereArbeidsforhold: z
+    .object({
+      harLikLoenn: z.boolean(),
+      erSykmeldtFraAlle: z.boolean(),
+      arbeidsforhold: z.array(
+        z.object({
+          inntekt: z
+            .number({
+              error: (issue) => (issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined)
+            })
+            .min(0, 'Månedslønn må være større enn eller lik 0.')
+            .or(z.undefined()),
+          stillingsprosent: z
+            .number({
+              error: (issue) =>
+                issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+            })
+            .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+            .or(z.undefined()),
+          yrkesbeskrivelse: z.string().or(z.undefined()),
+          inkludertISykefravaer: z.boolean().optional()
+        })
+      )
+    })
+    .or(z.null())
+    .optional()
 });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;

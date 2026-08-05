@@ -20,15 +20,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
       - name: Cache pnpm files
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ~/.pnpm-store
@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache Vitest
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: node_modules/.vitest
           key: ${{ runner.os }}-vitest-${{ hashFiles('pnpm-lock.yaml') }}
@@ -49,7 +49,7 @@ jobs:
         run: pnpm test
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
-        uses: SonarSource/sonarqube-scan-action@299e4b793aaa83bf2aba7c9c14bedbb485688ec4
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -59,15 +59,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@903f9c1a6ebcba6cf41d87230be49611ac97822e
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
       - name: Cache pnpm files
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: |
             ~/.pnpm-store
@@ -78,7 +78,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
       - name: Cache ESLint
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
           path: node_modules/.cache/eslint
           key: ${{ runner.os }}-eslint-${{ hashFiles('pnpm-lock.yaml', '.eslintrc*') }}
@@ -95,9 +95,9 @@ jobs:
       id-token: write
       security-events: "write"
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Build and push image and SBOM to OCI registry
-        uses: nais/docker-build-push@be85229e81c0293c265c646c084f05317fb6e0d2
+        uses: nais/docker-build-push@31c3a7321909bcb20799fdf46153fec721fd9512
         id: docker-build-push
         with:
           team: helsearbeidsgiver
@@ -122,8 +122,14 @@ jobs:
         with:
           sarif_file: "trivy-results.sarif"
 
+      - name: deploy new Unleash Apikey to dev
+        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: nais/unleash-apitoken-dev.yaml
+
       - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@fa754451577294aae42872a69b888b3470478ec1
+        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
         env:
           CLUSTER: dev-gcp
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.

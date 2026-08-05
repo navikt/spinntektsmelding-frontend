@@ -6,14 +6,31 @@ import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerS
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
-
-const basePath = 'http://' + globalThis.process.env.FAGER_TILGANG_INGRESS + globalThis.process.env.FAGER_TILGANG_URL;
+import { teamLogger } from '@navikt/next-logger/team-log';
+import { requireEnv } from '../../utils/api/validateEnv';
 
 export const config = {
   api: {
     externalResolver: true
   }
 };
+
+let teamLoggerGuardRegistrert = false;
+function registrerTeamLoggerGuard() {
+  if (teamLoggerGuardRegistrert) {
+    return;
+  }
+  teamLoggerGuardRegistrert = true;
+  process.on('uncaughtException', (err) => {
+    if (err instanceof Error && err.message.includes('the worker has exited')) {
+      logger.warn('teamLogger-worker avsluttet, ignorerer for å unngå nedetid');
+      return;
+    }
+    throw err;
+  });
+}
+
+registrerTeamLoggerGuard();
 
 type OrgNode = {
   orgnr: string;
@@ -29,6 +46,17 @@ function extractOrgStructure(hierarki: any[]): OrgNode[] {
   }));
 }
 
+function tellOrganisasjoner(hierarki: any[]): number {
+  return (hierarki ?? []).reduce((sum, node) => sum + 1 + tellOrganisasjoner(node.underenheter ?? []), 0);
+}
+
+function samleAltinn3Tilganger(hierarki: any[]): { orgnr: string; altinn3Tilganger: string[] }[] {
+  return (hierarki ?? []).flatMap((node) => [
+    { orgnr: node.orgnr, altinn3Tilganger: node.altinn3Tilganger ?? [] },
+    ...samleAltinn3Tilganger(node.underenheter ?? [])
+  ]);
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
@@ -39,10 +67,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       return res.status(404).json({ error: 'Mock not found' });
     }
 
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    const simpleTree = extractOrgStructure(data.hierarki);
-    setTimeout(() => res.status(200).json(simpleTree), 100);
-    return;
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      const simpleTree = extractOrgStructure(data.hierarki);
+      setTimeout(() => res.status(200).json(simpleTree), 100);
+      return;
+    } catch (error) {
+      console.error('Failed to parse mock data:', error);
+      return res.status(500).json({ error: 'Failed to parse mock data' });
+    }
   }
 
   const token = getToken(req);
@@ -57,7 +90,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const obo = await requestOboToken(token, process.env.FAGER_TILGANG_CLIENT_ID!);
+  const basePath = 'http://' + requireEnv('FAGER_TILGANG_INGRESS') + requireEnv('FAGER_TILGANG_URL');
+  const clientId = requireEnv('FAGER_TILGANG_CLIENT_ID');
+
+  const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
     logger.info('OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
@@ -72,7 +108,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     body: JSON.stringify({
       filter: {
         altinn2Tilganger: ['4936:1'],
-        altinn3Tilganger: []
+        altinn3Tilganger: ['nav_sykepenger_inntektsmelding']
       }
     })
   });
@@ -83,6 +119,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }
 
   const accessData: EndepunktAltinnTilganger = (await safelyParseJSON(accessResponse)) as EndepunktAltinnTilganger;
+
+  const antallOrganisasjoner = tellOrganisasjoner(accessData.hierarki);
+  const altinn3Tilganger = samleAltinn3Tilganger(accessData.hierarki);
+  const antallTilganger = altinn3Tilganger.filter((t) => t.altinn3Tilganger.length > 0).length;
+  logger.info({ antallOrganisasjoner, antallTilganger }, 'Mine-tilganger hentet');
+  try {
+    teamLogger.info(
+      {
+        antallOrganisasjoner,
+        altinn3Tilganger
+      },
+      'Forespørsel om mine-tilganger'
+    );
+  } catch (e) {
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
+  }
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };

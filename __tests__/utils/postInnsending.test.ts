@@ -97,6 +97,172 @@ describe('postInnsending', () => {
     expect(errs[0].error).toContain('akkurat nå en feil');
   });
 
+  it('returnerer valideringsfeil ved 400 BadRequest', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: 'Feltet er ugyldig'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+    expect(warnSpy).toHaveBeenCalled();
+  });
+
+  it('viser alle valideringsfeil ved 400 med valideringsfeil-array', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        type: 'Validering',
+        kontekstId: 'd7922581-c742-4691-aa40-77f4498b944a',
+        valideringsfeil: ['livet er for kjipt', 'det regner hele året'],
+        error: 'Feil under validering.',
+        errorId: 'd7922581'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Feil under validering.', valideringsfeil: ['livet er for kjipt', 'det regner hele året'] },
+      []
+    );
+    const errs = setErrorResponse.mock.calls[0][0];
+    expect(errs.map((e: ErrorResponse) => e.error)).toEqual(['livet er for kjipt', 'det regner hele året']);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('bruker ikke tom error som valideringsfeil ved 400 med tom error', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: '',
+        valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler']
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: '', valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler'] },
+      []
+    );
+    const errs = setErrorResponse.mock.calls[0][0];
+    expect(errs.map((e: ErrorResponse) => e.error)).toEqual(['Felt 1 er ugyldig', 'Felt 2 mangler']);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('setter generisk feil ved 400 når error har feil type', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: 123
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('setter generisk feil ved 400 når error-feltet mangler', async () => {
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        feilmelding: 'noe gikk galt'
+      })
+    );
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
+  it('setter generisk feil ved 400 når JSON er ugyldig', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      status: 400,
+      json: async () => {
+        throw new Error('ugyldig json');
+      },
+      text: async () => 'ikke json'
+    } as any);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(mapValidationErrors).toHaveBeenCalledWith(
+      { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
+      []
+    );
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Validering av skjema feilet');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+  });
+
   it('returnerer valideringsfeil ved 400-lignende default case med backend error-format', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(418, {
@@ -202,5 +368,164 @@ describe('postInnsending', () => {
 
     // Ingen validation errors trigget fordi parsing feilet
     expect(setErrorResponse).not.toHaveBeenCalled();
+  });
+
+  describe('handleDefaultResponse', () => {
+    it('mapper error-melding når backend-feil har fylt error-felt', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          error: 'Backend feilet',
+          valideringsfeil: ['Felt er ugyldig']
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: 'Backend feilet', valideringsfeil: ['Felt er ugyldig'] },
+        []
+      );
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Felt er ugyldig');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+      expect(warnSpy).toHaveBeenCalled();
+    });
+
+    it('bruker error som valideringsfeil når valideringsfeil er tom array', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          error: 'Backend feilet',
+          valideringsfeil: []
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: 'Backend feilet', valideringsfeil: ['Backend feilet'] },
+        []
+      );
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Backend feilet');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+    });
+
+    it('mapper valideringsfeil direkte når error-felt er tomt', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          error: '',
+          valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler']
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: '', valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler'] },
+        []
+      );
+      expect(setErrorResponse).toHaveBeenCalledTimes(1);
+      const errs = setErrorResponse.mock.calls[0][0];
+      expect(errs.map((e: ErrorResponse) => e.error)).toEqual(['Felt 1 er ugyldig', 'Felt 2 mangler']);
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+    });
+
+    it('bruker error som valideringsfeil når valideringsfeil mangler', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          error: 'Mangler valideringsfeil'
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).toHaveBeenCalledWith(
+        { error: 'Mangler valideringsfeil', valideringsfeil: ['Mangler valideringsfeil'] },
+        []
+      );
+      expect(setErrorResponse.mock.calls[0][0][0].error).toBe('Mangler valideringsfeil');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+    });
+
+    it('setter ingen feil når respons mangler error-felt', async () => {
+      global.fetch = vi.fn().mockResolvedValue(
+        buildResponse(422, {
+          feilmelding: 'noe gikk galt'
+        })
+      );
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(mapValidationErrors).not.toHaveBeenCalled();
+      expect(setErrorResponse).not.toHaveBeenCalled();
+      expect(setShowErrorList).not.toHaveBeenCalled();
+    });
+
+    it('logger og krasjer ikke når JSON-parsing feiler i default-case', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        status: 422,
+        json: async () => {
+          throw new Error('ugyldig json');
+        },
+        text: async () => 'ikke json'
+      } as any);
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(setErrorResponse).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalled();
+    });
   });
 });

@@ -19,7 +19,7 @@ export interface ForespurtDataState {
     tidligereinntekter: HistoriskInntekt | null
   ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
-  hentPaakrevdOpplysningstyper: () => Array<Opplysningstype>;
+  hentPaakrevdOpplysningstyper: (forespurtfraBackend?: MottattForespurtData) => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
   arbeidsgiverKreverRefusjon: () => boolean;
   arbeidsgiverRefusjonskravOpphører: () => boolean;
@@ -63,7 +63,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
     return [];
   },
-  hentPaakrevdOpplysningstyper: () => {
+  hentPaakrevdOpplysningstyper: (forespurtfraBackend) => {
     const forespurtData = get().forespurtData;
     const paakrevdeOpplysninger = get().paakrevdeOpplysninger;
 
@@ -72,6 +72,11 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
     } else if (forespurtData) {
       return Object.keys(forespurtData).filter(
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
+      ) as Array<Opplysningstype>;
+    } else if (forespurtfraBackend) {
+      return Object.keys(forespurtfraBackend.forespurtData).filter(
+        (key) =>
+          forespurtfraBackend.forespurtData[key as keyof typeof forespurtfraBackend.forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
     }
 

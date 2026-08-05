@@ -1,0 +1,74 @@
+.radiobuttonWrapper > div {
+  display: flex;
+  gap: 1rem;
+}
+
+.radiobuttonWrapper {
+  margin: var(--ax-space-20) 0;
+}
+
+.inputInntekt {
+  padding-top: 1rem;
+}
+
+.inputInntekt > input {
+  max-width: 10rem;
+}
+
+.feltOverskrifter {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 14rem) minmax(10rem, 14rem);
+  gap: var(--ax-space-16);
+  margin: var(--ax-space-16) 0 var(--ax-space-8);
+}
+
+.tomtFelt {
+  display: block;
+}
+
+.arbeidsforholdRad {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 14rem) minmax(10rem, 14rem);
+  gap: var(--ax-space-16);
+  align-items: start;
+  margin-bottom: var(--ax-space-12);
+}
+
+.arbeidsforholdCheckbox {
+  align-self: start;
+  margin-top: 1.05rem;
+}
+
+.outputInntekt {
+  margin-left: var(--ax-space-12);
+}
+
+@media (min-width: 769px) {
+  .arbeidsforholdRad :global(.aksel-form-field__label) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .feltOverskrifter {
+    display: none;
+  }
+
+  .arbeidsforholdRad {
+    grid-template-columns: 1fr;
+    gap: var(--ax-space-8);
+  }
+
+  .arbeidsforholdCheckbox {
+    align-self: start;
+    margin-top: 0;
+  }
+
+  .inputInntekt {
+    padding-top: 0;
+  }
+
+  .arbeidsforholdRad :global(.aksel-form-field__label) {
+    display: block;
+  }
+}

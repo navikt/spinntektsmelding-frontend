@@ -1,7 +1,7 @@
 import TextLabel from '../TextLabel';
 import useBoundStore from '../../state/useBoundStore';
 import { shallow } from 'zustand/shallow';
-import lokalStyles from './Person.module.css';
+import lokalStyling from './Person.module.css';
 import DelvisInnsendingInfo from './DelvisInnsendingInfo';
 import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import AnsattDataVisning from './AnsattDataVisning';
@@ -22,12 +22,12 @@ export default function Person({ erDelvisInnsending, sykmeldt, avsender }: Reado
     <>
       <DelvisInnsendingInfo erDelvisInnsending={erDelvisInnsending} />
       <FeilVedHentingAvPersondata sykmeldt={aktivSykmeldt} avsender={aktivAvsender} />
-      <div className={lokalStyles.personInfoWrapper}>
+      <div className={lokalStyling.personInfoWrapper}>
         <AnsattDataVisning sykmeldt={aktivSykmeldt} />
 
         <ArbeidsgiverDataVisning avsender={aktivAvsender}>
           <TextLabel>Telefon innsender</TextLabel>
-          <div className={lokalStyles.virksomhetsnavn}>{aktivAvsender.tlf}</div>
+          <div className={lokalStyling.virksomhetsnavn}>{aktivAvsender.tlf}</div>
         </ArbeidsgiverDataVisning>
       </div>
     </>

@@ -457,16 +457,16 @@ describe('finnAktuelleInntekter sortering', () => {
 
   it('should sort correctly across year boundaries', () => {
     const tidligereInntekt: HistoriskInntekt = {
-      '2022-11': 1000,
-      '2023-01': 3000,
-      '2022-12': 2000
+      '2025-11': 1000,
+      '2026-01': 3000,
+      '2025-12': 2000
     };
-    const bestemmendeFravaersdag = new Date(2023, 1, 15); // Februar 2023
+    const bestemmendeFravaersdag = new Date(2026, 1, 15); // Februar 2026
 
     const result = finnAktuelleInntekter(tidligereInntekt, bestemmendeFravaersdag);
     const keys = Array.from(result.keys());
 
-    expect(keys).toEqual(['2023-01', '2022-12', '2022-11']);
+    expect(keys).toEqual(['2026-01', '2025-12', '2025-11']);
   });
 
   it('should handle null values and still sort correctly', () => {
