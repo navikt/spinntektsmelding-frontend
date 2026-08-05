@@ -3,6 +3,8 @@ class NetworkError extends Error {
   info = {};
   constructor(message: string) {
     super(message);
+    this.name = 'NetworkError';
+    Object.setPrototypeOf(this, NetworkError.prototype);
   }
 }
 

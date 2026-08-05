@@ -11,14 +11,11 @@ export default function useBehandlingsdager(
   setError: any
 ) {
   return useSWRImmutable(
-    [environment.hentBehandlingsdagerUrl, identitetsnummer, orgNummer, eldsteFom],
+    identitetsnummer && orgNummer && orgNummer !== '-' && eldsteFom
+      ? [environment.hentBehandlingsdagerUrl, identitetsnummer, orgNummer, eldsteFom]
+      : null,
     ([url, identitetsnummer, orgNummer, eldsteFom]) =>
-      fetcherSykepengesoeknader(
-        !!identitetsnummer && !!orgNummer && !!eldsteFom ? url : null,
-        identitetsnummer,
-        orgNummer,
-        eldsteFom
-      ),
+      fetcherSykepengesoeknader(url, identitetsnummer, orgNummer, eldsteFom),
     {
       onError: buildSWRFormErrorHandler({
         setError,

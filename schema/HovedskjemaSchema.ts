@@ -367,7 +367,8 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
             .or(z.undefined())
         : z.any(),
       avsenderTlf: TelefonNummerSchema,
-      opplysningstyper: z.array(OpplysningstypeSchema).optional()
+      opplysningstyper: z.array(OpplysningstypeSchema).optional(),
+      erBehandlingsdager: z.boolean().optional()
     })
     .superRefine((val, ctx) => {
       validateInntektBeloep(val, ctx);

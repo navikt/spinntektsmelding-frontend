@@ -319,7 +319,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       opplysningstyper: Array.from(new Set(opplysningstyper)),
       agp: {
         redusertLoennIAgp: null
-      }
+      },
+      erBehandlingsdager: behandlingsdagerInnsending
     }
   });
 
@@ -371,7 +372,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         }
         return [];
       });
-      // effectSetBehandlingsdager(dager.filter((dag) => dag !== undefined));
+      effectSetBehandlingsdager(dager.filter((dag) => dag !== undefined));
     }
   }, [spData, spError, spIsLoading, sykmeldingsperioder]);
 
@@ -565,6 +566,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     console.log(formData);
     setSenderInn(true);
     if (selvbestemtInnsending) {
+      if (behandlingsdagerInnsending) {
+        setValue('erBehandlingsdager', true);
+      } else {
+        setValue('erBehandlingsdager', false);
+      }
+
       sendInnArbeidsgiverInitiertSkjema(
         true,
         slug,

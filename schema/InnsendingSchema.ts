@@ -164,6 +164,15 @@ export const InnsendingSchema = z.object({
         return;
       }
 
+      if (perioderErSannsynligvisBehandlingsdager(val.perioder) && val.perioder.length !== 12) {
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Arbeidsgiverperioden må bestå av 12 behandlingsdager.',
+          path: ['agp', 'perioder'],
+          input: ''
+        });
+        return;
+      }
       if (
         perioderErUnder16dagerTotalt(val.perioder) &&
         !val.redusertLoennIAgp?.begrunnelse &&
