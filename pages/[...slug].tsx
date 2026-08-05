@@ -564,11 +564,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
     if (selvbestemtInnsending) {
-      if (behandlingsdagerInnsending) {
-        setValue('agp.erBehandlingsdager', true);
-      } else {
-        setValue('agp.erBehandlingsdager', false);
-      }
+      formData.agp = { ...formData.agp, erBehandlingsdager: Boolean(behandlingsdagerInnsending) };
 
       sendInnArbeidsgiverInitiertSkjema(
         true,
