@@ -331,7 +331,8 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 })
               })
             )
-            .or(z.undefined())
+            .or(z.undefined()),
+          erBehandlingsdager: z.boolean().optional()
         })
         .or(z.object({}))
         .or(z.undefined()),
@@ -367,8 +368,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
             .or(z.undefined())
         : z.any(),
       avsenderTlf: TelefonNummerSchema,
-      opplysningstyper: z.array(OpplysningstypeSchema).optional(),
-      erBehandlingsdager: z.boolean().optional()
+      opplysningstyper: z.array(OpplysningstypeSchema).optional()
     })
     .superRefine((val, ctx) => {
       validateInntektBeloep(val, ctx);

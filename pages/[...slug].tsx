@@ -318,9 +318,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       fullLonn: undefined,
       opplysningstyper: Array.from(new Set(opplysningstyper)),
       agp: {
-        redusertLoennIAgp: null
-      },
-      erBehandlingsdager: behandlingsdagerInnsending
+        redusertLoennIAgp: null,
+        erBehandlingsdager: behandlingsdagerInnsending
+      }
     }
   });
 
@@ -567,9 +567,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setSenderInn(true);
     if (selvbestemtInnsending) {
       if (behandlingsdagerInnsending) {
-        setValue('erBehandlingsdager', true);
+        setValue('agp.erBehandlingsdager', true);
       } else {
-        setValue('erBehandlingsdager', false);
+        setValue('agp.erBehandlingsdager', false);
       }
 
       sendInnArbeidsgiverInitiertSkjema(
