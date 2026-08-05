@@ -1,3 +1,4 @@
+import { isTlfNumber } from '../utils/isTlfNumber';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
 
 export enum TelefonFeilkode {
@@ -14,8 +15,7 @@ export default function validerTelefon(telefon?: string): Array<ValiderResultat>
       code: TelefonFeilkode.TELEFON_MANGLER
     });
   } else {
-    const telefonRegex = /^(\+\d{10,17}|00\d{10,17}|\d{8,15})$/;
-    const validTelefon = telefonRegex.test(telefon);
+    const validTelefon = isTlfNumber(telefon);
 
     if (!validTelefon) {
       feilkoder.push({

@@ -36,6 +36,7 @@ describe('validerTelefon', () => {
       ['for kort nasjonalt nummer (7 siffer)', '1234567'],
       ['for langt nasjonalt nummer (16 siffer)', '1234567890123456'],
       ['+ med for få siffer (9 siffer)', '+123456789'],
+      ['00 med for få siffer (7 siffer etter 00)', '0012345'],
       ['+ med for mange siffer (18 siffer)', '+123456789012345678'],
       ['inneholder mellomrom', '+47 12345678'],
       ['inneholder bindestrek', '123-45678'],
