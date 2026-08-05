@@ -154,6 +154,8 @@ export default function useFyllInnsending() {
         : null
     };
 
+    delete innsendingSkjema.agp?.erBehandlingsdager;
+
     if (!faisuEnabled) {
       delete innsendingSkjema.flereArbeidsforhold;
     }

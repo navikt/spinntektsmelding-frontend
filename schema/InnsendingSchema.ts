@@ -169,7 +169,7 @@ export const InnsendingSchema = z.object({
         ctx.issues.push({
           code: 'custom',
           error: 'Arbeidsgiverperioden må bestå av 12 behandlingsdager.',
-          path: ['agp', 'perioder'],
+          path: ['perioder'],
           input: ''
         });
         return;
@@ -189,7 +189,7 @@ export const InnsendingSchema = z.object({
         } else {
           ctx.issues.push({
             code: 'custom',
-            error: 'Angi årsak til forkortet arbeidsgiverperiode.' + val.erBehandlingsdager,
+            error: 'Angi årsak til forkortet arbeidsgiverperiode.',
             path: ['redusertLoennIAgp', 'begrunnelse'],
             input: ''
           });

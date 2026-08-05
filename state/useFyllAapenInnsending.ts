@@ -140,9 +140,7 @@ export default function useFyllAapenInnsending() {
         : null
     });
 
-    if (innsending.data?.agp?.erBehandlingsdager) {
-      delete innsending.data.agp.erBehandlingsdager;
-    }
+    delete innsending.data?.agp?.erBehandlingsdager;
 
     return innsending;
   };

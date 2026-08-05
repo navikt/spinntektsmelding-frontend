@@ -4,7 +4,7 @@ import styling from './Behandlingsdager.module.css';
 import { Periode } from '../../state/state';
 import { Checkbox, CheckboxGroup } from '@navikt/ds-react';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
-import { use, useEffect, useEffectEvent, useRef } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 import useBoundStore from '../../state/useBoundStore';
 import Feilmelding from '../Feilmelding';
 
@@ -50,12 +50,16 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     }
   }, [agpFraSkjema]);
 
+  const onClearAgpPerioder = useEffectEvent(() => {
+    clearErrors('agp.perioder');
+  });
+
   useEffect(() => {
     if (agpFraSkjema && agpFraSkjema.length !== 12) {
       const feil = 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.';
       setError('agp.perioder', { type: 'manual', message: feil });
     } else {
-      clearErrors('agp.perioder');
+      onClearAgpPerioder();
     }
   }, [agpFraSkjema, setError]);
 

@@ -562,8 +562,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   }, [opplysningstyper]);
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    console.log('Form data ved innsending:');
-    console.log(formData);
     setSenderInn(true);
     if (selvbestemtInnsending) {
       if (behandlingsdagerInnsending) {

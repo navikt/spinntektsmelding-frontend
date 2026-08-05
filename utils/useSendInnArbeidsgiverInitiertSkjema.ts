@@ -107,8 +107,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    console.log('SkjemaData som sendes inn:', skjemaData);
-
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
     const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
 
