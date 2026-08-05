@@ -49,7 +49,7 @@ describe('useBehandlingsdager', () => {
     useBehandlingsdager(undefined, org, fom, setError);
     const fetcher = (useSWRImmutable as any).mock.calls[1][1];
     fetcher([TEST_URL, undefined, org, fom]);
-    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(null, undefined, org, fom);
+    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(TEST_URL, undefined, org, fom);
   });
 
   describe('onError handler', () => {
