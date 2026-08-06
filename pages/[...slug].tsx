@@ -289,6 +289,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const behandlingsdagerInnsending =
     slug === 'behandlingsdager' || selvbestemtType === SelvbestemtTypeConst.Behandlingsdager;
 
+  const unntattAaRegisteret =
+    slug === 'unntattAaRegisteret' || selvbestemtType === SelvbestemtTypeConst.UtenArbeidsforhold;
+
   const [overstyrSkalViseAgp, setOverstyrSkalViseAgp] = useState<boolean>(false);
   const skalViseArbeidsgiverperiode = harForespurtArbeidsgiverperiode || overstyrSkalViseAgp;
 
@@ -346,12 +349,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     onForespurtInit();
   }, []);
 
+  const onSetValue = useEffectEvent((...args: Parameters<typeof setValue>) => {
+    setValue(...args);
+  });
+
   useEffect(() => {
     if (naturalytelser !== undefined) {
-      setValue('inntekt.harBortfallAvNaturalytelser', naturalytelser.length !== 0);
-      setValue('inntekt.naturalytelser', naturalytelser);
+      onSetValue('inntekt.harBortfallAvNaturalytelser', naturalytelser.length !== 0);
+      onSetValue('inntekt.naturalytelser', naturalytelser);
     }
-  }, [naturalytelser, setValue]);
+  }, [naturalytelser]);
 
   const isEditingRefusjonBeloep = useWatch({
     control,
@@ -367,10 +374,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return isEditingRefusjonBeloep;
   });
 
-  const onSetValue = useEffectEvent((...args: Parameters<typeof setValue>) => {
-    setValue(...args);
-  });
-
   const avsenderOrgnummer = useEffectEvent(() => {
     return avsender.orgnr;
   });
@@ -379,8 +382,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return sykmeldt.fnr;
   });
 
+  const onUnntattAaRegisteret = useEffectEvent(() => {
+    return unntattAaRegisteret;
+  });
   useEffect(() => {
-    if (!dataFraBackend) {
+    if (!dataFraBackend && !onUnntattAaRegisteret()) {
       const orgnr = avsenderOrgnummer();
       const fnr = sykmeldtFnr();
       const gyldigePerioder = sykmeldingsperioder?.filter((p) => p.fom && p.tom) ?? [];
@@ -407,14 +413,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             stillingsprosent: periode.stillingsprosent,
             inkludertISykefravaer: undefined
           }));
-          setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
+          onSetValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
             shouldDirty: true,
             shouldValidate: true
           });
         })
         .catch(() => undefined);
     }
-  }, [setValue, dataFraBackend, sykmeldingsperioder]);
+  }, [dataFraBackend, sykmeldingsperioder]);
 
   useEffect(() => {
     if (ansettelsesforhold) {
@@ -424,12 +430,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         stillingsprosent: periode.stillingsprosent,
         inkludertISykefravaer: undefined
       }));
-      setValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
+      onSetValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
         shouldDirty: true,
         shouldValidate: true
       });
     }
-  }, [ansettelsesforhold, setValue]);
+  }, [ansettelsesforhold]);
 
   useEffect(() => {
     if (bruttoinntekt.bruttoInntekt !== undefined) {
