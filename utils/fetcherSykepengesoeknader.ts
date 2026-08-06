@@ -10,8 +10,8 @@ export default function fetcherSykepengesoeknader(
   orgNummer?: string,
   eldsteFom?: string
 ): Promise<EndepunktSykepengesoeknader> {
-  if (!url || !identitetsnummer || !orgNummer || !eldsteFom || orgNummer === '-') return Promise.resolve([]);
-
+  if (!url || !identitetsnummer || !orgNummer || !eldsteFom || orgNummer === '-')
+    return Promise.reject(new NetworkError('Manglende parametere'));
   return fetch(url, {
     method: 'POST',
     headers: {

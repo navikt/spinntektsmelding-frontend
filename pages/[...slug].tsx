@@ -54,6 +54,8 @@ import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
+import useBehandlingsdager from '../utils/useBehandlingsdager';
+import { toLocalIso } from '../utils/toLocalIso';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
@@ -239,6 +241,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     behandlingsdager,
     selvbestemtType,
     kvitteringData,
+    setBehandlingsdager,
     setArbeidsgiverperiodeDisabled
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
@@ -252,6 +255,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.behandlingsdager,
     state.selvbestemtType,
     state.kvitteringData,
+    state.setBehandlingsdager,
     state.setArbeidsgiverperiodeDisabled
   ]);
 
@@ -317,7 +321,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       fullLonn: undefined,
       opplysningstyper: Array.from(new Set(opplysningstyper)),
       agp: {
-        redusertLoennIAgp: null
+        redusertLoennIAgp: null,
+        erBehandlingsdager: behandlingsdagerInnsending
       }
     }
   });
@@ -325,6 +330,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
+    setError,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
@@ -344,6 +350,34 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       storeInitialized.current = true;
     }
   });
+
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spIsLoading
+  } = useBehandlingsdager(
+    behandlingsdagerInnsending && slug !== 'behandlingsdager' ? sykmeldt.fnr : undefined,
+    avsender.orgnr || '',
+    sykmeldingsperioder?.[0]?.fom ? toLocalIso(sykmeldingsperioder[0].fom) : undefined,
+    setError
+  );
+
+  const effectSetBehandlingsdager = useEffectEvent((behandlingsdager: string[]) => {
+    setBehandlingsdager(behandlingsdager);
+  });
+
+  useEffect(() => {
+    if (spData && !spError && !spIsLoading) {
+      const fomDate = sykmeldingsperioder?.[0]?.fom;
+      const dager = spData.flatMap((periode) => {
+        if (fomDate && periode.fom === toLocalIso(fomDate)) {
+          return periode.behandlingsdager;
+        }
+        return [];
+      });
+      effectSetBehandlingsdager(dager.filter((dag) => dag !== undefined));
+    }
+  }, [spData, spError, spIsLoading, sykmeldingsperioder]);
 
   useEffect(() => {
     onForespurtInit();
@@ -536,6 +570,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     setSenderInn(true);
     if (selvbestemtInnsending) {
+      formData.agp = {
+        ...formData.agp,
+        redusertLoennIAgp: formData.agp?.redusertLoennIAgp,
+        erBehandlingsdager: Boolean(behandlingsdagerInnsending)
+      };
+
       sendInnArbeidsgiverInitiertSkjema(
         true,
         slug,

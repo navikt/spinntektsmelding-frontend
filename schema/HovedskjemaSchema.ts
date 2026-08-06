@@ -331,7 +331,8 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 })
               })
             )
-            .or(z.undefined())
+            .or(z.undefined()),
+          erBehandlingsdager: z.boolean().optional()
         })
         .or(z.object({}))
         .or(z.undefined()),

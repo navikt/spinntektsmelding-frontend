@@ -128,7 +128,8 @@ export const InnsendingSchema = z.object({
             })
           })
         )
-        .or(z.undefined())
+        .or(z.undefined()),
+      erBehandlingsdager: z.boolean().optional()
     })
     .nullable()
     .superRefine((val, ctx) => {
@@ -164,17 +165,35 @@ export const InnsendingSchema = z.object({
         return;
       }
 
+      if (perioderErSannsynligvisBehandlingsdager(val.perioder) && val.perioder.length !== 12) {
+        ctx.issues.push({
+          code: 'custom',
+          error: 'Arbeidsgiverperioden må bestå av 12 behandlingsdager.',
+          path: ['perioder'],
+          input: ''
+        });
+        return;
+      }
       if (
         perioderErUnder16dagerTotalt(val.perioder) &&
         !val.redusertLoennIAgp?.begrunnelse &&
         !perioderErSannsynligvisBehandlingsdager(val.perioder)
       ) {
-        ctx.issues.push({
-          code: 'custom',
-          error: 'Angi årsak til forkortet arbeidsgiverperiode.',
-          path: ['redusertLoennIAgp', 'begrunnelse'],
-          input: ''
-        });
+        if (val.erBehandlingsdager) {
+          ctx.issues.push({
+            code: 'custom',
+            error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
+            path: ['perioder'],
+            input: ''
+          });
+        } else {
+          ctx.issues.push({
+            code: 'custom',
+            error: 'Angi årsak til forkortet arbeidsgiverperiode.',
+            path: ['redusertLoennIAgp', 'begrunnelse'],
+            input: ''
+          });
+        }
         return;
       }
 
@@ -218,6 +237,7 @@ export const InnsendingSchema = z.object({
     })
   ),
   naturalytelser: ApiNaturalytelserSchema,
+  erBehandlingsdager: z.boolean().optional(),
   flereArbeidsforhold: z
     .object({
       harLikLoenn: z.boolean(),

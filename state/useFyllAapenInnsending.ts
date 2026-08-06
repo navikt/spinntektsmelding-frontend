@@ -105,7 +105,8 @@ export default function useFyllAapenInnsending() {
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
         perioder: formattedAgpPerioder,
-        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null
+        redusertLoennIAgp: skjemaData.agp?.redusertLoennIAgp ?? null,
+        erBehandlingsdager: skjemaData.agp?.erBehandlingsdager ?? false
       },
       inntekt: {
         beloep: skjemaData.inntekt?.beloep ?? 0,
@@ -138,6 +139,8 @@ export default function useFyllAapenInnsending() {
           }
         : null
     });
+
+    delete innsending.data?.agp?.erBehandlingsdager;
 
     return innsending;
   };

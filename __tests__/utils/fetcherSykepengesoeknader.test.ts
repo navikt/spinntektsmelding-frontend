@@ -17,13 +17,17 @@ describe('fetcherSykepengesoeknader', () => {
   });
 
   it('should return an empty array if url is null', async () => {
-    const result = await fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet, eldsteFom);
-    expect(result).toEqual([]);
+    // const result = await fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet, eldsteFom);
+    // expect(result).toEqual([]);
+    await expect(fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet, eldsteFom)).rejects.toThrowError(
+      NetworkError
+    );
   });
 
-  it('should return an empty array if identitetsnummer is not provided', async () => {
-    const result = await fetcherSykepengesoeknader(url, undefined, orgnrUnderenhet, eldsteFom);
-    expect(result).toEqual([]);
+  it('should throw an error if identitetsnummer is not provided', async () => {
+    await expect(fetcherSykepengesoeknader(url, undefined, orgnrUnderenhet, eldsteFom)).rejects.toThrowError(
+      NetworkError
+    );
   });
 
   it('should make a POST request with the correct parameters', async () => {

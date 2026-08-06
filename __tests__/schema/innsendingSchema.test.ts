@@ -1385,4 +1385,162 @@ describe('InnsendingSchema', () => {
 
     expect(InnsendingSchema.safeParse(data).success).toBe(true);
   });
+
+  it('should validate InnsendingSchema with error when agp is behandlingsdager and too short', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2026-01-01', tom: '2026-01-01' },
+          { fom: '2026-01-08', tom: '2026-01-08' },
+          { fom: '2026-01-15', tom: '2026-01-15' },
+          { fom: '2026-01-22', tom: '2026-01-22' },
+          { fom: '2026-01-29', tom: '2026-01-29' },
+          { fom: '2026-02-05', tom: '2026-02-05' },
+          { fom: '2026-02-12', tom: '2026-02-12' }
+        ],
+        egenmeldinger: [],
+        erBehandlingsdager: true
+      },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: { beloepPerMaaned: 50000, endringer: [], sluttdato: '2023-03-31' },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ],
+      naturalytelser: [],
+      flereArbeidsforhold: null
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
+        message: 'Invalid input',
+        path: ['agp', 'perioder']
+      }
+    ]);
+  });
+
+  it('should validate InnsendingSchema without error when agp is behandlingsdager and 12 elements', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2026-01-01', tom: '2026-01-01' },
+          { fom: '2026-01-08', tom: '2026-01-08' },
+          { fom: '2026-01-15', tom: '2026-01-15' },
+          { fom: '2026-01-22', tom: '2026-01-22' },
+          { fom: '2026-01-29', tom: '2026-01-29' },
+          { fom: '2026-02-05', tom: '2026-02-05' },
+          { fom: '2026-02-12', tom: '2026-02-12' },
+          { fom: '2026-02-19', tom: '2026-02-19' },
+          { fom: '2026-02-26', tom: '2026-02-26' },
+          { fom: '2026-03-04', tom: '2026-03-04' },
+          { fom: '2026-03-11', tom: '2026-03-11' },
+          { fom: '2026-03-18', tom: '2026-03-18' }
+          // { fom: '2026-03-25', tom: '2026-03-25' },
+          // { fom: '2026-04-01', tom: '2026-04-01' },
+          // { fom: '2026-04-08', tom: '2026-04-08' },
+          // { fom: '2026-04-15', tom: '2026-04-15' },
+          // { fom: '2026-04-22', tom: '2026-04-22' }
+        ],
+        egenmeldinger: [],
+        erBehandlingsdager: true
+      },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: { beloepPerMaaned: 50000, endringer: [], sluttdato: '2023-03-31' },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ],
+      naturalytelser: [],
+      flereArbeidsforhold: null
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(true);
+    // expect(result.error?.issues).toEqual([
+    //   {
+    //     code: 'custom',
+    //     error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
+    //     message: 'Invalid input',
+    //     path: ['agp', 'perioder']
+    //   }
+    // ]);
+  });
+
+  it('should validate InnsendingSchema without error when agp is behandlingsdager and too long', () => {
+    const data = {
+      agp: {
+        perioder: [
+          { fom: '2026-01-01', tom: '2026-01-01' },
+          { fom: '2026-01-08', tom: '2026-01-08' },
+          { fom: '2026-01-15', tom: '2026-01-15' },
+          { fom: '2026-01-22', tom: '2026-01-22' },
+          { fom: '2026-01-29', tom: '2026-01-29' },
+          { fom: '2026-02-05', tom: '2026-02-05' },
+          { fom: '2026-02-12', tom: '2026-02-12' },
+          { fom: '2026-02-19', tom: '2026-02-19' },
+          { fom: '2026-02-26', tom: '2026-02-26' },
+          { fom: '2026-03-04', tom: '2026-03-04' },
+          { fom: '2026-03-11', tom: '2026-03-11' },
+          { fom: '2026-03-18', tom: '2026-03-18' },
+          { fom: '2026-03-25', tom: '2026-03-25' },
+          { fom: '2026-04-01', tom: '2026-04-01' }
+          // { fom: '2026-04-08', tom: '2026-04-08' },
+          // { fom: '2026-04-15', tom: '2026-04-15' },
+          // { fom: '2026-04-22', tom: '2026-04-22' }
+        ],
+        egenmeldinger: [],
+        erBehandlingsdager: true
+      },
+      inntekt: {
+        beloep: 50000,
+        inntektsdato: '2023-02-14',
+        endringAarsak: { aarsak: 'Bonus' },
+        endringAarsaker: [{ aarsak: 'Bonus' }]
+      },
+      refusjon: { beloepPerMaaned: 50000, endringer: [], sluttdato: '2023-03-31' },
+      vedtaksperiodeId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      sykmeldtFnr: '25087327879',
+      avsender: { orgnr: '911206722', tlf: '12345678' },
+      sykmeldingsperioder: [
+        { fom: '2023-02-20', tom: '2023-03-03' },
+        { fom: '2023-03-05', tom: '2023-03-06' }
+      ],
+      naturalytelser: [],
+      flereArbeidsforhold: null
+    };
+
+    const result = InnsendingSchema.safeParse(data);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues).toEqual([
+      {
+        code: 'custom',
+        error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
+        message: 'Invalid input',
+        path: ['agp', 'perioder']
+      }
+    ]);
+  });
 });

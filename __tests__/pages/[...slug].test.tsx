@@ -507,7 +507,7 @@ describe('Home Page', () => {
       stateFn(
         createMockState({
           skjemastatus: SkjemaStatus.SELVBESTEMT,
-          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }]
+          sykmeldingsperioder: [{ fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15') }]
         })
       )
     );
