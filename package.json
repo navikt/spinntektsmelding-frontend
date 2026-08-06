@@ -17,8 +17,8 @@
     "bundleanalyze": "ANALYZE=true pnpm build --webpack"
   },
   "dependencies": {
-    "@grafana/faro-web-sdk": "2.2.4",
-    "@grafana/faro-web-tracing": "2.2.4",
+    "@grafana/faro-web-sdk": "2.9.0",
+    "@grafana/faro-web-tracing": "2.9.0",
     "@hookform/resolvers": "5.2.2",
     "@navikt/aksel-icons": "^8.16.1",
     "@navikt/ds-css": "^8.16.1",
