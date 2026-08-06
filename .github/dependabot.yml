@@ -65,6 +65,5 @@ registries:
   npm-github:
     type: npm-registry
     url: https://npm.pkg.github.com
-    replaces-base: false
+    scope: '@navikt'
     token: ${{ secrets.READER_TOKEN }}
-
