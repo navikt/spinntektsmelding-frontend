@@ -5,4 +5,4 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 overrides:
-  'jsdom': '$jsdom'
+  'protobufjs': '^8.4.2'
