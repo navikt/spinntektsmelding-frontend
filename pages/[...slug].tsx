@@ -386,7 +386,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return unntattAaRegisteret;
   });
   useEffect(() => {
-    if (!dataFraBackend && !onUnntattAaRegisteret) {
+    if (!dataFraBackend && !onUnntattAaRegisteret()) {
       const orgnr = avsenderOrgnummer();
       const fnr = sykmeldtFnr();
       const gyldigePerioder = sykmeldingsperioder?.filter((p) => p.fom && p.tom) ?? [];
