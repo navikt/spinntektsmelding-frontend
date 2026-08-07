@@ -12,7 +12,7 @@ timezone_mock.register('UTC');
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 vi.mock('nanoid');
 
-nanoid.mockReturnValue('uuid');
+vi.mocked(nanoid).mockReturnValue('uuid');
 
 describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {

@@ -72,7 +72,7 @@ describe('useFyllInnsending', () => {
   beforeEach(() => {
     useBoundStore.setState(initialState, true);
     vi.spyOn(global, 'fetch').mockImplementation(fetchMock);
-    nanoid.mockReturnValue('uuid');
+    vi.mocked(nanoid).mockReturnValue('uuid');
   });
 
   afterEach(() => {

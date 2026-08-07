@@ -141,7 +141,7 @@ describe('useSendInnSkjema', () => {
     } as any);
 
     const isValidUUID = await import('../../utils/isValidUUID');
-    (isValidUUID.default as Mock).mockReturnValueOnce(false);
+    (isValidUUID.default as unknown as Mock).mockReturnValueOnce(false);
 
     const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
 

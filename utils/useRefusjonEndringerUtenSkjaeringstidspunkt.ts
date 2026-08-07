@@ -1,6 +1,9 @@
 import { isBefore } from 'date-fns';
+import { z } from 'zod';
 import useBoundStore from '../state/useBoundStore';
-import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 const useRefusjonEndringerUtenSkjaeringstidspunkt = (): EndringsBeloep[] | undefined => {
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);

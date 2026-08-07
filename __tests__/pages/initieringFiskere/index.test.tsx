@@ -48,7 +48,7 @@ describe('InitieringFiskere page', () => {
     // router mock
     mockedRouter.push.mockClear();
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -67,7 +67,7 @@ describe('InitieringFiskere page', () => {
 
   it('shows loading when tilganger not yet fetched', () => {
     // simulate hook not returned yet
-    (useMineTilganger as Mock).mockReturnValue({ data: undefined, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
     render(<InitieringFritatt />);
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
@@ -84,7 +84,7 @@ describe('InitieringFiskere page', () => {
         ]
       }
     ];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
 
     render(<InitieringFritatt />);
 
@@ -106,7 +106,7 @@ describe('InitieringFiskere page', () => {
         underenheter: [{ orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child', underenheter: [] }]
       }
     ];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
 
     render(<InitieringFritatt />);
 
@@ -133,7 +133,7 @@ describe('InitieringFiskere page', () => {
   });
 
   it('"Tilbake"-knappen har type="button" for å unngå utilsiktet skjemainnsending', async () => {
-    (useMineTilganger as Mock).mockReturnValue({ data: [], error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: [], error: undefined });
     render(<InitieringFritatt />);
     await waitFor(() => screen.getByRole('button', { name: 'Tilbake' }));
     expect(screen.getByRole('button', { name: 'Tilbake' })).toHaveAttribute('type', 'button');

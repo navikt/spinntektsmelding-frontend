@@ -1,12 +1,14 @@
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import fetchKvitteringsdata from '../../utils/fetchKvitteringsdataSSR';
 
 describe('fetchKvitteringsdata', () => {
   const UUID = '123e4567-e89b-12d3-a456-426614174000';
+  let mockFetch: Mock;
 
   beforeEach(() => {
     // Mock the global fetch function
-    global.fetch = vi.fn();
+    mockFetch = vi.fn();
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
@@ -15,7 +17,7 @@ describe('fetchKvitteringsdata', () => {
 
   it('should return the response data if the request is successful', async () => {
     // Mock the fetch function to return a successful response
-    global.fetch.mockResolvedValueOnce({
+    mockFetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
       json: vi.fn().mockResolvedValueOnce({ foo: 'bar' })
@@ -40,7 +42,7 @@ describe('fetchKvitteringsdata', () => {
 
   it('should throw a NetworkError if the request fails', async () => {
     // Mock the fetch function to return an error response
-    global.fetch.mockResolvedValueOnce({
+    mockFetch.mockResolvedValueOnce({
       ok: false,
       status: 500
     });
@@ -49,14 +51,14 @@ describe('fetchKvitteringsdata', () => {
     const forespoerselId = UUID;
     const token = 'abc123';
 
-    await expect(fetchKvitteringsdata(url, forespoerselId, token)).rejects.toThrowError(
+    await expect(fetchKvitteringsdata(url, forespoerselId, token)).rejects.toThrow(
       'An error occurred while fetching the data.'
     );
   });
 
   it('should throw a NetworkError if the response data cannot be decoded', async () => {
     // Mock the fetch function to return a successful response with invalid JSON
-    global.fetch.mockResolvedValueOnce({
+    mockFetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
       json: vi.fn().mockRejectedValueOnce(new Error('Invalid JSON'))
@@ -66,7 +68,7 @@ describe('fetchKvitteringsdata', () => {
     const forespoerselId = UUID;
     const token = 'abc123';
 
-    await expect(fetchKvitteringsdata(url, forespoerselId, token)).rejects.toThrowError(
+    await expect(fetchKvitteringsdata(url, forespoerselId, token)).rejects.toThrow(
       'An error occurred while decoding the data.'
     );
   });

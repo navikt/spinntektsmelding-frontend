@@ -1,8 +1,11 @@
 import { isEqual } from 'date-fns';
-import { EndringsBeloep } from '../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { z } from 'zod';
+import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import { LonnISykefravaeret, YesNo } from '../state/state';
 import ugyldigEllerNegativtTall from '../utils/ugyldigEllerNegativtTall';
 import { ValiderResultat } from '../utils/validerInntektsmelding';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 export enum EndringAvMaanedslonnFeilkode {
   MANGLER_BELOP = 'MANGLER_BELOP',

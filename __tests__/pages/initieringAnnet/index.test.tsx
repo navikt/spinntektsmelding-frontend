@@ -46,12 +46,12 @@ describe('InitieringAnnet page', () => {
     // router mock
     mockedRouter.push.mockClear();
     // store selector returns from fakeStore
-    (useBoundStore as unknown as Mock).mockImplementation((selector: any) => selector(fakeStore));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((selector: any) => selector(fakeStore));
   });
 
   it('shows loading spinner while arbeidsforhold is loading', () => {
-    (useArbeidsforhold as Mock).mockReturnValue({ data: undefined, error: undefined });
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: undefined, error: undefined, isLoading: false });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -71,7 +71,7 @@ describe('InitieringAnnet page', () => {
       ],
       perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
     const spData = [
@@ -87,7 +87,7 @@ describe('InitieringAnnet page', () => {
         vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
       }
     ];
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -143,7 +143,7 @@ describe('InitieringAnnet page', () => {
         { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
       ]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
     const spData = [
@@ -170,7 +170,7 @@ describe('InitieringAnnet page', () => {
         vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
       }
     ];
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -217,7 +217,7 @@ describe('InitieringAnnet page', () => {
         { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
       ]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
     const spData = [
@@ -245,7 +245,7 @@ describe('InitieringAnnet page', () => {
         vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
       }
     ];
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -290,7 +290,7 @@ describe('InitieringAnnet page', () => {
         { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
       ]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
     const spData = [
@@ -329,7 +329,7 @@ describe('InitieringAnnet page', () => {
         vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
       }
     ];
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -350,7 +350,7 @@ describe('InitieringAnnet page', () => {
         { id: 'b', fom: '2023-01-11', tom: '2023-01-20' }
       ]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
     const spData = [
@@ -389,7 +389,7 @@ describe('InitieringAnnet page', () => {
         vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
       }
     ];
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -426,8 +426,8 @@ describe('InitieringAnnet page', () => {
       underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test AS' }],
       perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
     };
-    (useArbeidsforhold as Mock).mockReturnValue({ data: arbData, error: undefined });
-    (useSykepengesoeknader as Mock).mockReturnValue({ data: [], error: undefined, isLoading: false });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: [], error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
