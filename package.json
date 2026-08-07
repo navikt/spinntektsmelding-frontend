@@ -76,7 +76,7 @@
     "prettier": "^3.9.6",
     "timezone-mock": "^1.4.3",
     "typescript": "5.9.3",
-    "vite": "^7.3.6",
+    "vite": "^8.2.0",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10",
     "vitest-fetch-mock": "^0.4.5",
