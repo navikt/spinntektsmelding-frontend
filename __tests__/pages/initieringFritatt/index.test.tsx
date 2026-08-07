@@ -49,7 +49,7 @@ describe('InitieringFritatt page', () => {
 
     mockedRouter.push.mockClear();
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         sykmeldt: { fnr: testFnr.GyldigeFraDolly.TestPerson1 },
         initPerson: initPerson,
@@ -62,11 +62,11 @@ describe('InitieringFritatt page', () => {
     );
 
     // router
-    // (useRouter as Mock).mockReturnValue(router);
+    // (useRouter as unknown as Mock).mockReturnValue(router);
   });
 
   it('shows loading spinner before tilganger arrive', () => {
-    (useMineTilganger as Mock).mockReturnValue({ data: undefined, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
     render(<InitieringFritatt />);
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
@@ -82,7 +82,7 @@ describe('InitieringFritatt page', () => {
         ]
       }
     ];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for select to mount
     await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
@@ -98,7 +98,7 @@ describe('InitieringFritatt page', () => {
         underenheter: []
       }
     ];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for button to mount
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
@@ -109,7 +109,7 @@ describe('InitieringFritatt page', () => {
 
   it('validates form and shows error if no enhet', async () => {
     const mockData = [];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for select to mount
     // await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
@@ -131,7 +131,7 @@ describe('InitieringFritatt page', () => {
         ]
       }
     ];
-    (useMineTilganger as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     const user = userEvent.setup();
     render(<InitieringFritatt />);
     // choose the nested unit

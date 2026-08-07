@@ -151,7 +151,7 @@ describe('_document.tsx', () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       process.env.NODE_ENV = 'production';
 
-      fetchDecoratorMock.mockRejectedValueOnce(new Error('Network error'));
+      (fetchDecoratorMock as any).mockRejectedValueOnce(new Error('Network error'));
 
       const ctx = {
         renderPage: vi.fn(() => ({ html: '', head: [] }))

@@ -2,8 +2,11 @@ import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import LonnUnderSykefravaeret from '../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 import { LonnISykefravaeret, YesNo } from '../../state/state';
-import { EndringsBeloep } from '../../components/RefusjonArbeidsgiver/RefusjonUtbetalingEndring';
+import { z } from 'zod';
+import { RefusjonEndringSchema } from '../../schema/RefusjonEndringSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
+
+type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 describe('LonnUnderSykefravaeret', () => {
   it('renders a title text', async () => {

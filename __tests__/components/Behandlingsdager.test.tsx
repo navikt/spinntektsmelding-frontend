@@ -36,7 +36,7 @@ function TestWrapper({
 describe('Behandlingsdager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useBoundStore as Mock).mockImplementation((selector) =>
+    (useBoundStore as unknown as Mock).mockImplementation((selector) =>
       selector({ setArbeidsgiverperioder: mockSetArbeidsgiverperioder })
     );
   });

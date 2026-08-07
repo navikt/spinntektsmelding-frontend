@@ -17,7 +17,7 @@ describe('Person component', () => {
   });
 
   it('renders correctly when data is loaded', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -52,7 +52,7 @@ describe('Person component', () => {
 
   it('renders skeleton loaders when data is not loaded', () => {
     configure({ testIdAttribute: 'data-cy' });
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -85,7 +85,7 @@ describe('Person component', () => {
   });
 
   it('renders error message when data fetching fails', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -112,7 +112,7 @@ describe('Person component', () => {
   });
 
   it('renders partial submission message when erDelvisInnsending is true', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -139,7 +139,7 @@ describe('Person component', () => {
   });
 
   it('should have no accessibility violations', async () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),

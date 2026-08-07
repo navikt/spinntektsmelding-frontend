@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import fetcherInntektsdataSelvbestemt from '../../utils/fetcherInntektsdataSelvbestemt';
 import NetworkError from '../../utils/NetworkError';
 
@@ -7,9 +7,11 @@ describe('fetcherInntektsdataSelvbestemt', () => {
   const identitetsnummer = '123456789';
   const orgnrUnderenhet = '987654321';
   const inntektsdato = new Date(2025, 3, 7);
+  let mockFetch: Mock;
 
   beforeEach(() => {
-    global.fetch = vi.fn();
+    mockFetch = vi.fn();
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
@@ -38,7 +40,7 @@ describe('fetcherInntektsdataSelvbestemt', () => {
       json: vi.fn().mockResolvedValueOnce({ data: 'mocked data' })
     };
 
-    global.fetch.mockResolvedValueOnce(mockResponse);
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
     await fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato);
 
@@ -57,7 +59,7 @@ describe('fetcherInntektsdataSelvbestemt', () => {
       json: vi.fn().mockResolvedValueOnce({ data: 'mocked data' })
     };
 
-    global.fetch.mockResolvedValueOnce(mockResponse);
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
     const result = await fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato);
 
@@ -70,11 +72,11 @@ describe('fetcherInntektsdataSelvbestemt', () => {
       status: 500
     };
 
-    global.fetch.mockResolvedValueOnce(mockResponse);
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
-    await expect(
-      fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato)
-    ).rejects.toThrowError(NetworkError);
+    await expect(fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato)).rejects.toThrow(
+      NetworkError
+    );
   });
 
   it('should throw a NetworkError if the response data cannot be decoded', async () => {
@@ -83,10 +85,10 @@ describe('fetcherInntektsdataSelvbestemt', () => {
       json: vi.fn().mockRejectedValueOnce(new Error('Invalid JSON'))
     };
 
-    global.fetch.mockResolvedValueOnce(mockResponse);
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
-    await expect(
-      fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato)
-    ).rejects.toThrowError(NetworkError);
+    await expect(fetcherInntektsdataSelvbestemt(url, identitetsnummer, orgnrUnderenhet, inntektsdato)).rejects.toThrow(
+      NetworkError
+    );
   });
 });

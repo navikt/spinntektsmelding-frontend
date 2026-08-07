@@ -59,8 +59,8 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 401 when we have a invalid token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: false, error: 'error' });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: false, error: 'error' });
 
     const req = {
       method: 'POST',
@@ -83,8 +83,8 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 400 when we dont have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',
@@ -115,9 +115,9 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 200 when we have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
+    vi.mocked(requestOboToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',
@@ -152,9 +152,9 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 200 when we have a token and vedtaksperiodeliste', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
+    vi.mocked(requestOboToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',

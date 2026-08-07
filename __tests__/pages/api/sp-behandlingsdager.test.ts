@@ -63,7 +63,7 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('401 when no token', async () => {
-    (getToken as Mock).mockReturnValue(undefined);
+    (getToken as unknown as Mock).mockReturnValue(undefined);
     const req = createReq({}, {});
     const res = createRes();
     await handler(req as any, res);
@@ -72,9 +72,9 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('400 when invalid orgnr', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(false);
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(false);
     const req = createReq({ orgnummer: 'bad', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
@@ -83,8 +83,8 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('405 when method is not POST', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     req.method = 'GET';
     const res = createRes();
@@ -96,8 +96,8 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('400 when request body is missing required fields', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
     const req = createReq({ orgnummer: '810007982' });
     const res = createRes();
 
@@ -108,9 +108,9 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('401 when token validation fails', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: false, error: 'x' });
-    (isMod11Number as Mock).mockReturnValue(true);
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'x' });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
     const req = createReq({ orgnummer: '123', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
@@ -118,12 +118,12 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('401 when OBO fails', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
     // auth API ok
-    (fetch as Mock).mockResolvedValueOnce({ ok: true });
-    (requestOboToken as Mock).mockResolvedValue({ ok: false, error: 'obo' });
+    (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'obo' });
     const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
@@ -132,14 +132,14 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('error when soeknad fetch fails', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (fetch as Mock)
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (fetch as unknown as Mock)
       .mockResolvedValueOnce({ ok: true }) // auth API
       .mockResolvedValueOnce({ ok: false, status: 403, statusText: 'nope' }); // soeknad
 
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
@@ -148,15 +148,15 @@ describe('sp-behandlingsdager API handler', () => {
   });
 
   it('returns empty array when no BEHANDLINGSDAGER', async () => {
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (fetch as Mock)
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (fetch as unknown as Mock)
       .mockResolvedValueOnce({ ok: true }) // auth
       .mockResolvedValueOnce({ ok: true }); // soeknad
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
     const data = [{ soknadstype: 'ANNET' }];
-    (safelyParseJSON as Mock).mockResolvedValue(data);
+    (safelyParseJSON as unknown as Mock).mockResolvedValue(data);
     const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
@@ -182,19 +182,19 @@ describe('sp-behandlingsdager API handler', () => {
       }
     ];
 
-    (getToken as Mock).mockReturnValue('tok');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (fetch as Mock)
+    (getToken as unknown as Mock).mockReturnValue('tok');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (fetch as unknown as Mock)
       .mockResolvedValueOnce({ ok: true }) // auth
       .mockResolvedValueOnce({ ok: true, status: 200 }); // soeknad
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
-    (safelyParseJSON as Mock).mockResolvedValue(data);
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
+    (safelyParseJSON as unknown as Mock).mockResolvedValue(data);
     const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
     await handler(req as any, res);
     expect(res.status).toHaveBeenCalledWith(200);
-    const result = (res.json as Mock).mock.calls[0][0];
+    const result = (res.json as unknown as Mock).mock.calls[0][0];
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       sykmeldingId: '1',

@@ -99,7 +99,7 @@ describe('arbeidsforhold API', () => {
 
   it('returns 401 when token is missing', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue(undefined);
+    (getToken as unknown as Mock).mockReturnValue(undefined);
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({});
@@ -126,9 +126,9 @@ describe('arbeidsforhold API', () => {
 
   it('returns 400 for invalid orgnummer', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(false);
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(false);
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '123', fnr: '12345678910', eldsteFom: '2024-01-01' });
@@ -142,12 +142,12 @@ describe('arbeidsforhold API', () => {
 
   it('returns 400 for invalid fnr', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (isFnrNumber as Mock).mockReturnValue(false);
-    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (isFnrNumber as unknown as Mock).mockReturnValue(false);
+    (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '111', eldsteFom: '2024-01-01' });
@@ -161,12 +161,12 @@ describe('arbeidsforhold API', () => {
 
   it('returns 400 for invalid eldsteFom', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (isFnrNumber as Mock).mockReturnValue(true);
-    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (isFnrNumber as unknown as Mock).mockReturnValue(true);
+    (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: 'ugyldig-dato' });
@@ -180,11 +180,11 @@ describe('arbeidsforhold API', () => {
 
   it('returns 401 when OBO token request fails', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (fetch as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
-    (requestOboToken as Mock).mockResolvedValue({ ok: false, error: 'obo-error' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'obo-error' });
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
@@ -198,17 +198,17 @@ describe('arbeidsforhold API', () => {
 
   it('returns empty list when no aktive søknader have vedtaksperiodeId', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (isFnrNumber as Mock).mockReturnValue(true);
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (isFnrNumber as unknown as Mock).mockReturnValue(true);
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    (fetch as Mock)
+    (fetch as unknown as Mock)
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
 
-    (safelyParseJSON as Mock).mockResolvedValueOnce([{ vedtaksperiodeId: null }]);
+    (safelyParseJSON as unknown as Mock).mockResolvedValueOnce([{ vedtaksperiodeId: null }]);
 
     const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
@@ -222,18 +222,18 @@ describe('arbeidsforhold API', () => {
 
   it('returns merged response with forespoerselId for aktive søknader', async () => {
     vi.stubEnv('NODE_ENV', 'production');
-    (getToken as Mock).mockReturnValue('token');
-    (validateToken as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as Mock).mockReturnValue(true);
-    (isFnrNumber as Mock).mockReturnValue(true);
-    (requestOboToken as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
+    (getToken as unknown as Mock).mockReturnValue('token');
+    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
+    (isMod11Number as unknown as Mock).mockReturnValue(true);
+    (isFnrNumber as unknown as Mock).mockReturnValue(true);
+    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    (fetch as Mock)
+    (fetch as unknown as Mock)
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
 
-    (safelyParseJSON as Mock)
+    (safelyParseJSON as unknown as Mock)
       .mockResolvedValueOnce([
         { vedtaksperiodeId: 'vp1', soknadstype: 'ARBEIDSTAKERE' },
         { vedtaksperiodeId: null, soknadstype: 'ANNET' }

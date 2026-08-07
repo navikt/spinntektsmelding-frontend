@@ -87,7 +87,7 @@ describe('useArbeidsforhold', () => {
 
     // buildSWRFormErrorHandler should be called with the expected config
     expect(buildSWRFormErrorHandler).toHaveBeenCalledTimes(1);
-    const cfg = (buildSWRFormErrorHandler as Mock).mock.calls[0][0];
+    const cfg = (buildSWRFormErrorHandler as unknown as Mock).mock.calls[0][0];
 
     expect(cfg.setError).toBe(setError);
     expect(cfg.field).toBe('arbeidsgiverListe');

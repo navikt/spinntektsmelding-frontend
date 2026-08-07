@@ -51,7 +51,7 @@ describe('InitieringBehandlingsdager', () => {
 
     mockedRouter.push.mockClear();
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),
@@ -70,7 +70,7 @@ describe('InitieringBehandlingsdager', () => {
     );
 
     // arbeidsforhold hook: one underenhet
-    (useArbeidsforhold as Mock).mockReturnValue({
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({
       data: {
         fulltNavn: 'Test Enhet',
         underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'Test Enhet' }],
@@ -80,7 +80,7 @@ describe('InitieringBehandlingsdager', () => {
     });
 
     // behandlingsdager hook: two periods, second has > 12 days
-    (useBehandlingsdager as Mock).mockReturnValue({
+    (useBehandlingsdager as unknown as Mock).mockReturnValue({
       data: [
         {
           sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
@@ -111,7 +111,7 @@ describe('InitieringBehandlingsdager', () => {
   });
 
   it('renders loading state then form controls', async () => {
-    (useArbeidsforhold as Mock).mockReturnValue({
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({
       data: {
         fulltNavn: 'Test Enhet',
         underenheter: [
