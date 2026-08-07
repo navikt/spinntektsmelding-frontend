@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "es2016",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,9 +14,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals"]
   },
   "include": [
     "next-env.d.ts",
@@ -32,12 +26,6 @@
     "./__tests__/setup.ts",
     "vitest.config.mts"
   ],
-  "exclude": [
-    "node_modules"
-  ],
-  "types": [
-    "node",
-    "vitest/globals",
-    "vitest/jsdom"
-  ]
+  "exclude": ["node_modules"],
+  "types": ["node", "vitest/globals", "vitest/jsdom"]
 }
