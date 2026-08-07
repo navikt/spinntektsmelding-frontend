@@ -30,7 +30,7 @@
     "@unleash/nextjs": "^1.6.7",
     "date-fns": "4.4.0",
     "html-react-parser": "^6.1.5",
-    "immer": "11.1.4",
+    "immer": "11.1.15",
     "jsdom": "28.1.0",
     "nanoid": "6.0.1",
     "next": "^16.3.0",
