@@ -7,12 +7,7 @@
 // import requiredArgs from '../_lib/requiredArgs/index'
 // import toInteger from '../_lib/toInteger/index'
 
-import addDays from 'date-fns/addDays';
-import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
-import isSameDay from 'date-fns/isSameDay';
-import isValid from 'date-fns/isValid';
-import isWeekend from 'date-fns/isWeekend';
-import toDate from 'date-fns/toDate';
+import { addDays, differenceInCalendarDays, isSameDay, isValid, isWeekend, toDate } from 'date-fns';
 
 function toInteger(dirtyNumber: unknown): number {
   if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {

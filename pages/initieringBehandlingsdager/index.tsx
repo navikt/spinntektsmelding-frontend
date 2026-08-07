@@ -141,7 +141,7 @@ const InitieringBehandlingsdager: NextPage = () => {
 
     const mottatteBehandlingsdager = EndepunktSykepengesoeknaderSchema.safeParse(spData);
     if (!mottatteBehandlingsdager.success) {
-      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteBehandlingsdager.error.errors));
+      logger.warn('Feil ved validering av sykepengesøknader' + JSON.stringify(mottatteBehandlingsdager.error.issues));
       return [];
     }
 
