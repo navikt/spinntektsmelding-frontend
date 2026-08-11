@@ -166,9 +166,10 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     return;
   }
 
-  const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.inkludertISykefravaer);
+  const valgteArbeidsforhold = [...arbeidsforhold];
 
   valgteArbeidsforhold.forEach((item, index) => {
+    console.log('Validerer arbeidsforhold: ', item, index);
     if (item.inntekt === undefined || item.inntekt === null) {
       ctx.issues.push({
         code: 'custom',
@@ -188,7 +189,8 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
       });
     }
 
-    if (item.stillingsprosent === undefined || item.stillingsprosent === null) {
+    if (item.stillingsprosent === undefined || item.stillingsprosent === null || item.stillingsprosent === '') {
+      console.log('Feil stillingsprosent: ', item.stillingsprosent);
       ctx.issues.push({
         code: 'custom',
         message: 'Vennligst oppgi spesifisert stillingsprosent.',
@@ -196,6 +198,8 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
         input: item.stillingsprosent
       });
       return;
+    } else {
+      console.log('Stillingsprosent: ', item.stillingsprosent);
     }
 
     if (item.stillingsprosent < 0) {
