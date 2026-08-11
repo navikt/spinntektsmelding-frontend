@@ -166,9 +166,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     return;
   }
 
-  const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.inkludertISykefravaer);
-
-  valgteArbeidsforhold.forEach((item, index) => {
+  arbeidsforhold.forEach((item, index) => {
     if (item.inntekt === undefined || item.inntekt === null) {
       ctx.issues.push({
         code: 'custom',
