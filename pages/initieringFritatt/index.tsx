@@ -63,6 +63,8 @@ const InitieringFritatt: NextPage = () => {
   let fulltNavn = '';
   let blokkerInnsending = false;
 
+  const antallDagerMellomSykmeldingsperioder = 0; // TODO: Implement logic to calculate the number of days between sick leave periods
+
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
     sykepengePeriodeId: z.array(z.uuid().or(z.literal('utenKobling'))).optional(),
     forespurtSykepengePeriodeId: z.string().optional()
@@ -70,7 +72,7 @@ const InitieringFritatt: NextPage = () => {
     if (data.sykepengePeriodeId && data.forespurtSykepengePeriodeId) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Du må velge enten foresporte eller andre perioder, ikke begge deler',
+        message: 'Du må velge enten forespurte eller andre perioder, ikke begge deler',
         path: ['forespurtSykepengePeriodeId']
       });
     }
@@ -110,10 +112,8 @@ const InitieringFritatt: NextPage = () => {
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    console.log('formData', formData);
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
-    console.log('mottatteData', spData);
-    console.log('formData', formData);
+
     if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, spData);
     }
@@ -208,6 +208,7 @@ const InitieringFritatt: NextPage = () => {
   };
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+  const sykepengePeriodeId: string[] | undefined = useWatch({ name: 'sykepengePeriodeId', control: methods.control });
   const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
 
   const organisasjonsnummer = orgnr;
@@ -284,8 +285,12 @@ const InitieringFritatt: NextPage = () => {
     }
   }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
 
-  const forespurtePerioder = [...sykepengePerioder].filter((periode) => !!periode.forespoerselId);
-  const ikkeForespurtePerioder = [...sykepengePerioder].filter((periode) => !periode.forespoerselId);
+  const forespurtePerioder = [...sykepengePerioder].filter(
+    (periode) => !!periode.forespoerselId || !!periode.forlengelseAv
+  );
+  const ikkeForespurtePerioder = [...sykepengePerioder].filter(
+    (periode) => !periode.forespoerselId && !periode.forlengelseAv
+  );
 
   return (
     <div className={styles.container}>
