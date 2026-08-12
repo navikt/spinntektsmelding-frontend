@@ -27,7 +27,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -64,7 +64,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -101,7 +101,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -137,7 +137,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
