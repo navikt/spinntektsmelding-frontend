@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, CheckboxGroup, Link, Radio, RadioGroup } from '@navikt/ds-react';
+import { Alert, Box, Button, Checkbox, CheckboxGroup, Heading, Link, Radio, RadioGroup } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch, Controller } from 'react-hook-form';
@@ -32,7 +32,15 @@ import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import { isValid, subYears } from 'date-fns';
 import formatIsoDate from '../../utils/formatIsoDate';
-import { addForlengelseAvInfo, formaterEgenmeldingsdager, SykepengePeriode } from '../initieringAnnet';
+import {
+  addForlengelseAvInfo,
+  formaterEgenmeldingsdager,
+  OrganisasjonInfo,
+  PersonInfo,
+  SykepengePeriode,
+  visFomDato,
+  visTomDato
+} from '../initieringAnnet';
 import { differenceInDays } from 'date-fns/differenceInDays';
 import { logger } from '@navikt/next-logger';
 import {
@@ -43,6 +51,10 @@ import formatDate from '../../utils/formatDate';
 import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import environment from '../../config/environment';
+import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
+import { finnSorterteUnikePerioder } from '../../utils/finnBestemmendeFravaersdag';
+import sorterFomStigende from '../../utils/sorterFomStigende';
+import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -67,7 +79,7 @@ const InitieringFritatt: NextPage = () => {
 
   const skjemaSchema = SkjemaInitieringSchema.safeExtend({
     sykepengePeriodeId: z.array(z.uuid().or(z.literal('utenKobling'))).optional(),
-    forespurtSykepengePeriodeId: z.string().optional()
+    forespurtSykepengePeriodeId: z.uuid().optional()
   }).superRefine((data, ctx) => {
     if (data.sykepengePeriodeId && data.forespurtSykepengePeriodeId) {
       ctx.addIssue({
@@ -113,7 +125,7 @@ const InitieringFritatt: NextPage = () => {
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     const mottatteData = data ? InitieringAnnetSchema.safeParse(formData) : undefined;
-
+    debugger;
     if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, spData);
     }
@@ -123,7 +135,7 @@ const InitieringFritatt: NextPage = () => {
     if (
       formData.sykepengePeriodeId &&
       formData.sykepengePeriodeId.length > 0 &&
-      formData.sykepengePeriodeId[0] !== 'utenKobling'
+      formData.sykepengePeriodeId.includes('utenKobling')
     ) {
       // arbeidsgiverInitiertInnsending
       const skjemaData = {
@@ -162,6 +174,13 @@ const InitieringFritatt: NextPage = () => {
         router.push('/arbeidsgiverInitiertInnsending');
         return;
       }
+      // else {
+      //   if (sykmeldingsperiode.length > 1) {
+      //     setError('sykepengePeriodeId', {
+      //       message: '"Send inntektsmelding for annen periode" kan kun velges for én periode om gangen',
+      //       type: 'manual'
+      //     });
+      //   }}
 
       if (validationResult.success) {
         setIsLoading(true);
@@ -210,6 +229,10 @@ const InitieringFritatt: NextPage = () => {
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
   const sykepengePeriodeId: string[] | undefined = useWatch({ name: 'sykepengePeriodeId', control: methods.control });
   const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
+  const forespurtSykepengePeriodeId: string | undefined = useWatch({
+    name: 'forespurtSykepengePeriodeId',
+    control: methods.control
+  });
 
   const organisasjonsnummer = orgnr;
 
@@ -275,15 +298,15 @@ const InitieringFritatt: NextPage = () => {
     return addForlengelseAvInfo(perioder);
   })();
 
-  useEffect(() => {
-    const forlengelser = sykepengePerioder
-      ?.filter((periode) => periode.forlengelseAv)
-      .filter((periode) => sykepengePeriodeId?.includes(periode.id));
+  // useEffect(() => {
+  //   const forlengelser = sykepengePerioder
+  //     ?.filter((periode) => periode.forlengelseAv)
+  //     .filter((periode) => sykepengePeriodeId?.includes(periode.id));
 
-    if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
-      resetField('endreRefusjon');
-    }
-  }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
+  //   if (!forlengelser || (forlengelser.length === 0 && !!endreRefusjon)) {
+  //     resetField('endreRefusjon');
+  //   }
+  // }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
 
   const forespurtePerioder = [...sykepengePerioder].filter(
     (periode) => !!periode.forespoerselId || !!periode.forlengelseAv
@@ -291,6 +314,13 @@ const InitieringFritatt: NextPage = () => {
   const ikkeForespurtePerioder = [...sykepengePerioder].filter(
     (periode) => !periode.forespoerselId && !periode.forlengelseAv
   );
+
+  const harValgtPeriodeMedForlengelse = sykepengePerioder.some(
+    (periode) => periode.id === forespurtSykepengePeriodeId && !!periode.forlengelseAv
+  );
+
+  const valgtePerioder = sykepengePerioder.filter((periode) => periode.id === forespurtSykepengePeriodeId);
+  const valgtePerioderMedForlengelse = valgtePerioder.filter((periode) => !!periode.forlengelseAv);
 
   return (
     <div className={styles.container}>
@@ -341,23 +371,86 @@ const InitieringFritatt: NextPage = () => {
                       name='forespurtSykepengePeriodeId'
                       control={methods.control}
                       render={({ field }) => (
-                        <RadioGroup
-                          legend='Nav har bedt om inntektsmelding for disse periodene:'
-                          id='forespurtSykepengePeriodeId'
-                          error={errors.forespurtSykepengePeriodeId?.message as string}
-                          value={field.value ?? ''}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                        >
-                          {forespurtePerioder.map((periode) => (
-                            <Radio key={periode.id} value={periode.id}>
-                              {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                              {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                              {periode.forlengelseAv && ' (forlengelse)'}
-                            </Radio>
-                          ))}
-                        </RadioGroup>
+                        <>
+                          <RadioGroup
+                            legend='Nav har bedt om inntektsmelding for disse periodene:'
+                            id='forespurtSykepengePeriodeId'
+                            error={errors.forespurtSykepengePeriodeId?.message as string}
+                            value={field.value ?? ''}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            ref={field.ref}
+                          >
+                            {forespurtePerioder.map((periode) => (
+                              <Radio key={periode.id} value={periode.id}>
+                                {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                                {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                                {periode.forlengelseAv && ' (forlengelse)'}
+                              </Radio>
+                            ))}
+                          </RadioGroup>
+                          {harValgtPeriodeMedForlengelse && (
+                            <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
+                          )}
+                          {endreRefusjon === 'Ja' && (
+                            <>
+                              <Alert variant='info'>
+                                <Heading spacing size='small' level='3'>
+                                  Du må korrigere tidligere innsendt inntektsmeldingen
+                                </Heading>
+                                Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på
+                                eventuelle refusjontidspunkter og beløp.
+                              </Alert>
+                              {valgtePerioderMedForlengelse.map(
+                                (periode) =>
+                                  periode?.forlengelseAv && (
+                                    <Box
+                                      paddingBlock='space-4'
+                                      borderWidth='1'
+                                      paddingInline='space-4'
+                                      key={periode.id}
+                                    >
+                                      <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
+                                      <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
+                                        <PersonInfo navn={'Ukjent navn'} fnr={sykmeldt.fnr} />
+                                      </Link>
+                                      <p>
+                                        Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
+                                        {visTomDato(periode.forlengelseAv, sykepengePerioder)}
+                                      </p>
+                                    </Box>
+                                  )
+                              )}
+                            </>
+                          )}
+                          {endreRefusjon === 'Nei' && (
+                            <Alert variant='info'>
+                              <Heading spacing size='small' level='3'>
+                                Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
+                              </Heading>
+                              Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding
+                              trenger du ikke sende inn ny inntektsmelding.
+                            </Alert>
+                          )}
+                          <div className={lokalStyling.knapperad}>
+                            <Button
+                              type='button'
+                              variant='tertiary'
+                              className={lokalStyling.primaryKnapp}
+                              onClick={() => history.back()}
+                            >
+                              Tilbake
+                            </Button>
+                            <Button
+                              variant='primary'
+                              className={lokalStyling.primaryKnapp}
+                              loading={isLoading}
+                              disabled={blokkerInnsending}
+                            >
+                              Neste
+                            </Button>
+                          </div>
+                        </>
                       )}
                     />
                   )}
