@@ -202,7 +202,8 @@ const InitieringFritatt: NextPage = () => {
     const validationResult = InitieringSchema.safeParse(skjemaData);
     if (validationResult.success) {
       setIsLoading(true);
-      handleValidFormData(validationResult.data, []);
+      debugger;
+      handleValidFormData(validationResult.data, sykepengePerioder);
     }
   };
 
@@ -277,8 +278,8 @@ const InitieringFritatt: NextPage = () => {
                       },
                       [
                         {
-                          fom: new Date(sorterteEgenmeldingsdager[0]),
-                          tom: new Date(sorterteEgenmeldingsdager[0])
+                          fom: sorterteEgenmeldingsdager[0],
+                          tom: sorterteEgenmeldingsdager[0]
                         }
                       ]
                     )
