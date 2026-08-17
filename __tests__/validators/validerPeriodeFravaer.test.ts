@@ -216,6 +216,25 @@ describe('validerPeriodeFravaer', () => {
         code: PeriodeFravaerFeilkode.MANGLER_TIL
       });
     });
+
+    it('should accept valid multiple perioder with 14 days gap', () => {
+      const perioder: Periode[] = [
+        {
+          fom: new Date('2026-05-26'),
+          tom: new Date('2026-06-07'),
+          id: '1'
+        },
+        {
+          fom: new Date('2026-06-22'),
+          tom: new Date('2026-06-23'),
+          id: '2'
+        }
+      ];
+
+      const result = validerPeriodeFravaer(perioder, prefix);
+
+      expect(result).toHaveLength(0);
+    });
   });
 
   describe('Date order validation', () => {
