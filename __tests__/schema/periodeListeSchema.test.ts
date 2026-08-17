@@ -38,4 +38,13 @@ describe('PeriodeListeSchema', () => {
 
     expect(PeriodeListeSchema.safeParse(data).success).toBe(false);
   });
+
+  it('should validate PeriodeListeSchema with 14 days gap', () => {
+    const data = [
+      { fom: '2026-05-26', tom: '2026-06-07' },
+      { fom: '2026-06-22', tom: '2026-06-23' }
+    ];
+
+    expect(PeriodeListeSchema.safeParse(data).success).toBe(true);
+  });
 });
