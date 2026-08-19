@@ -4,8 +4,6 @@ import { HovedskjemaSchema, createHovedskjemaSchema } from '../../schema/Hovedsk
 describe('HovedskjemaSchema', () => {
   it('should pass validation when all fields are correct', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 1234.5,
@@ -28,8 +26,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when bekreft_opplysninger is false', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: false,
       inntekt: {
         beloep: 1234.5,
@@ -37,8 +33,7 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 1234.5,
-        harEndringer: 'Nei'
+        beloepPerMaaned: 1234.5
       },
       avsenderTlf: '12345678'
     };
@@ -62,8 +57,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when beloep is missing and opplysningstyper includes inntekt', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         endringAarsaker: null,
@@ -91,8 +84,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when beloep is missing and opplysningstyper does not include inntekt', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: true,
       refusjon: {
         isEditing: false,
@@ -127,8 +118,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when inntekt is optional and not provided', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: true,
       refusjon: {
         isEditing: false,
@@ -162,8 +151,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should not fail validation when endringAarsaker is an empty array', () => {
     const schemaData = {
-      agp: undefined,
-      flereArbeidsforhold: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -185,7 +172,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should not fail validation when two endringAarsaker are not identical', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -198,8 +184,7 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.error).toBeUndefined();
@@ -208,7 +193,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should not fail validation when endringAarsaker is null', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -221,8 +205,7 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.success).toBe(true);
@@ -230,7 +213,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should not fail validation when endringAarsaker is undefined', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -239,11 +221,9 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 100,
-        harEndringer: undefined
+        beloepPerMaaned: 100
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const status = HovedskjemaSchema.safeParse(schemaData);
     expect(status.success).toBe(false);
@@ -277,7 +257,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when the endringAarsaker object is empty.', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -286,11 +265,9 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 100,
-        harEndringer: undefined
+        beloepPerMaaned: 100
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -340,7 +317,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when the endringAarsaker aarsak is an empty string.', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -349,11 +325,9 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 100,
-        harEndringer: undefined
+        beloepPerMaaned: 100
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -403,7 +377,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when the endringAarsaker aarsak is undefined.', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 100,
@@ -412,11 +385,9 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 100,
-        harEndringer: undefined
+        beloepPerMaaned: 100
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -466,7 +437,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when refusjonsbeløpet is higher than inntekt', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 1000,
@@ -480,7 +450,6 @@ describe('HovedskjemaSchema', () => {
       },
       kreverRefusjon: 'Ja',
       avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined,
       opplysningstyper: ['inntekt', 'refusjon']
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -496,7 +465,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when refusjonsbeløpet is higher than inntekt but kreverRefusjon is Nei', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 1000,
@@ -510,8 +478,7 @@ describe('HovedskjemaSchema', () => {
       },
       kreverRefusjon: 'Nei',
       avsenderTlf: '12345678',
-      opplysningstyper: ['inntekt', 'refusjon'],
-      flereArbeidsforhold: undefined
+      opplysningstyper: ['inntekt', 'refusjon']
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.error).toBeUndefined();
@@ -520,7 +487,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when inntekt is 0 and refusjonsbeløpet is higher', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 0,
@@ -533,8 +499,7 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.error).toBeUndefined();
@@ -543,7 +508,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when inntekt is 0 and refusjonsbeløpet is 0', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 0,
@@ -556,8 +520,7 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.error).toBeUndefined();
@@ -566,7 +529,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when harEndringer is Ja but no endringer provided', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -580,8 +542,7 @@ describe('HovedskjemaSchema', () => {
         endringer: []
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -596,7 +557,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when kreverRefusjon is Ja but harEndringer is not set', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -605,12 +565,10 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 3000,
-        harEndringer: undefined
+        beloepPerMaaned: 3000
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -625,7 +583,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when fullLonn is not set and opplysningstyper includes arbeidsgiverperiode', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -639,8 +596,7 @@ describe('HovedskjemaSchema', () => {
       },
       kreverRefusjon: 'Ja',
       opplysningstyper: ['arbeidsgiverperiode'],
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -673,8 +629,7 @@ describe('HovedskjemaSchema', () => {
           begrunnelse: 'StreikEllerLockout'
         }
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -707,8 +662,7 @@ describe('HovedskjemaSchema', () => {
           beloep: 1000
         }
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -742,8 +696,7 @@ describe('HovedskjemaSchema', () => {
           begrunnelse: 'StreikEllerLockout'
         }
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(false);
@@ -777,8 +730,7 @@ describe('HovedskjemaSchema', () => {
           begrunnelse: 'StreikEllerLockout'
         }
       },
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
@@ -786,7 +738,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when harEndringer is Ja and endringer are provided', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -800,8 +751,7 @@ describe('HovedskjemaSchema', () => {
         endringer: [{ beloep: 2000, startdato: new Date('2024-01-15') }]
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.error).toBeUndefined();
@@ -810,7 +760,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation when fullLonn is Ja and opplysningstyper includes arbeidsgiverperiode', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -825,8 +774,7 @@ describe('HovedskjemaSchema', () => {
       kreverRefusjon: 'Ja',
       fullLonn: 'Ja',
       opplysningstyper: ['arbeidsgiverperiode'],
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
@@ -896,7 +844,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation with naturalytelser', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -916,8 +863,7 @@ describe('HovedskjemaSchema', () => {
         harEndringer: 'Nei'
       },
       kreverRefusjon: 'Ja',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
@@ -925,7 +871,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should pass validation with kreverRefusjon Nei', () => {
     const schemaData = {
-      agp: undefined,
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -934,12 +879,10 @@ describe('HovedskjemaSchema', () => {
       },
       refusjon: {
         isEditing: false,
-        beloepPerMaaned: 0,
-        harEndringer: 'Nei'
+        beloepPerMaaned: 0
       },
       kreverRefusjon: 'Nei',
-      avsenderTlf: '12345678',
-      flereArbeidsforhold: undefined
+      avsenderTlf: '12345678'
     };
     const result = HovedskjemaSchema.safeParse(schemaData);
     expect(result.success).toBe(true);
@@ -947,9 +890,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when harLikLoenn is missing and Faisu validation is enabled', () => {
     const schemaData = {
-      agp: {
-        redusertLoennIAgp: null
-      },
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -964,11 +904,7 @@ describe('HovedskjemaSchema', () => {
       kreverRefusjon: 'Ja',
       fullLonn: 'Ja',
       avsenderTlf: '12345678',
-      flereArbeidsforhold: {
-        harLikLoenn: undefined,
-        erSykmeldtFraAlle: undefined,
-        arbeidsforhold: undefined
-      }
+      flereArbeidsforhold: {}
     };
 
     const result = HovedskjemaSchema.safeParse(schemaData);
@@ -984,9 +920,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when no arbeidsforhold is selected in Faisu', () => {
     const schemaData = {
-      agp: {
-        redusertLoennIAgp: null
-      },
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -1009,15 +942,13 @@ describe('HovedskjemaSchema', () => {
             inntekt: 2500,
             stillingsprosent: 100,
             inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Utvikler',
-            yrkesKode: '1234'
+            yrkesbeskrivelse: 'Utvikler'
           },
           {
             inntekt: 2500,
             stillingsprosent: 100,
             inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Designer',
-            yrkesKode: '5678'
+            yrkesbeskrivelse: 'Designer'
           }
         ]
       }
@@ -1036,9 +967,6 @@ describe('HovedskjemaSchema', () => {
 
   it('should fail validation when sum of arbeidsforhold inntekt differs from beregnet inntekt in Faisu', () => {
     const schemaData = {
-      agp: {
-        redusertLoennIAgp: null
-      },
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,
@@ -1061,15 +989,13 @@ describe('HovedskjemaSchema', () => {
             inntekt: 2000,
             stillingsprosent: 100,
             inkludertISykefravaer: true,
-            yrkesbeskrivelse: 'Utvikler',
-            yrkesKode: '1234'
+            yrkesbeskrivelse: 'Utvikler'
           },
           {
             inntekt: 500,
             stillingsprosent: 100,
             inkludertISykefravaer: false,
-            yrkesbeskrivelse: 'Designer',
-            yrkesKode: '5678'
+            yrkesbeskrivelse: 'Designer'
           }
         ]
       }
@@ -1090,9 +1016,6 @@ describe('HovedskjemaSchema', () => {
     const schemaWithoutFaisuValidation = createHovedskjemaSchema(false);
 
     const schemaData = {
-      agp: {
-        redusertLoennIAgp: null
-      },
       bekreft_opplysninger: true,
       inntekt: {
         beloep: 5000,

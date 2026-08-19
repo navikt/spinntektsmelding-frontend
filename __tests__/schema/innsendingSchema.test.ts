@@ -1399,8 +1399,7 @@ describe('InnsendingSchema', () => {
           { fom: '2026-02-12', tom: '2026-02-12' }
         ],
         egenmeldinger: [],
-        erBehandlingsdager: true,
-        redusertLoennIAgp: null
+        erBehandlingsdager: true
       },
       inntekt: {
         beloep: 50000,
@@ -1456,8 +1455,7 @@ describe('InnsendingSchema', () => {
           // { fom: '2026-04-22', tom: '2026-04-22' }
         ],
         egenmeldinger: [],
-        erBehandlingsdager: true,
-        redusertLoennIAgp: null
+        erBehandlingsdager: true
       },
       inntekt: {
         beloep: 50000,
@@ -1513,8 +1511,7 @@ describe('InnsendingSchema', () => {
           // { fom: '2026-04-22', tom: '2026-04-22' }
         ],
         egenmeldinger: [],
-        erBehandlingsdager: true,
-        redusertLoennIAgp: null
+        erBehandlingsdager: true
       },
       inntekt: {
         beloep: 50000,
