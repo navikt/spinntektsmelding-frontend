@@ -60,6 +60,7 @@ import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import environment from '../../config/environment';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
+import parseIsoDate from '../../utils/parseIsoDate';
 
 type skjemaData = {
   organisasjonsnummer: string;
@@ -76,6 +77,13 @@ function getFravaersperioder<T extends Periode[]>(sykmeldingsperiode: T): Period
   return sykmeldingsperiode.map((periode: Periode) => ({
     fom: periode.fom,
     tom: periode.tom
+  }));
+}
+
+function tilpassFravaersperioder<T extends Periode[]>(sykmeldingsperiode: T): Periode[] {
+  return sykmeldingsperiode.map((periode: Periode) => ({
+    fom: formatDate(periode.fom)!,
+    tom: formatDate(periode.tom)!
   }));
 }
 
@@ -105,6 +113,13 @@ const InitieringFritatt: NextPage = () => {
     forespurtSykepengePeriodeId: z.uuid().or(z.literal('utenKobling')).or(z.literal('andrePerioder')).optional(),
     endreRefusjon: z.literal('Ja').or(z.literal('Nei')).or(z.literal('')).optional()
   }).superRefine((data, ctx) => {
+    if (!data.forespurtSykepengePeriodeId) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Du må velge hva du vil gjøre videre',
+        path: ['forespurtSykepengePeriodeId']
+      });
+    }
     if (data.forespurtSykepengePeriodeId === 'andrePerioder' && !data.sykepengePeriodeId) {
       ctx.addIssue({
         code: 'custom',
@@ -177,10 +192,10 @@ const InitieringFritatt: NextPage = () => {
   };
 
   const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
-    const skjemaData = {
+    const skjemaData: skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
-      personnummer: sykmeldt.fnr
+      personnummer: sykmeldt.fnr!
     };
 
     const validationResult = InitieringSchema.safeParse(skjemaData);
@@ -193,7 +208,7 @@ const InitieringFritatt: NextPage = () => {
       formData.forespurtSykepengePeriodeId.length > 0 &&
       formData.forespurtSykepengePeriodeId === 'utenKobling'
     ) {
-      const aktuelleSykepengePerioder = [];
+      const aktuelleSykepengePerioder: Periode[] = [];
       handleValidFormData(skjemaData, aktuelleSykepengePerioder);
       return;
     }
@@ -234,7 +249,7 @@ const InitieringFritatt: NextPage = () => {
 
       if (validationResult.success) {
         setIsLoading(true);
-        handleValidFormData(validationResult.data, sykmeldingsperiode);
+        handleValidFormData(validationResult.data, getFravaersperioder(sykmeldingsperiode!));
       }
       return;
     }
@@ -250,7 +265,7 @@ const InitieringFritatt: NextPage = () => {
     }
   };
 
-  const handleValidFormData = (validerteData: skjemaData, sykmeldingsperiode: any) => {
+  const handleValidFormData = (validerteData: skjemaData, sykmeldingsperiode: Periode[]) => {
     const orgNavn = arbeidsforhold.find(
       (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
     )?.virksomhetsnavn!;
@@ -400,7 +415,7 @@ const InitieringFritatt: NextPage = () => {
                     Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
                     inntektsmelding for annen periode&quot;.
                   </Alert>
-                  {forespurtePerioder.length > 0 && (
+                  {forespurtePerioder.length >= 0 && (
                     <Controller
                       name='forespurtSykepengePeriodeId'
                       control={methods.control}
