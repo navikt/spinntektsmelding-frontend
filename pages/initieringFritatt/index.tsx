@@ -273,7 +273,7 @@ const InitieringFritatt: NextPage = () => {
   const organisasjonsnummer = orgnr;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const { data: spData } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+  const { data: spData } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, () => {});
 
   const harArbeidsforhold = spData && spData.length > 0;
 
