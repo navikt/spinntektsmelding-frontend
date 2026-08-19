@@ -128,7 +128,7 @@ export const InnsendingSchema = z.object({
             })
           })
         )
-        .or(z.undefined()),
+        .optional(),
       erBehandlingsdager: z.boolean().optional()
     })
     .nullable()
@@ -249,15 +249,15 @@ export const InnsendingSchema = z.object({
               error: (issue) => (issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined)
             })
             .min(0, 'Månedslønn må være større enn eller lik 0.')
-            .or(z.undefined()),
+            .optional(),
           stillingsprosent: z
             .number({
               error: (issue) =>
                 issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
             })
             .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-            .or(z.undefined()),
-          yrkesbeskrivelse: z.string().or(z.undefined()),
+            .optional(),
+          yrkesbeskrivelse: z.string().optional(),
           inkludertISykefravaer: z.boolean().optional()
         })
       )
