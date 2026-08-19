@@ -75,7 +75,7 @@
     "playwright-core": "^1.62.1",
     "prettier": "^3.9.6",
     "timezone-mock": "^1.4.3",
-    "typescript": "5.9.3",
+    "typescript": "6.0.3",
     "vite": "^8.2.1",
     "vitest": "^4.1.10",
     "vitest-fetch-mock": "^0.4.5",
