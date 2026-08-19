@@ -15,7 +15,10 @@ vi.mock('react-hook-form', () => ({
     fieldState: { error: {} }
   }),
   useFieldArray: () => ({
-    fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
+    fields: [
+      { naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() },
+      { naturalytelse: 'BÅT', sluttdato: new Date(), verdiBeloep: 123, id: 2, onChange: vi.fn() }
+    ],
     append: mockAppend,
     remove: mockRemove,
     replace: mockReplace
@@ -75,172 +78,7 @@ describe('Naturalytelser', () => {
     expect(screen.queryByText('Bortfall av naturalytelser')).not.toBeInTheDocument();
   });
 
-  it.skip('adds a naturalytelse when checkbox is checked', () => {
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} },
-        fieldState: { error: {} }
-      }),
-      useFieldArray: () => ({
-        fields: [],
-        append: mockAppend,
-        remove: mockRemove,
-        replace: mockReplace
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('BIL'),
-            mount: new Set('BIL'),
-            unMount: new Set('BIL'),
-            watch: new Set('BIL'),
-            focus: 'BIL',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['BIL'],
-          _defaultValues: ['BIL']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: () => vi.fn(),
-        fieldState: () => vi.fn(),
-        watch: () => vi.fn().mockReturnValue(false),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
-
-    render(<Naturalytelser />);
-    const checkbox = screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?');
-    fireEvent.click(checkbox);
-
-    expect(mockReplace).toHaveBeenCalled();
-  });
-
-  it.skip('removes all naturalytelser when checkbox is unchecked', () => {
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} }
-      }),
-      useFieldArray: () => ({
-        fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
-        append: mockAppend,
-        remove: mockRemove,
-        replace: mockReplace
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('BIL'),
-            mount: new Set('BIL'),
-            unMount: new Set('BIL'),
-            watch: new Set('BIL'),
-            focus: 'BIL',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['BIL'],
-          _defaultValues: ['BIL']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: () => vi.fn(),
-        fieldState: () => vi.fn(),
-        watch: () => vi.fn().mockReturnValue(true),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
-
-    render(<Naturalytelser />);
-    const checkbox = screen.getByLabelText('Har den ansatte naturalytelser som faller bort under sykefraværet?');
-    fireEvent.click(checkbox);
-
-    expect(mockRemove).toHaveBeenCalled();
-  });
-
   it('adds a new naturalytelse when "Legg til naturalytelse" button is clicked', () => {
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} },
-        fieldState: { error: {} }
-      }),
-      useFieldArray: () => ({
-        fields: [{ naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() }],
-        append: mockAppend,
-        remove: mockRemove,
-        replace: mockReplace
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('BIL'),
-            mount: new Set('BIL'),
-            unMount: new Set('BIL'),
-            watch: new Set('BIL'),
-            focus: 'BIL',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['BIL'],
-          _defaultValues: ['BIL']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: () => vi.fn(),
-        fieldState: () => vi.fn(),
-        watch: () => vi.fn().mockReturnValue(true),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
-
     render(<Naturalytelser />);
     const button = screen.getByText('Legg til naturalytelse');
     fireEvent.click(button);
@@ -249,59 +87,6 @@ describe('Naturalytelser', () => {
   });
 
   it('removes a naturalytelse when "Slett ytelse" button is clicked', () => {
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        field: { value: new Date(), onChange: vi.fn() },
-        formState: { errors: {} },
-        fieldState: { error: {} }
-      }),
-      useFieldArray: () => ({
-        fields: [
-          { naturalytelse: 'BIL', sluttdato: new Date(), verdiBeloep: 123, id: 1, onChange: vi.fn() },
-          { naturalytelse: 'BÅT', sluttdato: new Date(), verdiBeloep: 123, id: 2, onChange: vi.fn() }
-        ],
-        append: mockAppend,
-        remove: mockRemove,
-        replace: mockReplace
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('BÅT'),
-            mount: new Set('BIL'),
-            unMount: new Set('BIL'),
-            watch: new Set('BIL'),
-            focus: 'BIL',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['BIL'],
-          _defaultValues: ['BIL']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: () => vi.fn(),
-        fieldState: () => vi.fn(),
-        watch: () => vi.fn().mockReturnValue(true),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
-
     render(<Naturalytelser />);
     const button = screen.getByTitle('Slett ytelse');
     fireEvent.click(button);

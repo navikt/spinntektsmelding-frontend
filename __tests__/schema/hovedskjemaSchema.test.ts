@@ -282,6 +282,21 @@ describe('HovedskjemaSchema', () => {
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
+              options: [
+                'Bonus',
+                'Feilregistrert',
+                'Ferie',
+                'Ferietrekk',
+                'Nyansatt',
+                'NyStilling',
+                'NyStillingsprosent',
+                'Permisjon',
+                'Permittering',
+                'Sykefravaer',
+                'Tariffendring',
+                'VarigLoennsendring',
+                'SammeSomSist'
+              ],
               path: [0, 'aarsak']
             }
           ],
@@ -327,6 +342,21 @@ describe('HovedskjemaSchema', () => {
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
+              options: [
+                'Bonus',
+                'Feilregistrert',
+                'Ferie',
+                'Ferietrekk',
+                'Nyansatt',
+                'NyStilling',
+                'NyStillingsprosent',
+                'Permisjon',
+                'Permittering',
+                'Sykefravaer',
+                'Tariffendring',
+                'VarigLoennsendring',
+                'SammeSomSist'
+              ],
               path: [0, 'aarsak']
             }
           ],
@@ -372,6 +402,21 @@ describe('HovedskjemaSchema', () => {
               errors: [],
               message: 'Vennligst angi årsak til endringen.',
               note: 'No matching discriminator',
+              options: [
+                'Bonus',
+                'Feilregistrert',
+                'Ferie',
+                'Ferietrekk',
+                'Nyansatt',
+                'NyStilling',
+                'NyStillingsprosent',
+                'Permisjon',
+                'Permittering',
+                'Sykefravaer',
+                'Tariffendring',
+                'VarigLoennsendring',
+                'SammeSomSist'
+              ],
               path: [0, 'aarsak']
             }
           ],
