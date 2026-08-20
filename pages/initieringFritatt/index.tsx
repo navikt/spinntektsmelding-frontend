@@ -163,17 +163,16 @@ const InitieringFritatt: NextPage = () => {
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    logger.info('Innsending av skjemadata: %j', formData);
     if (!data) {
-      logger.warn('Innsending avbrutt: mangler tilgangsdata (data er undefined). Skjemadata: %j', formData);
+      logger.warn('Fritatt fra aa-registeret. Innsending avbrutt: mangler tilgangsdata (data er undefined)');
       return;
     }
     const mottatteData = InitieringAnnetSchema.safeParse(formData);
     if (!mottatteData.success) {
       logger.error(
-        'Validering av innsendte skjemadata feilet: %j. Skjemadata: %j',
-        mottatteData.error.issues,
-        formData
+        `Validering av innsendte skjemadata feilet: ${JSON.stringify(
+          mottatteData?.error?.issues ?? 'Ingen issues funnet'
+        )}`
       );
       return;
     }
@@ -254,7 +253,13 @@ const InitieringFritatt: NextPage = () => {
 
     if (validationResult.success) {
       setIsLoading(true);
-      handleValidFormData(validationResult.data, sykepengePerioder);
+      handleValidFormData(
+        validationResult.data,
+        sykepengePerioder.map((periode: SykepengePeriode) => ({
+          fom: formatIsoDate(periode.fom)!,
+          tom: formatIsoDate(periode.tom)!
+        }))
+      );
     }
   };
 
