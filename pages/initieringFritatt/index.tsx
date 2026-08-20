@@ -20,7 +20,7 @@ import lokalStyling from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -60,7 +60,6 @@ import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import environment from '../../config/environment';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
-import parseIsoDate from '../../utils/parseIsoDate';
 
 type skjemaData = {
   organisasjonsnummer: string;
@@ -77,13 +76,6 @@ function getFravaersperioder<T extends Periode[]>(sykmeldingsperiode: T): Period
   return sykmeldingsperiode.map((periode: Periode) => ({
     fom: periode.fom,
     tom: periode.tom
-  }));
-}
-
-function tilpassFravaersperioder<T extends Periode[]>(sykmeldingsperiode: T): Periode[] {
-  return sykmeldingsperiode.map((periode: Periode) => ({
-    fom: formatDate(periode.fom)!,
-    tom: formatDate(periode.tom)!
   }));
 }
 
@@ -148,6 +140,7 @@ const InitieringFritatt: NextPage = () => {
     handleSubmit,
     reset,
     resetField,
+    setValue,
     formState: { errors }
   } = methods;
 
@@ -288,9 +281,19 @@ const InitieringFritatt: NextPage = () => {
   const organisasjonsnummer = orgnr;
 
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const { data: spData } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, () => {});
+  const { data: spData, error: spError } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, () => {});
 
   const harArbeidsforhold = spData && spData.length > 0;
+
+  const onSetValue = useEffectEvent((name: keyof Skjema, value: any) => {
+    setValue(name, value, { shouldValidate: true, shouldDirty: true });
+  });
+
+  useEffect(() => {
+    if (spError) {
+      onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
+    }
+  }, [spError]);
 
   const sykepengePerioder: SykepengePeriode[] = ((): SykepengePeriode[] => {
     if (!spData) return [];
