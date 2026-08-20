@@ -308,9 +308,9 @@ const InitieringFritatt: NextPage = () => {
                     .reduce<{ fom: Date; tom: Date }[]>(
                       (accumulator, currentValue) => {
                         const currentDate = new Date(currentValue);
-                        const last = accumulator[accumulator.length - 1];
+                        const last = accumulator.at(-1);
 
-                        if (differenceInDays(currentDate, new Date(last.tom)) <= 1) {
+                        if (differenceInDays(currentDate, new Date(last!.tom)) <= 1) {
                           return [...accumulator.slice(0, -1), { ...last, tom: currentDate }];
                         }
                         return [...accumulator, { fom: currentDate, tom: currentDate }];
