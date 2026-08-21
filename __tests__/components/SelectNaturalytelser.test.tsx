@@ -3,11 +3,16 @@ import { axe } from 'jest-axe';
 import SelectNaturalytelser from '../../components/Naturalytelser/SelectNaturalytelser/SelectNaturalytelser';
 import { vi } from 'vitest';
 
+const mockRhf = vi.hoisted(() => ({
+  errors: {} as Record<string, unknown>,
+  fieldError: {} as Record<string, unknown>
+}));
+
 vi.mock('react-hook-form', () => ({
   useController: () => ({
     field: { value: 'BIL', onChange: vi.fn() },
-    formState: { errors: {} },
-    fieldState: { error: {} }
+    formState: { errors: mockRhf.errors },
+    fieldState: { error: mockRhf.fieldError }
   }),
   useFieldArray: () => ({
     fields: [
@@ -61,6 +66,8 @@ describe('SelectNaturalytelser', () => {
 
   beforeEach(() => {
     onChangeYtelseMock.mockClear();
+    mockRhf.errors = {};
+    mockRhf.fieldError = {};
   });
 
   it('renders the select component', () => {
@@ -76,68 +83,8 @@ describe('SelectNaturalytelser', () => {
   });
 
   it('renders the error message if provided', () => {
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        field: { value: 'BIL', onChange: vi.fn() },
-        formState: {
-          errors: {
-            naturalytelse: {
-              error: 'This is an error'
-            }
-          }
-        },
-        fieldState: {
-          error: {
-            message: 'This is an error'
-          }
-        }
-      }),
-      useFieldArray: () => ({
-        fields: [
-          {
-            onChange: vi.fn()
-          }
-        ],
-        append: vi.fn(),
-        remove: vi.fn(),
-        replace: vi.fn()
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('BIL'),
-            mount: new Set('BIL'),
-            unMount: new Set('BIL'),
-            watch: new Set('BIL'),
-            focus: 'BIL',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['BIL'],
-          _defaultValues: ['BIL']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: () => vi.fn(),
-        watch: () => vi.fn(),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
+    mockRhf.fieldError = { message: 'This is an error' };
+    mockRhf.errors = { naturalytelse: { error: 'This is an error' } };
     const errorMessage = 'This is an error';
     render(<SelectNaturalytelser name='naturalytelse' />);
     const errorElement = screen.getByText(errorMessage);

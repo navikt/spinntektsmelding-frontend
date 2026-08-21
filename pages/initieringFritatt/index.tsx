@@ -280,12 +280,12 @@ const InitieringFritatt: NextPage = () => {
   });
 
   useEffect(() => {
-    if (spError) {
+    if (spError?.status === 404) {
       onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [spError, spData]);
+  }, [spError]);
 
   const sykepengePerioder: SykepengePeriode[] = ((): SykepengePeriode[] => {
     if (!spData) return [];

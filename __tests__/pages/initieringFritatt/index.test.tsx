@@ -132,7 +132,7 @@ describe('InitieringFritatt page', () => {
       }
     ];
     (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: new Error('ingen') });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: { status: 404 } });
     const user = userEvent.setup();
     render(<InitieringFritatt />);
     // choose the nested unit
