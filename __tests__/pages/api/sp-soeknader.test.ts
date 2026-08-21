@@ -252,8 +252,8 @@ describe('sp-soeknader API', () => {
 
       await handler(req, res);
 
-      expect(existsSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad.json'));
-      expect(readFileSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad.json'), 'utf-8');
+      expect(existsSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad-ingenting.json'));
+      expect(readFileSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad-ingenting.json'), 'utf-8');
     });
 
     it('should not check token in development mode', async () => {

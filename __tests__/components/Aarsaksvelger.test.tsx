@@ -28,13 +28,17 @@ vi.stubGlobal('ResizeObserver', IntersectionObserverMock);
 
 const perioder = [{ fom: new Date('2025-01-01'), tom: new Date('2025-01-05') }];
 
+const mockRhf = vi.hoisted(() => ({
+  errors: {} as Record<string, unknown>,
+  fields: [{}] as Array<Record<string, unknown>>
+}));
+
 vi.mock('react-hook-form', () => ({
   useController: () => ({
-    // field: { value: 'test' },
-    formState: { errors: {} }
+    formState: { errors: mockRhf.errors }
   }),
   useFieldArray: () => ({
-    fields: [{}],
+    fields: mockRhf.fields,
     append: vi.fn(),
     remove: vi.fn(),
     replace: vi.fn()
@@ -66,7 +70,7 @@ vi.mock('react-hook-form', () => ({
       return [];
     },
     setValue: () => vi.fn(),
-    formState: () => vi.fn(),
+    formState: { errors: mockRhf.errors },
     watch: () => vi.fn(),
     register: vi.fn()
   }),
@@ -88,6 +92,8 @@ describe('Aarsaksvelger', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    mockRhf.errors = {};
+    mockRhf.fields = [{}];
   });
 
   it('renders the component', () => {
@@ -387,82 +393,21 @@ describe('Aarsaksvelger', () => {
   });
 
   it('shows an error message', async () => {
-    const setPerioder = vi.fn();
-
-    vi.mock('react-hook-form', () => ({
-      useController: () => ({
-        // field: { value: 'test' },
-        formState: {
-          errors: {
-            inntekt: {
-              endringAarsaker: {
-                0: {
-                  aarsak: {
-                    message: 'Dette er feil'
-                  }
-                }
-              }
+    mockRhf.errors = {
+      inntekt: {
+        endringAarsaker: {
+          0: {
+            aarsak: {
+              message: 'Dette er feil'
             }
           }
         }
-      }),
-      useFieldArray: () => ({
-        fields: [
-          { id: 'test', aarsak: 'Bonus' },
-          { id: 'test2', aarsak: 'Ferietrekk' }
-        ],
-        append: vi.fn(),
-        remove: vi.fn(),
-        replace: vi.fn()
-      }),
-      useFormContext: () => ({
-        handleSubmit: () => vi.fn(),
-        control: {
-          register: vi.fn(),
-          unregister: vi.fn(),
-          getFieldState: vi.fn(),
-          _names: {
-            array: new Set('test'),
-            mount: new Set('test'),
-            unMount: new Set('test'),
-            watch: new Set('test'),
-            focus: 'test',
-            watchAll: false
-          },
-          _subjects: {
-            watch: vi.fn(),
-            array: vi.fn(),
-            state: vi.fn()
-          },
-          _getWatch: vi.fn(),
-          _formValues: ['test'],
-          _defaultValues: ['test']
-        },
-        getValues: () => {
-          return [];
-        },
-        setValue: () => vi.fn(),
-        formState: {
-          errors: {
-            inntekt: {
-              endringAarsaker: {
-                0: {
-                  aarsak: {
-                    message: 'Dette er feil'
-                  }
-                }
-              }
-            }
-          }
-        },
-        watch: () => vi.fn(),
-        register: vi.fn()
-      }),
-      Controller: () => [],
-      useSubscribe: () => ({
-        r: { current: { subject: { subscribe: () => vi.fn() } } }
-      })
-    }));
+      }
+    };
+    mockRhf.fields = [
+      { id: 'test', aarsak: 'Bonus' },
+      { id: 'test2', aarsak: 'Ferietrekk' }
+    ];
 
     render(
       <Aarsaksvelger

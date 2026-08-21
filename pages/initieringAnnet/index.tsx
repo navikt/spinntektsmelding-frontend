@@ -48,7 +48,7 @@ import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import { differenceInDays } from 'date-fns/differenceInDays';
 import { isValid } from 'date-fns/isValid';
 
-type SykepengePeriode = {
+export type SykepengePeriode = {
   id: string;
   fom: Date;
   tom: Date;
@@ -61,7 +61,7 @@ type SykepengePeriode = {
   }[];
 };
 
-function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
+export function addForlengelseAvInfo(perioder: SykepengePeriode[]): SykepengePeriode[] {
   return perioder.reduce((acc, current) => {
     if (acc.length === 0) {
       acc.push(current);
@@ -461,7 +461,7 @@ const InitieringAnnet: NextPage = () => {
                   {valgteSykepengePerioder.map(
                     (periode) =>
                       periode?.forlengelseAv && (
-                        <Box paddingBlock='4' borderWidth='1' paddingInline='4' key={periode.id}>
+                        <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-4' key={periode.id}>
                           <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
                           <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
                             <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
@@ -520,17 +520,17 @@ const InitieringAnnet: NextPage = () => {
   );
 };
 
-function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
+export function formaterEgenmeldingsdager(antallEgenmeldingsdager: number) {
   if (antallEgenmeldingsdager === 0) {
     return null;
   }
 
   return antallEgenmeldingsdager === 1
-    ? '(pluss 1 egenmeldingsdag)'
-    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager)`;
+    ? '(pluss 1 egenmeldingsdag fra sykmelding)'
+    : `(pluss ${antallEgenmeldingsdager} egenmeldingsdager fra sykmelding)`;
 }
 
-function OrganisasjonInfo({
+export function OrganisasjonInfo({
   orgNr,
   arbeidsforhold
 }: Readonly<{ orgNr: string; arbeidsforhold: ArbeidsgiverSelect[] }>) {
@@ -548,7 +548,7 @@ function OrganisasjonInfo({
   );
 }
 
-function PersonInfo({ navn, fnr }: Readonly<{ navn?: string; fnr?: string }>) {
+export function PersonInfo({ navn, fnr }: Readonly<{ navn?: string; fnr?: string }>) {
   if (!navn || !fnr) {
     return null;
   }
@@ -580,8 +580,8 @@ function visDato(id: string, perioder: SykepengePeriode[], key: 'fom' | 'tom'): 
   return formatDate(parseIsoDate(periode[key]));
 }
 
-const visFomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'fom');
+export const visFomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'fom');
 
-const visTomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'tom');
+export const visTomDato = (id: string, perioder: SykepengePeriode[]) => visDato(id, perioder, 'tom');
 
 export default InitieringAnnet;
