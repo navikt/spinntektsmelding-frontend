@@ -275,11 +275,17 @@ const InitieringFritatt: NextPage = () => {
     setValue(name, value, { shouldValidate: true, shouldDirty: true });
   });
 
+  const onResetField = useEffectEvent((name: keyof Skjema) => {
+    resetField(name);
+  });
+
   useEffect(() => {
     if (spError) {
       onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
+    } else {
+      onResetField('forespurtSykepengePeriodeId');
     }
-  }, [spError]);
+  }, [spError, spData]);
 
   const sykepengePerioder: SykepengePeriode[] = ((): SykepengePeriode[] => {
     if (!spData) return [];
