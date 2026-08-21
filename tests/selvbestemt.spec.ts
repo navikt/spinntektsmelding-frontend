@@ -59,6 +59,8 @@ const activeOrgnr = {
 };
 
 test.describe('Utfylling og innsending av selvbestemt skjema', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page }) => {
     // stub logger
     await page.route('*/**/api/logger', (r) => r.fulfill({ status: 200, contentType: 'text/plain', body: 'OK' }));
@@ -347,6 +349,9 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt ambassadepersonell e.l. med varig lønnsendring', async ({ page }) => {
+    await page.route('*/**/api/sp-soeknader', (r) =>
+      r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({}) })
+    );
     // fill personnummer and next
     const formPage = new FormPage(page);
     await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
@@ -367,9 +372,10 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // );
 
     // await page.getByLabel(/Organisasjon/).click();
+    const reqPromise = page.waitForRequest('*/**/api/sp-soeknader');
     await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
     await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
-
+    const req = await reqPromise;
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
