@@ -375,7 +375,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     const reqPromise = page.waitForRequest('*/**/api/sp-soeknader');
     await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
     await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
-    const req = await reqPromise;
+    await reqPromise;
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
