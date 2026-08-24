@@ -109,12 +109,13 @@ jobs:
           path: .next/analyze/bundle-stats.json
 
       - name: Download base bundle stats
-        uses: dawidd6/action-download-artifact@b6e2e70617bc3265edd6dab6c906732b2f1ae151
+        uses: dawidd6/action-download-artifact@d63b86af1b34672e53c440b1b83979861906bad7
         if: github.event_name == 'pull_request'
         continue-on-error: true
         with:
           workflow: bundle-analysis.yml
           branch: main
+          commit: ${{ github.event.pull_request.base.sha }}
           name: bundle-stats
           path: .next/analyze-base/
 
@@ -155,9 +156,6 @@ jobs:
             process.exit(0);
           }
 
-          const currentSizes = current.assets.reduce((acc, a) => { acc[a.name] = a.size; return acc; }, {});
-          const baseSizes = base ? base.assets.reduce((acc, a) => { acc[a.name] = a.size; return acc; }, {}) : {};
-
           const currentTotal = current.totalSize;
           const baseTotal = base ? base.totalSize : 0;
 
@@ -172,39 +170,7 @@ jobs:
             report += `|--------|------|---------|--------|\n`;
             report += `| **Total JS** | ${formatSize(baseTotal)} | ${formatSize(currentTotal)} | ${emoji} ${formatBytes(diff)} (${pctChange}%) |\n\n`;
 
-            // Finn nye, fjernede og endrede chunks
-            const allChunks = new Set([...Object.keys(currentSizes), ...Object.keys(baseSizes)]);
-            const changes = [];
-            
-            for (const chunk of allChunks) {
-              const currSize = currentSizes[chunk] || 0;
-              const baseSize = baseSizes[chunk] || 0;
-              const chunkDiff = currSize - baseSize;
-              
-              if (chunkDiff !== 0) {
-                changes.push({ chunk, currSize, baseSize, diff: chunkDiff });
-              }
-            }
-            
-            // Sorter etter absolutt endring
-            changes.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
-
-            if (changes.length > 0) {
-              report += `### Biggest Changes\n\n`;
-              report += `| Chunk | Base | Current | Change |\n`;
-              report += `|-------|------|---------|--------|\n`;
-
-              for (const { chunk, currSize, baseSize, diff } of changes.slice(0, 10)) {
-                const chunkEmoji = diff > 0 ? '📈' : '📉';
-                const shortName = chunk.length > 50 ? '...' + chunk.slice(-47) : chunk;
-                const baseStr = baseSize > 0 ? formatSize(baseSize) : '_new_';
-                const currStr = currSize > 0 ? formatSize(currSize) : '_removed_';
-                
-                report += `| \`${shortName}\` | ${baseStr} | ${currStr} | ${chunkEmoji} ${formatBytes(diff)} |\n`;
-              }
-            } else {
-              report += `> ✅ No changes in bundle sizes\n`;
-            }
+            report += `> ℹ️ Chunk filenames contain build hashes and are not compared individually.\n`;
 
             // Advarsel ved stor økning
             if (diff > 50 * 1024) {
