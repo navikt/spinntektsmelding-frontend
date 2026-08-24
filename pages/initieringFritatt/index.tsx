@@ -402,7 +402,7 @@ const InitieringFritatt: NextPage = () => {
               )}
               {harArbeidsforhold && (
                 <>
-                  <Alert variant='warning' className={lokalStyling.alert}>
+                  <Alert variant='warning' className={lokalStyling.alertPadding}>
                     Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding for.
                     Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
                     inntektsmelding for annen periode&quot;.
@@ -432,7 +432,7 @@ const InitieringFritatt: NextPage = () => {
                         )}
                         {endreRefusjon === 'Ja' && (
                           <>
-                            <Alert variant='info'>
+                            <Alert variant='info' className={lokalStyling.alertPadding}>
                               <Heading spacing size='small' level='3'>
                                 Du må korrigere tidligere innsendt inntektsmeldingen
                               </Heading>
@@ -442,7 +442,13 @@ const InitieringFritatt: NextPage = () => {
                             {valgtePerioderMedForlengelse.map(
                               (periode) =>
                                 periode?.forlengelseAv && (
-                                  <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-4' key={periode.id}>
+                                  <Box
+                                    paddingBlock='space-4'
+                                    borderWidth='1'
+                                    paddingInline='space-4'
+                                    key={periode.id}
+                                    className={lokalStyling.forlengelseAvBox}
+                                  >
                                     <OrganisasjonInfo orgNr={orgnr} arbeidsforhold={arbeidsforhold} />
                                     <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
                                       <PersonInfo navn={'Ukjent navn'} fnr={sykmeldt.fnr} />
@@ -457,7 +463,7 @@ const InitieringFritatt: NextPage = () => {
                           </>
                         )}
                         {endreRefusjon === 'Nei' && (
-                          <Alert variant='info'>
+                          <Alert variant='info' className={lokalStyling.alertPadding}>
                             <Heading spacing size='small' level='3'>
                               Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
                             </Heading>

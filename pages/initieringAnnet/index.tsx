@@ -461,7 +461,7 @@ const InitieringAnnet: NextPage = () => {
                   {valgteSykepengePerioder.map(
                     (periode) =>
                       periode?.forlengelseAv && (
-                        <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-4' key={periode.id}>
+                        <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-16' key={periode.id}>
                           <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
                           <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
                             <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
