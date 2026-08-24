@@ -54,6 +54,7 @@ import useStateInit from '../state/useStateInit';
 import { getToken, validateToken } from '@navikt/oasis';
 import { useRemoveQueryParam } from '../utils/useRemoveQueryParam';
 import { redirectTilLogin } from '../utils/redirectTilLogin';
+import { useRouter } from 'next/router';
 import useBehandlingsdager from '../utils/useBehandlingsdager';
 import { toLocalIso } from '../utils/toLocalIso';
 import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
@@ -338,7 +339,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const memoErrors = useMemo(() => transformErrors(errors), [errors]);
 
+  const router = useRouter();
   const removeQueryParam = useRemoveQueryParam();
+
+  useEffect(() => {
+    if (router.query.endre === 'true') {
+      removeQueryParam('endre');
+    }
+  }, [removeQueryParam, router.query.endre]);
 
   const onForespurtInit = useEffectEvent(() => {
     if (dataFraBackend && forespurt && !storeInitialized.current) {

@@ -8,6 +8,7 @@ import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsg
 import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import forespoerselType from '../../config/forespoerselType';
+import router from 'next-router-mock';
 
 vi.mock('@unleash/nextjs', () => ({
   getDefinitions: vi.fn(() => Promise.resolve({})),
@@ -230,6 +231,26 @@ describe('Home Page', () => {
     expect(screen.getByTestId('refusjon')).toBeInTheDocument();
     expect(screen.getByTestId('naturalytelser')).toBeInTheDocument();
     expect(screen.getByText('Send')).toBeInTheDocument();
+  });
+
+  it('removes endre=true from the URL without a full page reload', async () => {
+    router.setCurrentUrl('/550e8400-e29b-41d4-a716-446655440000?endre=true&fromSubmit=true');
+    const replaceSpy = vi.spyOn(router, 'replace');
+
+    render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
+
+    await waitFor(() => {
+      expect(replaceSpy).toHaveBeenCalledWith(
+        {
+          pathname: router.pathname,
+          query: { fromSubmit: 'true' }
+        },
+        undefined,
+        { shallow: true }
+      );
+    });
+
+    replaceSpy.mockRestore();
   });
 
   it('renders confirmation checkbox', () => {
