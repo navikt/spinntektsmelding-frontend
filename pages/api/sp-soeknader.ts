@@ -38,10 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
     const parsedBody = requestBodySchema.safeParse(req.body);
-    if (!parsedBody.success) {
-      logger.info('Ugyldig request body for sykepengesøknader');
-      return res.status(400).json({ error: 'Ugyldig forespørsel' });
-    }
+
     const requestBody = parsedBody.data;
     const mockdata = requestBody?.fnr === '10107400090' ? 'sp-soeknad' : 'sp-soeknad-ingenting';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
