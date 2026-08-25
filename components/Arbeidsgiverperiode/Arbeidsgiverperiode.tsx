@@ -25,7 +25,7 @@ import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersda
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useShallow } from 'zustand/react/shallow';
 import NumberField from '../NumberField/NumberField';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface ArbeidsgiverperiodeProps {
@@ -298,7 +298,8 @@ export default function Arbeidsgiverperiode({
     }
   }, [inngangFraKvittering, arbeidsgiverperioder]);
 
-  const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
+  const betvilerArbeidsevne =
+    useWatch({ control, name: 'agp.redusertLoennIAgp.begrunnelse' }) === 'BetvilerArbeidsufoerhet';
 
   const minFomDate = useMemo(() => {
     const fireAarSiden = startOfDay(subYears(new Date(), 10));
