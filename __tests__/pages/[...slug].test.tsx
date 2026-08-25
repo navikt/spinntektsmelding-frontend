@@ -237,20 +237,23 @@ describe('Home Page', () => {
     router.setCurrentUrl('/550e8400-e29b-41d4-a716-446655440000?endre=true&fromSubmit=true');
     const replaceSpy = vi.spyOn(router, 'replace');
 
-    render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
+    try {
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
 
-    await waitFor(() => {
-      expect(replaceSpy).toHaveBeenCalledWith(
-        {
-          pathname: router.pathname,
-          query: { fromSubmit: 'true' }
-        },
-        undefined,
-        { shallow: true }
-      );
-    });
-
-    replaceSpy.mockRestore();
+      await waitFor(() => {
+        expect(replaceSpy).toHaveBeenCalledWith(
+          {
+            pathname: router.pathname,
+            query: { fromSubmit: 'true' }
+          },
+          undefined,
+          { shallow: true }
+        );
+      });
+    } finally {
+      replaceSpy.mockRestore();
+      router.reset();
+    }
   });
 
   it('renders confirmation checkbox', () => {
