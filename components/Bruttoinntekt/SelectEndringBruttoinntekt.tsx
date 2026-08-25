@@ -39,18 +39,10 @@ export default function SelectEndringBruttoinntekt({
   });
 
   const feilmeldinger = useMemo(() => transformErrors(errors), [errors]);
-  const rootError = errors.inntekt?.endringAarsaker?.root?.message;
-
-  const error =
-    findErrorInRHFErrors(id, feilmeldinger as FieldErrors) ??
-    findErrorInRHFErrors(id.replace(/\.aarsak$/, ''), feilmeldinger as FieldErrors) ??
-    findErrorInRHFErrors(`${begrunnelserId}.root`, feilmeldinger as FieldErrors) ??
-    findErrorInRHFErrors(begrunnelserId, feilmeldinger as FieldErrors) ??
-    findErrorInRHFErrors(`${begrunnelserId}.root`, errors as FieldErrors) ??
-    rootError;
+  const fieldError = findErrorInRHFErrors(id, feilmeldinger as FieldErrors);
 
   return (
-    <Select label={label ?? 'Velg endringsårsak'} error={error} id={ensureValidHtmlId(id)} {...register(id)}>
+    <Select label={label ?? 'Velg endringsårsak'} error={fieldError} id={ensureValidHtmlId(id)} {...register(id)}>
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (
         <option value={begrunnelseKey} key={begrunnelseKey}>

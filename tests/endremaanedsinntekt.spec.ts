@@ -33,7 +33,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     // send for validering
     await formPage.clickButton('Send');
 
-    await Promise.all([formPage.assertVisibleTextAtLeastOnce('Vennligst angi årsak til endringen.')]);
+    await expect(page.getByText('Vennligst angi årsak til endringen.', { exact: true })).toHaveCount(2);
 
     // skriv gyldig beløp
     await formPage.fillInput('Månedslønn 15.03.2023', '70000');

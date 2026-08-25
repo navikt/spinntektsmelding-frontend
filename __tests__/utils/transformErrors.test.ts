@@ -605,7 +605,7 @@ describe('transformErrors', () => {
       expect(result?.target).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }, { message: 'Error 2' }]);
     });
 
-    it('should handle empty composite errors array', () => {
+    it('should preserve nested root errors when composite errors are empty', () => {
       const errors = {
         nested: {
           root: { message: 'Root error' }
@@ -614,8 +614,20 @@ describe('transformErrors', () => {
 
       const result = transformErrors(errors as FieldErrors<any>);
 
-      // No numeric keys means empty composite errors
-      expect(result?.nested).toEqual([]);
+      expect(result?.nested).toEqual({ root: { message: 'Root error' } });
+    });
+
+    it('should remove a nested root error when the same error exists on an array field', () => {
+      const errors = {
+        nested: {
+          '0': { aarsak: { message: 'Root error' } },
+          root: { message: 'Root error' }
+        }
+      };
+
+      const result = transformErrors(errors as FieldErrors<any>);
+
+      expect(result?.nested).toEqual({ '0': { aarsak: { message: 'Root error' } } });
     });
 
     it('should preserve nested structure when no root property exists', () => {
