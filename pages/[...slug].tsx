@@ -343,7 +343,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const removeQueryParam = useRemoveQueryParam();
 
   useEffect(() => {
-    if (router.query.endre === 'true') {
+    if (router.query.endre != null) {
       removeQueryParam('endre');
     }
   }, [removeQueryParam, router.query.endre]);
