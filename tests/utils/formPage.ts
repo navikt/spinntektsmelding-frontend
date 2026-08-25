@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, Request, Response, expect } from '@playwright/test';
 
 export class FormPage {
   private readonly page: Page;
@@ -72,6 +72,18 @@ export class FormPage {
     const button = index > 0 ? buttons.nth(index) : buttons.first();
     await expect(button).toBeVisible();
     await button.click();
+  }
+
+  async submitAndWaitForRequest(urlPattern: string | RegExp): Promise<Request> {
+    const requestPromise = this.page.waitForRequest(urlPattern);
+    await this.clickButton('Send');
+    return requestPromise;
+  }
+
+  async submitAndWaitForResponse(urlPattern: string | RegExp): Promise<Response> {
+    const responsePromise = this.page.waitForResponse(urlPattern);
+    await this.clickButton('Send');
+    return responsePromise;
   }
 
   async clickByDataCy(value: string): Promise<void> {

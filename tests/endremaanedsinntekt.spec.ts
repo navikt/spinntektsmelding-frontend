@@ -22,7 +22,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     );
 
     // klikk for å endre inntekt
-    await page.locator('[data-cy="endre-beloep"]').click();
+    await formPage.clickByDataCy('endre-beloep');
     // bekreft opplysninger
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
@@ -33,11 +33,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     // send for validering
     await formPage.clickButton('Send');
 
-    // feilmeldinger vises
-    await Promise.all([
-      // formPage.assertVisibleTextAtLeastOnce('Vennligst angi bruttoinntekt på formatet 1234,50'),
-      formPage.assertVisibleTextAtLeastOnce('Vennligst angi årsak til endringen.')
-    ]);
+    await Promise.all([formPage.assertVisibleTextAtLeastOnce('Vennligst angi årsak til endringen.')]);
 
     // skriv gyldig beløp
     await formPage.fillInput('Månedslønn 15.03.2023', '70000');
@@ -48,7 +44,7 @@ test.describe('Utfylling og innsending av skjema – endre månedsinntekt', () =
     expect(text).toMatch(/70\s000,00\skr\/måned/);
 
     // endre refusjonsbeløp
-    await page.locator('[data-cy="endre-refusjon-arbeidsgiver-beloep"]').click();
+    await formPage.clickByDataCy('endre-refusjon-arbeidsgiver-beloep');
     await formPage.fillInput('Månedslønn 15.03.2023', '75000');
     await expect(page.getByLabel('Oppgi refusjonsbeløpet per måned')).toHaveValue('70000');
   });

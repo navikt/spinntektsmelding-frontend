@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import inntektData from '../mockdata/inntektData.json';
+import { FormPage } from './utils/formPage';
 
 test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
   const uuid = '66f1188a-5cb7-4741-bd60-c9070835633c';
@@ -23,6 +24,7 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
   });
 
   test('Changes and submit', async ({ page }) => {
+    const formPage = new FormPage(page);
     // should redirect to receipt page
     await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
 
@@ -31,26 +33,18 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
     await page.waitForURL(`**/im-dialog/${uuid}/overskriv`);
 
     // select full lønn = Ja
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // select refusjon under sykefravær = Nei
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Nei')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 
     // confirm
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // submit
 
     // assert request payload
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
     const body = JSON.parse(req.postData()!);
     expect(body).toEqual({
       forespoerselId: uuid,
@@ -73,6 +67,7 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
     });
 
     // final confirmation
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="12345678"')).toBeVisible();
   });

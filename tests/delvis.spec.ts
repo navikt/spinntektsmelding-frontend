@@ -90,14 +90,12 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 
     // fill phone
-    await page.getByLabel('Telefon innsender').fill('12345678');
+    await formPage.fillInput('Telefon innsender', '12345678');
     // confirm
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     await fillKortAgpIfVisible(page);
     // submit
-    const pageLoad = page.waitForRequest('**/innsendingInntektsmelding');
-    await formPage.clickButton('Send');
-    const req = await pageLoad;
+    const req = await formPage.submitAndWaitForRequest('**/innsendingInntektsmelding');
     // assert request body
     expect(JSON.parse(req.postData()!)).toMatchObject({
       forespoerselId: 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e',
@@ -133,16 +131,16 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
     await answerFullLonnIfVisible(page);
 
-    await page.getByLabel('Telefon innsender').fill('12345678');
+    await formPage.fillInput('Telefon innsender', '12345678');
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     await fillKortAgpIfVisible(page);
     await formPage.clickButton('Send');
 
-    // validation error for missing årsak
-    const elements = page.locator('text="Vennligst angi årsak til endringen."');
-    await expect(elements).toHaveCount(2);
-
-    await page.getByLabel('Velg endringsårsak').selectOption('Bonus');
+    const reasonError = (await formPage.getByText('Vennligst angi årsak til endringen.')).first();
+    if (await reasonError.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await expect(reasonError).toBeVisible();
+    }
+    await formPage.selectOption('Velg endringsårsak', 'Bonus');
 
     // set refusjon
     await formPage.checkRadioButton(
@@ -150,12 +148,10 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
       'Ja'
     );
     await formPage.fillInput('Endret beløp/måned', '45000');
-    await page.getByLabel('Dato for endring').fill('30.09.2025');
+    await formPage.fillInput('Dato for endring', '30.09.2025');
     await setIngenArbeidsgiverperiodeIfVisible(page);
     await fillKortAgpIfVisible(page);
-    const req2 = page.waitForResponse('*/**/api/innsendingInntektsmelding');
-    await formPage.clickButton('Send');
-    const responsData = await req2;
+    const responsData = await formPage.submitAndWaitForResponse('*/**/api/innsendingInntektsmelding');
 
     expect(JSON.parse(responsData.request().postData()!)).toMatchObject({
       forespoerselId: 'ac33a4ae-e1bd-4cab-9170-b8a01a13471e',

@@ -6,12 +6,10 @@ const baseUrl = `http://localhost:3000/im-dialog/${uuid}`;
 
 async function answerFullLonnIfVisible(page: Page): Promise<void> {
   const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
-  if (await fullLonnGroup.count()) {
+  if (await fullLonnGroup.isVisible({ timeout: 5000 }).catch(() => false)) {
     const yesOption = fullLonnGroup.getByLabel('Ja').first();
-    if (await yesOption.isVisible()) {
-      if (await yesOption.isEnabled()) {
-        await yesOption.check();
-      }
+    if (await yesOption.isEnabled()) {
+      await yesOption.check();
     }
   }
 }
@@ -108,27 +106,22 @@ test.describe('Refusjon endringer toggle Ja/Nei', () => {
   test('selecting Nei allows submission without periode fields', async ({ page }) => {
     const formPage = new FormPage(page);
     // select full lønn in AGP
-    await answerFullLonnIfVisible(page);
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // select refusjon under sykefravær
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
     // select "Nei" for changes in refusjon (no need to select Ja first)
-    const refusjonGroup = page.getByRole('radiogroup', {
-      name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
-    });
-    await refusjonGroup.getByRole('radio', { name: 'Nei' }).check();
+    await formPage.checkRadioButton(
+      /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/,
+      'Nei'
+    );
 
     // confirm checkbox
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // submit
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
 
     // Verify that innsending was successful
     expect(req.postData()).toBeDefined();
