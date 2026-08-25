@@ -287,6 +287,12 @@ const InitieringFritatt: NextPage = () => {
     }
   }, [spError]);
 
+  useEffect(() => {
+    if (arbeidsforhold.length === 1) {
+      onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
+    }
+  }, [arbeidsforhold.length]);
+
   const sykepengePerioder: SykepengePeriode[] = ((): SykepengePeriode[] => {
     if (!spData) return [];
 
