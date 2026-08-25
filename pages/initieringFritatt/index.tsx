@@ -266,8 +266,9 @@ const InitieringFritatt: NextPage = () => {
     control: methods.control
   });
 
+  const tmpOrgnr = arbeidsforhold.length === 1 ? arbeidsforhold[0].orgnrUnderenhet : orgnr;
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const { data: spData, error: spError } = useSykepengesoeknader(sykmeldt.fnr, orgnr, fomDato, () => {});
+  const { data: spData, error: spError } = useSykepengesoeknader(sykmeldt.fnr, tmpOrgnr, fomDato, () => {});
 
   const harArbeidsforhold = spData && spData.length > 0;
 
@@ -478,41 +479,39 @@ const InitieringFritatt: NextPage = () => {
                           </Alert>
                         )}
 
-                        {orgnr && (
-                          <Controller
-                            name='sykepengePeriodeId'
-                            control={methods.control}
-                            render={({ field }) => (
-                              <>
-                                <Radio value='andrePerioder' key='andrePerioder'>
-                                  Eller velg en annen periode som du ønsker å sende inntektsmelding for:
-                                </Radio>
-                                <CheckboxGroup
-                                  legend='Velg en periode som du ønsker å sende inntektsmelding for:'
-                                  hideLegend
-                                  id='sykepengePeriodeId'
-                                  error={errors.sykepengePeriodeId?.message as string}
-                                  value={field.value ?? []}
-                                  onChange={field.onChange}
-                                  onBlur={field.onBlur}
-                                  ref={field.ref}
-                                  className={lokalStyling.checkboxGroup}
-                                >
-                                  {ikkeForespurtePerioder.map((periode) => (
-                                    <Checkbox key={periode.id} value={periode.id} disabled={disablePeriodeCheck}>
-                                      {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                                      {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
-                                      {periode.forlengelseAv && ' (forlengelse)'}
-                                    </Checkbox>
-                                  ))}
-                                </CheckboxGroup>
-                                <Radio key='utenKobling' value='utenKobling'>
-                                  Send inntektsmelding for annen periode
-                                </Radio>
-                              </>
-                            )}
-                          />
-                        )}
+                        <Controller
+                          name='sykepengePeriodeId'
+                          control={methods.control}
+                          render={({ field }) => (
+                            <>
+                              <Radio value='andrePerioder' key='andrePerioder'>
+                                Eller velg en annen periode som du ønsker å sende inntektsmelding for:
+                              </Radio>
+                              <CheckboxGroup
+                                legend='Velg en periode som du ønsker å sende inntektsmelding for:'
+                                hideLegend
+                                id='sykepengePeriodeId'
+                                error={errors.sykepengePeriodeId?.message as string}
+                                value={field.value ?? []}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                ref={field.ref}
+                                className={lokalStyling.checkboxGroup}
+                              >
+                                {ikkeForespurtePerioder.map((periode) => (
+                                  <Checkbox key={periode.id} value={periode.id} disabled={disablePeriodeCheck}>
+                                    {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                                    {formaterEgenmeldingsdager(periode.antallEgenmeldingsdager)}
+                                    {periode.forlengelseAv && ' (forlengelse)'}
+                                  </Checkbox>
+                                ))}
+                              </CheckboxGroup>
+                              <Radio key='utenKobling' value='utenKobling'>
+                                Send inntektsmelding for annen periode
+                              </Radio>
+                            </>
+                          )}
+                        />
                       </RadioGroup>
                     )}
                   />
