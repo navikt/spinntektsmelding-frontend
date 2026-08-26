@@ -2,7 +2,6 @@ import { Select } from '@navikt/ds-react';
 
 import lokalStyling from './SelectBegrunnelseKortArbeidsgiverperiode.module.css';
 import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgiver/begrunnelseIngenEllerRedusertUtbetalingListe';
-import filterBegrunnelseKortArbeidsgiverperiode from './filterBegrunnelseKortArbeidsgiverperiode';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 
 interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
@@ -10,31 +9,22 @@ interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
   value?: string;
   error?: React.ReactNode;
   label?: string;
-  ikkeAgp?: boolean;
 }
 
 export default function SelectBegrunnelseKortArbeidsgiverperiode(
   props: Readonly<SelectBegrunnelseKortArbeidsgiverperiodeProps>
 ) {
-  const begrunnelseKeys = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe).filter((begrunnelse) =>
-    filterBegrunnelseKortArbeidsgiverperiode.includes(begrunnelse)
-  );
+  const begrunnelse = Object.keys(begrunnelseIngenEllerRedusertUtbetalingListe);
   const label = props.label ?? 'Velg begrunnelse for kort arbeidsgiverperiode';
 
-  let begrunnelse: string[] = [];
-
-  if (props.ikkeAgp) {
-    begrunnelse = begrunnelseKeys.filter((begrunnelse) => {
-      return begrunnelse !== 'BetvilerArbeidsufoerhet';
-    });
-  } else {
-    begrunnelse = [...begrunnelseKeys];
-  }
+  const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    props.onChangeBegrunnelse(event.target.value);
+  };
 
   return (
     <Select
       label={label}
-      onChange={(event) => props.onChangeBegrunnelse(event.target.value)}
+      onChange={onChange}
       id={ensureValidHtmlId('agp.redusertLoennIAgp.begrunnelse')}
       className={lokalStyling.selectbegrunnelse}
       value={props.value ?? ''}

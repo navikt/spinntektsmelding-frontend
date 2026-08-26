@@ -25,7 +25,7 @@ import { finnSammenhengendePeriode } from '../../utils/finnBestemmendeFravaersda
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { useShallow } from 'zustand/react/shallow';
 import NumberField from '../NumberField/NumberField';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 interface ArbeidsgiverperiodeProps {
@@ -59,7 +59,6 @@ export default function Arbeidsgiverperiode({
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     inngangFraKvittering,
-    fullLonnIArbeidsgiverPerioden,
     arbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeKort,
@@ -81,7 +80,6 @@ export default function Arbeidsgiverperiode({
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden:
         state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
       inngangFraKvittering: state.inngangFraKvittering,
-      fullLonnIArbeidsgiverPerioden: state.fullLonnIArbeidsgiverPerioden,
       arbeidsgiverperiodeDisabled: state.arbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeDisabled: state.setArbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort,
@@ -298,7 +296,8 @@ export default function Arbeidsgiverperiode({
     }
   }, [inngangFraKvittering, arbeidsgiverperioder]);
 
-  const betvilerArbeidsevne = fullLonnIArbeidsgiverPerioden?.begrunnelse === 'BetvilerArbeidsufoerhet';
+  const betvilerArbeidsevne =
+    useWatch({ control, name: 'agp.redusertLoennIAgp.begrunnelse' }) === 'BetvilerArbeidsufoerhet';
 
   const minFomDate = useMemo(() => {
     const fireAarSiden = startOfDay(subYears(new Date(), 10));
@@ -524,7 +523,6 @@ export default function Arbeidsgiverperiode({
                     value={field.value}
                     error={findErrorInRHFErrors('agp.redusertLoennIAgp.begrunnelse', errors)}
                     label='Velg begrunnelse'
-                    ikkeAgp={arbeidsgiverperiodeDisabled}
                   />
                 )}
               />
