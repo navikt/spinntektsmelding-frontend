@@ -76,7 +76,7 @@
     "prettier": "^3.9.6",
     "timezone-mock": "^1.4.3",
     "typescript": "6.0.3",
-    "vite": "^8.2.1",
+    "vite": "^8.2.2",
     "vitest": "^4.1.11",
     "vitest-fetch-mock": "^0.4.5",
     "vitest-sonar-reporter": "^3.0.0"
