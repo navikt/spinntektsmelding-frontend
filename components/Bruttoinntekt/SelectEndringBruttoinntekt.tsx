@@ -39,11 +39,10 @@ export default function SelectEndringBruttoinntekt({
   });
 
   const feilmeldinger = useMemo(() => transformErrors(errors), [errors]);
-
-  const error = findErrorInRHFErrors(id, feilmeldinger as FieldErrors);
+  const fieldError = findErrorInRHFErrors(id, feilmeldinger as FieldErrors);
 
   return (
-    <Select label={label ?? 'Velg endringsårsak'} error={error} id={ensureValidHtmlId(id)} {...register(id)}>
+    <Select label={label ?? 'Velg endringsårsak'} error={fieldError} id={ensureValidHtmlId(id)} {...register(id)}>
       <option value=''>Velg begrunnelse</option>
       {begrunnelseKeys.map((begrunnelseKey) => (
         <option value={begrunnelseKey} key={begrunnelseKey}>

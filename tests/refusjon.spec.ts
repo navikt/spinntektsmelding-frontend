@@ -28,33 +28,26 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
   });
 
   test('can check radios for refusjon and submit', async ({ page }) => {
+    const formPage = new FormPage(page);
     // select full lønn in AGP
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // select refusjon under sykefravær
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('radiogroup', {
-      name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
-    });
-    await refusjonGroup.getByRole('radio', { name: 'Nei' }).check();
+    await formPage.checkRadioButton(
+      /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/,
+      'Nei'
+    );
 
     // confirm checkbox
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // submit
 
     // assert request payload
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
     const body = JSON.parse(req.postData()!);
     expect(body).toEqual({
       forespoerselId: uuid,
@@ -74,7 +67,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -83,23 +76,12 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
   }) => {
     // select full lønn in AGP
     const formPage = new FormPage(page);
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // select refusjon under sykefravær
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('radiogroup', {
-      name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
-    });
-    await refusjonGroup.getByRole('radio', { name: 'Ja' }).check();
-
     await formPage.checkRadioButton(
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Ja'
@@ -109,7 +91,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Dato for endring', '15.03.23');
 
     // confirm checkbox
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // submit
     await formPage.clickButton('Send');
@@ -120,9 +102,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Endret beløp/måned', '60000');
 
     // assert request payload
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
     const body = JSON.parse(req.postData()!);
     expect(body).toEqual({
       forespoerselId: uuid,
@@ -142,7 +122,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -151,23 +131,12 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
   }) => {
     // select full lønn in AGP
     const formPage = new FormPage(page);
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // select refusjon under sykefravær
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
 
     // select "Nei" for changes in refusjon
-    const refusjonGroup = page.getByRole('radiogroup', {
-      name: /Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?/
-    });
-    await refusjonGroup.getByRole('radio', { name: 'Ja' }).check();
-
     await formPage.checkRadioButton(
       'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
       'Ja'
@@ -177,7 +146,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Dato for endring', '15.02.23');
 
     // confirm checkbox
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
     // submit
     await formPage.clickButton('Send');
@@ -188,9 +157,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     await formPage.fillInput('Dato for endring', '15.04.23');
 
     // assert request payload
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await page.getByRole('button', { name: 'Send' }).click();
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
     const body = JSON.parse(req.postData()!);
     expect(body).toEqual({
       forespoerselId: uuid,

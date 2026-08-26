@@ -61,8 +61,25 @@ function safeDelete(obj: any, key: string | number): boolean {
   }
 }
 
+function hasDuplicateNumericError(parent: any, rootNode: any): boolean {
+  const rootMessage = rootNode?.message;
+  if (typeof rootMessage !== 'string') {
+    return false;
+  }
+
+  return Object.keys(parent)
+    .filter(isNumericKey)
+    .some((index) => parent[index]?.message === rootMessage || parent[index]?.aarsak?.message === rootMessage);
+}
+
 function handleRootNode(node: any, parent: any, key: string | number | undefined, compositeErrors: any[]): void {
   if (parent !== undefined && key !== undefined) {
+    if (compositeErrors.length === 0) {
+      if (hasDuplicateNumericError(node, node.root)) {
+        safeDelete(node, 'root');
+      }
+      return;
+    }
     safeSet(parent, key, compositeErrors);
     return;
   }

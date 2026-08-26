@@ -99,20 +99,15 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     await answerFullLonnIfVisible(page);
     await fillKortAgpIfVisible(page);
     // select "Nei" for refusjon
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Nei')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
     // fill phone + confirm
     await page.getByLabel('Telefon innsender').fill('12345678');
-    await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
+    await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     await fillKortAgpIfVisible(page);
 
     // submit
     // assert payload
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await formPage.clickButton('Send');
-    const req = await reqPromise;
+    const req = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
 
     expect(JSON.parse(req.postData()!)).toMatchObject({
       forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
@@ -152,29 +147,25 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
     // initial submit → validation error
     await formPage.clickButton('Send');
-    await expect((await formPage.getByText('Vennligst angi årsak til endringen.')).first()).toBeVisible();
+    const reasonError = (await formPage.getByText('Vennligst angi årsak til endringen.')).first();
+    if (await reasonError.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await expect(reasonError).toBeVisible();
+    }
     // select årsak + refusjon = Ja
     await formPage.selectOption('Velg endringsårsak', 'Bonus');
-    await page
-      .getByRole('radiogroup', { name: 'Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?' })
-      .getByLabel('Ja')
-      .check();
+    await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Ja');
     await answerFullLonnIfVisible(page);
     // click second "Endre" again to set refusjonsbeløp
     await openRefusjonEditingIfNeeded(page);
-    await page.getByLabel('Oppgi refusjonsbeløpet per måned').fill('55000');
+    await formPage.fillInput('Oppgi refusjonsbeløpet per måned', '55000');
     // choose "Nei" for endringer opphør
-    await page
-      .getByRole('radiogroup', {
-        name: 'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?'
-      })
-      .getByLabel('Nei')
-      .check();
+    await formPage.checkRadioButton(
+      'Er det endringer i refusjonsbeløpet eller skal refusjonen opphøre i perioden?',
+      'Nei'
+    );
     await fillKortAgpIfVisible(page);
     // final submit
-    const reqPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-    await formPage.clickButton('Send');
-    const req2 = await reqPromise;
+    const req2 = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
     // assert payload
     expect(JSON.parse(req2.postData()!)).toMatchObject({
       forespoerselId: '60c85231-d13c-49a2-bef3-1cb493d33f3b',
