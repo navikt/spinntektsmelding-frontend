@@ -9,7 +9,6 @@ interface SelectBegrunnelseKortArbeidsgiverperiodeProps {
   value?: string;
   error?: React.ReactNode;
   label?: string;
-  ikkeAgp?: boolean;
 }
 
 export default function SelectBegrunnelseKortArbeidsgiverperiode(

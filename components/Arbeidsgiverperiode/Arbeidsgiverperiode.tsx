@@ -59,7 +59,6 @@ export default function Arbeidsgiverperiode({
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
     inngangFraKvittering,
-    fullLonnIArbeidsgiverPerioden,
     arbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeDisabled,
     setArbeidsgiverperiodeKort,
@@ -81,7 +80,6 @@ export default function Arbeidsgiverperiode({
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden:
         state.slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden,
       inngangFraKvittering: state.inngangFraKvittering,
-      fullLonnIArbeidsgiverPerioden: state.fullLonnIArbeidsgiverPerioden,
       arbeidsgiverperiodeDisabled: state.arbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeDisabled: state.setArbeidsgiverperiodeDisabled,
       setArbeidsgiverperiodeKort: state.setArbeidsgiverperiodeKort,
@@ -525,7 +523,6 @@ export default function Arbeidsgiverperiode({
                     value={field.value}
                     error={findErrorInRHFErrors('agp.redusertLoennIAgp.begrunnelse', errors)}
                     label='Velg begrunnelse'
-                    ikkeAgp={arbeidsgiverperiodeDisabled}
                   />
                 )}
               />
