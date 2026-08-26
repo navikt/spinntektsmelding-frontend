@@ -4,6 +4,7 @@ import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 import { RefusjonEndringSchema } from './RefusjonEndringSchema';
+import { PeriodeSchema } from './PeriodeSchema';
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
@@ -240,6 +241,7 @@ function validateInntektBeloep(val: HovedskjemaInput, ctx: z.RefinementCtx) {
 export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
   return z
     .object({
+      sykmeldingsperioder: z.array(PeriodeSchema),
       bekreft_opplysninger: z.literal(true, {
         error: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
       }),
