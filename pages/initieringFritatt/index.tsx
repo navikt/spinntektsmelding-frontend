@@ -268,7 +268,11 @@ const InitieringFritatt: NextPage = () => {
 
   const tmpOrgnr = arbeidsforhold.length === 1 ? arbeidsforhold[0].orgnrUnderenhet : orgnr;
   const fomDato = formatIsoDate(subYears(new Date(), 1));
-  const { data: spData, error: spError } = useSykepengesoeknader(sykmeldt.fnr, tmpOrgnr, fomDato, () => {});
+  const {
+    data: spData,
+    error: spError,
+    isLoading: spLoading
+  } = useSykepengesoeknader(sykmeldt.fnr, tmpOrgnr, fomDato, () => {});
 
   const harArbeidsforhold = spData && spData.length > 0;
 
@@ -281,12 +285,12 @@ const InitieringFritatt: NextPage = () => {
   });
 
   useEffect(() => {
-    if (spError?.status === 404) {
+    if (spError?.status === 404 || spData?.length === 0) {
       onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [spError]);
+  }, [spError, spData?.length]);
 
   useEffect(() => {
     if (arbeidsforhold.length === 1) {
@@ -407,6 +411,7 @@ const InitieringFritatt: NextPage = () => {
                   />
                 </div>
               )}
+              {spLoading && <Loading />}
               {harArbeidsforhold && (
                 <>
                   <Alert variant='warning' className={lokalStyling.alertPadding}>

@@ -226,7 +226,7 @@ describe('sp-soeknader API', () => {
       expect(JSON.parse(res._getData())).toEqual(mockData);
     });
 
-    it('should return 404 when mock file does not exist in development', async () => {
+    it('should return 200 when mock file does not exist in development', async () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(false);
 
       const { req, res } = createMocks({
@@ -236,8 +236,8 @@ describe('sp-soeknader API', () => {
 
       await handler(req, res);
 
-      expect(res._getStatusCode()).toBe(404);
-      expect(JSON.parse(res._getData())).toEqual({ error: 'Mock not found' });
+      expect(res._getStatusCode()).toBe(200);
+      expect(JSON.parse(res._getData())).toEqual([]);
     });
 
     it('should read mock file from correct path', async () => {
