@@ -44,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'Mock not found' });
+      return res.status(200).json([]);
     }
 
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
