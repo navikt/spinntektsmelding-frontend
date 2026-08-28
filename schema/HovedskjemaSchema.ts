@@ -4,7 +4,6 @@ import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 import { RefusjonEndringSchema } from './RefusjonEndringSchema';
-import { PeriodeSchema } from './PeriodeSchema';
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
