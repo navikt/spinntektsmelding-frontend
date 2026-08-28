@@ -101,7 +101,7 @@ export default function useFyllAapenInnsending() {
         tlf: skjemaData.avsenderTlf
       },
       sykmeldingsperioder: sykmeldingsperioder!
-        .filter((periode) => periode.fom && periode.tom)
+        .filter((periode) => periode?.fom && periode?.tom)
         .map((periode) => ({ fom: formatDateForSubmit(periode.fom), tom: formatDateForSubmit(periode.tom) })),
       agp: {
         perioder: formattedAgpPerioder,

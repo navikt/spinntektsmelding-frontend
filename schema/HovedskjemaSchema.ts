@@ -241,7 +241,6 @@ function validateInntektBeloep(val: HovedskjemaInput, ctx: z.RefinementCtx) {
 export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
   return z
     .object({
-      sykmeldingsperioder: z.array(PeriodeSchema),
       bekreft_opplysninger: z.literal(true, {
         error: 'Du må bekrefte at opplysningene er riktige før du kan sende inn.'
       }),

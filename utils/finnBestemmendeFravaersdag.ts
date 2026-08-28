@@ -76,7 +76,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   arbeidsgiverKanFlytteBFD?: boolean,
   erBegrensetForespoersel?: boolean
 ): string | undefined {
-  if (!fravaerPerioder || !fravaerPerioder[0] || !fravaerPerioder?.[0]?.fom) {
+  if (!fravaerPerioder?.length || !fravaerPerioder[0] || !fravaerPerioder?.[0]?.fom || !fravaerPerioder?.[0]?.tom) {
     return undefined;
   }
 
@@ -103,8 +103,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   if (sisteDagArbeidsgiverperiode) {
     perioderEtterAgp = sorterteSykmeldingPerioder.map((periode) => ({
       ...periode,
-      fom: periode.fom! < sisteDagArbeidsgiverperiode ? sisteDagArbeidsgiverperiode : periode.fom,
-      tom: periode.tom! < sisteDagArbeidsgiverperiode ? sisteDagArbeidsgiverperiode : periode.tom
+      fom: new Date(Math.max(periode.fom!.getTime(), sisteDagArbeidsgiverperiode.getTime())),
+      tom: new Date(Math.max(periode.tom!.getTime(), sisteDagArbeidsgiverperiode.getTime()))
     }));
   } else {
     perioderEtterAgp = sorterteSykmeldingPerioder;
@@ -119,7 +119,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
     finnSorterteUnikePerioder(
-      perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode.fom && periode.tom)
+      perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode?.fom && periode?.tom)
     )
   ).filter((periode) => periode?.fom && periode?.tom);
 
