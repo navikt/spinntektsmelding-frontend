@@ -88,7 +88,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
     return undefined;
   }
 
-  const sorterteSykmeldingPerioder: T[] = finnSammenhengendePeriode(finnSorterteUnikePerioder(gyldigeFravaerPerioder));
+  const sorterteSykmeldingPerioder = finnSammenhengendePeriode(gyldigeFravaerPerioder);
 
   if (erBegrensetForespoersel) {
     const sistePeriode = sorterteSykmeldingPerioder.at(-1);
@@ -100,9 +100,7 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
     }
   }
 
-  const sorterteArbeidsgiverperioder: T[] = (arbeidsgiverperiode ?? [])
-    .filter(erGyldigTidPeriode)
-    .sort(sorterFomSynkende);
+  const sorterteArbeidsgiverperioder = (arbeidsgiverperiode ?? []).filter(erGyldigTidPeriode).sort(sorterFomSynkende);
   const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
 
   let perioderEtterAgp = [];
@@ -123,10 +121,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   }
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
-    finnSorterteUnikePerioder(
-      perioderEtterAgp.concat(sorterteArbeidsgiverperioder).filter((periode) => periode?.fom && periode?.tom)
-    )
-  ).filter((periode) => periode?.fom && periode?.tom);
+    perioderEtterAgp.concat(sorterteArbeidsgiverperioder).filter(erGyldigTidPeriode)
+  );
 
   let antallDager = 0;
   let bestemmendeFravaersdag = '';
