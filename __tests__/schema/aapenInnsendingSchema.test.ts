@@ -88,7 +88,11 @@ describe('AapenInnsendingSchema', () => {
     expect(result.error?.issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          message: 'Det må være minst én sykmeldingsperiode.',
+          code: 'too_small',
+          inclusive: true,
+          message: 'Det må være minst én gyldig sykmeldingsperiode.',
+          minimum: 1,
+          origin: 'array',
           path: ['sykmeldingsperioder']
         })
       ])
