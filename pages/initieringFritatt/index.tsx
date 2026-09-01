@@ -220,7 +220,6 @@ const InitieringFritatt: NextPage = () => {
       initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
       tilbakestillArbeidsgiverperiode();
       setVedtaksperiodeId(sykmeldingsperiode[0].vedtaksperiodeId!);
-      debugger;
       setSelvbestemtType(SelvbestemtTypeConst.MedArbeidsforhold);
       const harGradert = sykmeldingsperiode.some((periode) =>
         periode.soknadsperioder?.some((sp) => sp.grad < 100 || (sp.faktiskGrad != null && sp.faktiskGrad > 0))
