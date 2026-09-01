@@ -5,6 +5,12 @@ import sorterFomStigende from './sorterFomStigende';
 import sorterFomSynkende from './sorterFomSynkende';
 import { TidPeriode } from '../schema/TidPeriodeSchema';
 
+type GyldigTidPeriode<T extends TidPeriode> = T & Required<Pick<TidPeriode, 'fom' | 'tom'>>;
+
+function erGyldigTidPeriode<T extends TidPeriode>(periode: T): periode is GyldigTidPeriode<T> {
+  return Boolean(periode.fom && periode.tom);
+}
+
 export function overlappendePeriode<T extends TidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
@@ -76,13 +82,13 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   arbeidsgiverKanFlytteBFD?: boolean,
   erBegrensetForespoersel?: boolean
 ): string | undefined {
-  if (!fravaerPerioder?.length || !fravaerPerioder[0] || !fravaerPerioder?.[0]?.fom || !fravaerPerioder?.[0]?.tom) {
+  const gyldigeFravaerPerioder = fravaerPerioder?.filter(erGyldigTidPeriode) ?? [];
+
+  if (gyldigeFravaerPerioder.length === 0) {
     return undefined;
   }
 
-  const sorterteSykmeldingPerioder = finnSammenhengendePeriode(
-    finnSorterteUnikePerioder(fravaerPerioder.filter((periode) => periode.fom && periode.tom))
-  );
+  const sorterteSykmeldingPerioder = finnSammenhengendePeriode(gyldigeFravaerPerioder);
 
   if (erBegrensetForespoersel) {
     const sistePeriode = sorterteSykmeldingPerioder.at(-1);
@@ -94,10 +100,8 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
     }
   }
 
-  const sisteDagArbeidsgiverperiode =
-    Array.isArray(arbeidsgiverperiode) && arbeidsgiverperiode.length > 0
-      ? [...arbeidsgiverperiode].sort(sorterFomSynkende)[0].tom
-      : undefined;
+  const sorterteArbeidsgiverperioder = (arbeidsgiverperiode ?? []).filter(erGyldigTidPeriode).sort(sorterFomSynkende);
+  const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
 
   let perioderEtterAgp = [];
   if (sisteDagArbeidsgiverperiode) {
@@ -110,18 +114,15 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
     perioderEtterAgp = sorterteSykmeldingPerioder;
   }
   if (
-    arbeidsgiverperiode &&
-    arbeidsgiverperiode.length > 0 &&
-    differenceInBusinessDays(perioderEtterAgp[0].fom!, arbeidsgiverperiode.at(-1)!.tom!) <= 1
+    sisteDagArbeidsgiverperiode &&
+    differenceInBusinessDays(perioderEtterAgp[0].fom!, sisteDagArbeidsgiverperiode) <= 1
   ) {
-    perioderEtterAgp[0].fom = arbeidsgiverperiode.at(-1)!.tom;
+    perioderEtterAgp[0].fom = sisteDagArbeidsgiverperiode;
   }
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
-    finnSorterteUnikePerioder(
-      perioderEtterAgp.concat(arbeidsgiverperiode ?? []).filter((periode) => periode?.fom && periode?.tom)
-    )
-  ).filter((periode) => periode?.fom && periode?.tom);
+    perioderEtterAgp.concat(sorterteArbeidsgiverperioder).filter(erGyldigTidPeriode)
+  );
 
   let antallDager = 0;
   let bestemmendeFravaersdag = '';
@@ -172,38 +173,39 @@ export function finnSorterteUnikePerioder<T extends TidPeriode>(fravaerPerioder:
   return sorterteSykmeldingPerioder;
 }
 
-export function finnSammenhengendePeriode<T extends TidPeriode>(sykmeldingsperioder: Array<T>): Array<T> {
-  const { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder } = joinPerioderMedOverlapp(sykmeldingsperioder);
-  mergedSykmeldingsperioder.forEach((periode) => {
-    const aktivPeriode = tilstoetendeSykmeldingsperioder.at(-1)!;
-    const oppdatertPeriode = tilstoetendePeriode(aktivPeriode, periode);
+function slaaSammenPerioder<T extends TidPeriode>(
+  sykmeldingsperioder: Array<T>,
+  slaaSammen: (aktivPeriode: T, periode: T) => T | null
+): Array<T> {
+  return finnSorterteUnikePerioder(sykmeldingsperioder).reduce<Array<T>>((sammenhengendePerioder, periode) => {
+    const aktivPeriode = sammenhengendePerioder.at(-1);
+
+    if (!aktivPeriode) {
+      sammenhengendePerioder.push(periode);
+      return sammenhengendePerioder;
+    }
+
+    const oppdatertPeriode = slaaSammen(aktivPeriode, periode);
 
     if (oppdatertPeriode) {
-      tilstoetendeSykmeldingsperioder[tilstoetendeSykmeldingsperioder.length - 1] = oppdatertPeriode;
+      sammenhengendePerioder[sammenhengendePerioder.length - 1] = oppdatertPeriode;
     } else {
-      tilstoetendeSykmeldingsperioder.push(periode);
+      sammenhengendePerioder.push(periode);
     }
-  });
 
-  return tilstoetendeSykmeldingsperioder;
+    return sammenhengendePerioder;
+  }, []);
+}
+
+export function finnSammenhengendePeriode<T extends TidPeriode>(sykmeldingsperioder: Array<T>): Array<T> {
+  return slaaSammenPerioder(
+    sykmeldingsperioder,
+    (aktivPeriode, periode) => overlappendePeriode(aktivPeriode, periode) ?? tilstoetendePeriode(aktivPeriode, periode)
+  );
 }
 
 export function joinPerioderMedOverlapp<T extends TidPeriode>(sykmeldingsperioder: T[]) {
-  const sorterteSykmeldingsperioder = finnSorterteUnikePerioder(sykmeldingsperioder);
-
-  const mergedSykmeldingsperioder = [sorterteSykmeldingsperioder[0]];
-
-  sorterteSykmeldingsperioder.forEach((periode) => {
-    const aktivPeriode = mergedSykmeldingsperioder.at(-1)!;
-    const oppdatertPeriode = overlappendePeriode(aktivPeriode, periode);
-
-    if (oppdatertPeriode) {
-      mergedSykmeldingsperioder[mergedSykmeldingsperioder.length - 1] = oppdatertPeriode;
-    } else {
-      mergedSykmeldingsperioder.push(periode);
-    }
-  });
-
-  const tilstoetendeSykmeldingsperioder = [mergedSykmeldingsperioder[0]];
+  const mergedSykmeldingsperioder = slaaSammenPerioder(sykmeldingsperioder, overlappendePeriode);
+  const tilstoetendeSykmeldingsperioder = mergedSykmeldingsperioder.slice(0, 1);
   return { mergedSykmeldingsperioder, tilstoetendeSykmeldingsperioder };
 }
