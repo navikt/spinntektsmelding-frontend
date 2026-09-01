@@ -255,7 +255,7 @@ const InitieringFritatt: NextPage = () => {
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
     initEgenmeldingsperiode(getEgenmeldingsperioderFromSykmelding(sykmeldingsperiode));
     tilbakestillArbeidsgiverperiode();
-    setSelvbestemtType('UtenArbeidsforhold');
+    setSelvbestemtType(SelvbestemtTypeConst.UtenArbeidsforhold);
     router.push('/unntattAaRegisteret');
   };
 
