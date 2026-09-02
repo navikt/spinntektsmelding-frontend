@@ -53,13 +53,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const token = getToken(req);
   if (!token) {
-    logger.info('Mangler token i header');
+    logger.info('sp-soeknader: Mangler token i header');
     return res.status(401);
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
-    logger.info('Validering feilet: ' + JSON.stringify(validation.error));
+    logger.info('sp-soeknader: Validering feilet: ' + JSON.stringify(validation.error));
     return res.status(401);
   }
 
@@ -70,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const parsedBody = requestBodySchema.safeParse(req.body);
   if (!parsedBody.success) {
-    logger.info('Ugyldig request body for sykepengesøknader');
+    logger.info('sp-soeknader: Ugyldig request body for sykepengesøknader');
     return res.status(400).json({ error: 'Ugyldig forespørsel' });
   }
 
@@ -78,7 +78,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const orgnr = requestBody.orgnummer;
 
   if (!isMod11Number(orgnr)) {
-    logger.info('Ugyldig orgnr: ' + orgnr);
+    logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnr);
     return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
   }
 
@@ -91,13 +91,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!tokenResponse.ok) {
-    logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
+    logger.info('sp-soeknader: Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
   const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
-    logger.info('OBO-feil: ' + JSON.stringify(obo.error));
+    logger.info('sp-soeknader: OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -115,7 +115,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!soeknadResponse.ok) {
-    logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
+    logger.error('sp-soeknader: Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
     return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
   }
 
@@ -123,7 +123,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
 
   logger.info(
-    `Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr}`
+    `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr}`
   );
 
   if (aktiveSoeknader.length === 0) {
@@ -141,7 +141,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!forespoerselIdListe.ok) {
-    logger.error('Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
+    logger.error('sp-soeknader: Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
     return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
   }
 
@@ -157,7 +157,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   }));
 
   logger.info(
-    `Koblet forespørselIder til aktive søknader for orgnr ${orgnr}, totalt ${soeknadResponseData.length} søknader`
+    `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr}, totalt ${soeknadResponseData.length} søknader`
   );
 
   return res.status(soeknadResponse.status).json(soeknadResponseData);
