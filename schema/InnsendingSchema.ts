@@ -90,7 +90,7 @@ export const InnsendingSchema = z.object({
         if (langtGapIPerioder(val)) {
           ctx.issues.push({
             code: 'custom',
-            error: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
+            message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
             input: ''
           });
         }
@@ -98,7 +98,7 @@ export const InnsendingSchema = z.object({
         if (perioderHarOverlapp(val)) {
           ctx.issues.push({
             code: 'custom',
-            error: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
+            message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
             input: ''
           });
         }
@@ -106,7 +106,7 @@ export const InnsendingSchema = z.object({
         if (perioderErOver16dagerTotalt(val)) {
           ctx.issues.push({
             code: 'custom',
-            error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
+            message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
             input: ''
           });
         }
@@ -144,7 +144,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
+          message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
@@ -158,7 +158,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi årsak til forkortet arbeidsgiverperiode...',
+          message: 'Angi årsak til forkortet arbeidsgiverperiode...',
           path: ['redusertLoennIAgp', 'begrunnelse'],
           input: ''
         });
@@ -168,7 +168,7 @@ export const InnsendingSchema = z.object({
       if (perioderErSannsynligvisBehandlingsdager(val.perioder) && val.perioder.length !== 12) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Arbeidsgiverperioden må bestå av 12 behandlingsdager.',
+          message: 'Arbeidsgiverperioden må bestå av 12 behandlingsdager.',
           path: ['perioder'],
           input: ''
         });
@@ -182,14 +182,14 @@ export const InnsendingSchema = z.object({
         if (val.erBehandlingsdager) {
           ctx.issues.push({
             code: 'custom',
-            error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
+            message: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
             path: ['perioder'],
             input: ''
           });
         } else {
           ctx.issues.push({
             code: 'custom',
-            error: 'Angi årsak til forkortet arbeidsgiverperiode.',
+            message: 'Angi årsak til forkortet arbeidsgiverperiode.',
             path: ['redusertLoennIAgp', 'begrunnelse'],
             input: ''
           });
@@ -204,7 +204,7 @@ export const InnsendingSchema = z.object({
       ) {
         ctx.issues.push({
           code: 'custom',
-          error: 'Angi en årsak og beløp for redusert lønn i arbeidsgiverperioden.',
+          message: 'Angi en årsak og beløp for redusert lønn i arbeidsgiverperioden.',
           path: ['redusertLoennIAgp', 'beloep'],
           input: ''
         });
