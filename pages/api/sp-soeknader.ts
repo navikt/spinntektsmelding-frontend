@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import fs from 'node:fs';
 import isMod11Number from '../../utils/isMod11Number';
+import isFnrNumber from '../../utils/isFnrNumber';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
@@ -82,6 +83,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   if (!isMod11Number(orgnr)) {
     logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnr);
     return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+  }
+
+  if (!isFnrNumber(fnr)) {
+    logger.info('sp-soeknader: Ugyldig fnr');
+    return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
   }
 
   const tokenResponse = await fetch(authApi + '/' + orgnr, {
