@@ -8,6 +8,7 @@ import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
 import { requireEnv } from '../../utils/api/validateEnv';
 
 type forespoerselIdListeEnhet = {
@@ -76,6 +77,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const requestBody = parsedBody.data;
   const orgnr = requestBody.orgnummer;
+  const fnr = requestBody.fnr;
 
   if (!isMod11Number(orgnr)) {
     logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnr);
@@ -122,8 +124,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
 
-  logger.info(
-    `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr}`
+  teamLogger.info(
+    `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr} og fnr ${fnr}`
   );
 
   if (aktiveSoeknader.length === 0) {
@@ -156,8 +158,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     )?.forespoerselId
   }));
 
-  logger.info(
-    `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr}, totalt ${soeknadResponseData.length} søknader`
+  teamLogger.info(
+    `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr} og fnr ${fnr}, totalt ${soeknadResponseData.length} søknader`
   );
 
   return res.status(soeknadResponse.status).json(soeknadResponseData);
