@@ -115,8 +115,7 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
-        message: 'Invalid input',
+        message: 'Det kan ikke være opphold over 16 dager i arbeidsgiverperioden.',
         path: ['agp', 'perioder']
       }
     ]);
@@ -154,14 +153,12 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
-        message: 'Invalid input',
+        message: 'Det kan ikke være overlappende perioder i arbeidsgiverperioden.',
         path: ['agp', 'perioder']
       },
       {
         code: 'custom',
-        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
-        message: 'Invalid input',
+        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
         path: ['agp', 'perioder']
       }
     ]);
@@ -353,8 +350,7 @@ describe('InnsendingSchema', () => {
     expect(InnsendingSchema.safeParse(data).error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
-        message: 'Invalid input',
+        message: 'Arbeidsgiverperioden kan ikke overstige 16 dager.',
         path: ['agp', 'perioder']
       }
     ]);
@@ -1425,8 +1421,7 @@ describe('InnsendingSchema', () => {
     expect(result.error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
-        message: 'Invalid input',
+        message: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
         path: ['agp', 'perioder']
       }
     ]);
@@ -1537,8 +1532,7 @@ describe('InnsendingSchema', () => {
     expect(result.error?.issues).toEqual([
       {
         code: 'custom',
-        error: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
-        message: 'Invalid input',
+        message: 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.',
         path: ['agp', 'perioder']
       }
     ]);
