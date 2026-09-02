@@ -130,7 +130,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
 
-  teamLogger.info(
+  safeTeamLoggerInfo(
     `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr} og fnr ${fnr}`
   );
 
@@ -164,11 +164,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     )?.forespoerselId
   }));
 
-  teamLogger.info(
+  safeTeamLoggerInfo(
     `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr} og fnr ${fnr}, totalt ${soeknadResponseData.length} søknader`
   );
 
   return res.status(soeknadResponse.status).json(soeknadResponseData);
 };
+
+function safeTeamLoggerInfo(message: string) {
+  try {
+    teamLogger.info(message);
+  } catch (e) {
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
+  }
+}
 
 export default handler;
