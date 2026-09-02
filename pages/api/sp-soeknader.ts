@@ -122,6 +122,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
 
+  logger.info(
+    `Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr}`
+  );
+
   if (aktiveSoeknader.length === 0) {
     return res.status(200).json([]);
   }
@@ -151,6 +155,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
     )?.forespoerselId
   }));
+
+  logger.info(
+    `Koblet forespørselIder til aktive søknader for orgnr ${orgnr}, totalt ${soeknadResponseData.length} søknader`
+  );
 
   return res.status(soeknadResponse.status).json(soeknadResponseData);
 };
