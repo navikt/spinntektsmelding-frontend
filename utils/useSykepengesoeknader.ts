@@ -4,21 +4,11 @@ import fetcherSykepengesoeknader from './fetcherSykepengesoeknader';
 import { commonSWRFormOptions } from './commonSWRFormOptions';
 import { buildSWRFormErrorHandler } from './buildSWRFormErrorHandler';
 
-export default function useSykepengesoeknader(
-  identitetsnummer: string | undefined,
-  orgNummer: string,
-  eldsteFom: string | undefined,
-  setError: any
-) {
+export default function useSykepengesoeknader(identitetsnummer: string | undefined, orgNummer: string, setError: any) {
   return useSWRImmutable(
-    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer, eldsteFom],
-    ([url, identitetsnummer, orgNummer, eldsteFom]) =>
-      fetcherSykepengesoeknader(
-        !!identitetsnummer && !!orgNummer && !!eldsteFom ? url : null,
-        identitetsnummer,
-        orgNummer,
-        eldsteFom
-      ),
+    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer],
+    ([url, identitetsnummer, orgNummer]) =>
+      fetcherSykepengesoeknader(!!identitetsnummer && !!orgNummer ? url : null, identitetsnummer, orgNummer),
     {
       onError: buildSWRFormErrorHandler({
         setError,

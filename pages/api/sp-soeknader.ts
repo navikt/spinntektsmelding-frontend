@@ -1,182 +1,102 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
+import handleProxyInit from '../../utils/api/handleProxyInit';
 import fs from 'node:fs';
+import path from 'node:path';
+import { z } from 'zod';
+import { logger } from '@navikt/next-logger';
+import { requireEnv } from '../../utils/api/validateEnv';
 import isMod11Number from '../../utils/isMod11Number';
 import isFnrNumber from '../../utils/isFnrNumber';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
-import safelyParseJSON from '../../utils/safelyParseJson';
-import path from 'node:path';
-import { logger } from '@navikt/next-logger';
-import { teamLogger } from '@navikt/next-logger/team-log';
-import { requireEnv } from '../../utils/api/validateEnv';
 
-type forespoerselIdListeEnhet = {
-  vedtaksperiodeId: string;
-  forespoerselId: string;
+type InntektsData = {
+  gjennomsnitt: number;
+  historikk: Record<string, number>;
 };
 
-export const config = {
-  api: {
-    externalResolver: true
-  }
-};
-
-type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+type InntektsdataResponse = InntektsData | { error: string };
 
 const requestBodySchema = z.object({
   orgnummer: z.string().min(1),
-  fnr: z.string().min(1),
-  eldsteFom: z.string().min(1)
+  fnr: z.string().min(1)
 });
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).json({ error: 'Method Not Allowed' });
+export const config = {
+  api: {
+    externalResolver: true,
+    bodyParser: true
   }
+};
 
+const handler = (req: NextApiRequest, res: NextApiResponse<InntektsdataResponse>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const parsedBody = requestBodySchema.safeParse(req.body);
-
-    const requestBody = parsedBody.data;
-    const mockdata = requestBody?.fnr === '10107400090' ? 'sp-soeknad' : 'sp-soeknad-ingenting';
+    const mockdata = 'inntektData';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(200).json([]);
+      return res.status(404).json({ error: 'Mock not found' });
     }
 
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    return res.status(200).json(data);
-  }
-
-  const token = getToken(req);
-  if (!token) {
-    logger.info('sp-soeknader: Mangler token i header');
-    return res.status(401);
-  }
-
-  const validation = await validateToken(token);
-  if (!validation.ok) {
-    logger.info('sp-soeknader: Validering feilet: ' + JSON.stringify(validation.error));
-    return res.status(401);
-  }
-
-  const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
-  const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
-  const forespoerselIdListeApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('FORESPOERSEL_ID_LISTE_API');
-  const clientId = requireEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID');
-
-  const parsedBody = requestBodySchema.safeParse(req.body);
-  if (!parsedBody.success) {
-    logger.info('sp-soeknader: Ugyldig request body for sykepengesøknader');
-    return res.status(400).json({ error: 'Ugyldig forespørsel' });
-  }
-
-  const requestBody = parsedBody.data;
-  const orgnr = requestBody.orgnummer;
-  const fnr = requestBody.fnr;
-
-  if (!isMod11Number(orgnr)) {
-    logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnr);
-    return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
-  }
-
-  if (!isFnrNumber(fnr)) {
-    logger.info('sp-soeknader: Ugyldig fnr');
-    return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
-  }
-
-  const tokenResponse = await fetch(authApi + '/' + orgnr, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      logger.info('inntektsdata mock data loaded');
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error('Failed to parse mock data:', error);
+      return res.status(500).json({ error: 'Failed to parse mock data' });
     }
-  });
+  } else if (env === 'production') {
+    const parsedBody = requestBodySchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      logger.info('sp-soeknader: Ugyldig request body for sykepengesøknader');
+      return res.status(400).json({ error: 'Ugyldig forespørsel' });
+    }
 
-  if (!tokenResponse.ok) {
-    logger.info('sp-soeknader: Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
-    return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+    const { orgnummer, fnr } = parsedBody.data;
+    if (!isMod11Number(orgnummer)) {
+      logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnummer);
+      return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+    }
+    if (!isFnrNumber(fnr)) {
+      logger.info('sp-soeknader: Ugyldig fnr');
+      return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
+    }
+
+    const bodyToSend = {
+      orgnr: parsedBody.data.orgnummer,
+      sykmeldtFnr: parsedBody.data.fnr,
+      erBehandlingsdager: false
+    };
+
+    try {
+      const basePath = 'http://' + requireEnv('IM_API_URI') + requireEnv('HENT-SOEKNADER');
+      return httpProxyMiddleware(req, res, {
+        target: basePath,
+        onProxyInit: (proxy) => onProxyInitWithBody(proxy, bodyToSend),
+        pathRewrite: [
+          {
+            patternStr: '^/api/sp-soeknader',
+            replaceStr: ''
+          }
+        ]
+      });
+    } catch (error) {
+      console.error('Missing required environment variables:', error);
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
   }
-
-  const obo = await requestOboToken(token, clientId);
-  if (!obo.ok) {
-    logger.info('sp-soeknader: OBO-feil: ' + JSON.stringify(obo.error));
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  const soeknadResponse = await fetch(basePath, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${obo.token}`
-    },
-    body: JSON.stringify({
-      orgnummer: requestBody.orgnummer,
-      fnr: requestBody.fnr,
-      eldsteFom: requestBody.eldsteFom
-    })
-  });
-
-  if (!soeknadResponse.ok) {
-    logger.error('sp-soeknader: Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
-    return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-  }
-
-  const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-  const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
-
-  safeTeamLoggerInfo(
-    `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr} og fnr ${fnr}`
-  );
-
-  if (aktiveSoeknader.length === 0) {
-    return res.status(200).json([]);
-  }
-
-  const idListe = aktiveSoeknader.map((soeknad) => soeknad.vedtaksperiodeId);
-  const forespoerselIdListe = await fetch(forespoerselIdListeApi, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ vedtaksperiodeIdListe: idListe })
-  });
-
-  if (!forespoerselIdListe.ok) {
-    logger.error('sp-soeknader: Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
-    return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
-  }
-
-  const forespoerselIdListeData: forespoerselIdListeEnhet[] = (await safelyParseJSON(
-    forespoerselIdListe
-  )) as forespoerselIdListeEnhet[];
-
-  const soeknadResponseData = aktiveSoeknader.map((soeknad) => ({
-    ...soeknad,
-    forespoerselId: forespoerselIdListeData.find(
-      (forespoersel) => soeknad.vedtaksperiodeId === forespoersel.vedtaksperiodeId
-    )?.forespoerselId
-  }));
-
-  safeTeamLoggerInfo(
-    `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr} og fnr ${fnr}, totalt ${soeknadResponseData.length} søknader`
-  );
-
-  return res.status(soeknadResponse.status).json(soeknadResponseData);
 };
 
-function safeTeamLoggerInfo(message: string) {
-  try {
-    teamLogger.info(message);
-  } catch (e) {
-    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
-  }
+function onProxyInitWithBody(proxy: Parameters<typeof handleProxyInit>[0], body: unknown) {
+  handleProxyInit(proxy);
+  proxy.on('proxyReq', (proxyReq: any) => {
+    const bodyData = JSON.stringify(body);
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+    proxyReq.write(bodyData);
+  });
 }
 
 export default handler;
