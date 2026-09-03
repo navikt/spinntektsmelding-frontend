@@ -267,12 +267,12 @@ const InitieringFritatt: NextPage = () => {
   });
 
   const tmpOrgnr = arbeidsforhold.length === 1 ? arbeidsforhold[0].orgnrUnderenhet : orgnr;
-  const fomDato = formatIsoDate(subYears(new Date(), 1));
+
   const {
     data: spData,
     error: spError,
     isLoading: spLoading
-  } = useSykepengesoeknader(sykmeldt.fnr, tmpOrgnr, fomDato, () => {});
+  } = useSykepengesoeknader(sykmeldt.fnr, tmpOrgnr, () => {});
 
   const harArbeidsforhold = spData && spData.length > 0;
 
