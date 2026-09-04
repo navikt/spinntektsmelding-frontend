@@ -1,5 +1,4 @@
 import React, { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
-import { evaluateFlags, flagsClient, getDefinitions } from '@unleash/nextjs';
 import type { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
@@ -811,7 +810,7 @@ export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const faisuEnabled = isDevelopment ? true : await hentFaisuEnabled(context);
+  const faisuEnabled = true;
 
   const { slug, endre } = context.query;
   const uuid = slug?.[0] ?? '';
@@ -877,18 +876,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
 }
 function isSessionIdValid(existingSessionId: string | undefined) {
   return typeof existingSessionId === 'string' && /^[0-9a-f-]{36}$/i.test(existingSessionId);
-}
-
-async function hentFaisuEnabled(context: GetServerSidePropsContext<{ slug: string[] }>) {
-  const existingSessionId = context.req.cookies['unleash-session-id'];
-  const sessionId = isSessionIdValid(existingSessionId) ? existingSessionId : crypto.randomUUID();
-
-  context.res.appendHeader('set-cookie', `unleash-session-id=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax`);
-  const definitions = await getDefinitions();
-  const { toggles } = evaluateFlags(definitions, { sessionId });
-  const flags = flagsClient(toggles);
-
-  const enabled = flags.isEnabled('faisu-inntektsmelding');
-  flags.sendMetrics().catch(() => {});
-  return enabled;
 }

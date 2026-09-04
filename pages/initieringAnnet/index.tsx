@@ -121,7 +121,7 @@ const InitieringAnnet: NextPage = () => {
   const sykepengePeriodeId: string[] | undefined = useWatch({ name: 'sykepengePeriodeId', control: methods.control });
   const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
 
-  const { data, error } = useArbeidsforhold(sykmeldt.fnr, setError);
+  const { data, error, isLoading: arbeidsforholdIsLoading } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
 
   const handleSykepengePeriodeIdRadio = (value: any) => {
@@ -437,13 +437,15 @@ const InitieringAnnet: NextPage = () => {
                       ))}
                     </CheckboxGroup>
                   )}
-                  {(spError || (organisasjonsnummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
-                    <Alert variant='error'>
-                      Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
-                      har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger er
-                      sendt inn.
-                    </Alert>
-                  )}
+                  {(error || (organisasjonsnummer && data && sykepengePerioder.length === 0)) &&
+                    !arbeidsforholdIsLoading &&
+                    !spIsLoading && (
+                      <Alert variant='error'>
+                        Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
+                        har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
+                        er sendt inn.
+                      </Alert>
+                    )}
                 </>
               )}
               {harValgtPeriodeMedForlengelse && (
