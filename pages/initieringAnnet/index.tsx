@@ -155,11 +155,12 @@ const InitieringAnnet: NextPage = () => {
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
   const fomDato = formatIsoDate(subYears(new Date(), 3));
-  const {
-    data: spData,
-    error: spError,
-    isLoading: spIsLoading
-  } = useSykepengesoeknader(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+  const { data: spData, isLoading: spIsLoading } = useSykepengesoeknader(
+    sykmeldt.fnr,
+    organisasjonsnummer,
+    fomDato,
+    setError
+  );
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 

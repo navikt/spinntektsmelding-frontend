@@ -10,15 +10,6 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import forespoerselType from '../../config/forespoerselType';
 import router from 'next-router-mock';
 
-vi.mock('@unleash/nextjs', () => ({
-  getDefinitions: vi.fn(() => Promise.resolve({})),
-  evaluateFlags: vi.fn(() => ({ toggles: {} })),
-  flagsClient: vi.fn(() => ({
-    isEnabled: vi.fn((flagName: string) => flagName === 'faisu-inntektsmelding'),
-    sendMetrics: vi.fn(() => Promise.resolve())
-  }))
-}));
-
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
   getToken: vi.fn(() => 'mock-token'),
