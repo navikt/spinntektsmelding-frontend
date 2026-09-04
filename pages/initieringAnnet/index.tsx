@@ -455,6 +455,8 @@ const InitieringAnnet: NextPage = () => {
                         id='organisasjonsnummer'
                         register={register}
                         error={errors.organisasjonsnummer?.message as string}
+                        description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
+                        descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
                       />
                     </div>
                   </div>
