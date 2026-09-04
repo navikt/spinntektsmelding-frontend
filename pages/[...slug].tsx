@@ -874,6 +874,3 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     }
   };
 }
-function isSessionIdValid(existingSessionId: string | undefined) {
-  return typeof existingSessionId === 'string' && /^[0-9a-f-]{36}$/i.test(existingSessionId);
-}
