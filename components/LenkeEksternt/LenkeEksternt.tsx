@@ -1,7 +1,8 @@
-import { Link } from '@navikt/ds-react';
+import { Link, type LinkProps } from '@navikt/ds-react';
 
-interface LenkeEksterntProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface LenkeEksterntProps extends Omit<LinkProps, 'children'> {
   isHidden?: boolean;
+  children?: React.ReactNode;
 }
 
 export default function LenkeEksternt(props: Readonly<LenkeEksterntProps>) {

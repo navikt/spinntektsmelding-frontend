@@ -27,7 +27,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await test.step('Gå til kvitteringsside og trykk Endre', async () => {
       await expect(page).toHaveURL(/\/im-dialog\/kvittering\/b4e2f8a1-6c3d-4e9f-82b7-1a5c9d0e4f63/);
       await page.getByRole('button', { name: /Endre/ }).first().click();
-      await expect(page).toHaveURL(baseUrl + '?endre=true');
+      await expect(page).toHaveURL(baseUrl);
     });
 
     await test.step('Oppdater månedslønn', async () => {

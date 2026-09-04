@@ -12,6 +12,8 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import ButtonEndre from '../ButtonEndre';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import ButtonTilbakestill from '../ButtonTilbakestill';
+import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
+import Feilmelding from '../Feilmelding';
 
 interface FravaerEnkeltAnsattforholdProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -30,6 +32,7 @@ export default function FravaerEnkeltAnsattforhold({
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
   const setFravaersperiodeDato = useBoundStore((state) => state.setFravaersperiodeDato);
   const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
+  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -81,9 +84,11 @@ export default function FravaerEnkeltAnsattforhold({
           {endreSykemelding && (
             <Periodevelger
               fomTekst='Fra'
-              fomID={`fom-${periode.id}`}
+              fomID={ensureValidHtmlId(`sykmeldingsperioder.${periodeIndex}.fom`)}
+              fomError={visFeilmeldingTekst(`sykmeldingsperioder.${periodeIndex}.fom`)}
               tomTekst='Til'
-              tomID={`tom-${periode.id}`}
+              tomID={ensureValidHtmlId(`sykmeldingsperioder.${periodeIndex}.tom`)}
+              tomError={visFeilmeldingTekst(`sykmeldingsperioder.${periodeIndex}.tom`)}
               onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato?.(periode.id, oppdatertPeriode)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
@@ -95,6 +100,10 @@ export default function FravaerEnkeltAnsattforhold({
           )}
         </div>
       ))}
+      {visFeilmeldingTekst(`sykmeldingsperioder`) && (
+        <Feilmelding id='sykmeldingsperioder'>{visFeilmeldingTekst(`sykmeldingsperioder`)}</Feilmelding>
+      )}
+
       {skjemastatus !== SkjemaStatus.SELVBESTEMT && endreSykemelding && (
         <ButtonEndre onClick={(event) => clickEndreFravaersperiodeHandler(event)} />
       )}

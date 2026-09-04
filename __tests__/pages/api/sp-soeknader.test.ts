@@ -59,8 +59,8 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 401 when we have a invalid token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: false, error: 'error' });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: false, error: 'error' });
 
     const req = {
       method: 'POST',
@@ -83,8 +83,8 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 400 when we dont have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',
@@ -115,9 +115,9 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 200 when we have a token', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
+    vi.mocked(requestOboToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',
@@ -152,9 +152,9 @@ describe('sp-soeknader API', () => {
   });
 
   it('should return 200 when we have a token and vedtaksperiodeliste', async () => {
-    getToken.mockReturnValue('token');
-    validateToken.mockResolvedValue({ ok: true });
-    requestOboToken.mockResolvedValue({ ok: true });
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
+    vi.mocked(requestOboToken).mockResolvedValue({ ok: true });
 
     const req = {
       method: 'POST',
@@ -226,7 +226,7 @@ describe('sp-soeknader API', () => {
       expect(JSON.parse(res._getData())).toEqual(mockData);
     });
 
-    it('should return 404 when mock file does not exist in development', async () => {
+    it('should return 200 when mock file does not exist in development', async () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(false);
 
       const { req, res } = createMocks({
@@ -236,8 +236,8 @@ describe('sp-soeknader API', () => {
 
       await handler(req, res);
 
-      expect(res._getStatusCode()).toBe(404);
-      expect(JSON.parse(res._getData())).toEqual({ error: 'Mock not found' });
+      expect(res._getStatusCode()).toBe(200);
+      expect(JSON.parse(res._getData())).toEqual([]);
     });
 
     it('should read mock file from correct path', async () => {
@@ -252,8 +252,8 @@ describe('sp-soeknader API', () => {
 
       await handler(req, res);
 
-      expect(existsSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad.json'));
-      expect(readFileSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad.json'), 'utf-8');
+      expect(existsSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad-ingenting.json'));
+      expect(readFileSpy).toHaveBeenCalledWith(expect.stringContaining('mockdata/sp-soeknad-ingenting.json'), 'utf-8');
     });
 
     it('should not check token in development mode', async () => {

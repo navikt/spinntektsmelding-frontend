@@ -11,6 +11,28 @@
     "soknadsperioder": [{ "fom": "2026-02-01", "tom": "2026-02-08", "grad": 100, "faktiskGrad": 50 }]
   },
   {
+    "sykepengesoknadUuid": "11117927-3F0F-40A5-8E87-118C2FD61ABC",
+    "fom": "2024-08-17",
+    "tom": "2024-08-23",
+    "sykmeldingId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "status": "NY",
+    "startSykeforlop": "2024-08-06",
+    "egenmeldingsdagerFraSykmelding": ["2024-08-16"],
+    "vedtaksperiodeId": "0B67CD17-3183-4E72-98EB-98B13AF77F27",
+    "soknadsperioder": [{ "fom": "2026-02-01", "tom": "2026-02-08", "grad": 100, "faktiskGrad": 50 }]
+  },
+  {
+    "sykepengesoknadUuid": "33C99335-1C01-40C3-A58F-C12CEAD36E5C",
+    "fom": "2024-09-24",
+    "tom": "2024-09-30",
+    "sykmeldingId": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
+    "status": "NY",
+    "startSykeforlop": "2024-09-24",
+    "egenmeldingsdagerFraSykmelding": ["2024-09-08", "2024-09-07", "2024-09-06"],
+    "vedtaksperiodeId": "9B96308C-5649-4580-86EE-A22040E4C963",
+    "soknadsperioder": [{ "fom": "2026-02-01", "tom": "2026-02-08", "grad": 100, "faktiskGrad": 50 }]
+  },
+  {
     "sykepengesoknadUuid": "399a6090-1ec9-48e5-b53c-df60d9e95e0e",
     "fom": "2024-09-11",
     "tom": "2024-09-15",

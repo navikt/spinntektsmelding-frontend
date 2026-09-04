@@ -54,14 +54,20 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     clearErrors('agp.perioder');
   });
 
+  const onSetError = useEffectEvent((...args: Parameters<typeof setError>) => {
+    setError(...args);
+  });
+
+  const antallValgteDager = agpFraSkjema?.length;
+
   useEffect(() => {
-    if (agpFraSkjema && agpFraSkjema.length !== 12) {
+    if (antallValgteDager !== undefined && antallValgteDager !== 12) {
       const feil = 'Du må velge 12 behandlingsdager i arbeidsgiverperioden.';
-      setError('agp.perioder', { type: 'manual', message: feil });
+      onSetError('agp.perioder', { type: 'manual', message: feil });
     } else {
       onClearAgpPerioder();
     }
-  }, [agpFraSkjema, setError]);
+  }, [antallValgteDager]);
 
   if (!behandlingsdager || behandlingsdager.length === 0) {
     return null;

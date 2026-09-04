@@ -64,7 +64,7 @@ function buildState(overrides: Partial<Record<string, any>> = {}) {
 describe('RefusjonArbeidsgiver', () => {
   it('should show full lønn radio when skalViseArbeidsgiverperiode is true', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' } }}>
@@ -77,7 +77,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should show utbetalt field when agp.fullLonn is Nei', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
@@ -92,7 +92,7 @@ describe('RefusjonArbeidsgiver', () => {
   it('should show a warning when sykefravaer betviles', () => {
     vi.clearAllMocks();
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper
@@ -107,7 +107,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should update utbetalt when text field is changed', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
@@ -123,7 +123,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should convert norwegian decimal input for utbetalt field', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ fullLonn: 'Nei' }}>
@@ -141,7 +141,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('handles agp.fullLonn = Ja path without showing utbetalt field', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Ja' } }}>
@@ -154,7 +154,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should show refusjon fields when lonnISykefravaeret is Ja', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ kreverRefusjon: 'Ja' }}>
@@ -167,7 +167,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should not show refusjon fields when lonnISykefravaeret is Nei', () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     render(
       <TestWrapper defaultValues={{ kreverRefusjon: 'Nei' }}>
@@ -180,7 +180,7 @@ describe('RefusjonArbeidsgiver', () => {
 
   it('should have no accessibility violations', async () => {
     const state = buildState();
-    (useBoundStore as unknown as Mock).mockImplementation((fn) => fn(state));
+    (useBoundStore as unknown as unknown as Mock).mockImplementation((fn) => fn(state));
 
     const { container } = render(
       <TestWrapper defaultValues={{ agp: { fullLonn: 'Nei' }, kreverRefusjon: 'Ja' }}>

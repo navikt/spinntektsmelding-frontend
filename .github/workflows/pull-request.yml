@@ -27,7 +27,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -64,7 +64,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -101,7 +101,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -137,7 +137,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -149,4 +149,4 @@ jobs:
             ${{ runner.os }}-pnpm-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
-      - uses: codex-/knip-reporter@438819707021437618b2527e668b0d1e491db05e
+      - uses: codex-/knip-reporter@7ee82434e4adcb560038aaa59bc647fe8c3c6ee4

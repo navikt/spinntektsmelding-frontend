@@ -31,7 +31,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   // Setup default mock store state
   const setupMockStore = () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         sykmeldt: { navn: 'John Doe', fnr: '12345678901' },
         avsender: { orgnr: '987654321', orgNavn: 'Example Company', navn: 'Jane Doe', tlf: '12345678' },
@@ -64,7 +64,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should return false if form is not dirty', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(vi.fn().mockReturnValue({ success: true }));
 
     const { result } = renderHook(() =>
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
@@ -78,7 +78,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle validation errors', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
         success: false,
         error: { issues: [{ error: 'test error', path: ['test', 'test2'] }] }
@@ -101,7 +101,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle successful submission', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
         success: true,
         data: {
@@ -132,7 +132,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle server error 500', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
         success: true,
         data: {
@@ -166,7 +166,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   it('should handle unauthorized error 401', async () => {
     setupMockStore();
-    (useFyllAapenInnsending as Mock).mockReturnValue(
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
         success: true,
         data: {

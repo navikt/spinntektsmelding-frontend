@@ -317,7 +317,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
               <Skillelinje />
             </>
           )}
-          <BodyShort>Kvittering - innsendt inntektsmelding{aktivInnsendingTidspunkt}</BodyShort>
+          <BodyShort>Inntektsmelding innsendt{aktivInnsendingTidspunkt}</BodyShort>
           <HStack justify='space-between' className={lokalStyling.buttonWrapper + ' skjul-fra-print'}>
             <HStack gap='space-64'>
               {!kvitteringEksterntSystem?.avsenderSystem && <ButtonEndre onClick={clickEndre} />}

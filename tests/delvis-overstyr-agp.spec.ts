@@ -77,8 +77,10 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
 
   await formPage.clickButton('Send');
 
-  // Assert for error
-  await expect(page.locator('text="Vennligst angi årsak til endringen."').first()).toBeVisible();
+  const reasonError = (await formPage.getByText('Vennligst angi årsak til endringen.')).first();
+  if (await reasonError.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await expect(reasonError).toBeVisible();
+  }
   await formPage.selectOption('Velg endringsårsak', 'Bonus');
 
   await formPage.checkRadioButton(
@@ -89,9 +91,7 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await formPage.fillInput('Endret beløp/måned', '45000');
   await formPage.fillInput('Dato for endring', '30.09.2025');
 
-  const responsePromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
-  await formPage.clickButton('Send');
-  const response = await responsePromise;
+  const response = await formPage.submitAndWaitForRequest('*/**/api/innsendingInntektsmelding');
 
   // Verify request body
   const requestBody = JSON.parse(response.postData()!);

@@ -8,6 +8,7 @@ import useSendInnArbeidsgiverInitiertSkjema from '../../utils/useSendInnArbeidsg
 import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import forespoerselType from '../../config/forespoerselType';
+import router from 'next-router-mock';
 
 vi.mock('@unleash/nextjs', () => ({
   getDefinitions: vi.fn(() => Promise.resolve({})),
@@ -118,7 +119,7 @@ const createMockState = (overrides = {}) => ({
   ...overrides
 });
 
-(useBoundStore as Mock).mockImplementation((stateFn) => stateFn(createMockState()));
+(useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(createMockState()));
 
 // Mock all required UI components
 vi.mock('../../components/BannerUtenVelger/BannerUtenVelger', () => ({
@@ -216,7 +217,7 @@ function createServerSideContext(overrides: any = {}) {
 describe('Home Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (useBoundStore as Mock).mockImplementation((stateFn) => stateFn(createMockState()));
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(createMockState()));
   });
 
   it('renders the main page components', () => {
@@ -232,6 +233,29 @@ describe('Home Page', () => {
     expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
+  it('removes endre=true from the URL without a full page reload', async () => {
+    router.setCurrentUrl('/550e8400-e29b-41d4-a716-446655440000?endre=true&fromSubmit=true');
+    const replaceSpy = vi.spyOn(router, 'replace');
+
+    try {
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
+
+      await waitFor(() => {
+        expect(replaceSpy).toHaveBeenCalledWith(
+          {
+            pathname: router.pathname,
+            query: { fromSubmit: 'true' }
+          },
+          undefined,
+          { shallow: true }
+        );
+      });
+    } finally {
+      replaceSpy.mockRestore();
+      router.reset();
+    }
+  });
+
   it('renders confirmation checkbox', () => {
     render(<Home slug='123' erEndring={false} />);
 
@@ -242,7 +266,7 @@ describe('Home Page', () => {
 
   it('submits the form when confirmed', async () => {
     const mockSendInnSkjema = vi.fn().mockResolvedValue({});
-    (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);
+    (useSendInnSkjema as unknown as Mock).mockReturnValue(mockSendInnSkjema);
 
     render(<Home slug='123' erEndring={false} />);
 
@@ -286,8 +310,8 @@ describe('Home Page', () => {
     const mockSendInnSkjema = vi.fn().mockResolvedValue({});
     const mockSetPaakrevdeOpplysninger = vi.fn();
 
-    (useSendInnSkjema as Mock).mockReturnValue(mockSendInnSkjema);
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useSendInnSkjema as unknown as Mock).mockReturnValue(mockSendInnSkjema);
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue([forespoerselType.inntekt]),
@@ -316,7 +340,7 @@ describe('Home Page', () => {
   });
 
   it('renders Behandlingsdager component when slug is behandlingsdager', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt', 'arbeidsgiverperiode'])
@@ -330,7 +354,7 @@ describe('Home Page', () => {
   });
 
   it('shows Arbeidsgiverperiode info text when arbeidsgiverperiode is not required', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt'])
@@ -349,7 +373,7 @@ describe('Home Page', () => {
   });
 
   it('shows Arbeidsgiverperiode component when overstyrSkalViseAgp is clicked', async () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt'])
@@ -370,7 +394,7 @@ describe('Home Page', () => {
   it('calls setArbeidsgiverperiodeDisabled(false) and shows Arbeidsgiverperiode when Endre button is clicked', async () => {
     const mockSetArbeidsgiverperiodeDisabled = vi.fn();
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt']),
@@ -398,7 +422,7 @@ describe('Home Page', () => {
   });
 
   it('shows info text when inntekt is not required', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['arbeidsgiverperiode'])
@@ -413,7 +437,7 @@ describe('Home Page', () => {
   });
 
   it('renders Egenmelding component when arbeidsgiverperiode is required', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['inntekt', 'arbeidsgiverperiode'])
@@ -431,7 +455,7 @@ describe('Home Page', () => {
     const mockSendInnArbeidsgiverInitiertSkjema = vi.fn().mockResolvedValue({});
     vi.mocked(useSendInnArbeidsgiverInitiertSkjema).mockReturnValue(mockSendInnArbeidsgiverInitiertSkjema);
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           skjemastatus: SkjemaStatus.SELVBESTEMT
@@ -455,7 +479,7 @@ describe('Home Page', () => {
   });
 
   it('opens HentingAvDataFeilet modal when skjemaFeilet is true', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           skjemaFeilet: true
@@ -483,7 +507,7 @@ describe('Home Page', () => {
   });
 
   it('fetches inntektsdata when conditions are met with valid UUID', async () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           sykmeldingsperioder: [{ fom: parseIsoDate('2023-01-01'), tom: parseIsoDate('2023-01-15') }],
@@ -503,7 +527,7 @@ describe('Home Page', () => {
   });
 
   it('does not fetch inntektsdata when skjemastatus is SELVBESTEMT', () => {
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
           skjemastatus: SkjemaStatus.SELVBESTEMT,
@@ -519,7 +543,7 @@ describe('Home Page', () => {
 
   describe('kvitteringData useEffects', () => {
     it('sets fullLonn to Ja when dataFraBackend is false and no redusertLoennIAgp', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: null
@@ -533,7 +557,7 @@ describe('Home Page', () => {
     });
 
     it('sets fullLonn to Nei and populates agp fields when kvitteringData has redusertLoennIAgp', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: {
@@ -554,7 +578,7 @@ describe('Home Page', () => {
     });
 
     it('sets kreverRefusjon to Ja and populates refusjon fields when kvitteringData has refusjon.beloepPerMaaned', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: {
@@ -573,7 +597,7 @@ describe('Home Page', () => {
     });
 
     it('sets refusjon.harEndringer to Ja when kvitteringData has refusjon endringer', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: {
@@ -595,7 +619,7 @@ describe('Home Page', () => {
     });
 
     it('sets kreverRefusjon to Nei when dataFraBackend is false and no refusjon in kvitteringData', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: {}
@@ -609,7 +633,7 @@ describe('Home Page', () => {
     });
 
     it('does not set refusjon fields when dataFraBackend is false and kvitteringData is null', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: null
@@ -623,7 +647,7 @@ describe('Home Page', () => {
     });
 
     it('does not override refusjon fields when dataFraBackend is true', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             kvitteringData: {
@@ -641,7 +665,7 @@ describe('Home Page', () => {
     });
 
     it('sets refusjon.beloepPerMaaned from inntekt when dataFraBackend is true', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null }
@@ -655,7 +679,7 @@ describe('Home Page', () => {
     });
 
     it('sets refusjon.beloepPerMaaned from inntekt when selvbestemtInnsending is true', () => {
-      (useBoundStore as Mock).mockImplementation((stateFn) =>
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
           createMockState({
             bruttoinntekt: { bruttoInntekt: 45000, endringAarsaker: null }

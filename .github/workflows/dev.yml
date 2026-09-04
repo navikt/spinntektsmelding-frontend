@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Build and push image and SBOM to OCI registry
-        uses: nais/docker-build-push@2d2b0a7193e65422b7f0355d4afb445e0a8b2cc3
+        uses: nais/docker-build-push@8e41f1f58749b9248e376c25d33bfbdd2b1163c0
         id: docker-build-push
         with:
           team: helsearbeidsgiver
@@ -53,13 +53,13 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
       - name: deploy new Unleash Apikey to dev
-        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
+        uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: dev-gcp
           RESOURCE: nais/unleash-apitoken-dev.yaml
 
       - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
+        uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: dev-gcp
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.

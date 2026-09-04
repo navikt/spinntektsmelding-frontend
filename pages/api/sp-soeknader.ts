@@ -3,11 +3,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import fs from 'node:fs';
 import isMod11Number from '../../utils/isMod11Number';
+import isFnrNumber from '../../utils/isFnrNumber';
 import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
 import { requireEnv } from '../../utils/api/validateEnv';
 
 type forespoerselIdListeEnhet = {
@@ -37,11 +39,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const mockdata = 'sp-soeknad';
+    const parsedBody = requestBodySchema.safeParse(req.body);
+
+    const requestBody = parsedBody.data;
+    const mockdata = requestBody?.fnr === '10107400090' ? 'sp-soeknad' : 'sp-soeknad-ingenting';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'Mock not found' });
+      return res.status(200).json([]);
     }
 
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
@@ -50,13 +55,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const token = getToken(req);
   if (!token) {
-    logger.info('Mangler token i header');
+    logger.info('sp-soeknader: Mangler token i header');
     return res.status(401);
   }
 
   const validation = await validateToken(token);
   if (!validation.ok) {
-    logger.info('Validering feilet: ' + JSON.stringify(validation.error));
+    logger.info('sp-soeknader: Validering feilet: ' + JSON.stringify(validation.error));
     return res.status(401);
   }
 
@@ -67,16 +72,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
   const parsedBody = requestBodySchema.safeParse(req.body);
   if (!parsedBody.success) {
-    logger.info('Ugyldig request body for sykepengesøknader');
+    logger.info('sp-soeknader: Ugyldig request body for sykepengesøknader');
     return res.status(400).json({ error: 'Ugyldig forespørsel' });
   }
 
   const requestBody = parsedBody.data;
   const orgnr = requestBody.orgnummer;
+  const fnr = requestBody.fnr;
 
   if (!isMod11Number(orgnr)) {
-    logger.info('Ugyldig orgnr: ' + orgnr);
+    logger.info('sp-soeknader: Ugyldig orgnr: ' + orgnr);
     return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
+  }
+
+  if (!isFnrNumber(fnr)) {
+    logger.info('sp-soeknader: Ugyldig fnr');
+    return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
   }
 
   const tokenResponse = await fetch(authApi + '/' + encodeURIComponent(orgnr), {
@@ -88,13 +99,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!tokenResponse.ok) {
-    logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
+    logger.info('sp-soeknader: Feil ved kontroll av tilgang: ' + tokenResponse.statusText);
     return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
   }
 
   const obo = await requestOboToken(token, clientId);
   if (!obo.ok) {
-    logger.info('OBO-feil: ' + JSON.stringify(obo.error));
+    logger.info('sp-soeknader: OBO-feil: ' + JSON.stringify(obo.error));
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -112,12 +123,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!soeknadResponse.ok) {
-    logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
+    logger.error('sp-soeknader: Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
     return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
   }
 
   const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
   const aktiveSoeknader = soeknadData.filter((soeknad) => soeknad.vedtaksperiodeId);
+
+  safeTeamLoggerInfo(
+    `sp-soeknader: Fant ${soeknadData.length} søknader hvorav ${aktiveSoeknader.length} aktive søknader for orgnr ${orgnr} og fnr ${fnr}`
+  );
 
   if (aktiveSoeknader.length === 0) {
     return res.status(200).json([]);
@@ -134,7 +149,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   });
 
   if (!forespoerselIdListe.ok) {
-    logger.error('Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
+    logger.error('sp-soeknader: Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
     return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
   }
 
@@ -149,7 +164,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     )?.forespoerselId
   }));
 
+  safeTeamLoggerInfo(
+    `sp-soeknader: Koblet forespørselIder til aktive søknader for orgnr ${orgnr} og fnr ${fnr}, totalt ${soeknadResponseData.length} søknader`
+  );
+
   return res.status(soeknadResponse.status).json(soeknadResponseData);
 };
+
+function safeTeamLoggerInfo(message: string) {
+  try {
+    teamLogger.info(message);
+  } catch (e) {
+    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
+  }
+}
 
 export default handler;

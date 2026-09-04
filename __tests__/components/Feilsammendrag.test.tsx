@@ -11,8 +11,8 @@ vi.mock('../../utils/formatRHFFeilmeldinger');
 
 describe('Feilsammendrag', () => {
   it('should render null if there are no errors', () => {
-    (formatRHFFeilmeldinger as Mock).mockReturnValue([]);
-    (useBoundStore as Mock).mockReturnValue([]);
+    (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue([]);
+    (useBoundStore as unknown as Mock).mockReturnValue([]);
 
     const { container } = render(<Feilsammendrag skjemafeil={undefined} />);
     expect(container.firstChild).toBeNull();
@@ -23,8 +23,8 @@ describe('Feilsammendrag', () => {
       { text: 'Error 1', felt: 'field1' },
       { text: 'Error 2', felt: 'field2' }
     ];
-    (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
-    (useBoundStore as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
+    (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
+    (useBoundStore as unknown as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
 
     const { getByText } = render(<Feilsammendrag skjemafeil={mockErrors} />);
     expect(getByText('Error 1')).toBeInTheDocument();
@@ -34,8 +34,8 @@ describe('Feilsammendrag', () => {
   it('should combine errors from state and props', () => {
     const mockErrors = [{ text: 'Error 1', felt: 'field1' }];
     const stateErrors = [{ text: 'State Error', felt: 'field2' }];
-    (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
-    (useBoundStore as Mock).mockReturnValueOnce(stateErrors).mockReturnValueOnce(true);
+    (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
+    (useBoundStore as unknown as Mock).mockReturnValueOnce(stateErrors).mockReturnValueOnce(true);
 
     const { getByText } = render(<Feilsammendrag skjemafeil={mockErrors} />);
     expect(getByText('Error 1')).toBeInTheDocument();
@@ -47,8 +47,8 @@ describe('Feilsammendrag', () => {
       { text: 'Error 1', felt: 'field1' },
       { text: 'Error 2', felt: 'field2' }
     ];
-    (formatRHFFeilmeldinger as Mock).mockReturnValue(mockErrors);
-    (useBoundStore as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
+    (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
+    (useBoundStore as unknown as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
 
     const { container } = render(<Feilsammendrag skjemafeil={mockErrors} />);
     const results = await axe(container);

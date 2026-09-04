@@ -53,7 +53,7 @@ describe('fetcherArbeidsforhold', () => {
       ok: false
     } as any);
 
-    await expect(fetcherArbeidsforhold(url, identitetsnummer)).rejects.toThrowError(
+    await expect(fetcherArbeidsforhold(url, identitetsnummer)).rejects.toThrow(
       'Kunne ikke tolke resultatet fra serveren'
     );
     expect(global.fetch).toHaveBeenCalledWith(url, {

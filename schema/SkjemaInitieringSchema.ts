@@ -24,14 +24,13 @@ const SkjemaInitieringSchema = z
       ),
     navn: z.string().nullable().optional(),
     personnummer: PersonnummerSchema.optional(),
-    // sykmeldingId: z.uuid('Du må velge en periode for behandlingsdager'),
     endreRefusjon: z.string().optional()
   })
   .superRefine((value, ctx) => {
     if (value.endreRefusjon === 'Ja') {
       ctx.issues.push({
         code: 'custom',
-        error: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
+        message: 'Endring av refusjon for den ansatte må gjøres i den opprinnelige inntektsmeldingen.',
         path: ['endreRefusjon'],
         input: ''
       });
@@ -40,7 +39,7 @@ const SkjemaInitieringSchema = z
     if (value.endreRefusjon === 'Nei') {
       ctx.issues.push({
         code: 'custom',
-        error: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
+        message: 'Du kan ikke sende inn en inntektsmelding som forlengelse av en tidligere inntektsmelding.',
         path: ['endreRefusjon'],
         input: ''
       });

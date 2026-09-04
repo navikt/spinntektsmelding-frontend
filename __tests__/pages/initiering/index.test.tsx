@@ -31,9 +31,9 @@ describe('Initiering Page', () => {
 
   beforeEach(() => {
     // mock next/router
-    (useRouter as unknown as Mock).mockReturnValue({ push: pushMock });
+    (useRouter as unknown as unknown as Mock).mockReturnValue({ push: pushMock });
 
-    (useBoundStore as Mock).mockImplementation((stateFn) =>
+    (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         __esModule: true,
         default: vi.fn(),

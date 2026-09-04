@@ -166,9 +166,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
     return;
   }
 
-  const valgteArbeidsforhold = arbeidsforhold.filter((item) => item.inkludertISykefravaer);
-
-  valgteArbeidsforhold.forEach((item, index) => {
+  arbeidsforhold.forEach((item, index) => {
     if (item.inntekt === undefined || item.inntekt === null) {
       ctx.issues.push({
         code: 'custom',
@@ -303,7 +301,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
           .number({ error: 'Vennligst angi hvor mye som refunderes per måned.' })
           .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
         isEditing: z.boolean(),
-        harEndringer: z.enum(['Ja', 'Nei']).or(z.undefined()),
+        harEndringer: z.enum(['Ja', 'Nei']).optional(),
         endringer: z.array(RefusjonEndringSchema).optional()
       }),
       kreverRefusjon: z
@@ -331,16 +329,16 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 })
               })
             )
-            .or(z.undefined()),
+            .optional(),
           erBehandlingsdager: z.boolean().optional()
         })
         .or(z.object({}))
-        .or(z.undefined()),
+        .optional(),
       flereArbeidsforhold: skalValidereFaisu
         ? z
             .object({
-              harLikLoenn: z.enum(['Ja', 'Nei']).or(z.undefined()),
-              erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).or(z.undefined()),
+              harLikLoenn: z.enum(['Ja', 'Nei']).optional(),
+              erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).optional(),
               arbeidsforhold: z
                 .array(
                   z.object({
@@ -350,23 +348,23 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                           issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
                       })
                       .min(0, 'Månedslønn må være større enn eller lik 0.')
-                      .or(z.undefined()),
+                      .optional(),
                     stillingsprosent: z
                       .number({
                         error: (issue) =>
                           issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
                       })
                       .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-                      .or(z.undefined()),
-                    yrkesKode: z.string().or(z.undefined()),
-                    yrkesbeskrivelse: z.string().or(z.undefined()),
+                      .optional(),
+                    yrkesKode: z.string().optional(),
+                    yrkesbeskrivelse: z.string().optional(),
                     inkludertISykefravaer: z.boolean().optional()
                   })
                 )
-                .or(z.undefined())
+                .optional()
             })
-            .or(z.undefined())
-        : z.any(),
+            .optional()
+        : z.any().optional(),
       avsenderTlf: TelefonNummerSchema,
       opplysningstyper: z.array(OpplysningstypeSchema).optional()
     })

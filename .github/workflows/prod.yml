@@ -24,7 +24,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -60,7 +60,7 @@ jobs:
           node-version: "24.0"
           registry-url: "https://npm.pkg.github.com"
       - name: Setup pnpm
-        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86
       - name: Cache pnpm files
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         with:
@@ -91,7 +91,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Build and push image and SBOM to OCI registry
-        uses: nais/docker-build-push@2d2b0a7193e65422b7f0355d4afb445e0a8b2cc3
+        uses: nais/docker-build-push@8e41f1f58749b9248e376c25d33bfbdd2b1163c0
         id: docker-build-push
         with:
           team: helsearbeidsgiver
@@ -117,13 +117,13 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
       - name: deploy new Unleash Apikey to prod
-        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
+        uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: prod-gcp
           RESOURCE: nais/unleash-apitoken-prod.yaml
 
       - name: Deploy to Nais
-        uses: nais/deploy/actions/deploy@fc3eae3edebabdf67f7592102ae16176d5ba3b5f
+        uses: nais/deploy/actions/deploy@027a91857992525139798892f2804b0ca21f4af6
         env:
           CLUSTER: prod-gcp
           RESOURCE: naiserator.yaml #, topic.yaml, statefulset.yaml, etc.

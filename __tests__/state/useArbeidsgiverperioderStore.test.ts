@@ -603,7 +603,7 @@ describe('useBoundStore', () => {
   it('should reset Arbeidsgiverperiode to its initial value.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    (nanoid as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
+    (nanoid as unknown as Mock).mockReturnValueOnce('1').mockReturnValueOnce('2');
 
     const mottattArbeidsgiverperiode: Array<MottattPeriode> = [
       {
