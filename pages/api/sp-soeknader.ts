@@ -90,7 +90,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
   }
 
-  const tokenResponse = await fetch(authApi + '/' + orgnr, {
+  const tokenResponse = await fetch(authApi + '/' + encodeURIComponent(orgnr), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
