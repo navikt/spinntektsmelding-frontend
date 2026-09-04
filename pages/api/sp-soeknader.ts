@@ -32,7 +32,7 @@ export const config = {
 const handler = (req: NextApiRequest, res: NextApiResponse<InntektsdataResponse>) => {
   const env = process.env.NODE_ENV;
   if (env === 'development') {
-    const mockdata = 'inntektData';
+    const mockdata = 'sp-soeknad-forespoersel';
     const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
     if (!fs.existsSync(filePath)) {
