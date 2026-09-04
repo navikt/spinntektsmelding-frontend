@@ -65,7 +65,7 @@
     "eslint-config-next": "^16.3.2",
     "husky": "^9.1.7",
     "jest-axe": "11.0.0",
-    "knip": "6.32.2",
+    "knip": "6.34.0",
     "lint-staged": "17.4.1",
     "msw": "^2.15.0",
     "next-router-mock": "1.0.5",
