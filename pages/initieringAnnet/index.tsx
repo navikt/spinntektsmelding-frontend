@@ -144,6 +144,10 @@ const InitieringAnnet: NextPage = () => {
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
   const sykepengePeriodeId: string[] | undefined = useWatch({ name: 'sykepengePeriodeId', control: methods.control });
   const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
+  const forespurtSykepengePeriodeId: string | undefined = useWatch({
+    name: 'forespurtSykepengePeriodeId',
+    control: methods.control
+  });
 
   const { data, error, isLoading: arbeidsforholdIsLoading } = useArbeidsforhold(sykmeldt.fnr, setError);
   let orgNavnMangler = false;
@@ -421,6 +425,8 @@ const InitieringAnnet: NextPage = () => {
     field.onChange(value);
   };
 
+  const disablePeriodeCheck = forespurtSykepengePeriodeId !== 'andrePerioder';
+
   return (
     <div className={styles.container}>
       <Head>
@@ -462,126 +468,135 @@ const InitieringAnnet: NextPage = () => {
                   </div>
                   {spIsLoading && <Loading />}
                   {spData && organisasjonsnummer && (
-                    <Controller
-                      name='forespurtSykepengePeriodeId'
-                      control={methods.control}
-                      render={({ field }) => (
-                        <RadioGroup
-                          legend='Nav har bedt om inntektsmelding for disse periodene:'
-                          id='forespurtSykepengePeriodeId'
-                          error={errors.forespurtSykepengePeriodeId?.message as string}
-                          value={field.value ?? ''}
-                          onChange={(value) => onRadioChange(value, field)}
-                          onBlur={field.onBlur}
-                          ref={field.ref}
-                        >
-                          {forespoersler.map((forespoersel) => (
-                            <Radio key={forespoersel.forespoerselId} value={forespoersel.forespoerselId}>
-                              {forespoersel.sykmeldingsperioder.map((periode) => (
-                                <span key={periode.fom}>
-                                  {formatDate(parseIsoDate(periode.fom))} - {formatDate(parseIsoDate(periode.tom))}{' '}
-                                </span>
-                              ))}
-                              {forespoersel.egenmeldingsperioder.map((periode) => (
-                                <span key={periode.fom}>
-                                  Egenmeldingsperiode:
-                                  {formatDate(parseIsoDate(periode.fom))} - {formatDate(parseIsoDate(periode.tom))}{' '}
-                                </span>
-                              ))}
-                              <br />
-                              {!!forespoersel.erBesvart && ' (Besvart)'}
-                            </Radio>
-                          ))}
-                        </RadioGroup>
-                      )}
-                    />
-                  )}
-                  {spData?.soeknaderArbeidstaker && (
-                    <Controller
-                      name='sykepengePeriodeId'
-                      control={methods.control}
-                      render={({ field }) => (
-                        <>
-                          <Radio value='andrePerioder' key='andrePerioder'>
-                            Eller velg en annen periode som du ønsker å sende inntektsmelding for:
-                          </Radio>
-                          <CheckboxGroup
-                            legend='Velg en periode som du ønsker å sende inntektsmelding for:'
-                            hideLegend
-                            id='sykepengePeriodeId'
-                            error={errors.sykepengePeriodeId?.message as string}
-                            value={field.value ?? []}
-                            onChange={field.onChange}
+                    <>
+                      <Controller
+                        name='forespurtSykepengePeriodeId'
+                        control={methods.control}
+                        render={({ field }) => (
+                          <RadioGroup
+                            legend='Nav har bedt om inntektsmelding for disse periodene:'
+                            id='forespurtSykepengePeriodeId'
+                            error={errors.forespurtSykepengePeriodeId?.message as string}
+                            value={field.value ?? ''}
+                            onChange={(value) => onRadioChange(value, field)}
                             onBlur={field.onBlur}
                             ref={field.ref}
-                            className={lokalStyling.checkboxGroup}
                           >
-                            {spData.soeknaderArbeidstaker.map((soeknad) => (
-                              <Checkbox key={soeknad.sykmeldingsperiode.fom} value={soeknad.sykmeldingsperiode.fom}>
-                                {formatDate(parseIsoDate(soeknad.sykmeldingsperiode.fom))} -{' '}
-                                {formatDate(parseIsoDate(soeknad.sykmeldingsperiode.tom))}{' '}
-                                {soeknad.egenmeldingsperioder.map((periode) => (
+                            {forespoersler.map((forespoersel) => (
+                              <Radio key={forespoersel.forespoerselId} value={forespoersel.forespoerselId}>
+                                {forespoersel.sykmeldingsperioder.map((periode) => (
                                   <span key={periode.fom}>
-                                    Egenmeldingsperiode: {formatDate(parseIsoDate(periode.fom))} -{' '}
+                                    {formatDate(parseIsoDate(periode.fom))} -{' '}
                                     {formatDate(parseIsoDate(periode.tom))}{' '}
                                   </span>
                                 ))}
-                                {!!soeknad.erGradert && ' (Gradert)'}
-                              </Checkbox>
+                                {forespoersel.egenmeldingsperioder.map((periode) => (
+                                  <span key={periode.fom}>
+                                    Egenmeldingsperiode:
+                                    {formatDate(parseIsoDate(periode.fom))} -{' '}
+                                    {formatDate(parseIsoDate(periode.tom))}{' '}
+                                  </span>
+                                ))}
+                                <br />
+                                {!!forespoersel.erBesvart && ' (Besvart)'}
+                              </Radio>
                             ))}
-                          </CheckboxGroup>
-                        </>
-                      )}
-                    />
+                            {spData?.soeknaderArbeidstaker && (
+                              <Controller
+                                name='sykepengePeriodeId'
+                                control={methods.control}
+                                render={({ field }) => (
+                                  <>
+                                    <Radio value='andrePerioder' key='andrePerioder'>
+                                      Eller velg en annen periode som du ønsker å sende inntektsmelding for:
+                                    </Radio>
+                                    <CheckboxGroup
+                                      legend='Velg en periode som du ønsker å sende inntektsmelding for:'
+                                      hideLegend
+                                      id='sykepengePeriodeId'
+                                      error={errors.sykepengePeriodeId?.message as string}
+                                      value={field.value ?? []}
+                                      onChange={field.onChange}
+                                      onBlur={field.onBlur}
+                                      ref={field.ref}
+                                      className={lokalStyling.checkboxGroup}
+                                    >
+                                      {spData.soeknaderArbeidstaker.map((soeknad) => (
+                                        <Checkbox
+                                          key={soeknad.sykmeldingsperiode.fom}
+                                          value={soeknad.sykmeldingsperiode.fom}
+                                          disabled={disablePeriodeCheck}
+                                        >
+                                          {formatDate(parseIsoDate(soeknad.sykmeldingsperiode.fom))} -{' '}
+                                          {formatDate(parseIsoDate(soeknad.sykmeldingsperiode.tom))}{' '}
+                                          {soeknad.egenmeldingsperioder.map((periode) => (
+                                            <span key={periode.fom}>
+                                              Egenmeldingsperiode: {formatDate(parseIsoDate(periode.fom))} -{' '}
+                                              {formatDate(parseIsoDate(periode.tom))}{' '}
+                                            </span>
+                                          ))}
+                                          {!!soeknad.erGradert && ' (Gradert)'}
+                                        </Checkbox>
+                                      ))}
+                                    </CheckboxGroup>
+                                  </>
+                                )}
+                              />
+                            )}
+                          </RadioGroup>
+                        )}
+                      />
+
+                      {(error || (organisasjonsnummer && data && sykepengePerioder.length === 0)) &&
+                        !arbeidsforholdIsLoading &&
+                        !spIsLoading && (
+                          <Alert variant='error'>
+                            Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at
+                            du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
+                            sykepenger er sendt inn.
+                          </Alert>
+                        )}
+                    </>
                   )}
-                  {(error || (organisasjonsnummer && data && sykepengePerioder.length === 0)) &&
-                    !arbeidsforholdIsLoading &&
-                    !spIsLoading && (
-                      <Alert variant='error'>
-                        Finner ingen sykepengesøknader for den valgte personen i den valgte organisasjonen. Sjekk at du
-                        har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om sykepenger
-                        er sendt inn.
+                  {harValgtPeriodeMedForlengelse && (
+                    <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
+                  )}
+                  {endreRefusjon === 'Ja' && (
+                    <>
+                      <Alert variant='info'>
+                        <Heading spacing size='small' level='3'>
+                          Du må korrigere tidligere innsendt inntektsmeldingen
+                        </Heading>
+                        Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på eventuelle
+                        refusjontidspunkter og beløp.
                       </Alert>
-                    )}
-                </>
-              )}
-              {harValgtPeriodeMedForlengelse && (
-                <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
-              )}
-              {endreRefusjon === 'Ja' && (
-                <>
-                  <Alert variant='info'>
-                    <Heading spacing size='small' level='3'>
-                      Du må korrigere tidligere innsendt inntektsmeldingen
-                    </Heading>
-                    Gå inn på den tidligere innsendte inntektsmeldingen nedenfor for å gjøre endringer på eventuelle
-                    refusjontidspunkter og beløp.
-                  </Alert>
-                  {valgteSykepengePerioder.map(
-                    (periode) =>
-                      periode?.forlengelseAv && (
-                        <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-16' key={periode.id}>
-                          <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
-                          <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
-                            <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
-                          </Link>
-                          <p>
-                            Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
-                            {visTomDato(periode.forlengelseAv, sykepengePerioder)}
-                          </p>
-                        </Box>
-                      )
+                      {valgteSykepengePerioder.map(
+                        (periode) =>
+                          periode?.forlengelseAv && (
+                            <Box paddingBlock='space-4' borderWidth='1' paddingInline='space-16' key={periode.id}>
+                              <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
+                              <Link href={`${environment.baseUrl}/${periode.forlengelseAv}`}>
+                                <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
+                              </Link>
+                              <p>
+                                Sykmeldingsperiode {visFomDato(periode.forlengelseAv, sykepengePerioder)} -{' '}
+                                {visTomDato(periode.forlengelseAv, sykepengePerioder)}
+                              </p>
+                            </Box>
+                          )
+                      )}
+                    </>
+                  )}
+                  {endreRefusjon === 'Nei' && (
+                    <Alert variant='info'>
+                      <Heading spacing size='small' level='3'>
+                        Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
+                      </Heading>
+                      Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding trenger du
+                      ikke sende inn ny inntektsmelding.
+                    </Alert>
                   )}
                 </>
-              )}
-              {endreRefusjon === 'Nei' && (
-                <Alert variant='info'>
-                  <Heading spacing size='small' level='3'>
-                    Du trenger ikke sende inn en ny inntektsmelding for denne perioden.
-                  </Heading>
-                  Så lenge sykepengesøknaden er en forlengelse med en tidligere innsendt inntektsmelding trenger du ikke
-                  sende inn ny inntektsmelding.
-                </Alert>
               )}
               <div className={lokalStyling.knapperad}>
                 <Button
