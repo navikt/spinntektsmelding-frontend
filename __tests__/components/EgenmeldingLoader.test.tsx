@@ -4,6 +4,10 @@ import { axe } from 'jest-axe';
 import EgenmeldingLoader from '../../components/Egenmelding/EgenmeldingLoader';
 import { vi } from 'vitest';
 
+vi.mock('@navikt/ds-react', () => ({
+  Skeleton: () => <div>Skeleton</div>
+}));
+
 describe('EgenmeldingLoader', () => {
   it('should have no violations', async () => {
     const { container } = render(<EgenmeldingLoader />);
@@ -14,10 +18,6 @@ describe('EgenmeldingLoader', () => {
   });
 
   it('should show perioder', async () => {
-    vi.mock('@navikt/ds-react', () => ({
-      Skeleton: () => <div>Skeleton</div>
-    }));
-
     const { container } = render(<EgenmeldingLoader />);
 
     expect(await screen.findAllByText('Skeleton')).toHaveLength(2);

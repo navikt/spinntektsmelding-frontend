@@ -8,6 +8,10 @@ import { Periode } from '../../../state/state';
 import { vi, expect, describe } from 'vitest';
 import { SkjemaStatus } from '../../../state/useSkjemadataStore';
 
+vi.mock('../../../components/Datovelger', () => ({
+  default: () => <div>Datovelger</div>
+}));
+
 function TestWrapper({
   children,
   defaultValues = {}
@@ -60,11 +64,6 @@ describe('TidligereInntekt', () => {
   });
 
   it('should be able to add periode', async () => {
-    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
-    vi.mock('../../../components/Datovelger', () => ({
-      default: () => <div>Datovelger</div>
-    }));
-
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }];
 
     const { container } = render(
@@ -91,11 +90,6 @@ describe('TidligereInntekt', () => {
   });
 
   it('should give a warning when arbeidsgiverperiode is more than 16 days', async () => {
-    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
-    vi.mock('../../../components/Datovelger', () => ({
-      default: () => <div>Datovelger</div>
-    }));
-
     const arbeidsgiverperiode: Array<Periode> = [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 24), id: '123' }];
 
     const { container } = render(
@@ -123,11 +117,6 @@ describe('TidligereInntekt', () => {
   });
 
   it('should give a warning when arbeidsgiverperiode is empty', async () => {
-    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
-    vi.mock('../../../components/Datovelger', () => ({
-      default: () => <div>Datovelger</div>
-    }));
-
     const arbeidsgiverperiode: Array<Periode> = [];
 
     const { container } = render(
@@ -153,11 +142,6 @@ describe('TidligereInntekt', () => {
   });
 
   it('should be able to tilbakestille', async () => {
-    // Datovelgeren er ikke helt enig med axe om a11y. Gjør derfor en liten mock
-    vi.mock('../../../components/Datovelger', () => ({
-      default: () => <div>Datovelger</div>
-    }));
-
     const arbeidsgiverperiode = undefined;
 
     const { container } = render(
