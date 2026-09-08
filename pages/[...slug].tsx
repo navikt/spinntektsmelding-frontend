@@ -446,9 +446,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
 
       if (fom.getTime() >= tom.getTime()) {
-        teamLogger.warn(
-          `Feil ved innhenting av arbeidsforhold for ${fnr} i ${orgnr}, fom ${fom.toISOString()} er etter tom ${tom.toISOString()}`
-        );
+        try {
+          teamLogger.warn(
+            `Feil ved innhenting av arbeidsforhold for ${fnr} i ${orgnr}, fom ${fom.toISOString()} er etter tom ${tom.toISOString()}`
+          );
+        } catch (e) {
+          logger.warn(
+            { err: e },
+            'teamLogger feilet ved feil ved innhenting av arbeidsforhold: ' +
+              (e instanceof Error ? e.message : String(e))
+          );
+        }
       }
 
       fetchArbeidsforhold(orgnr, fnr, fom, tom)
