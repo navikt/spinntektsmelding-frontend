@@ -28,7 +28,9 @@ import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
 import formatIsoDate from '../../utils/formatIsoDate';
 import {
+  EndepunktSykepengesoeknader,
   EndepunktSykepengesoeknaderSchema,
+  SoeknadArbeidstaker,
   type EndepunktSykepengesoeknad
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
@@ -305,7 +307,14 @@ const InitieringAnnet: NextPage = () => {
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+    console.debug('[initieringAnnet] Submit startet', {
+      formData,
+      harValgtPeriodeMedForlengelse,
+      endreRefusjon
+    });
+
     if (harValgtPeriodeMedForlengelse && !endreRefusjon) {
+      console.error('[initieringAnnet] Submit stoppet: refusjon er ikke besvart');
       setError('endreRefusjon', {
         message: 'Angi om det skal endres refusjon for den ansatte.',
         type: 'manual'
@@ -318,6 +327,8 @@ const InitieringAnnet: NextPage = () => {
 
     if (mottatteData?.success) {
       handleValidData(formData, mottatteData.data, mottatteSykepengesoeknader);
+    } else {
+      console.error('[initieringAnnet] Submit stoppet: ugyldige arbeidsforholdsdata', mottatteData?.error.issues);
     }
   };
 
@@ -332,6 +343,10 @@ const InitieringAnnet: NextPage = () => {
     const sykmeldingsperiode = getSykmeldingsperiode(formData, mottatteSykepengesoeknader);
 
     if (sykmeldingsperiode.length === 0) {
+      console.error('[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet', {
+        formData,
+        sykepengesoknader: mottatteSykepengesoeknader
+      });
       setError('sykepengePeriodeId', {
         message: 'Ingen sykmeldingsperioder valgt',
         type: 'manual'
@@ -342,23 +357,28 @@ const InitieringAnnet: NextPage = () => {
     if (validationResult.success) {
       setIsLoading(true);
       handleValidFormData(validationResult.data, sykmeldingsperiode);
+    } else {
+      console.error('[initieringAnnet] Submit stoppet: validering av skjema feilet', validationResult.error.issues);
     }
   };
 
   const getSykmeldingsperiode = (
     formData: Skjema,
-    mottatteSykepengesoeknader: ZodSafeParseResult<EndepunktSykepengesoeknad[]> | undefined
+    mottatteSykepengesoeknader: ZodSafeParseResult<EndepunktSykepengesoeknader> | undefined
   ) => {
+    console.log(formData);
     const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
     for (const id of formData.sykepengePeriodeId || []) {
       let periode: EndepunktSykepengesoeknad | false;
       if (mottatteSykepengesoeknader?.success === false) {
         periode = false;
       } else {
-        const funnetPeriode = mottatteSykepengesoeknader?.data?.find(
-          (soeknad: EndepunktSykepengesoeknad) => soeknad.sykepengesoknadUuid === id
-        );
-        periode = funnetPeriode ?? false;
+        if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
+          const funnetPeriode = mottatteSykepengesoeknader?.data?.find(
+            (soeknad: SoeknadArbeidstaker) => soeknad.vedtaksperiodeId === id
+          );
+          periode = funnetPeriode ?? false;
+        }
       }
 
       if (periode) {
@@ -439,7 +459,15 @@ const InitieringAnnet: NextPage = () => {
         <div className={styles.padded}>
           <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
           <FormProvider {...methods}>
-            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
+            <form
+              className={lokalStyling.form}
+              onSubmit={handleSubmit(submitForm, (formErrors) => {
+                console.error('[initieringAnnet] Submit stoppet: skjemaet er ugyldig', {
+                  values: methods.getValues(),
+                  errors: formErrors
+                });
+              })}
+            >
               <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
               <div className={lokalStyling.persondata}>
                 <div className={lokalStyling.navn}>
@@ -523,8 +551,8 @@ const InitieringAnnet: NextPage = () => {
                                     >
                                       {spData.soeknaderArbeidstaker.map((soeknad) => (
                                         <Checkbox
-                                          key={soeknad.sykmeldingsperiode.fom}
-                                          value={soeknad.sykmeldingsperiode.fom}
+                                          key={soeknad.vedtaksperiodeId}
+                                          value={soeknad.vedtaksperiodeId}
                                           disabled={disablePeriodeCheck}
                                         >
                                           {formatDate(parseIsoDate(soeknad.sykmeldingsperiode.fom))} -{' '}
@@ -547,7 +575,11 @@ const InitieringAnnet: NextPage = () => {
                         )}
                       />
 
-                      {(error || (organisasjonsnummer && data && sykepengePerioder.length === 0)) &&
+                      {(error ||
+                        (organisasjonsnummer &&
+                          data &&
+                          soeknaderArbeidstaker.length === 0 &&
+                          forespoersler.length === 0)) &&
                         !arbeidsforholdIsLoading &&
                         !spIsLoading && (
                           <Alert variant='error'>

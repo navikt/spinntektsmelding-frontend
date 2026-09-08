@@ -30,7 +30,8 @@ const SoeknadArbeidstakerResponseSchema = z.object({
       tom: isoDate
     })
   ),
-  erGradert: z.boolean()
+  erGradert: z.boolean(),
+  vedtaksperiodeId: z.uuid()
 });
 
 const SoeknadBehandlingsdagerResponseSchema = z.object({
@@ -48,3 +49,6 @@ export const EndepunktSykepengesoeknaderSchema = z.object({
 });
 
 export type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+export type SoeknadArbeidstaker = z.infer<typeof SoeknadArbeidstakerResponseSchema>;
+export type SoeknadBehandlingsdager = z.infer<typeof SoeknadBehandlingsdagerResponseSchema>;
+export type Forespoersel = z.infer<typeof ForespoerselResponseSchema>;
