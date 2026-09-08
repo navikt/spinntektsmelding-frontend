@@ -60,6 +60,7 @@ import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
+import { teamLogger } from '@navikt/next-logger/team-log';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
@@ -442,6 +443,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
       if (!orgnr || !fnr || !fom || !tom) {
         return;
+      }
+
+      if (fom.getTime() >= tom.getTime()) {
+        teamLogger.warn(
+          `Feil ved innhenting av arbeidsforhold for ${fnr} i ${orgnr}, fom ${fom.toISOString()} er etter tom ${tom.toISOString()}`
+        );
       }
 
       fetchArbeidsforhold(orgnr, fnr, fom, tom)
