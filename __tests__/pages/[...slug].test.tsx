@@ -87,7 +87,7 @@ const createMockState = (overrides = {}) => ({
   sykmeldingsperioder: [{ id: 'periode-1', fom: parseIsoDate('2023-02-20'), tom: parseIsoDate('2023-03-03') }],
   egenmeldingsperioder: [],
   skjemaFeilet: false,
-  skjemastatus: SkjemaStatus.UNDER_UTFYLLING,
+  skjemastatus: SkjemaStatus.FULL,
   inngangFraKvittering: false,
   arbeidsgiverperioder: [],
   setTidligereInntekter: vi.fn(),
