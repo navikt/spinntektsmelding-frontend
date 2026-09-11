@@ -9,6 +9,9 @@ vi.mock('../../utils/logEvent', () => ({ __esModule: true, default: vi.fn() }));
 const warnSpy = vi.fn();
 vi.mock('@navikt/next-logger', () => ({ logger: { warn: (...args: any[]) => warnSpy(...args) } }));
 
+const teamLoggerWarnSpy = vi.hoisted(() => vi.fn());
+vi.mock('@navikt/next-logger/team-log', () => ({ teamLogger: { warn: teamLoggerWarnSpy } }));
+
 // Helper to build fetch Response mock
 function buildResponse(status: number, jsonData?: any): Response {
   return {
@@ -40,6 +43,7 @@ describe('postInnsending', () => {
     setErrorResponse = vi.fn();
     setShowErrorList = vi.fn();
     warnSpy.mockClear();
+    teamLoggerWarnSpy.mockReset();
   });
 
   it('kaller onSuccess ved 201 og parser json', async () => {
@@ -119,6 +123,44 @@ describe('postInnsending', () => {
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     expect(setShowErrorList).toHaveBeenCalledWith(true);
     expect(warnSpy).toHaveBeenCalled();
+  });
+
+  it('logger sanert melding med logger når teamLogger feiler', async () => {
+    const fnr = '12345678901';
+    const orgnr = '123456789';
+    const requestBody = { fnr, orgnr };
+    const validationError = `Fødselsnummer ${fnr} og organisasjonsnummer ${orgnr}`;
+    teamLoggerWarnSpy.mockImplementationOnce(() => {
+      throw new Error('teamLogger feilet');
+    });
+    global.fetch = vi.fn().mockResolvedValue(
+      buildResponse(400, {
+        error: validationError
+      })
+    );
+
+    await postInnsending({
+      url,
+      body: requestBody,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(teamLoggerWarnSpy).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenLastCalledWith(
+      `Feil ved innsending av skjema - 400 - BadRequest undefined ${JSON.stringify({ error: validationError })
+        .replace(fnr, '[redacted]')
+        .replace(
+          orgnr,
+          '[redacted]'
+        )} ${JSON.stringify(requestBody).replace(fnr, '[redacted]').replace(orgnr, '[redacted]')}`
+    );
+    expect(warnSpy).not.toHaveBeenLastCalledWith(expect.stringContaining(fnr));
+    expect(warnSpy).not.toHaveBeenLastCalledWith(expect.stringContaining(orgnr));
   });
 
   it('viser alle valideringsfeil ved 400 med valideringsfeil-array', async () => {

@@ -17,6 +17,26 @@ vi.mock('@navikt/oasis', () => ({
   validateToken: vi.fn()
 }));
 
+vi.mock('@navikt/next-logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn()
+  }
+}));
+
+vi.mock('@navikt/next-logger/team-log', () => ({
+  teamLogger: {
+    info: vi.fn()
+  }
+}));
+
+import { logger } from '@navikt/next-logger';
+import { teamLogger } from '@navikt/next-logger/team-log';
+
+const mockLoggerInfo = vi.mocked(logger.info);
+const mockTeamLoggerInfo = vi.mocked(teamLogger.info);
+
 describe('sp-soeknader API', () => {
   beforeAll(() => {
     fetchMocker.doMock();
@@ -31,6 +51,8 @@ describe('sp-soeknader API', () => {
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_URL', '/flex/sykepengesoknad/url');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID', 'client-id');
     fetchMocker.resetMocks();
+    mockLoggerInfo.mockReset();
+    mockTeamLoggerInfo.mockReset();
   });
 
   afterEach(() => {
@@ -196,6 +218,39 @@ describe('sp-soeknader API', () => {
         vedtaksperiodeId: '12345'
       }
     ]);
+  });
+
+  it('should log a sanitized message when teamLogger fails', async () => {
+    const fnr = testFnr.GyldigeFraDolly.TestPerson1;
+    const orgnr = testOrganisasjoner[0].organizationNumber;
+    vi.mocked(getToken).mockReturnValue('token');
+    vi.mocked(validateToken).mockResolvedValue({ ok: true });
+    vi.mocked(requestOboToken).mockResolvedValue({ ok: true });
+    mockTeamLoggerInfo.mockImplementationOnce(() => {
+      throw new Error('teamLogger failed');
+    });
+
+    const req = {
+      method: 'POST',
+      headers: { authorization: 'Bearer token' },
+      body: { fnr, orgnummer: orgnr, eldsteFom: '2021-01-01' }
+    } as unknown as NextApiRequest;
+    const mockJson = vi.fn();
+    const res = {
+      status: vi.fn(() => ({ json: mockJson })),
+      json: vi.fn()
+    } as unknown as NextApiResponse<unknown>;
+
+    fetchMocker.mockResponses([JSON.stringify(['token OK']), { status: 200 }], [JSON.stringify([]), { status: 200 }]);
+
+    await handler(req, res);
+
+    expect(mockTeamLoggerInfo).toHaveBeenCalledTimes(1);
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      'sp-soeknader: Fant 0 søknader hvorav 0 aktive søknader for orgnr [redacted] og fnr [redacted]'
+    );
+    expect(mockLoggerInfo.mock.calls[0][0]).not.toContain(fnr);
+    expect(mockLoggerInfo.mock.calls[0][0]).not.toContain(orgnr);
   });
 
   describe('development environment', () => {
