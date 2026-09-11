@@ -313,6 +313,7 @@ function safeTeamLoggerWarn(message: string) {
   try {
     teamLogger.warn(message);
   } catch (e) {
-    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
+    const sanitizedMessage = message.replace(/\b(?:\d{11}|\d{9})\b/g, '[redacted]');
+    logger.warn(sanitizedMessage);
   }
 }
