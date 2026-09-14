@@ -330,14 +330,14 @@ const InitieringBehandlingsdager: NextPage = () => {
                         onChange={handleSykmeldingIdRadio}
                       >
                         {sykepengePerioder.map((periode) => (
-                          <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager <= 12}>
+                          <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager < 12}>
                             {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
                             {formaterBehandlingsdager(periode.antallBehandlingsdager)}
                           </Radio>
                         ))}
                       </RadioGroup>
                       {sykepengePerioder.length > 0 &&
-                        sykepengePerioder.every((periode) => periode.antallBehandlingsdager <= 12) && (
+                        sykepengePerioder.every((periode) => periode.antallBehandlingsdager < 12) && (
                           <Alert variant='warning'>
                             Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
                             kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
