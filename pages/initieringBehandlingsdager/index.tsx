@@ -397,7 +397,7 @@ function formaterBehandlingsdager(antallBehandlingsdager: number) {
     return null;
   }
 
-  if (antallBehandlingsdager <= 12) {
+  if (antallBehandlingsdager < 12) {
     return '(Det må være mer enn 12 behandlingsdager før du kan sende inn inntektsmeldingen)';
   } else {
     return `(${antallBehandlingsdager} behandlingsdager)`;
