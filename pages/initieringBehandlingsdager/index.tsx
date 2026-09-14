@@ -340,7 +340,7 @@ const InitieringBehandlingsdager: NextPage = () => {
                         sykepengePerioder.every((periode) => periode.antallBehandlingsdager < 12) && (
                           <Alert variant='warning'>
                             Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
-                            kreves mer enn 12 behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                            kreves 12 eller flere behandlingsdager i sykmeldingsperioden for å kunne sende inn
                             inntektsmelding for behandlingsdager.
                           </Alert>
                         )}
@@ -398,7 +398,7 @@ function formaterBehandlingsdager(antallBehandlingsdager: number) {
   }
 
   if (antallBehandlingsdager < 12) {
-    return '(Det må være mer enn 12 behandlingsdager før du kan sende inn inntektsmeldingen)';
+    return '(Det må være 12 eller flere behandlingsdager før du kan sende inn inntektsmeldingen)';
   } else {
     return `(${antallBehandlingsdager} behandlingsdager)`;
   }
