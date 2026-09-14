@@ -158,6 +158,35 @@ describe('InitieringBehandlingsdager', () => {
     expect(setSelvbestemtType).toHaveBeenCalledWith('Behandlingsdager');
   });
 
+  it('allows exactly 12 behandlingsdager', async () => {
+    const behandlingsdager = Array.from({ length: 12 }, (_, index) => `2023-02-${String(index + 1).padStart(2, '0')}`);
+    (useBehandlingsdager as unknown as Mock).mockReturnValue({
+      data: [
+        {
+          sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
+          sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
+          fom: '2023-02-01',
+          tom: '2023-02-12',
+          behandlingsdager,
+          egenmeldingsdagerFraSykmelding: [],
+          status: 'NY',
+          startSykeforlop: '2023-02-01',
+          vedtaksperiodeId: null
+        }
+      ],
+      error: undefined,
+      isLoading: false
+    });
+
+    render(<InitieringBehandlingsdager />);
+    await waitFor(() => screen.getByRole('radio', { name: /01\.02\.2023 - 12\.02\.2023/ }));
+    fireEvent.click(screen.getByRole('radio', { name: /01\.02\.2023 - 12\.02\.2023/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/behandlingsdager'));
+    expect(setBehandlingsdager).toHaveBeenCalledWith(behandlingsdager);
+  });
+
   it('"Tilbake"-knappen har type="button" for å unngå utilsiktet skjemainnsending', async () => {
     render(<InitieringBehandlingsdager />);
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
