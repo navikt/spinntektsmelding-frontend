@@ -1,7 +1,7 @@
 import { Button, CheckboxGroup, Checkbox, Alert, Link, Heading, Box, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z, ZodSafeParseResult } from 'zod';
-import { useForm, SubmitHandler, FormProvider, useWatch, Controller } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch, Controller, ControllerRenderProps } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Heading1 from '../../components/Heading1/Heading1';
@@ -49,6 +49,7 @@ import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntall
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import { differenceInDays } from 'date-fns/differenceInDays';
 import { isValid } from 'date-fns/isValid';
+import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 
 export type SykepengePeriode = {
   id: string;
@@ -332,67 +333,97 @@ const InitieringAnnet: NextPage = () => {
     }
   };
 
-  const handleValidData = (formData: Skjema, mottatteData: any, mottatteSykepengesoeknader: any) => {
+  const handleValidData = (
+    formData: Skjema,
+    mottatteData: z.infer<typeof InitieringAnnetSchema>,
+    mottatteSykepengesoeknader: EndepunktSykepengesoeknad | undefined
+  ) => {
     const skjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
       personnummer: sykmeldt.fnr
     };
+    const sykepengePeriodeId = formData.sykepengePeriodeId || [];
 
     const validationResult = InitieringSchema.safeParse(skjemaData);
-    const sykmeldingsperiode = getSykmeldingsperiode(formData, mottatteSykepengesoeknader);
+    if (!validationResult.success) {
+      logger.error('Validering av skjemadata feilet: %j', validationResult.error.issues);
+    }
 
-    if (sykmeldingsperiode.length === 0) {
-      console.error('[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet', {
-        formData,
-        sykepengesoknader: mottatteSykepengesoeknader
-      });
-      setError('sykepengePeriodeId', {
-        message: 'Ingen sykmeldingsperioder valgt',
-        type: 'manual'
-      });
+    if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
+      handleValidFormData(skjemaData, []);
       return;
     }
 
-    if (validationResult.success) {
-      setIsLoading(true);
-      handleValidFormData(validationResult.data, sykmeldingsperiode);
-    } else {
-      console.error('[initieringAnnet] Submit stoppet: validering av skjema feilet', validationResult.error.issues);
+    if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
+      debugger;
+      const sykmeldingsperiode = getSykmeldingsperiode(
+        formData,
+        mottatteSykepengesoeknader?.data?.soeknaderArbeidstaker
+      );
+
+      if (sykepengePeriodeId.length === 0) {
+        console.error('[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet', {
+          formData,
+          sykepengesoknader: mottatteSykepengesoeknader
+        });
+        setError('sykepengePeriodeId', {
+          message: 'Ingen sykmeldingsperioder valgt',
+          type: 'manual'
+        });
+        return;
+      }
+
+      if (validationResult.success) {
+        setIsLoading(true);
+        const sykmeldtePerioder = sykmeldingsperiode.map((periode) => periode.sykmeldingsperiode);
+        console.log('Validerte data:', validationResult.data);
+        console.log('sykmeldingsperiode:', sykmeldingsperiode);
+        handleValidFormData(validationResult.data, sykmeldtePerioder);
+      } else {
+        console.error('[initieringAnnet] Submit stoppet: validering av skjema feilet', validationResult.error.issues);
+      }
+    }
+    if (formData.forespurtSykepengePeriodeId) {
+      router.push(`/${formData.forespurtSykepengePeriodeId}`);
+      return;
     }
   };
 
   const getSykmeldingsperiode = (
     formData: Skjema,
-    mottatteSykepengesoeknader: ZodSafeParseResult<EndepunktSykepengesoeknader> | undefined
+    mottatteSykepengesoeknader: EndepunktSykepengesoeknad[] | undefined
   ) => {
-    console.log(formData);
-    const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
-    for (const id of formData.sykepengePeriodeId || []) {
-      let periode: EndepunktSykepengesoeknad | false;
-      if (mottatteSykepengesoeknader?.success === false) {
-        periode = false;
-      } else {
-        if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
-          const funnetPeriode = mottatteSykepengesoeknader?.data?.find(
-            (soeknad: SoeknadArbeidstaker) => soeknad.vedtaksperiodeId === id
-          );
-          periode = funnetPeriode ?? false;
-        }
-      }
+    console.log('formData', formData);
+    // const sykmeldingsperiode: EndepunktSykepengesoeknad[] = [];
 
-      if (periode) {
-        sykmeldingsperiode.push(periode);
-      }
-    }
+    // let periode: EndepunktSykepengesoeknad | false;
+    // if (!mottatteSykepengesoeknader) {
+    //   periode = false;
+    // } else if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
+    //   console.log('mottatteSykepengesoeknader', mottatteSykepengesoeknader);
+    //   const funnetPeriode = mottatteSykepengesoeknader?.find((soeknad: SoeknadArbeidstaker) =>
+    //     formData.sykepengePeriodeId?.includes(soeknad.vedtaksperiodeId)
+    //   );
+    //   periode = funnetPeriode ?? false;
+    // }
 
-    const forespoerselIdListe = sykmeldingsperiode
-      .filter((periode) => !!periode.forespoerselId)
-      .map((periode) => periode.forespoerselId!);
+    // if (periode) {
+    //   sykmeldingsperiode.push(periode);
+    // }
 
-    if (forespoerselIdListe.length > 0) {
-      router.push(`/${forespoerselIdListe[0]}`);
-    }
+    // const forespoerselIdListe = sykmeldingsperiode
+    //   .filter((periode) => !!periode.vedtaksperiodeId)
+    //   .map((periode) => periode.vedtaksperiodeId!);
+
+    // if (forespoerselIdListe.length > 0) {
+    //   router.push(`/${forespoerselIdListe[0]}`);
+    // }
+
+    const sykmeldingsperiode =
+      mottatteSykepengesoeknader?.filter((soeknad: EndepunktSykepengesoeknad) =>
+        formData.sykepengePeriodeId?.includes(soeknad.vedtaksperiodeId)
+      ) ?? [];
 
     return sykmeldingsperiode;
   };
@@ -436,7 +467,10 @@ const InitieringAnnet: NextPage = () => {
   }, [endreRefusjon, resetField, sykepengePeriodeId, sykepengePerioder]);
 
   const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
+    debugger;
     if (value === 'andrePerioder') {
+      setValue('forespurtSykepengePeriodeId', value);
+    } else {
       resetField('forespurtSykepengePeriodeId');
     }
 
@@ -530,14 +564,14 @@ const InitieringAnnet: NextPage = () => {
                               </Radio>
                             ))}
                             {spData?.soeknaderArbeidstaker && (
-                              <Controller
-                                name='sykepengePeriodeId'
-                                control={methods.control}
-                                render={({ field }) => (
-                                  <>
-                                    <Radio value='andrePerioder' key='andrePerioder'>
-                                      Eller velg en annen periode som du ønsker å sende inntektsmelding for:
-                                    </Radio>
+                              <>
+                                <Radio value='andrePerioder' key='andrePerioder'>
+                                  Eller velg en annen periode som du ønsker å sende inntektsmelding for:
+                                </Radio>
+                                <Controller
+                                  name='sykepengePeriodeId'
+                                  control={methods.control}
+                                  render={({ field }) => (
                                     <CheckboxGroup
                                       legend='Velg en periode som du ønsker å sende inntektsmelding for:'
                                       hideLegend
@@ -567,9 +601,9 @@ const InitieringAnnet: NextPage = () => {
                                         </Checkbox>
                                       ))}
                                     </CheckboxGroup>
-                                  </>
-                                )}
-                              />
+                                  )}
+                                />
+                              </>
                             )}
                           </RadioGroup>
                         )}
