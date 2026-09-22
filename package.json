@@ -28,7 +28,7 @@
     "@navikt/next-logger": "5.0.1",
     "@navikt/oasis": "^4.2.2",
     "date-fns": "4.4.0",
-    "html-react-parser": "^6.1.7",
+    "html-react-parser": "^6.1.8",
     "immer": "11.1.18",
     "jsdom": "30.0.1",
     "nanoid": "6.0.1",
