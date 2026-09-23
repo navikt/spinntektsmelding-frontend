@@ -21,7 +21,7 @@ import { describe, it, beforeEach, vi, expect, Mock } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import InitieringFritatt from '../../../pages/initieringFritatt/index';
-import useMineTilganger from '../../../utils/useMineTilganger';
+import useArbeidsforhold from '../../../utils/useArbeidsforhold';
 import useSykepengesoeknader from '../../../utils/useSykepengesoeknader';
 import useBoundStore from '../../../state/useBoundStore';
 import { __mockedRouter as mockedRouter } from 'next/navigation';
@@ -34,8 +34,8 @@ vi.mock('../../../state/useBoundStore', () => ({
   default: vi.fn()
 }));
 
-// Mock useMineTilganger
-vi.mock('../../../utils/useMineTilganger', () => ({
+// Mock useArbeidsforhold
+vi.mock('../../../utils/useArbeidsforhold', () => ({
   default: vi.fn()
 }));
 
@@ -66,23 +66,21 @@ describe('InitieringFritatt page', () => {
   });
 
   it('shows loading spinner before tilganger arrive', () => {
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
     render(<InitieringFritatt />);
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
 
   it('validates form and shows error if no selection', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: [
-          { orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child Org', underenheter: [] },
-          { orgnr: testOrganisasjoner[1].organizationNumber, navn: 'Child Org 2', underenheter: [] }
-        ]
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for select to mount
     await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
@@ -91,14 +89,12 @@ describe('InitieringFritatt page', () => {
   });
 
   it('validates form and shows error if no underenhet', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: []
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: []
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for button to mount
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
@@ -108,8 +104,12 @@ describe('InitieringFritatt page', () => {
   });
 
   it('validates form and shows error if no enhet', async () => {
-    const mockData = [];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: []
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
     // wait for select to mount
     // await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
@@ -121,17 +121,15 @@ describe('InitieringFritatt page', () => {
   });
 
   it('submits valid form and navigates correctly', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: [
-          { orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child Org', underenheter: [] },
-          { orgnr: testOrganisasjoner[1].organizationNumber, navn: 'Child Org 2', underenheter: [] }
-        ]
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: { status: 404 } });
     const user = userEvent.setup();
     render(<InitieringFritatt />);
@@ -163,32 +161,36 @@ describe('InitieringFritatt page', () => {
   });
 
   it('shows forespurte perioder and navigates to the periode route', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: [
-          { orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child Org', underenheter: [] },
-          { orgnr: testOrganisasjoner[1].organizationNumber, navn: 'Child Org 2', underenheter: [] }
-        ]
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
 
     const forespoerselId = '123e4567-e89b-12d3-a456-426614174000';
-    const spData = [
-      {
-        sykepengesoknadUuid: forespoerselId,
-        sykmeldingId: forespoerselId,
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: forespoerselId,
-        vedtaksperiodeId: forespoerselId
-      }
-    ];
+    const spData = {
+      forespoersler: [
+        {
+          forespoerselId,
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: forespoerselId
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
     (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined });
 
     const user = userEvent.setup();
@@ -210,32 +212,29 @@ describe('InitieringFritatt page', () => {
   });
 
   it('submits andrePerioder selection and navigates to arbeidsgiverInitiertInnsending', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: [
-          { orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child Org', underenheter: [] },
-          { orgnr: testOrganisasjoner[1].organizationNumber, navn: 'Child Org 2', underenheter: [] }
-        ]
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
 
     const uuid = '123e4567-e89b-12d3-a456-426614174000';
-    const spData = [
-      {
-        sykepengesoknadUuid: uuid,
-        sykmeldingId: uuid,
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        vedtaksperiodeId: uuid,
-        soknadsperioder: [{ fom: '2023-01-01', tom: '2023-01-10', grad: 50 }]
-      }
-    ];
+    const spData = {
+      forespoersler: [],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: true,
+          vedtaksperiodeId: uuid
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
     (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined });
 
     const user = userEvent.setup();
@@ -260,31 +259,29 @@ describe('InitieringFritatt page', () => {
   });
 
   it('shows error when andrePerioder is selected without choosing a periode', async () => {
-    const mockData = [
-      {
-        orgnr: '1',
-        navn: 'Top Org',
-        underenheter: [
-          { orgnr: testOrganisasjoner[0].organizationNumber, navn: 'Child Org', underenheter: [] },
-          { orgnr: testOrganisasjoner[1].organizationNumber, navn: 'Child Org 2', underenheter: [] }
-        ]
-      }
-    ];
-    (useMineTilganger as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
 
     const uuid = '123e4567-e89b-12d3-a456-426614174000';
-    const spData = [
-      {
-        sykepengesoknadUuid: uuid,
-        sykmeldingId: uuid,
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        vedtaksperiodeId: uuid
-      }
-    ];
+    const spData = {
+      forespoersler: [],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: uuid
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
     (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined });
 
     const user = userEvent.setup();

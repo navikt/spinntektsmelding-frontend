@@ -1,207 +1,154 @@
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import testdata from '../../../mockdata/behandlingsdager.json';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
+import handleProxyInit from '../../../utils/api/handleProxyInit';
 import handler from '../../../pages/api/sp-behandlingsdager';
-import isMod11Number from '../../../utils/isMod11Number';
-import safelyParseJSON from '../../../utils/safelyParseJson';
-import { getToken, validateToken, requestOboToken } from '@navikt/oasis';
+import { logger } from '@navikt/next-logger';
 
-vi.mock('@navikt/oasis', () => ({
-  getToken: vi.fn(),
-  validateToken: vi.fn(),
-  requestOboToken: vi.fn()
-}));
-vi.mock('../../../utils/isMod11Number', () => ({
-  __esModule: true,
-  default: vi.fn()
-}));
-vi.mock('../../../utils/safelyParseJson', () => ({
-  __esModule: true,
+vi.mock('next-http-proxy-middleware', () => ({
   default: vi.fn()
 }));
 
-function createReq(body: any = {}, headers: Record<string, string> = {}): Partial<NextApiRequest> {
-  return { body, headers, method: 'POST' };
+vi.mock('../../../utils/api/handleProxyInit', () => ({
+  default: vi.fn()
+}));
+
+vi.mock('@navikt/next-logger', () => ({
+  logger: {
+    info: vi.fn(),
+    error: vi.fn()
+  }
+}));
+
+const mockHttpProxyMiddleware = vi.mocked(httpProxyMiddleware);
+const mockHandleProxyInit = vi.mocked(handleProxyInit);
+const mockLoggerInfo = vi.mocked(logger.info);
+
+const fnr = '25087327879';
+const orgnummer = '810007672';
+
+function createResponse() {
+  const json = vi.fn();
+  const status = vi.fn(() => ({ json }));
+  return { json, status, setHeader: vi.fn() } as unknown as NextApiResponse;
 }
 
-function createRes() {
-  const res: Partial<NextApiResponse> = {};
-  res.status = vi.fn().mockReturnValue(res);
-  res.json = vi.fn().mockReturnValue(res);
-  res.setHeader = vi.fn();
-  res.statusCode = 200;
-
-  return res as NextApiResponse;
+function createRequest(body: unknown = { fnr, orgnummer }) {
+  return {
+    method: 'POST',
+    body,
+    url: '/api/sp-behandlingsdager'
+  } as unknown as NextApiRequest;
 }
 
-beforeEach(() => {
-  vi.resetAllMocks();
-  process.env.NODE_ENV = 'test';
-  process.env.FLEX_SYKEPENGESOEKNAD_INGRESS = 'ingress';
-  process.env.FLEX_SYKEPENGESOEKNAD_URL = '/url';
-  process.env.IM_API_URI = 'uri';
-  process.env.AUTH_SYKEPENGESOEKNAD_API = '/auth';
-  process.env.FLEX_SYKEPENGESOEKNAD_CLIENT_ID = 'cid';
-  (globalThis as any).fetch = vi.fn();
-});
-
-afterEach(() => {
-  vi.useRealTimers();
-});
-
-describe('sp-behandlingsdager API handler', () => {
-  it('returns testdata in development mode', async () => {
-    process.env.NODE_ENV = 'development';
-    vi.useFakeTimers();
-    const req = createReq();
-    const res = createRes();
-    handler(req as any, res);
-    vi.advanceTimersByTime(100);
-    await vi.runAllTimersAsync();
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(testdata);
+describe('API Route: /api/sp-behandlingsdager', () => {
+  beforeEach(() => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('IM_API_URI', 'api.example.com');
+    vi.stubEnv('HENT-SOEKNADER', '/hent-soeknader');
+    vi.clearAllMocks();
   });
 
-  it('401 when no token', async () => {
-    (getToken as unknown as Mock).mockReturnValue(undefined);
-    const req = createReq({}, {});
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).not.toHaveBeenCalled();
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
-  it('400 when invalid orgnr', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as unknown as Mock).mockReturnValue(false);
-    const req = createReq({ orgnummer: 'bad', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Ugyldig forespørsel' });
+  it('returnerer mockdata i development', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+    const response = createResponse();
+
+    await handler(createRequest(), response);
+
+    expect(response.status).toHaveBeenCalledWith(200);
+    expect(response.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        forespoersler: expect.any(Array),
+        soeknaderArbeidstaker: expect.any(Array),
+        soeknaderBehandlingsdager: expect.any(Array)
+      })
+    );
+    expect(mockHttpProxyMiddleware).not.toHaveBeenCalled();
   });
 
-  it('405 when method is not POST', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    req.method = 'GET';
-    const res = createRes();
+  it('returnerer 400 ved ugyldig request body', () => {
+    const response = createResponse();
 
-    await handler(req as any, res);
+    handler(createRequest({ fnr }), response);
 
-    expect(res.status).toHaveBeenCalledWith(405);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Method Not Allowed' });
+    expect(response.status).toHaveBeenCalledWith(400);
+    expect(response.json).toHaveBeenCalledWith({ error: 'Ugyldig forespørsel' });
   });
 
-  it('400 when request body is missing required fields', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    const req = createReq({ orgnummer: '810007982' });
-    const res = createRes();
+  it('returnerer 400 ved ugyldig organisasjonsnummer', () => {
+    const response = createResponse();
 
-    await handler(req as any, res);
+    handler(createRequest({ fnr, orgnummer: '' }), response);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Ugyldig forespørsel' });
+    expect(response.status).toHaveBeenCalledWith(400);
+    expect(response.json).toHaveBeenCalledWith({ error: 'Ugyldig forespørsel' });
   });
 
-  it('401 when token validation fails', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'x' });
-    (isMod11Number as unknown as Mock).mockReturnValue(true);
-    const req = createReq({ orgnummer: '123', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(401);
+  it('proxyer gyldig request med riktig konfigurasjon', () => {
+    const request = createRequest();
+    const response = createResponse();
+
+    handler(request, response);
+
+    expect(mockHttpProxyMiddleware).toHaveBeenCalledWith(
+      request,
+      response,
+      expect.objectContaining({
+        target: 'http://api.example.com/hent-soeknader',
+        pathRewrite: [{ patternStr: '^/api/sp-behandlingsdager', replaceStr: '' }]
+      })
+    );
   });
 
-  it('401 when OBO fails', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as unknown as Mock).mockReturnValue(true);
-    // auth API ok
-    (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true });
-    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'obo' });
-    const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Unauthorized' });
+  it('sender behandlingsdager-flagget i omskrevet request-body til proxy', () => {
+    const response = createResponse();
+    handler(createRequest(), response);
+
+    const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2] as {
+      onProxyInit: (proxy: { on: (event: string, callback: (proxyReq: unknown) => void) => void }) => void;
+    };
+    const proxyRequest = {
+      setHeader: vi.fn(),
+      write: vi.fn()
+    };
+    const proxy = {
+      on: vi.fn((event: string, callback: (proxyReq: unknown) => void) => {
+        if (event === 'proxyReq') {
+          callback(proxyRequest);
+        }
+      })
+    };
+
+    proxyConfig.onProxyInit(proxy);
+
+    const expectedBody = { orgnr: orgnummer, sykmeldtFnr: fnr, erBehandlingsdager: true };
+    expect(mockHandleProxyInit).toHaveBeenCalledWith(proxy);
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith('Content-Type', 'application/json');
+    expect(proxyRequest.setHeader).toHaveBeenCalledWith(
+      'Content-Length',
+      Buffer.byteLength(JSON.stringify(expectedBody))
+    );
+    expect(proxyRequest.write).toHaveBeenCalledWith(JSON.stringify(expectedBody));
   });
 
-  it('error when soeknad fetch fails', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as unknown as Mock).mockReturnValue(true);
-    (fetch as unknown as Mock)
-      .mockResolvedValueOnce({ ok: true }) // auth API
-      .mockResolvedValueOnce({ ok: false, status: 403, statusText: 'nope' }); // soeknad
+  it('returnerer 500 når nødvendig proxy-konfigurasjon mangler', () => {
+    vi.stubEnv('HENT-SOEKNADER', undefined);
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const response = createResponse();
 
-    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
-    const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-  });
+    handler(createRequest(), response);
 
-  it('returns empty array when no BEHANDLINGSDAGER', async () => {
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as unknown as Mock).mockReturnValue(true);
-    (fetch as unknown as Mock)
-      .mockResolvedValueOnce({ ok: true }) // auth
-      .mockResolvedValueOnce({ ok: true }); // soeknad
-    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
-    const data = [{ soknadstype: 'ANNET' }];
-    (safelyParseJSON as unknown as Mock).mockResolvedValue(data);
-    const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith([]);
-  });
-
-  it('merges behandlingsdager by sykmeldingId and dates', async () => {
-    const data = [
-      {
-        sykmeldingId: '1',
-        soknadstype: 'BEHANDLINGSDAGER',
-        behandlingsdager: [1, 2],
-        fom: '2021-01-02',
-        tom: '2021-01-05'
-      },
-      {
-        sykmeldingId: '1',
-        soknadstype: 'BEHANDLINGSDAGER',
-        behandlingsdager: [2, 3],
-        fom: '2021-01-01',
-        tom: '2021-01-06'
-      }
-    ];
-
-    (getToken as unknown as Mock).mockReturnValue('tok');
-    (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
-    (isMod11Number as unknown as Mock).mockReturnValue(true);
-    (fetch as unknown as Mock)
-      .mockResolvedValueOnce({ ok: true }) // auth
-      .mockResolvedValueOnce({ ok: true, status: 200 }); // soeknad
-    (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'oboTok' });
-    (safelyParseJSON as unknown as Mock).mockResolvedValue(data);
-    const req = createReq({ orgnummer: '123456789', fnr: '12345678910', eldsteFom: '2024-01-01' });
-    const res = createRes();
-    await handler(req as any, res);
-    expect(res.status).toHaveBeenCalledWith(200);
-    const result = (res.json as unknown as Mock).mock.calls[0][0];
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
-      sykmeldingId: '1',
-      soknadstype: 'BEHANDLINGSDAGER',
-      behandlingsdager: [1, 2, 3],
-      fom: '2021-01-01',
-      tom: '2021-01-06'
-    });
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({ error: 'Server configuration error' });
+    expect(mockLoggerInfo).not.toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Missing required environment variables:',
+      expect.objectContaining({ message: 'Missing required environment variable: HENT-SOEKNADER' })
+    );
+    consoleErrorSpy.mockRestore();
   });
 });

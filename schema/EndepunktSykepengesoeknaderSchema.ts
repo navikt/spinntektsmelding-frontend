@@ -31,7 +31,8 @@ const SoeknadArbeidstakerResponseSchema = z.object({
     })
   ),
   erGradert: z.boolean(),
-  vedtaksperiodeId: z.uuid()
+  vedtaksperiodeId: z.uuid(),
+  forlengerVedtaksperiodeId: z.uuid().nullable().optional()
 });
 
 const SoeknadBehandlingsdagerResponseSchema = z.object({
@@ -39,7 +40,8 @@ const SoeknadBehandlingsdagerResponseSchema = z.object({
     fom: isoDate,
     tom: isoDate
   }),
-  behandlingsdager: z.array(isoDate)
+  behandlingsdager: z.array(isoDate),
+  forespoerselId: z.uuid()
 });
 
 export const EndepunktSykepengesoeknaderSchema = z.object({
