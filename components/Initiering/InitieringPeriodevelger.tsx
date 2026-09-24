@@ -68,7 +68,9 @@ export default function InitieringPeriodevelger({
               {!!forespoersel.erBesvart && ' (Besvart)'}
             </Radio>
           ))}
-          <Radio value='andrePerioder'>Eller velg en annen periode du vil sende inntektsmelding for:</Radio>
+          {perioder && perioder.length > 0 && (
+            <Radio value='andrePerioder'>Eller velg en annen periode du vil sende inntektsmelding for:</Radio>
+          )}
           <Controller
             name='sykepengePeriodeId'
             control={control}

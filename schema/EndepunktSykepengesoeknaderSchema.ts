@@ -41,7 +41,7 @@ const SoeknadBehandlingsdagerResponseSchema = z.object({
     tom: isoDate
   }),
   behandlingsdager: z.array(isoDate),
-  forespoerselId: z.uuid()
+  soeknadIder: z.array(z.uuid())
 });
 
 export const EndepunktSykepengesoeknaderSchema = z.object({

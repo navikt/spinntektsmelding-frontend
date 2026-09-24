@@ -32,9 +32,10 @@ export default function useFyllAapenInnsending() {
   const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt] = useBoundStore((state) => [
+  const [setEndringAarsaker, setBareNyMaanedsinntekt, soeknadIder] = useBoundStore((state) => [
     state.setEndringAarsaker,
-    state.setBareNyMaanedsinntekt
+    state.setBareNyMaanedsinntekt,
+    state.soeknadIder
   ]);
 
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
@@ -137,7 +138,8 @@ export default function useFyllAapenInnsending() {
               stillingsprosent: forhold.stillingsprosent
             }))
           }
-        : null
+        : null,
+      soeknadIder: selvbestemtType === 'Behandlingsdager' ? soeknadIder : undefined
     });
 
     delete innsending.data?.agp?.erBehandlingsdager;
