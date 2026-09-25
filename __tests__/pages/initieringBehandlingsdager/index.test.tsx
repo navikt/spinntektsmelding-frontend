@@ -65,7 +65,9 @@ describe('InitieringBehandlingsdager', () => {
         initArbeidsgiverperioder: initArbeidsgiverperioder,
         setIdentitetsnummer: vi.fn(),
         setAarsakSelvbestemtInnsending: vi.fn(),
-        setSelvbestemtType: setSelvbestemtType
+        setSelvbestemtType: setSelvbestemtType,
+        soeknadIder: undefined,
+        setSoeknadIder: vi.fn()
       })
     );
 
@@ -86,7 +88,7 @@ describe('InitieringBehandlingsdager', () => {
         soeknaderArbeidstaker: [],
         soeknaderBehandlingsdager: [
           {
-            forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+            soeknadIder: ['123e4567-e89b-12d3-a456-426614174000'],
             sykmeldingsperiode: {
               fom: '2023-01-01',
               tom: '2023-01-05'
@@ -94,7 +96,7 @@ describe('InitieringBehandlingsdager', () => {
             behandlingsdager: ['2023-01-01', '2023-01-02']
           },
           {
-            forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
+            soeknadIder: ['123e4567-e89b-12d3-a456-426614174001'],
             sykmeldingsperiode: {
               fom: '2023-02-01',
               tom: '2023-02-15'

@@ -97,7 +97,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.waitForURL('**/im-dialog/initieringAnnet');
 
     // choose period with ferie dager
-    await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)').check();
+    await page.getByLabel(/11.09.2024 - 15.09.2024/).check();
     await formPage.clickButton('Neste');
 
     // fill utbetalt under AGP
@@ -188,7 +188,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.waitForURL('**/initieringAnnet');
 
     // select both periods
-    await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)').check();
+    await page.getByLabel(/11.09.2024 - 15.09.2024/).check();
     await page.getByLabel('16.09.2024 - 17.09.2024').check();
     await page.getByRole('button', { name: 'Neste' }).click();
 
