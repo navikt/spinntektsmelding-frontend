@@ -448,24 +448,17 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     await page.waitForURL('**/initieringFritatt');
 
-    // select both periods
-    // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
-    // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    // await formPage.selectOption(
-    //   'Hvilken underenhet er personen sykmeldt fra',
-    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    // );
-
-    // await page.getByLabel(/Organisasjon/).click();
-    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
-    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
-
     await formPage.assertVisibleText('Nav har bedt om inntektsmelding for disse periodene:');
 
-    await formPage.checkRadioButton(
-      'Nav har bedt om inntektsmelding for disse periodene:',
-      'Send inntektsmelding for annen periode'
-    );
+    const annenPeriodeRadio = page
+      .getByRole('radiogroup', { name: 'Nav har bedt om inntektsmelding for disse periodene:' })
+      .getByRole('radio', { name: 'Send inntektsmelding for annen periode' });
+    await page
+      .getByRole('radiogroup', { name: 'Nav har bedt om inntektsmelding for disse periodene:' })
+      .getByRole('radio', { name: 'Eller velg en annen periode du vil sende inntektsmelding for:' })
+      .click();
+    await annenPeriodeRadio.click();
+    await expect(annenPeriodeRadio).toBeChecked();
 
     await page.getByRole('button', { name: 'Neste' }).click();
 
