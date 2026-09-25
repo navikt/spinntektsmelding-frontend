@@ -331,7 +331,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
-    setError,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }

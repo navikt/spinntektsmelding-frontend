@@ -551,26 +551,16 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     await page.waitForURL('**/initieringFritatt');
 
-    // select both periods
-    // await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager)').check();
-    // await page.getByLabel('16.09.2024 - 17.09.2024').check();
-    // await formPage.selectOption(
-    //   'Hvilken underenhet er personen sykmeldt fra',
-    //   'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE'
-    // );
-
-    // await page.getByLabel(/Organisasjon/).click();
-    await page.getByLabel('Hvilken underenhet er personen sykmeldt fra').click();
-    await page.getByRole('option', { name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE' }).click();
-
     await formPage.assertVisibleText('Nav har bedt om inntektsmelding for disse periodene:');
 
-    await formPage.checkRadioButton(
-      'Nav har bedt om inntektsmelding for disse periodene:',
-      'Eller velg en annen periode som du ønsker å sende inntektsmelding for'
-    );
+    const periodegruppe = page.getByRole('radiogroup', {
+      name: 'Nav har bedt om inntektsmelding for disse periodene:'
+    });
+    await periodegruppe
+      .getByRole('radio', { name: 'Eller velg en annen periode du vil sende inntektsmelding for:' })
+      .click();
 
-    await formPage.checkCheckbox('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)');
+    await page.getByLabel(/11\.09\.2024 - 15\.09\.2024/).check();
     // await formPage.checkRadioButton(
     //   'Nav har bedt om inntektsmelding for disse periodene:',
     //   '11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)'
@@ -613,10 +603,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     const req2 = await req2Promise;
     expect(JSON.parse(req2.postData()!)).toEqual({
       agp: {
-        perioder: [
-          { fom: '2024-09-06', tom: '2024-09-08' },
-          { fom: '2024-09-10', tom: '2024-09-15' }
-        ],
+        perioder: [{ fom: '2024-09-06', tom: '2024-09-15' }],
         redusertLoennIAgp: {
           beloep: 5000,
           begrunnelse: 'ManglerOpptjening'
@@ -624,7 +611,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       inntekt: {
         beloep: 7500,
-        inntektsdato: '2024-09-10',
+        inntektsdato: '2024-09-06',
         endringAarsaker: [{ aarsak: 'VarigLoennsendring', gjelderFra: '2024-06-30' }]
       },
       refusjon: null,
@@ -662,7 +649,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     // choose period with ferie dager
     await page.getByLabel('Eller velg en annen periode du vil sende inntektsmelding for:').check();
-    await page.getByLabel('11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)').check();
+    await page.getByLabel(/11\.09\.2024 - 15\.09\.2024/).check();
     await formPage.clickButton('Neste');
 
     // fill utbetalt under AGP
@@ -706,10 +693,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     const req = await reqPromise;
     expect(JSON.parse(req.postData()!)).toEqual({
       agp: {
-        perioder: [
-          { fom: '2024-09-06', tom: '2024-09-08' },
-          { fom: '2024-09-10', tom: '2024-09-15' }
-        ],
+        perioder: [{ fom: '2024-09-06', tom: '2024-09-15' }],
         redusertLoennIAgp: {
           beloep: 5000,
           begrunnelse: 'ManglerOpptjening'
@@ -717,7 +701,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       inntekt: {
         beloep: 7500,
-        inntektsdato: '2024-09-10',
+        inntektsdato: '2024-09-06',
         endringAarsaker: [
           {
             aarsak: 'Ferie',
