@@ -1,0 +1,54 @@
+{
+  "forespoersler": [
+    {
+      "forespoerselId": "049c78f1-ab2d-4886-91dd-36bb8787b4a4",
+      "sykmeldingsperioder": [{ "fom": "2025-04-01", "tom": "2025-04-19" }],
+      "egenmeldingsperioder": [{ "fom": "2025-03-30", "tom": "2025-03-31" }],
+      "erBesvart": true
+    }
+  ],
+  "soeknaderArbeidstaker": [
+    {
+      "sykmeldingsperiode": { "fom": "2026-03-05", "tom": "2026-03-30" },
+      "egenmeldingsperioder": [{ "fom": "2026-03-02", "tom": "2026-03-04" }],
+      "erGradert": false,
+      "vedtaksperiodeId": "049c78f1-ab2d-4886-91dd-36bb8787b4a4"
+    },
+    {
+      "sykmeldingsperiode": { "fom": "2026-04-02", "tom": "2026-04-30" },
+      "egenmeldingsperioder": [],
+      "erGradert": false,
+      "vedtaksperiodeId": "CF1205C7-1109-42C7-A4EC-AD806425B6B4"
+    },
+    {
+      "sykmeldingsperiode": { "fom": "2026-05-02", "tom": "2026-05-30" },
+      "egenmeldingsperioder": [],
+      "erGradert": false,
+      "vedtaksperiodeId": "BF2D076A-30ED-4C7C-A212-4E5B4D87F5CD",
+      "forlengerVedtaksperiodeId": "049c78f1-ab2d-4886-91dd-36bb8787b4a4"
+    }
+  ],
+  "soeknaderBehandlingsdager": [
+    {
+      "sykmeldingsperiode": { "fom": "2026-04-02", "tom": "2026-07-30" },
+      "behandlingsdager": [
+        "2026-04-04",
+        "2026-04-11",
+        "2026-04-18",
+        "2026-04-25",
+        "2026-05-04",
+        "2026-05-11",
+        "2026-05-18",
+        "2026-05-25",
+        "2026-06-01",
+        "2026-06-08",
+        "2026-06-15",
+        "2026-06-22",
+        "2026-07-01",
+        "2026-07-08",
+        "2026-07-15"
+      ],
+      "soeknadIder": ["CF1205C7-1109-42C7-A4EC-AD806425B6B4"]
+    }
+  ]
+}

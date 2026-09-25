@@ -18,7 +18,6 @@ describe('useBehandlingsdager', () => {
   const TEST_URL = 'http://test-url';
   const ident = '123';
   const org = '456';
-  const fom = '2021-01-01';
   let setError: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
@@ -26,13 +25,13 @@ describe('useBehandlingsdager', () => {
     environment.hentBehandlingsdagerUrl = TEST_URL;
     setError = vi.fn();
     // call the hook to record the useSWRImmutable call
-    useBehandlingsdager(ident, org, fom, setError);
+    useBehandlingsdager(ident, org, setError);
   });
 
   it('calls useSWRImmutable with correct key, fetcher and config', () => {
     expect(useSWRImmutable).toHaveBeenCalledTimes(1);
     const [key, fetcher, config] = (useSWRImmutable as any).mock.calls[0];
-    expect(key).toEqual([TEST_URL, ident, org, fom]);
+    expect(key).toEqual([TEST_URL, ident, org]);
     expect(typeof fetcher).toBe('function');
     expect(config.refreshInterval).toBe(0);
     expect(config.shouldRetryOnError).toBe(false);
@@ -41,15 +40,15 @@ describe('useBehandlingsdager', () => {
 
   it('fetcher invokes fetcherSykepengesoeknader with URL when all params truthy', () => {
     const fetcher = (useSWRImmutable as any).mock.calls[0][1];
-    fetcher([TEST_URL, ident, org, fom]);
-    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(TEST_URL, ident, org, fom);
+    fetcher([TEST_URL, ident, org]);
+    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(TEST_URL, ident, org);
   });
 
   it('fetcher invokes fetcherSykepengesoeknader with null URL when ident is undefined', () => {
-    useBehandlingsdager(undefined, org, fom, setError);
+    useBehandlingsdager(undefined, org, setError);
     const fetcher = (useSWRImmutable as any).mock.calls[1][1];
-    fetcher([TEST_URL, undefined, org, fom]);
-    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(TEST_URL, undefined, org, fom);
+    fetcher([TEST_URL, undefined, org]);
+    expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(TEST_URL, undefined, org);
   });
 
   describe('onError handler', () => {

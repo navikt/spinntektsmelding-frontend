@@ -125,4 +125,11 @@ describe('useArbeidsforhold', () => {
 
     expect(fetcherArbeidsforhold).toHaveBeenCalledWith(null, undefined);
   });
+
+  it('always provides an onError function when setError is not provided', () => {
+    useArbeidsforhold('123', undefined);
+
+    expect(hoisted.capturedOptions.onError).toEqual(expect.any(Function));
+    expect(buildSWRFormErrorHandler).not.toHaveBeenCalled();
+  });
 });

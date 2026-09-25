@@ -331,7 +331,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
-    setError,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
@@ -366,8 +365,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   } = useBehandlingsdager(
     behandlingsdagerInnsending && slug !== 'behandlingsdager' ? sykmeldt.fnr : undefined,
     avsender.orgnr || '',
-    sykmeldingsperioder?.[0]?.fom ? toLocalIso(sykmeldingsperioder[0].fom) : undefined,
-    setError
+    sykmeldingsperioder?.[0]?.fom ? toLocalIso(sykmeldingsperioder[0].fom) : undefined
   );
 
   const effectSetBehandlingsdager = useEffectEvent((behandlingsdager: string[]) => {

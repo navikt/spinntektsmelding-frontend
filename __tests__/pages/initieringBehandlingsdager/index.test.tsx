@@ -65,7 +65,9 @@ describe('InitieringBehandlingsdager', () => {
         initArbeidsgiverperioder: initArbeidsgiverperioder,
         setIdentitetsnummer: vi.fn(),
         setAarsakSelvbestemtInnsending: vi.fn(),
-        setSelvbestemtType: setSelvbestemtType
+        setSelvbestemtType: setSelvbestemtType,
+        soeknadIder: undefined,
+        setSoeknadIder: vi.fn()
       })
     );
 
@@ -81,32 +83,30 @@ describe('InitieringBehandlingsdager', () => {
 
     // behandlingsdager hook: two periods, second has > 12 days
     (useBehandlingsdager as unknown as Mock).mockReturnValue({
-      data: [
-        {
-          sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-          sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-          fom: '2023-01-01',
-          tom: '2023-01-05',
-          behandlingsdager: ['2023-01-01', '2023-01-02'],
-          egenmeldingsdagerFraSykmelding: [],
-          status: 'NY',
-          startSykeforlop: '2023-01-01',
-          vedtaksperiodeId: null
-        },
-        {
-          sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-          sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-          fom: '2023-02-01',
-          tom: '2023-02-15',
-          behandlingsdager: Array(14).fill('2023-02-01'),
-          egenmeldingsdagerFraSykmelding: [],
-          status: 'NY',
-          startSykeforlop: '2023-02-01',
-          vedtaksperiodeId: null
-        }
-      ],
-      error: undefined,
-      isLoading: false
+      data: {
+        forespoersler: [],
+        soeknaderArbeidstaker: [],
+        soeknaderBehandlingsdager: [
+          {
+            soeknadIder: ['123e4567-e89b-12d3-a456-426614174000'],
+            sykmeldingsperiode: {
+              fom: '2023-01-01',
+              tom: '2023-01-05'
+            },
+            behandlingsdager: ['2023-01-01', '2023-01-02']
+          },
+          {
+            soeknadIder: ['123e4567-e89b-12d3-a456-426614174001'],
+            sykmeldingsperiode: {
+              fom: '2023-02-01',
+              tom: '2023-02-15'
+            },
+            behandlingsdager: Array(14).fill('2023-02-01')
+          }
+        ],
+        error: undefined,
+        isLoading: false
+      }
     });
   });
 
@@ -161,19 +161,20 @@ describe('InitieringBehandlingsdager', () => {
   it('allows exactly 12 behandlingsdager', async () => {
     const behandlingsdager = Array.from({ length: 12 }, (_, index) => `2023-02-${String(index + 1).padStart(2, '0')}`);
     (useBehandlingsdager as unknown as Mock).mockReturnValue({
-      data: [
-        {
-          sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-          sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-          fom: '2023-02-01',
-          tom: '2023-02-12',
-          behandlingsdager,
-          egenmeldingsdagerFraSykmelding: [],
-          status: 'NY',
-          startSykeforlop: '2023-02-01',
-          vedtaksperiodeId: null
-        }
-      ],
+      data: {
+        forespoersler: [],
+        soeknaderArbeidstaker: [],
+        soeknaderBehandlingsdager: [
+          {
+            soeknadIder: ['123e4567-e89b-12d3-a456-426614174001'],
+            sykmeldingsperiode: {
+              fom: '2023-02-01',
+              tom: '2023-02-12'
+            },
+            behandlingsdager
+          }
+        ]
+      },
       error: undefined,
       isLoading: false
     });

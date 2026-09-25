@@ -8,24 +8,26 @@ import { redirectToLogin } from './redirectToLogin';
 
 export default function useArbeidsforhold(
   identitetsnummer: string | undefined,
-  setError: UseFormSetError<any> // (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
+  setError: UseFormSetError<any> | undefined // (name: string, error: FieldError, options?: { shouldFocus: boolean | undefined }) => void
 ) {
   return useSWRImmutable(
     [environment.initierBlankSkjemaUrl, identitetsnummer],
     ([url, idToken]) => fetcherArbeidsforhold(identitetsnummer ? url : null, idToken),
     {
-      onError: buildSWRFormErrorHandler({
-        setError,
-        field: 'arbeidsgiverListe',
-        messages: {
-          unauthorized: 'Mangler tilgang til den aktuelle organisasjonen',
-          notFound: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
-          default: 'Kunne ikke hente arbeidsforhold'
-        },
-        onUnauthorized: (err) => {
-          redirectToLogin('/initiering');
-        }
-      }),
+      onError: setError
+        ? buildSWRFormErrorHandler({
+            setError,
+            field: 'arbeidsgiverListe',
+            messages: {
+              unauthorized: 'Mangler tilgang til den aktuelle organisasjonen',
+              notFound: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
+              default: 'Kunne ikke hente arbeidsforhold'
+            },
+            onUnauthorized: (err) => {
+              redirectToLogin('/initiering');
+            }
+          })
+        : () => undefined,
       ...commonSWRFormOptions
     }
   );
