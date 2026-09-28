@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const isoDate = z.iso.date();
+export const isoDate = z.iso.date();
 
 const ForespoerselResponseSchema = z.object({
   forespoerselId: z.uuid(),

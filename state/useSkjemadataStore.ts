@@ -157,8 +157,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setSoeknadIder: (soeknadIder: string) => {
-    console.log(soeknadIder);
+  setSoeknadIder: (soeknadIder: string[]) => {
     set(
       produce((state: SkjemadataState) => {
         state.soeknadIder = soeknadIder;
