@@ -375,7 +375,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   useEffect(() => {
     if (spData && !spError && !spIsLoading) {
       const fomDate = sykmeldingsperioder?.[0]?.fom;
-      const dager = spData.soeknaderBehandlingsdager?.flatMap((periode) => {
+      const dager = spData.soeknaderBehandlingsdager.flatMap((periode) => {
         if (fomDate && periode.sykmeldingsperiode.fom === toLocalIso(fomDate)) {
           return periode.behandlingsdager;
         }

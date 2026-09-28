@@ -67,7 +67,7 @@ export const config = {
   }
 };
 
-type Sykepengesoeknader = z.infer<typeof SPEndepunktSykepengesoeknadSchema>;
+type Sykepengesoeknader = z.infer<typeof SPEndepunktSykepengesoeknadSchema>[];
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   try {

@@ -130,7 +130,11 @@ const InitieringAnnet: NextPage = () => {
     const mottatteData = data ? EndepunktArbeidsforholdSchema.safeParse(data) : undefined;
 
     if (mottatteData?.success) {
-      handleValidData(formData, mottatteData.data, mottatteSykepengesoeknader?.data);
+      handleValidData(
+        formData,
+        mottatteData.data,
+        mottatteSykepengesoeknader?.success ? mottatteSykepengesoeknader.data : undefined
+      );
     } else {
       logger.error(
         '[initieringAnnet] Submit stoppet: ugyldige arbeidsforholdsdata ' + JSON.stringify(mottatteData?.error.issues)
