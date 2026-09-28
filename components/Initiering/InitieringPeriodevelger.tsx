@@ -48,24 +48,22 @@ export default function InitieringPeriodevelger({
         >
           {forespoersler.map((forespoersel) => (
             <Radio key={forespoersel.forespoerselId} value={forespoersel.forespoerselId}>
-              {forespoersel.sykmeldingsperioder.map((periode) => (
-                <span key={periode.fom}>
-                  {formatDate(parseIsoDate(periode.fom))} - {formatDate(parseIsoDate(periode.tom))}{' '}
-                </span>
-              ))}
+              {forespoersel.sykmeldingsperioder
+                .map((periode) => `${formatDate(parseIsoDate(periode.fom))} - ${formatDate(parseIsoDate(periode.tom))}`)
+                .join(', ')}{' '}
               {forespoersel.egenmeldingsperioder && forespoersel.egenmeldingsperioder.length > 0 && (
                 <>
                   <br />
-                  Egenmeldingsperiode:
-                  {forespoersel.egenmeldingsperioder.map((periode) => (
-                    <span key={periode.fom}>
-                      {formatDate(parseIsoDate(periode.fom))} - {formatDate(parseIsoDate(periode.tom))}{' '}
-                    </span>
-                  ))}
+                  Egenmeldingsperiode:{' '}
+                  {forespoersel.egenmeldingsperioder
+                    .map(
+                      (periode) => `${formatDate(parseIsoDate(periode.fom))} - ${formatDate(parseIsoDate(periode.tom))}`
+                    )
+                    .join(', ')}{' '}
                   <br />
                 </>
               )}
-              {!!forespoersel.erBesvart && ' (Besvart)'}
+              {!!forespoersel.erBesvart && ' (Viser kvittering)'}
             </Radio>
           ))}
           {perioder && perioder.length > 0 && (

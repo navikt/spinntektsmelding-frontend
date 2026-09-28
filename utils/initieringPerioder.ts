@@ -12,7 +12,7 @@ export function formaterEgenmeldingsdager(egenmeldingsdager: Periode[] | null | 
     return null;
   }
 
-  return 'Egenmeldingsperiode: ' + egenmeldingsdager.map((periode) => formaterPerioder(periode)).join(', ');
+  return 'Egenmeldingsperiode: ' + egenmeldingsdager.map((periode) => formaterPeriode(periode)).join(', ');
 }
 
 function visDato(id: string, perioder: SoeknadArbeidstaker[], key: 'fom' | 'tom'): string {
@@ -27,6 +27,6 @@ export function getFravaersperioder<T extends Periode>(perioder: T[]) {
   return perioder.map((periode) => ({ fom: periode.fom, tom: periode.tom }));
 }
 
-function formaterPerioder(periode: Periode) {
+function formaterPeriode(periode: Periode) {
   return `${formatDate(parseIsoDate(periode.fom))} - ${formatDate(parseIsoDate(periode.tom))}`;
 }
