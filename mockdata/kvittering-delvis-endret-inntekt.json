@@ -8,33 +8,22 @@
       "tlf": "12345678"
     },
     "sykmeldingsperioder": [
-      {
-        "fom": "2026-04-10",
-        "tom": "2026-04-17"
-      }
-    ],
-    "egenmeldingsperioder": [
-      {
-        "fom": "2026-04-07",
-        "tom": "2026-04-09"
-      }
+      { "fom": "2023-01-02", "tom": "2023-01-29" },
+      { "fom": "2023-01-31", "tom": "2023-02-08" }
     ],
     "skjema": {
-      "forespoerselId": "6d3a9bb7-f5db-4137-94fa-a4ad1134758d",
-      "avsenderTlf": "22865500",
+      "forespoerselId": "52ad58fb-a3cc-4c43-a20d-53fe74db31f9",
+      "avsenderTlf": "12345678",
       "agp": null,
       "inntekt": {
-        "beloep": 65223.39,
-        "inntektsdato": "2026-04-07",
-        "endringAarsaker": []
+        "beloep": 65000.0,
+        "inntektsdato": "2023-01-02",
+        "naturalytelser": [],
+        "endringAarsak": null,
+        "endringAarsaker": [{ "aarsak": "Bonus" }]
       },
-      "naturalytelser": [],
-      "refusjon": {
-        "beloepPerMaaned": 65223.39,
-        "endringer": []
-      },
-      "flereArbeidsforhold": null
+      "refusjon": { "beloepPerMaaned": null, "endringer": [], "sluttdato": null }
     },
-    "mottatt": "2026-04-22T13:42:14.344643"
+    "mottatt": "2023-08-23T13:04:51.580106881+02:00"
   }
 }
