@@ -92,6 +92,7 @@ const InitieringAnnet: NextPage = () => {
     register,
     resetField,
     setError,
+    setValue,
     handleSubmit,
     formState: { errors }
   } = methods;
@@ -260,6 +261,7 @@ const InitieringAnnet: NextPage = () => {
       setHarValgtPeriodeMedForlengelse(true);
     } else {
       setHarValgtPeriodeMedForlengelse(false);
+      setValue('endreRefusjon', undefined, { shouldValidate: true, shouldDirty: true });
     }
     field.onChange(value);
     setValgtePerioderMedForlengelse(value);
