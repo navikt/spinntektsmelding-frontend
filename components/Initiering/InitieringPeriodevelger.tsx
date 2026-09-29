@@ -1,11 +1,11 @@
 import { Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
-import type { ReactNode } from 'react';
 import type { ControllerRenderProps, FieldErrors } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import type { Forespoersel } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import type { SykepengePeriode } from '../../utils/useInitieringData';
 import formatDate from '../../utils/formatDate';
 import parseIsoDate from '../../utils/parseIsoDate';
+import { formaterEgenmeldingsdager } from '../../utils/initieringPerioder';
 
 type Props = Readonly<{
   control: any;
@@ -17,7 +17,6 @@ type Props = Readonly<{
   checkboxGroupClassName?: string;
   onRadioChange: (value: string, field: ControllerRenderProps<any, 'forespurtSykepengePeriodeId'>) => void;
   onCheckboxChange?: (value: string[], field: ControllerRenderProps<any, 'sykepengePeriodeId'>) => void;
-  renderPeriode: (periode: SykepengePeriode) => ReactNode;
 }>;
 
 export default function InitieringPeriodevelger({
@@ -29,8 +28,7 @@ export default function InitieringPeriodevelger({
   visUtenKobling = false,
   checkboxGroupClassName,
   onRadioChange,
-  onCheckboxChange,
-  renderPeriode
+  onCheckboxChange
 }: Props) {
   return (
     <Controller
@@ -38,7 +36,11 @@ export default function InitieringPeriodevelger({
       control={control}
       render={({ field }) => (
         <RadioGroup
-          legend='Nav har bedt om inntektsmelding for disse periodene:'
+          legend={
+            visUtenKobling && forespoersler.length === 0 && perioder.length === 0
+              ? 'Velg hva du vil gjøre videre:'
+              : 'Nav har bedt om inntektsmelding for disse periodene:'
+          }
           id='forespurtSykepengePeriodeId'
           error={errors.forespurtSykepengePeriodeId?.message as string}
           value={field.value ?? ''}
@@ -88,7 +90,12 @@ export default function InitieringPeriodevelger({
               >
                 {perioder.map((periode) => (
                   <Checkbox key={periode.id} value={periode.id} disabled={disablePeriodeCheck}>
-                    {renderPeriode(periode)}
+                    <>
+                      {formatDate(periode.fom)} - {formatDate(periode.tom)}
+                      <br />
+                      {formaterEgenmeldingsdager(periode.egenmeldingsperioder)}
+                      {periode.forlengerVedtaksperiodeId && ' (Forlengelse)'}
+                    </>
                   </Checkbox>
                 ))}
               </CheckboxGroup>

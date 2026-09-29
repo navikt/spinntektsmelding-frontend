@@ -27,7 +27,6 @@ import {
   EndepunktSykepengesoeknaderSchema,
   SoeknadArbeidstaker
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
@@ -36,7 +35,7 @@ import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforh
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import useInitieringData from '../../utils/useInitieringData';
 import { OrganisasjonInfo, PersonInfo } from '../../components/Initiering/InitieringInfo';
-import { formaterEgenmeldingsdager, visFomDato, visTomDato } from '../../utils/initieringPerioder';
+import { visFomDato, visTomDato } from '../../utils/initieringPerioder';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
@@ -335,14 +334,6 @@ const InitieringAnnet: NextPage = () => {
                         checkboxGroupClassName={lokalStyling.checkboxGroup}
                         onRadioChange={onRadioChange}
                         onCheckboxChange={onCheckboxChange}
-                        renderPeriode={(periode) => (
-                          <>
-                            {formatDate(periode.fom)} - {formatDate(periode.tom)}
-                            <br></br>
-                            {formaterEgenmeldingsdager(periode.egenmeldingsperioder)}
-                            {periode.forlengerVedtaksperiodeId && ' (Forlengelse)'}
-                          </>
-                        )}
                       />
 
                       {(error ||

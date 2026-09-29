@@ -71,6 +71,51 @@ describe('InitieringFritatt page', () => {
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
 
+  it('does not select utenKobling when sickness-benefit data arrives later', async () => {
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' }]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
+
+    const { rerender } = render(<InitieringFritatt />);
+    const forespoerselId = '123e4567-e89b-12d3-a456-426614174000';
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({
+      data: {
+        forespoersler: [
+          {
+            forespoerselId,
+            sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+            egenmeldingsperioder: [],
+            erBesvart: false
+          }
+        ],
+        soeknaderArbeidstaker: [
+          {
+            sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+            egenmeldingsperioder: [],
+            erGradert: false,
+            vedtaksperiodeId: forespoerselId
+          }
+        ],
+        soeknaderBehandlingsdager: []
+      },
+      error: undefined
+    });
+    rerender(<InitieringFritatt />);
+
+    const user = userEvent.setup();
+    const utenKoblingRadio = await screen.findByRole('radio', { name: 'Send inntektsmelding for annen periode' });
+    expect(utenKoblingRadio).not.toBeChecked();
+    await user.click(utenKoblingRadio);
+    expect(utenKoblingRadio).toBeChecked();
+    await user.click(screen.getByRole('button', { name: 'Neste' }));
+
+    await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+  });
+
   it('validates form and shows error if no selection', async () => {
     const mockData = {
       fulltNavn: 'Ukjent navn',
@@ -141,6 +186,7 @@ describe('InitieringFritatt page', () => {
         name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
       })
     );
+    await user.click(await screen.findByRole('radio', { name: 'Send inntektsmelding for annen periode' }));
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
