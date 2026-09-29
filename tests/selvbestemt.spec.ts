@@ -21,7 +21,14 @@ async function answerFaisuIfVisible(page: Page) {
 }
 
 const spSoeknader = {
-  forespoersler: [],
+  forespoersler: [
+    {
+      forespoerselId: '049c78f1-ab2d-4886-91dd-36bb8787b4a4',
+      sykmeldingsperioder: [{ fom: '2025-04-01', tom: '2025-04-19' }],
+      egenmeldingsperioder: [{ fom: '2025-03-30', tom: '2025-03-31' }],
+      erBesvart: true
+    }
+  ],
   soeknader: [],
   soeknaderArbeidstaker: [
     {
@@ -561,20 +568,11 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       .click();
 
     await page.getByLabel(/11\.09\.2024 - 15\.09\.2024/).check();
-    // await formPage.checkRadioButton(
-    //   'Nav har bedt om inntektsmelding for disse periodene:',
-    //   '11.09.2024 - 15.09.2024 (pluss 4 egenmeldingsdager fra sykmelding)'
-    // );
 
     await page.getByRole('button', { name: 'Neste' }).click();
 
     // fill phone and utbetalt
     await page.getByLabel('Telefon innsender').fill('12345678');
-
-    // await page.getByRole('textbox', { name: 'Fra' }).first().fill('06.09.24');
-    // await page.getByRole('textbox', { name: 'Til' }).first().fill('08.09.24');
-    // await page.getByRole('textbox', { name: 'Fra' }).nth(1).fill('10.09.24');
-    // await page.getByRole('textbox', { name: 'Til' }).nth(1).fill('17.09.24');
 
     await page.getByLabel('Telefon innsender').fill('12345678');
 
