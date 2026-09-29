@@ -37,8 +37,8 @@ export default function InitieringPeriodevelger({
       render={({ field }) => (
         <RadioGroup
           legend={
-            visUtenKobling && forespoersler.length === 0 && perioder.length === 0
-              ? 'Velg hva du vil gjøre videre:'
+            forespoersler.length === 0
+              ? 'Hva vil du gjøre videre:'
               : 'Nav har bedt om inntektsmelding for disse periodene:'
           }
           id='forespurtSykepengePeriodeId'
@@ -69,7 +69,11 @@ export default function InitieringPeriodevelger({
             </Radio>
           ))}
           {perioder && perioder.length > 0 && (
-            <Radio value='andrePerioder'>Eller velg en annen periode du vil sende inntektsmelding for:</Radio>
+            <Radio value='andrePerioder'>
+              {forespoersler.length === 0
+                ? 'Velg en annen periode du vil sende inntektsmelding for:'
+                : 'Eller velg en annen periode du vil sende inntektsmelding for:'}
+            </Radio>
           )}
           <Controller
             name='sykepengePeriodeId'

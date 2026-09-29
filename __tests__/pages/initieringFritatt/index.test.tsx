@@ -293,7 +293,7 @@ describe('InitieringFritatt page', () => {
       })
     );
 
-    await user.click(await screen.findByRole('radio', { name: /Eller velg en annen periode/ }));
+    await user.click(await screen.findByRole('radio', { name: /en annen periode/ }));
     await user.click(await screen.findByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
@@ -305,6 +305,56 @@ describe('InitieringFritatt page', () => {
   });
 
   it('shows error when andrePerioder is selected without choosing a periode', async () => {
+    const mockData = {
+      fulltNavn: 'Ukjent navn',
+      fnr: testFnr.GyldigeFraDolly.TestPerson1,
+      underenheter: [
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+      ]
+    };
+    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+
+    const uuid = '123e4567-e89b-12d3-a456-426614174000';
+    const spData = {
+      forespoersler: [
+        {
+          forespoerselId: '049c78f1-ab2d-4886-91dd-36bb8787b4a4',
+          sykmeldingsperioder: [{ fom: '2025-04-01', tom: '2025-04-19' }],
+          egenmeldingsperioder: [{ fom: '2025-03-30', tom: '2025-03-31' }],
+          erBesvart: true
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: uuid
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
+    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined });
+
+    const user = userEvent.setup();
+    render(<InitieringFritatt />);
+
+    await user.click(await screen.findByLabelText(/Hvilken underenhet/));
+    await user.click(
+      await screen.findByRole('option', {
+        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+      })
+    );
+
+    await user.click(await screen.findByRole('radio', { name: /Eller velg en annen periode/ }));
+    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    expect(await screen.findAllByText('Du må velge periodene som det skal sendes inntektsmelding for')).toHaveLength(2);
+    expect(mockedRouter.push).not.toHaveBeenCalled();
+  });
+
+  it('shows error when andrePerioder is selected without choosing a periode and no forespoerseler', async () => {
     const mockData = {
       fulltNavn: 'Ukjent navn',
       fnr: testFnr.GyldigeFraDolly.TestPerson1,
@@ -340,7 +390,7 @@ describe('InitieringFritatt page', () => {
       })
     );
 
-    await user.click(await screen.findByRole('radio', { name: /Eller velg en annen periode/ }));
+    await user.click(await screen.findByRole('radio', { name: /Velg en annen periode/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     expect(await screen.findAllByText('Du må velge periodene som det skal sendes inntektsmelding for')).toHaveLength(2);

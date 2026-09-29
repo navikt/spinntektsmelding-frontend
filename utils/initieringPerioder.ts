@@ -1,6 +1,7 @@
 import formatDate from './formatDate';
 import parseIsoDate from './parseIsoDate';
 import type { SoeknadArbeidstaker } from '../schema/EndepunktSykepengesoeknaderSchema';
+import formatIsoDate from './formatIsoDate';
 
 export type Periode = {
   fom: string | Date;
@@ -24,7 +25,10 @@ export const visFomDato = (id: string, perioder: SoeknadArbeidstaker[]) => visDa
 export const visTomDato = (id: string, perioder: SoeknadArbeidstaker[]) => visDato(id, perioder, 'tom');
 
 export function getFravaersperioder<T extends Periode>(perioder: T[]) {
-  return perioder.map((periode) => ({ fom: periode.fom, tom: periode.tom }));
+  return perioder.map((periode) => ({
+    fom: formatIsoDate(parseIsoDate(periode.fom)!),
+    tom: formatIsoDate(parseIsoDate(periode.tom)!)
+  }));
 }
 
 function formaterPeriode(periode: Periode) {
