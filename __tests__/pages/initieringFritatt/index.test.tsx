@@ -156,9 +156,7 @@ describe('InitieringFritatt page', () => {
     };
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
     render(<InitieringFritatt />);
-    // wait for select to mount
-    // await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
-    // fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
@@ -186,7 +184,7 @@ describe('InitieringFritatt page', () => {
         name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
       })
     );
-    await user.click(await screen.findByRole('radio', { name: 'Send inntektsmelding for annen periode' }));
+
     await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
