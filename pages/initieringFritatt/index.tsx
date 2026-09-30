@@ -155,7 +155,12 @@ const InitieringFritatt: NextPage = () => {
     if (!validationResult.success) {
       logger.error('Validering av skjemadata feilet: %j', validationResult.error.issues);
     }
-
+    // if (!visUtenKobling) {
+    //   console.log('visUtenKobling is false, setting forespurtSykepengePeriodeId to "utenKobling"');
+    //   formData.forespurtSykepengePeriodeId = 'utenKobling';
+    // } else {
+    //   console.log('visUtenKobling is true, not setting forespurtSykepengePeriodeId to "utenKobling"');
+    // }
     if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
       handleValidFormData(skjemaData, []);
       return;
@@ -260,12 +265,12 @@ const InitieringFritatt: NextPage = () => {
     spError?.status === 404 || (spData?.soeknaderArbeidstaker.length === 0 && spData?.forespoersler.length === 0)
   );
 
-  const onResetField = useEffectEvent((name: keyof Skjema) => {
-    resetField(name);
+  const onResetField = useEffectEvent((field: keyof Skjema) => {
+    resetField(field, { defaultValue: undefined });
   });
 
   useEffect(() => {
-    onResetField('forespurtSykepengePeriodeId');
+    onResetField('forespurtSykepengePeriodeId', {});
   }, [spError?.status, spData?.soeknaderArbeidstaker.length, arbeidsforhold.length]);
 
   const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
@@ -294,6 +299,24 @@ const InitieringFritatt: NextPage = () => {
   const valgtePerioder = soeknaderArbeidstaker.filter((periode) =>
     valgtePerioderMedForlengelse.includes(periode.vedtaksperiodeId)
   );
+
+  const visUtenKobling =
+    (spData?.forespoersler && spData?.forespoersler.length > 0) ||
+    (spData?.soeknaderArbeidstaker && spData?.soeknaderArbeidstaker.length > 0);
+
+  const onSetValue = useEffectEvent((value: string) => {
+    setValue('forespurtSykepengePeriodeId', value, { shouldValidate: true, shouldDirty: true });
+  });
+
+  useEffect(() => {
+    if (!visUtenKobling && !spLoading && spData) {
+      console.log('visUtenKobling is false, setting forespurtSykepengePeriodeId to "utenKobling"');
+      onSetValue('utenKobling');
+    } else {
+      console.log('visUtenKobling is true, not setting forespurtSykepengePeriodeId to "utenKobling"');
+      onResetField('forespurtSykepengePeriodeId');
+    }
+  }, [visUtenKobling, spLoading, spData]);
 
   return (
     <div className={styles.container}>
@@ -344,7 +367,7 @@ const InitieringFritatt: NextPage = () => {
                     forespoersler={forespoersler}
                     perioder={sykepengePerioder}
                     disablePeriodeCheck={disablePeriodeCheck}
-                    visUtenKobling
+                    visUtenKobling={visUtenKobling}
                     checkboxGroupClassName={lokalStyling.checkboxGroup}
                     onRadioChange={onRadioChange}
                     onCheckboxChange={onCheckboxChange}
