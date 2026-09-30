@@ -587,7 +587,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     onSetValue('opplysningstyper', Array.from(new Set(opplysningstyper)));
   }, [opplysningstyper]);
 
-  const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
+  const submitForm: SubmitHandler<Skjema> = async (formData: Skjema) => {
     setSenderInn(true);
     if (selvbestemtInnsending) {
       formData.agp = {
@@ -596,16 +596,20 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         erBehandlingsdager: Boolean(behandlingsdagerInnsending)
       };
 
-      sendInnArbeidsgiverInitiertSkjema(
-        true,
-        slug,
-        isDirtyForm || isDirty,
-        formData,
-        begrensetForespoersel,
-        faisuEnabled
-      ).finally(() => {
+      try {
+        await sendInnArbeidsgiverInitiertSkjema(
+          true,
+          slug,
+          isDirtyForm || isDirty,
+          formData,
+          begrensetForespoersel,
+          faisuEnabled
+        );
+      } catch (error) {
+        logger.warn({ err: error }, 'Uventet feil ved innsending av arbeidsgiverinitiert skjema');
+      } finally {
         setSenderInn(false);
-      });
+      }
 
       return;
     }
@@ -622,15 +626,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setPaakrevdeOpplysninger(nesteOpplysningstyper);
     setValue('opplysningstyper', Array.from(new Set(nesteOpplysningstyper)));
 
-    sendInnSkjema(
-      true,
-      slug,
-      isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
-      formData,
-      begrensetForespoersel
-    ).finally(() => {
+    try {
+      await sendInnSkjema(
+        true,
+        slug,
+        isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
+        formData,
+        begrensetForespoersel
+      );
+    } catch (error) {
+      logger.warn({ err: error }, 'Uventet feil ved innsending av skjema');
+    } finally {
       setSenderInn(false);
-    });
+    }
   };
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
