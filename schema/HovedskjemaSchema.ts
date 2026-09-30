@@ -159,7 +159,7 @@ function validateFaisu(val: HovedskjemaInput, ctx: z.RefinementCtx) {
   if (arbeidsforhold.every((item) => item.inkludertISykefravaer)) {
     ctx.issues.push({
       code: 'custom',
-      message: 'Du svart "Nei" på om personen er sykmeldt fra alle arbeidsforhold. ',
+      message: 'Du svarte "Nei" på om personen er sykmeldt fra alle arbeidsforhold. ',
       path: ['flereArbeidsforhold', 'arbeidsforhold'],
       input: arbeidsforhold
     });
