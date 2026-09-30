@@ -7,6 +7,7 @@ import NumberField from '../NumberField/NumberField';
 import { Controller, FieldErrors, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import formatCurrency from '../../utils/formatCurrency';
+import useBoundStore from '../../state/useBoundStore';
 
 interface FaisuArbeidsforholdSkjema {
   inntekt?: number;
@@ -32,6 +33,8 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     setValue,
     formState: { errors }
   } = useFormContext<{ flereArbeidsforhold?: FaisuSkjema }>();
+
+  const avsender = useBoundStore((state) => state.avsender);
 
   const harLikLoenn = useWatch({ control, name: 'flereArbeidsforhold.harLikLoenn' });
   const erSykmeldtFraAlle = useWatch({
@@ -155,7 +158,11 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
             defaultValue={undefined}
             render={({ field }) => (
               <RadioGroup
-                legend='Er personen sykmeldt fra alle arbeidsforhold i underenheten?'
+                legend={
+                  avsender.orgNavn
+                    ? `Er personen sykmeldt fra alle arbeidsforhold i "${avsender.orgNavn}"?`
+                    : 'Er personen sykmeldt fra alle arbeidsforhold i underenheten?'
+                }
                 className={localStyles.radiobuttonWrapper}
                 onChange={(value) => handleAlleArbeidsforholdCheckboxChange(value as 'Ja' | 'Nei')}
                 value={field.value ?? ''}
