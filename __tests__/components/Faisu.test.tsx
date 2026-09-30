@@ -91,7 +91,7 @@ describe('Faisu', () => {
     await user.click(screen.getAllByLabelText('Nei')[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Er personen sykmeldt fra alle arbeidsforhold?')).toBeInTheDocument();
+      expect(screen.getByText('Er personen sykmeldt fra alle arbeidsforhold i underenheten?')).toBeInTheDocument();
     });
   });
 

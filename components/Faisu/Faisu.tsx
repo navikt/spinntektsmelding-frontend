@@ -155,7 +155,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
             defaultValue={undefined}
             render={({ field }) => (
               <RadioGroup
-                legend='Er personen sykmeldt fra alle arbeidsforhold?'
+                legend='Er personen sykmeldt fra alle arbeidsforhold i underenheten?'
                 className={localStyles.radiobuttonWrapper}
                 onChange={(value) => handleAlleArbeidsforholdCheckboxChange(value as 'Ja' | 'Nei')}
                 value={field.value ?? ''}
@@ -180,7 +180,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
                   >
                     <div className={localStyles.feltOverskrifter}>
                       <BodyLong>Aktive arbeidsforhold</BodyLong>
-                      <BodyLong>Månedslønn av beregnet inntekt</BodyLong>
+                      <BodyLong>Beregnet månedslønn</BodyLong>
                       <BodyLong>Stillingsprosent i beregningsperioden</BodyLong>
                     </div>
                     {arbeidsforholdListe.map((arbeidsforhold, index) => {

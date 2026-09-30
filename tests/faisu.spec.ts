@@ -77,7 +77,7 @@ test.describe('Utfylling og innsending av skjema', () => {
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 
     await formPage.checkRadioButton('Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?', 'Nei');
-    await formPage.checkRadioButton('Er personen sykmeldt fra alle arbeidsforhold?', 'Nei');
+    await formPage.checkRadioButton('Er personen sykmeldt fra alle arbeidsforhold i underenheten?', 'Nei');
 
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
