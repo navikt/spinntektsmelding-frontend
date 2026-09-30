@@ -117,7 +117,7 @@ export default function useSendInnSkjema(
     }
 
     if (!isValidUUID(pathSlug)) {
-      console.log('Ugyldig UUID ved innsending: ', pathSlug);
+      logger.warn('Ugyldig UUID ved innsending: ' + pathSlug);
       const errors: Array<ErrorResponse> = [
         {
           value: 'Innsending av skjema feilet',

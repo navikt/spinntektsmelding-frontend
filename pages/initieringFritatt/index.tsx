@@ -155,12 +155,7 @@ const InitieringFritatt: NextPage = () => {
     if (!validationResult.success) {
       logger.error('Validering av skjemadata feilet: %j', validationResult.error.issues);
     }
-    // if (!visUtenKobling) {
-    //   console.log('visUtenKobling is false, setting forespurtSykepengePeriodeId to "utenKobling"');
-    //   formData.forespurtSykepengePeriodeId = 'utenKobling';
-    // } else {
-    //   console.log('visUtenKobling is true, not setting forespurtSykepengePeriodeId to "utenKobling"');
-    // }
+
     if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
       handleValidFormData(skjemaData, []);
       return;
@@ -309,14 +304,12 @@ const InitieringFritatt: NextPage = () => {
   });
 
   useEffect(() => {
-    if (!visUtenKobling && !spLoading && spData) {
-      console.log('visUtenKobling is false, setting forespurtSykepengePeriodeId to "utenKobling"');
+    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404) {
       onSetValue('utenKobling');
     } else {
-      console.log('visUtenKobling is true, not setting forespurtSykepengePeriodeId to "utenKobling"');
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [visUtenKobling, spLoading, spData]);
+  }, [visUtenKobling, spLoading, spData, spError]);
 
   return (
     <div className={styles.container}>

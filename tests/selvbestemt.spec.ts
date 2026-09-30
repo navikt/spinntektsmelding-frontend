@@ -254,7 +254,15 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
   test('selvbestemt fisker med varig lønnsendring', async ({ page }) => {
     await page.route('*/**/api/sp-soeknader', (r) =>
-      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+      r.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          forespoersler: [],
+          soeknaderArbeidstaker: [],
+          soeknaderBehandlingsdager: []
+        })
+      })
     );
     // fill personnummer and next
     const formPage = new FormPage(page);
