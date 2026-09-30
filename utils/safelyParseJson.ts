@@ -4,7 +4,7 @@ async function safelyParseJSON(possibleJsonData: Response): Promise<unknown> {
   try {
     parsed = await possibleJsonData.json();
   } catch (e) {
-    console.error('Failed to parse JSON:', e.message);
+    console.error('Failed to parse JSON:', e instanceof Error ? e.message : e);
     parsed = [];
   }
 

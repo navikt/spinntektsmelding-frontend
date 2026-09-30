@@ -21,15 +21,14 @@ import InitieringSchema from '../../schema/InitieringSchema';
 import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
-import { subYears } from 'date-fns';
 import isMod11Number from '../../utils/isMod11Number';
 import { useRouter } from 'next/navigation';
 import useArbeidsforhold from '../../utils/useArbeidsforhold';
 import useBehandlingsdager from '../../utils/useBehandlingsdager';
-import formatIsoDate from '../../utils/formatIsoDate';
 import {
+  EndepunktSykepengesoeknader,
   EndepunktSykepengesoeknaderSchema,
-  EndepunktSykepengesoeknadSchema
+  SoeknadBehandlingsdager
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import formatDate from '../../utils/formatDate';
 import { logger } from '@navikt/next-logger';
@@ -61,6 +60,7 @@ const InitieringBehandlingsdager: NextPage = () => {
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const initArbeidsgiverperioder = useBoundStore((state) => state.initArbeidsgiverperioder);
   const setSelvbestemtType = useBoundStore((state) => state.setSelvbestemtType);
+  const setSoeknadIder = useBoundStore((state) => state.setSoeknadIder);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -76,8 +76,6 @@ const InitieringBehandlingsdager: NextPage = () => {
   });
 
   type Skjema = z.infer<typeof skjemaSchema>;
-  type EndepunktSykepengesoeknad = z.infer<typeof EndepunktSykepengesoeknadSchema>;
-
   const methods = useForm<Skjema>({
     resolver: zodResolver(skjemaSchema)
   });
@@ -127,12 +125,11 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   const organisasjonsnummer = orgnr ?? orgnrUnderenhet;
 
-  const fomDato = formatIsoDate(subYears(new Date(), 3));
   const {
     data: spData,
     error: spError,
     isLoading: spIsLoading
-  } = useBehandlingsdager(sykmeldt.fnr, organisasjonsnummer, fomDato, setError);
+  } = useBehandlingsdager(sykmeldt.fnr, organisasjonsnummer, setError);
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
@@ -146,13 +143,12 @@ const InitieringBehandlingsdager: NextPage = () => {
     }
 
     let perioder =
-      mottatteBehandlingsdager.data.length > 0
-        ? mottatteBehandlingsdager.data.map((periode) => ({
-            fom: new Date(periode.fom),
-            tom: new Date(periode.tom),
-            id: periode.sykmeldingId,
-            antallBehandlingsdager: periode.behandlingsdager?.length ?? 0,
-            forespoerselId: periode.forespoerselId
+      mottatteBehandlingsdager.data.soeknaderBehandlingsdager.length > 0
+        ? mottatteBehandlingsdager.data.soeknaderBehandlingsdager.map((periode) => ({
+            fom: new Date(periode.sykmeldingsperiode.fom),
+            tom: new Date(periode.sykmeldingsperiode.tom),
+            id: periode.soeknadIder[0],
+            antallBehandlingsdager: periode.behandlingsdager.length
           }))
         : [];
 
@@ -228,12 +224,12 @@ const InitieringBehandlingsdager: NextPage = () => {
 
   function getBehandlingsdager(
     formData: Skjema,
-    mottatteSykepengesoeknader: z.ZodSafeParseResult<EndepunktSykepengesoeknad[]>
-  ): EndepunktSykepengesoeknad | false {
+    mottatteSykepengesoeknader: z.ZodSafeParseResult<EndepunktSykepengesoeknader>
+  ): SoeknadBehandlingsdager | false {
     const sykmeldingsperiode =
       mottatteSykepengesoeknader?.success &&
-      mottatteSykepengesoeknader?.data?.find(
-        (soeknad: EndepunktSykepengesoeknad) => soeknad.sykmeldingId === formData.sykmeldingId
+      mottatteSykepengesoeknader?.data?.soeknaderBehandlingsdager?.find((soeknad: SoeknadBehandlingsdager) =>
+        soeknad.soeknadIder.includes(formData.sykmeldingId)
       );
 
     return sykmeldingsperiode ?? false;
@@ -267,14 +263,15 @@ const InitieringBehandlingsdager: NextPage = () => {
     setBehandlingsdager(sykmeldingsperiode.behandlingsdager);
     initArbeidsgiverperioder(arbeidsgiverperioder);
     setSelvbestemtType(SelvbestemtTypeConst.Behandlingsdager);
+    setSoeknadIder(sykmeldingsperiode.soeknadIder);
     router.push('/behandlingsdager');
   };
 
-  const getSykmeldingsperioder = (periode: any) => {
+  const getSykmeldingsperioder = (periode: SoeknadBehandlingsdager) => {
     return [
       {
-        fom: periode.fom,
-        tom: periode.tom
+        fom: periode.sykmeldingsperiode.fom,
+        tom: periode.sykmeldingsperiode.tom
       }
     ];
   };

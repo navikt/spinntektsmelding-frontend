@@ -1,219 +1,99 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
+import handleProxyInit from '../../utils/api/handleProxyInit';
 import fs from 'node:fs';
-import isMod11Number from '../../utils/isMod11Number';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { z } from 'zod';
-import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
+import { z } from 'zod';
 import { logger } from '@navikt/next-logger';
-import { teamLogger } from '@navikt/next-logger/team-log';
 import { requireEnv } from '../../utils/api/validateEnv';
+import isMod11Number from '../../utils/isMod11Number';
+import isFnrNumber from '../../utils/isFnrNumber';
+import { EndepunktSykepengesoeknader } from '../../schema/EndepunktSykepengesoeknaderSchema';
+
+type EndepunktSykepengesoeknaderResponse = EndepunktSykepengesoeknader;
+type SykepengesoeknaderResponse = EndepunktSykepengesoeknaderResponse | { error: string };
 
 const requestBodySchema = z.object({
-  orgnummer: z.string().min(9),
-  fnr: z.string().min(11),
-  eldsteFom: z.string().min(10)
+  orgnummer: z.string().min(1),
+  fnr: z.string().min(1)
 });
-
-function minDate(date1: string, date2: string): string {
-  return date1 < date2 ? date1 : date2;
-}
-function maxDate(date1: string, date2: string): string {
-  return date1 > date2 ? date1 : date2;
-}
 
 export const config = {
   api: {
-    externalResolver: true
+    externalResolver: true,
+    bodyParser: true
   }
 };
 
-let teamLoggerGuardRegistrert = false;
-function registrerTeamLoggerGuard() {
-  if (teamLoggerGuardRegistrert) {
-    return;
-  }
-  teamLoggerGuardRegistrert = true;
-  process.on('uncaughtException', (err) => {
-    if (err instanceof Error && err.message.includes('the worker has exited')) {
-      logger.warn('teamLogger-worker avsluttet, ignorerer for å unngå nedetid');
-      return;
-    }
-    throw err;
-  });
-}
+const handler = (req: NextApiRequest, res: NextApiResponse<SykepengesoeknaderResponse>) => {
+  const env = process.env.NODE_ENV;
+  if (env === 'development') {
+    const mockdata = 'sp-behandlingsdager-forespoersel';
+    const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
 
-registrerTeamLoggerGuard();
-
-type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
-
-function loggBehandlingsdagerTilTeam(
-  orgnr: string,
-  fnr: string,
-  antallSoeknader: number,
-  perioder: Sykepengesoeknader
-) {
-  const dagerPerPeriode = perioder.map((periode) => periode.behandlingsdager?.length ?? 0);
-
-  logger.info(
-    `Hentet aktive behandlingsdager for orgnr: ${orgnr}, antall: ${perioder.length}, fra: ${antallSoeknader}, dager per periode: ${dagerPerPeriode.join(
-      ', '
-    )}`
-  );
-
-  try {
-    teamLogger.info(
-      {
-        orgnr,
-        fnr,
-        antallPerioder: perioder.length,
-        antallSoeknader,
-        perioder: perioder.map((periode) => ({
-          sykmeldingId: periode.sykmeldingId,
-          fom: periode.fom,
-          tom: periode.tom,
-          antallBehandlingsdager: periode.behandlingsdager?.length ?? 0,
-          behandlingsdager: periode.behandlingsdager ?? []
-        }))
-      },
-      'Hentet aktive behandlingsdager'
-    );
-  } catch (e) {
-    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
-  }
-}
-
-const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
-  try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST');
-      return res.status(405).json({ error: 'Method Not Allowed' });
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'Mock not found' });
     }
 
-    const env = process.env.NODE_ENV;
-    if (env === 'development') {
-      const mockdata = 'behandlingsdager';
-      const filePath = path.join(process.cwd(), 'mockdata', `${mockdata}.json`);
-
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: 'Mock not found' });
-      }
-
-      try {
-        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-        setTimeout(() => res.status(200).json(data), 100);
-        return;
-      } catch (error) {
-        console.error('Failed to parse mock data:', error);
-        return res.status(500).json({ error: 'Failed to parse mock data' });
-      }
+    try {
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      logger.info('inntektsdata mock data loaded');
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error('Failed to parse mock data:', error);
+      return res.status(500).json({ error: 'Failed to parse mock data' });
     }
-
-    const basePath = 'http://' + requireEnv('FLEX_SYKEPENGESOEKNAD_INGRESS') + requireEnv('FLEX_SYKEPENGESOEKNAD_URL');
-    const authApi = 'http://' + requireEnv('IM_API_URI') + requireEnv('AUTH_SYKEPENGESOEKNAD_API');
-    const clientId = requireEnv('FLEX_SYKEPENGESOEKNAD_CLIENT_ID');
-
-    const token = getToken(req);
-    if (!token) {
-      logger.info('Mangler token i header');
-      return res.status(401);
-    }
-
-    const validation = await validateToken(token);
-    if (!validation.ok) {
-      logger.info('Validering feilet: ' + JSON.stringify(validation.error));
-      return res.status(401);
-    }
-
+  } else if (env === 'production') {
     const parsedBody = requestBodySchema.safeParse(req.body);
     if (!parsedBody.success) {
-      logger.info('Ugyldig request body for behandlingsdager');
+      logger.info('sp-behandlingsdager: Ugyldig request body for sykepengesøknader');
       return res.status(400).json({ error: 'Ugyldig forespørsel' });
     }
 
-    const requestBody = parsedBody.data;
-    const orgnr = requestBody.orgnummer;
-
-    if (!isMod11Number(orgnr)) {
-      logger.info('Ugyldig orgnr: ' + orgnr);
+    const { orgnummer, fnr } = parsedBody.data;
+    if (!isMod11Number(orgnummer)) {
+      logger.info('sp-behandlingsdager: Ugyldig orgnr: ' + orgnummer);
       return res.status(400).json({ error: 'Ugyldig organisasjonsnummer' });
     }
-
-    const tokenResponse = await fetch(authApi + '/' + encodeURIComponent(orgnr), {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!tokenResponse.ok) {
-      logger.info('Feil ved kontroll av tilgang: ' + tokenResponse.statusText + ', url: ' + tokenResponse.url);
-      return res.status(tokenResponse.status).json({ error: 'Feil ved kontroll av tilgang' });
+    if (!isFnrNumber(fnr)) {
+      logger.info('sp-behandlingsdager: Ugyldig fnr');
+      return res.status(400).json({ error: 'Ugyldig fødselsnummer' });
     }
 
-    const obo = await requestOboToken(token, clientId);
-    if (!obo.ok) {
-      logger.info('OBO-feil: ' + JSON.stringify(obo.error));
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const bodyToSend = {
+      orgnr: parsedBody.data.orgnummer,
+      sykmeldtFnr: parsedBody.data.fnr,
+      erBehandlingsdager: true
+    };
 
-    const soeknadResponse = await fetch(basePath, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${obo.token}`
-      },
-      body: JSON.stringify({
-        orgnummer: requestBody.orgnummer,
-        fnr: requestBody.fnr,
-        eldsteFom: requestBody.eldsteFom
-      })
-    });
-
-    if (!soeknadResponse.ok) {
-      logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
-      return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
-    }
-
-    const soeknadData: Sykepengesoeknader = (await safelyParseJSON(soeknadResponse)) as Sykepengesoeknader;
-    const aktiveSoeknader = [...(soeknadData ?? [])].filter((soeknad) => soeknad.soknadstype === 'BEHANDLINGSDAGER');
-
-    if (aktiveSoeknader.length === 0) {
-      logger.info(
-        `Ingen aktive behandlingsdager funnet for orgnr: ${orgnr}, selv om antall poster var: ${soeknadData?.length ?? 0}`
-      );
-      return res.status(200).json([]);
-    }
-
-    let sykmeldingPerioder = [aktiveSoeknader[0]];
-
-    aktiveSoeknader.forEach((soeknad) => {
-      if (!sykmeldingPerioder.some((periode) => periode.sykmeldingId === soeknad.sykmeldingId)) {
-        sykmeldingPerioder.push(soeknad);
-      }
-      sykmeldingPerioder = sykmeldingPerioder.map((periode) => {
-        if (periode.sykmeldingId === soeknad.sykmeldingId) {
-          return {
-            ...periode,
-            behandlingsdager: [...new Set([...(periode.behandlingsdager ?? []), ...(soeknad.behandlingsdager ?? [])])],
-            fom: minDate(periode.fom, soeknad.fom),
-            tom: maxDate(periode.tom, soeknad.tom)
-          };
-        }
-        return periode;
+    try {
+      const basePath = 'http://' + requireEnv('IM_API_URI') + requireEnv('HENT-SOEKNADER');
+      return httpProxyMiddleware(req, res, {
+        target: basePath,
+        onProxyInit: (proxy) => onProxyInitWithBody(proxy, bodyToSend),
+        pathRewrite: [
+          {
+            patternStr: '^/api/sp-behandlingsdager',
+            replaceStr: ''
+          }
+        ]
       });
-    });
-
-    loggBehandlingsdagerTilTeam(orgnr, requestBody.fnr, aktiveSoeknader.length, sykmeldingPerioder);
-
-    return res.status(soeknadResponse.status).json(sykmeldingPerioder);
-  } catch (error) {
-    console.error('Missing required environment variables or error:', error);
-    return res.status(500).json({ error: 'Server configuration error' });
+    } catch (error) {
+      console.error('Missing required environment variables:', error);
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
   }
 };
+
+function onProxyInitWithBody(proxy: Parameters<typeof handleProxyInit>[0], body: unknown) {
+  handleProxyInit(proxy);
+  proxy.on('proxyReq', (proxyReq: any) => {
+    const bodyData = JSON.stringify(body);
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+    proxyReq.write(bodyData);
+  });
+}
 
 export default handler;

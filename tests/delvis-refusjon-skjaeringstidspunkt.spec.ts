@@ -22,7 +22,7 @@ async function setIngenArbeidsgiverperiodeIfVisible(page: Page) {
 
 async function fillKortAgpIfVisible(page: Page) {
   const beloepInput = page.locator('#agp-redusertloenniagp-beloep');
-  if (await beloepInput.count()) {
+  if (await beloepInput.isVisible().catch(() => false)) {
     const existing = await beloepInput.inputValue();
     if (!existing) {
       await beloepInput.fill('5000');
@@ -30,11 +30,10 @@ async function fillKortAgpIfVisible(page: Page) {
   }
 
   const begrunnelseSelectById = page.locator('#agp-redusertloenniagp-begrunnelse');
-  const begrunnelseSelect =
-    (await begrunnelseSelectById.count()) > 0
-      ? begrunnelseSelectById
-      : page.getByRole('combobox', { name: /Velg begrunnelse/i });
-  if (await begrunnelseSelect.count()) {
+  const begrunnelseSelect = (await begrunnelseSelectById.isVisible().catch(() => false))
+    ? begrunnelseSelectById
+    : page.getByRole('combobox', { name: /Velg begrunnelse/i });
+  if (await begrunnelseSelect.isVisible().catch(() => false)) {
     if (await begrunnelseSelect.isEnabled()) {
       const selected = await begrunnelseSelect.inputValue();
       if (!selected || /velg\s+begrunnelse/i.test(selected)) {

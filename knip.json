@@ -1,4 +1,11 @@
 {
-  "ignore": ["next-logger.config.mjs", "__mocks__/**", "components/FlexJarResponse", "mockdata/**", ".pnpm-store/**"],
+  "ignore": [
+    "next-logger.config.mjs",
+    "__mocks__/**",
+    "components/FlexJarResponse",
+    "mockdata/**",
+    ".pnpm-store/**",
+    "__tests__/**"
+  ],
   "ignoreDependencies": ["@eslint/eslintrc", "@navikt/aksel", "pino-socket"]
 }

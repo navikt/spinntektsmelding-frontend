@@ -22,11 +22,7 @@
         "endringAarsak": null,
         "endringAarsaker": [{ "aarsak": "Bonus" }]
       },
-      "refusjon": {
-        "beloepPerMaaned": null,
-        "endringer": [],
-        "sluttdato": null
-      }
+      "refusjon": { "beloepPerMaaned": null, "endringer": [], "sluttdato": null }
     },
     "mottatt": "2023-08-23T13:04:51.580106881+02:00"
   }

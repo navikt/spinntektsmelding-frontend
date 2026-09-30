@@ -32,7 +32,8 @@ const AapenInnsendingSchema = InnsendingSchema.extend({
         });
       }
     }),
-  arbeidsforholdType: TypeArbeidsforholdSchema
+  arbeidsforholdType: TypeArbeidsforholdSchema,
+  soeknadIder: z.array(z.uuid()).optional()
 }).superRefine(superRefineInnsending);
 
 export default AapenInnsendingSchema;

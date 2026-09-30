@@ -1,100 +1,3 @@
-// import { describe, it, expect, vi, beforeEach } from 'vitest';
-// import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
-
-// const envUrl = vi.hoisted(() => 'https://api.example/hentSykepengesoknader');
-// let lastErrorHandlerConfig: any;
-// let capturedArgs: { key: any; fetcher: any; options: any } | undefined;
-
-// vi.mock('swr/immutable', () => {
-//   const mock = vi.fn((key: any, fetcher: any, options: any) => {
-//     capturedArgs = { key, fetcher, options };
-//     return { data: 'swrReturn' };
-//   });
-//   return { default: mock };
-// });
-
-// vi.mock('../../config/environment', () => ({
-//   default: { hentSykepengesoknaderUrl: envUrl }
-// }));
-
-// const fetcherMock = vi.fn();
-// vi.mock('../../config/fetcherSykepengesoeknader', () => ({
-//   default: (...args: any[]) => fetcherMock(...args)
-// }));
-
-// const commonOptions = { revalidateOnFocus: false, keepPreviousData: true, marker: 'marker' };
-// vi.mock('../../config/commonSWRFormOptions', () => ({
-//   commonSWRFormOptions: commonOptions
-// }));
-
-// const onErrorSpy = vi.fn();
-// vi.mock('../../config/buildSWRFormErrorHandler', () => ({
-//   buildSWRFormErrorHandler: vi.fn((config: any) => {
-//     lastErrorHandlerConfig = config;
-//     return onErrorSpy;
-//   })
-// }));
-
-// describe('useSykepengesoeknader', () => {
-//   beforeEach(() => {
-//     capturedArgs = undefined;
-//     fetcherMock.mockReset();
-//     onErrorSpy.mockReset();
-//     lastErrorHandlerConfig = undefined;
-//   });
-
-//   it('calls useSWRImmutable with correct key and merged options', () => {
-//     const setError = vi.fn();
-//     const result = useSykepengesoeknader('12345678901', '999888777', '2023-01-01', setError);
-
-//     expect(result).toEqual({ data: 'swrReturn' });
-//     expect(capturedArgs).toBeTruthy();
-//     expect(capturedArgs?.key).toEqual([envUrl, '12345678901', '999888777', '2023-01-01']);
-
-//     expect(lastErrorHandlerConfig).toEqual({
-//       setError,
-//       field: 'sykepengePeriodeId',
-//       messages: {
-//         unauthorized: 'Mangler tilgang til den aktuelle organisasjonen',
-//         notFound: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
-//         default: 'Kunne ikke hente sykepengesøknader'
-//       }
-//     });
-//     expect(capturedArgs?.options.onError).toBe(onErrorSpy);
-//     // spread options present
-//     expect(capturedArgs?.options).toMatchObject(commonOptions);
-//   });
-
-//   it('fetcher passes through URL when all params are truthy', async () => {
-//     useSykepengesoeknader('123', '456', '2023-01-01', vi.fn());
-//     expect(capturedArgs?.fetcher).toBeTypeOf('function');
-
-//     fetcherMock.mockResolvedValueOnce('ok');
-//     await capturedArgs!.fetcher([envUrl, '123', '456', '2023-01-01']);
-//     expect(fetcherMock).toHaveBeenCalledWith(envUrl, '123', '456', '2023-01-01');
-//   });
-
-//   it('fetcher passes null URL when a param is falsy', async () => {
-//     useSykepengesoeknader(undefined, '456', '2023-01-01', vi.fn());
-//     expect(capturedArgs?.fetcher).toBeTypeOf('function');
-
-//     fetcherMock.mockResolvedValueOnce('ok');
-//     await capturedArgs!.fetcher([envUrl, undefined, '456', '2023-01-01'] as any);
-//     expect(fetcherMock).toHaveBeenCalledWith(null, undefined, '456', '2023-01-01');
-
-//     fetcherMock.mockResolvedValueOnce('ok');
-//     await capturedArgs!.fetcher([envUrl, '123', '', '2023-01-01']);
-//     expect(fetcherMock).toHaveBeenCalledWith(null, '123', '', '2023-01-01');
-//   });
-
-//   it('exposes the built onError handler', () => {
-//     useSykepengesoeknader('123', '456', '2023-01-01', vi.fn());
-//     const err = new Error('boom');
-//     capturedArgs!.options.onError(err);
-//     expect(onErrorSpy).toHaveBeenCalledWith(err);
-//   });
-// });
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import useSWRImmutable from 'swr/immutable';
 import useSykepengesoeknader from '../../utils/useSykepengesoeknader';
@@ -160,7 +63,6 @@ describe('useSykepengesoeknader', () => {
     const result = useSykepengesoeknader(
       testFnr.GyldigeFraDolly.TestPerson1,
       testOrganisasjoner[0].organizationNumber,
-      '2023-01-01',
       setError
     );
 
@@ -171,8 +73,7 @@ describe('useSykepengesoeknader', () => {
     expect(lastUseSWRArgs.key).toEqual([
       envUrl,
       testFnr.GyldigeFraDolly.TestPerson1,
-      testOrganisasjoner[0].organizationNumber,
-      '2023-01-01'
+      testOrganisasjoner[0].organizationNumber
     ]);
 
     // Fetcher forwards url to fetcherSykepengesoeknader
@@ -180,14 +81,12 @@ describe('useSykepengesoeknader', () => {
     await lastUseSWRArgs.fetcher([
       envUrl,
       testFnr.GyldigeFraDolly.TestPerson1,
-      testOrganisasjoner[0].organizationNumber,
-      '2023-01-01'
+      testOrganisasjoner[0].organizationNumber
     ]);
     expect(fetcherSykepengesoeknader).toHaveBeenCalledWith(
       'https://example.test/mine-tilganger',
       '25087327879',
-      '810007672',
-      '2023-01-01'
+      '810007672'
     );
 
     // Options merged and onError wired
@@ -198,12 +97,7 @@ describe('useSykepengesoeknader', () => {
   it('builds error handler with proper config and redirects on unauthorized', () => {
     const setError = vi.fn();
 
-    useSykepengesoeknader(
-      testFnr.GyldigeFraDolly.TestPerson1,
-      testOrganisasjoner[0].organizationNumber,
-      '2023-01-01',
-      setError
-    );
+    useSykepengesoeknader(testFnr.GyldigeFraDolly.TestPerson1, testOrganisasjoner[0].organizationNumber, setError);
 
     expect(buildSWRFormErrorHandler).toHaveBeenCalledTimes(1);
     const cfg = lastErrorHandlerConfig;
@@ -214,5 +108,12 @@ describe('useSykepengesoeknader', () => {
       notFound: 'Kunne ikke finne arbeidsforhold for personen, sjekk at du har tastet riktig fødselsnummer',
       default: 'Kunne ikke hente sykepengesøknader'
     });
+  });
+
+  it('always provides an onError function when setError is not provided', () => {
+    useSykepengesoeknader(testFnr.GyldigeFraDolly.TestPerson1, testOrganisasjoner[0].organizationNumber, undefined);
+
+    expect(lastUseSWRArgs.options.onError).toEqual(expect.any(Function));
+    expect(buildSWRFormErrorHandler).not.toHaveBeenCalled();
   });
 });

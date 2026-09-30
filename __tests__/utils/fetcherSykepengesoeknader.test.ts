@@ -6,7 +6,6 @@ describe('fetcherSykepengesoeknader', () => {
   const url = 'https://example.com/api';
   const identitetsnummer = '123456789';
   const orgnrUnderenhet = '987654321';
-  const eldsteFom = '2025-02-02';
 
   beforeEach(() => {
     global.fetch = vi.fn();
@@ -17,22 +16,19 @@ describe('fetcherSykepengesoeknader', () => {
   });
 
   it('should return an empty array if url is null', async () => {
-    // const result = await fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet, eldsteFom);
+    // const result = await fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet);
     // expect(result).toEqual([]);
-    await expect(fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet, eldsteFom)).rejects.toThrow(
-      NetworkError
-    );
+    await expect(fetcherSykepengesoeknader(null, identitetsnummer, orgnrUnderenhet)).rejects.toThrow(NetworkError);
   });
 
   it('should throw an error if identitetsnummer is not provided', async () => {
-    await expect(fetcherSykepengesoeknader(url, undefined, orgnrUnderenhet, eldsteFom)).rejects.toThrow(NetworkError);
+    await expect(fetcherSykepengesoeknader(url, undefined, orgnrUnderenhet)).rejects.toThrow(NetworkError);
   });
 
   it('should make a POST request with the correct parameters', async () => {
     const expectedRequestBody = JSON.stringify({
       fnr: identitetsnummer,
-      orgnummer: orgnrUnderenhet,
-      eldsteFom: eldsteFom
+      orgnummer: orgnrUnderenhet
     });
 
     const mockResponse = {
@@ -42,7 +38,7 @@ describe('fetcherSykepengesoeknader', () => {
 
     (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-    await fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet, eldsteFom);
+    await fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet);
 
     expect(global.fetch).toHaveBeenCalledWith(url, {
       method: 'POST',
@@ -61,7 +57,7 @@ describe('fetcherSykepengesoeknader', () => {
 
     (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-    const result = await fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet, eldsteFom);
+    const result = await fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet);
 
     expect(result).toEqual({ data: 'mocked data' });
   });
@@ -74,9 +70,7 @@ describe('fetcherSykepengesoeknader', () => {
 
     (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-    await expect(fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet, eldsteFom)).rejects.toThrow(
-      NetworkError
-    );
+    await expect(fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet)).rejects.toThrow(NetworkError);
   });
 
   it('should throw a NetworkError if the response data cannot be decoded', async () => {
@@ -87,8 +81,6 @@ describe('fetcherSykepengesoeknader', () => {
 
     (global.fetch as jest.Mock).mockResolvedValueOnce(mockResponse);
 
-    await expect(fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet, eldsteFom)).rejects.toThrow(
-      NetworkError
-    );
+    await expect(fetcherSykepengesoeknader(url, identitetsnummer, orgnrUnderenhet)).rejects.toThrow(NetworkError);
   });
 });

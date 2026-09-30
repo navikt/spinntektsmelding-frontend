@@ -18,6 +18,8 @@ import {
 } from './sendInnCommon';
 import { LonnIArbeidsgiverperioden } from '../state/state';
 
+type ValiderteAapenInnsending = ReturnType<ReturnType<typeof useFyllAapenInnsending>>;
+
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
   analyticsComponent: string,
@@ -42,12 +44,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   };
 
   const buildClientSideErrors = (
-    validerteData: ReturnType<typeof fyllAapenInnsending> extends infer R
-      ? R extends { success: boolean; error?: any; data?: any }
-        ? R
-        : any
-      : any,
-    opplysningerBekreftet: boolean
+    validerteData: ValiderteAapenInnsending,
+    opplysningerBekreftet: boolean,
+    fullLonn: 'Ja' | 'Nei' | undefined
   ): ValiderTekster[] => {
     const errors: ValiderTekster[] = [];
 
@@ -60,12 +59,12 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       );
     }
 
-    const formData: typeof validerteData.data | {} = validerteData.success ? validerteData.data : {};
+    const formData = validerteData.success ? validerteData.data : undefined;
 
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: 'fullLonn' in formData && formData.fullLonn ? formData.fullLonn : undefined,
-      utbetalt: 'agp' in formData ? formData.agp?.redusertLoennIAgp?.beloep : undefined,
-      begrunnelse: 'agp' in formData ? formData.agp?.redusertLoennIAgp?.begrunnelse : undefined
+      status: fullLonn,
+      utbetalt: formData?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: formData?.agp?.redusertLoennIAgp?.begrunnelse
     };
 
     const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
@@ -108,7 +107,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     }
 
     const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
-    const errors = buildClientSideErrors(validerteData, opplysningerBekreftet);
+    const errors = buildClientSideErrors(validerteData, opplysningerBekreftet, skjemaData.fullLonn);
 
     setSkalViseFeilmeldinger(true);
 
@@ -145,9 +144,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
         setKvitteringInnsendt(new Date());
         if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-          router.push(`/kvittering/agi/${pathSlug}`);
+          await router.push(`/kvittering/agi/${pathSlug}`);
         } else {
-          router.push(`/kvittering/${pathSlug}`);
+          await router.push(`/kvittering/${pathSlug}`);
         }
       },
       mapValidationErrors,

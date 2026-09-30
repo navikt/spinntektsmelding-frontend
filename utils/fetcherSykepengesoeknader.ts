@@ -7,17 +7,16 @@ type EndepunktSykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSch
 export default function fetcherSykepengesoeknader(
   url: string | null,
   identitetsnummer?: string,
-  orgNummer?: string,
-  eldsteFom?: string
+  orgNummer?: string
 ): Promise<EndepunktSykepengesoeknader> {
-  if (!url || !identitetsnummer || !orgNummer || !eldsteFom || orgNummer === '-')
+  if (!url || !identitetsnummer || !orgNummer || orgNummer === '-')
     return Promise.reject(new NetworkError('Manglende parametere'));
   return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ fnr: identitetsnummer, orgnummer: orgNummer, eldsteFom })
+    body: JSON.stringify({ fnr: identitetsnummer, orgnummer: orgNummer })
   })
     .then((res) => {
       if (!res.ok) {

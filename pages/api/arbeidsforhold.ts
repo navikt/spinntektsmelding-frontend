@@ -3,13 +3,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import fs from 'node:fs';
 import isMod11Number from '../../utils/isMod11Number';
-import { EndepunktSykepengesoeknaderSchema } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { z } from 'zod';
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
 import isFnrNumber from '../../utils/isFnrNumber';
 import { requireEnv } from '../../utils/api/validateEnv';
+import { SPEndepunktSykepengesoeknadSchema } from '../../schema/SPEndepunktSykepengesoeknadSchema';
 
 const requestBodySchema = z.object({
   orgnummer: z.string().min(1),
@@ -67,7 +67,7 @@ export const config = {
   }
 };
 
-type Sykepengesoeknader = z.infer<typeof EndepunktSykepengesoeknaderSchema>;
+type Sykepengesoeknader = z.infer<typeof SPEndepunktSykepengesoeknadSchema>[];
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   try {

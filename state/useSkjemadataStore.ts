@@ -32,6 +32,8 @@ export interface SkjemadataState {
   setBehandlingsdager: (behandlingsdager: string[]) => void;
   setBegrensetForespoersel: (begrenset: boolean) => void;
   setHarGradertSykmelding: (harGradertSykmelding: boolean) => void;
+  setSoeknadIder: (soeknadIder: string[]) => void;
+  soeknadIder?: string[];
   henterInntektsdata: boolean;
   kvitteringInnsendt?: Date;
   skjemaFeilet: boolean;
@@ -152,6 +154,13 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.harGradertSykmelding = harGradertSykmelding;
+      })
+    );
+  },
+  setSoeknadIder: (soeknadIder: string[]) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.soeknadIder = soeknadIder;
       })
     );
   }

@@ -42,11 +42,10 @@ export type MinimalData = {
 };
 
 export type SafeParseMinimal<D extends MinimalData = MinimalData> =
-  | { success: true; data: D }
-  | { success: false; error: any };
+  { success: true; data: D } | { success: false; error: any };
 
 export interface FeltFeil {
-  text?: string;
+  text: string;
   felt: string;
 }
 
@@ -67,7 +66,7 @@ export function checkCommonValidations<D extends MinimalData, R extends SafePars
       const key = err.code as keyof typeof feiltekster;
       return {
         felt: err.felt,
-        text: feiltekster[key] ?? err.text
+        text: feiltekster[key] ?? err.text ?? err.code
       };
     });
 

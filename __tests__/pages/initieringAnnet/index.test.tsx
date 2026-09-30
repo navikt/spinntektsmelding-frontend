@@ -15,20 +15,27 @@ import userEvent from '@testing-library/user-event';
 import InitieringAnnet from '../../../pages/initieringAnnet/index';
 import useBoundStore from '../../../state/useBoundStore';
 import useArbeidsforhold from '../../../utils/useArbeidsforhold';
-import useSykepengesoeknader from '../../../utils/useSykepengesoeknader';
+import useInitieringData from '../../../utils/useInitieringData';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import testFnr from '../../../mockdata/testFnr';
+import type { EndepunktSykepengesoeknader } from '../../../schema/EndepunktSykepengesoeknaderSchema';
 
 // Mock state and hooks
 vi.mock('../../../state/useBoundStore', () => ({ default: vi.fn() }));
 vi.mock('../../../utils/useArbeidsforhold', () => ({ default: vi.fn() }));
-vi.mock('../../../utils/useSykepengesoeknader', () => ({ default: vi.fn() }));
+vi.mock('../../../utils/useInitieringData', () => ({ default: vi.fn() }));
 // Mock formatting util to simplify error display
 vi.mock('../../../utils/formatRHFFeilmeldinger', () => ({
   default: (errs: any) => Object.values(errs).map((e: any) => e.message)
 }));
 
 describe('InitieringAnnet page', () => {
+  let mockedSykepengesoeknader: {
+    data: EndepunktSykepengesoeknader | undefined;
+    error: unknown;
+    isLoading: boolean;
+  };
+
   const fakeStore = {
     sykmeldt: { fnr: testFnr.GyldigeFraDolly.TestPerson1 },
     initPerson: vi.fn(),
@@ -43,15 +50,53 @@ describe('InitieringAnnet page', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockedSykepengesoeknader = { data: undefined, error: undefined, isLoading: false };
     // router mock
     mockedRouter.push.mockClear();
     // store selector returns from fakeStore
     (useBoundStore as unknown as unknown as Mock).mockImplementation((selector: any) => selector(fakeStore));
+    (useInitieringData as unknown as Mock).mockImplementation((_fnr, valgtOrganisasjonsnummer) => {
+      const arbeidsforholdResponse = (useArbeidsforhold as unknown as Mock)();
+      const { data: spData, error: spError, isLoading: spIsLoading } = mockedSykepengesoeknader;
+      const underenheter = arbeidsforholdResponse?.data?.underenheter ?? [];
+      const arbeidsforhold = underenheter.map((arbeidsgiver: any) => ({
+        orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet,
+        virksomhetsnavn: arbeidsgiver.virksomhetsnavn
+      }));
+      const organisasjonsnummer =
+        valgtOrganisasjonsnummer ?? (arbeidsforhold.length === 1 ? arbeidsforhold[0].orgnrUnderenhet : undefined);
+      const forespoersler = spData?.forespoersler ?? [];
+      const soeknaderArbeidstaker = spData?.soeknaderArbeidstaker ?? [];
+      const sykepengePerioder = soeknaderArbeidstaker.map((soeknad: any) => ({
+        id: soeknad.vedtaksperiodeId,
+        fom: new Date(soeknad.sykmeldingsperiode.fom),
+        tom: new Date(soeknad.sykmeldingsperiode.tom),
+        egenmeldingsperioder: soeknad.egenmeldingsperioder,
+        forespoerselId: forespoersler.find(
+          (foresp: any) => foresp.sykmeldingsperioder[0].fom === soeknad.sykmeldingsperiode.fom
+        )?.forespoerselId,
+        forlengerVedtaksperiodeId: soeknad.forlengerVedtaksperiodeId
+      }));
+
+      return {
+        data: arbeidsforholdResponse?.data,
+        error: arbeidsforholdResponse?.error,
+        arbeidsforhold,
+        fulltNavn: arbeidsforholdResponse?.data?.fulltNavn ?? '',
+        orgNavnMangler: false,
+        organisasjonsnummer,
+        spData,
+        spError,
+        spIsLoading,
+        forespoersler,
+        soeknaderArbeidstaker,
+        sykepengePerioder
+      };
+    });
   });
 
   it('shows loading spinner while arbeidsforhold is loading', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: undefined, isLoading: false });
 
     render(<InitieringAnnet />);
 
@@ -74,35 +119,42 @@ describe('InitieringAnnet page', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
-    const spData = [
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
-      }
-    ];
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText(/Hvilken underenhet/)).toBeInTheDocument());
 
     // select the underenhet
     const user = userEvent.setup();
-    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(screen.getByLabelText(/Hvilken underenhet/));
     await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
 
     // wait for sykmeldingsperiode checkbox
     await waitFor(() => expect(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ })).toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
 
     // choose the periode
     fireEvent.click(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
@@ -146,40 +198,47 @@ describe('InitieringAnnet page', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
-    const spData = [
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-        fom: '2023-01-11',
-        tom: '2023-01-20',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-11',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
-      }
-    ];
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        },
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
+          sykmeldingsperioder: [{ fom: '2023-01-11', tom: '2023-01-20' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-01-11', tom: '2023-01-20' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001',
+          forlengerVedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText(/Hvilken underenhet/)).toBeInTheDocument());
 
     // select the underenhet
     const user = userEvent.setup();
-    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(screen.getByLabelText(/Hvilken underenhet/));
     await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
@@ -187,17 +246,19 @@ describe('InitieringAnnet page', () => {
     // wait for sykmeldingsperiode checkbox
     await waitFor(() => expect(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ })).toBeInTheDocument());
 
+    fireEvent.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+
     // choose the periode
     fireEvent.click(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ }));
 
-    // Skal du endre refusjon for den ansatte?
+    // Skal du endre refusjonen for den ansatte?
     fireEvent.click(screen.getByRole('radio', { name: /Ja/ }));
 
     // click "Neste" to submit
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     await waitFor(() =>
-      expect(screen.getByText(/Du må korrigere tidligere innsendt inntektsmeldingen/)).toBeInTheDocument()
+      expect(screen.getByText(/Du må korrigere den tidligere innsendte inntektsmeldingen/)).toBeInTheDocument()
     );
 
     // });
@@ -220,62 +281,70 @@ describe('InitieringAnnet page', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
-    const spData = [
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-        fom: '2023-01-01',
-        tom: '2023-01-10',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000',
-        egenmeldingsdager: ['']
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-        fom: '2023-01-11',
-        tom: '2023-01-20',
-        egenmeldingsdagerFraSykmelding: ['2023-01-01', '2023-01-02', '2023-01-03'],
-        status: 'NY',
-        startSykeforlop: '2023-01-11',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
-      }
-    ];
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        },
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
+          sykmeldingsperioder: [{ fom: '2023-01-11', tom: '2023-01-20' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-01-11', tom: '2023-01-20' },
+          egenmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-03' }],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001',
+          forlengerVedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/Organisasjon/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByLabelText(/Hvilken underenhet/)).toBeInTheDocument());
 
     // select the underenhet
     const user = userEvent.setup();
-    await user.click(screen.getByLabelText(/Organisasjon/));
+    await user.click(screen.getByLabelText(/Hvilken underenhet/));
     await user.click(
       await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
     );
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/3 egenmeldingsdager/)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Egenmeldingsperiode:/)).toBeInTheDocument());
 
     // wait for sykmeldingsperiode checkbox
     await waitFor(() => expect(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ })).toBeInTheDocument());
 
+    fireEvent.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+
     // choose the periode
     fireEvent.click(screen.getByRole('checkbox', { name: /11.01.2023 - 20.01.2023/ }));
 
-    // Skal du endre refusjon for den ansatte?
+    // Skal du endre refusjonen for den ansatte?
     fireEvent.click(screen.getByRole('radio', { name: /Ja/ }));
 
     // click "Neste" to submit
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     await waitFor(() =>
-      expect(screen.getByText(/Du må korrigere tidligere innsendt inntektsmeldingen/)).toBeInTheDocument()
+      expect(screen.getByText(/Du må korrigere den tidligere innsendte inntektsmeldingen/)).toBeInTheDocument()
     );
   });
 
@@ -293,49 +362,43 @@ describe('InitieringAnnet page', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
-    const spData = [
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-        fom: '2023-01-01',
-        tom: '2023-01-20',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000',
-        egenmeldingsdager: ['']
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-        fom: '2023-01-21',
-        tom: '2023-01-30',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-11',
-        // forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174002',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174002',
-        fom: '2023-02-21',
-        tom: '2023-02-28',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-02-21',
-        // forespoerselId: '123e4567-e89b-12d3-a456-426614174002',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
-      }
-    ];
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-20' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-20' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-01-21', tom: '2023-01-30' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001',
+          forlengerVedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-02-21', tom: '2023-02-28' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/forlengelse/)).toBeInTheDocument());
-    expect(screen.getByText(/Inntektsmelding er allerede forespurt/)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText(/Forlengelse/)).toBeInTheDocument());
   });
 
   it(`should detekterer forlengelse av sykepengeperiode and refuse to submit if "Skal du endre refusjon for den ansatte?
@@ -353,59 +416,54 @@ describe('InitieringAnnet page', () => {
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
     // mock sykepengesøknader data
-    const spData = [
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174000',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174000',
-        fom: '2023-01-01',
-        tom: '2023-01-20',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-01',
-        forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000',
-        egenmeldingsdager: ['']
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174001',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174001',
-        fom: '2023-01-21',
-        tom: '2023-01-30',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-01-11',
-        // forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
-      },
-      {
-        sykepengesoknadUuid: '123e4567-e89b-12d3-a456-426614174002',
-        sykmeldingId: '123e4567-e89b-12d3-a456-426614174002',
-        fom: '2023-02-21',
-        tom: '2023-02-28',
-        egenmeldingsdagerFraSykmelding: [],
-        status: 'NY',
-        startSykeforlop: '2023-02-21',
-        // forespoerselId: '123e4567-e89b-12d3-a456-426614174002',
-        vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
-      }
-    ];
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: spData, error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [
+        {
+          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-20' }],
+          egenmeldingsperioder: [],
+          erBesvart: false
+        }
+      ],
+      soeknaderArbeidstaker: [
+        {
+          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-20' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-01-21', tom: '2023-01-30' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001',
+          forlengerVedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+        },
+        {
+          sykmeldingsperiode: { fom: '2023-02-21', tom: '2023-02-28' },
+          egenmeldingsperioder: [],
+          erGradert: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174002'
+        }
+      ],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
     // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/forlengelse/)).toBeInTheDocument());
-    expect(screen.getByText(/Inntektsmelding er allerede forespurt/)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText(/Forlengelse/)).toBeInTheDocument());
 
-    screen.getByLabelText(/forlengelse/).click();
-    await waitFor(() => expect(screen.getByLabelText(/Skal du endre refusjon for den ansatte/)).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+    screen.getByLabelText(/Forlengelse/).click();
+    await waitFor(() => expect(screen.getByLabelText(/Skal du endre refusjonen for den ansatte/)).toBeInTheDocument());
 
     const positiveRadio = screen.getByRole('radio', { name: /Ja/i });
 
     positiveRadio.click();
 
     await waitFor(() =>
-      expect(screen.getByText(/Gå inn på den tidligere innsendte inntektsmeldingen nedenfor/)).toBeInTheDocument()
+      expect(screen.getByText(/Åpne den tidligere innsendte inntektsmeldingen nedenfor/)).toBeInTheDocument()
     );
 
     const negativeRadio = screen.getByRole('radio', { name: /Nei/i });
@@ -427,7 +485,11 @@ describe('InitieringAnnet page', () => {
       perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
     };
     (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: [], error: undefined, isLoading: false });
+    mockedSykepengesoeknader.data = {
+      forespoersler: [],
+      soeknaderArbeidstaker: [],
+      soeknaderBehandlingsdager: []
+    };
 
     render(<InitieringAnnet />);
 
