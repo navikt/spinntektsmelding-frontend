@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import Faisu from '../../components/Faisu/Faisu';
+import useBoundStore from '../../state/useBoundStore';
 
 type FaisuArbeidsforholdSkjema = {
   inntekt?: number;
@@ -91,8 +92,27 @@ describe('Faisu', () => {
     await user.click(screen.getAllByLabelText('Nei')[0]);
 
     await waitFor(() => {
-      expect(screen.getByText('Er personen sykmeldt fra alle arbeidsforhold?')).toBeInTheDocument();
+      expect(screen.getByText('Er personen sykmeldt fra alle arbeidsforhold i underenheten?')).toBeInTheDocument();
     });
+  });
+
+  it('uses avsender org name in the follow-up question when available', async () => {
+    const user = userEvent.setup();
+    useBoundStore.setState({ avsender: { orgNavn: 'Testbedrift' } });
+
+    render(
+      <TestWrapper>
+        <Faisu harGradertSykmeldingOgFlereArbeidsforhold />
+      </TestWrapper>
+    );
+
+    await user.click(screen.getAllByLabelText('Nei')[0]);
+
+    expect(
+      await screen.findByText('Er personen sykmeldt fra alle arbeidsforhold i "Testbedrift"?')
+    ).toBeInTheDocument();
+
+    useBoundStore.setState({ avsender: { orgNavn: undefined } });
   });
 
   it('shows arbeidsforhold details when both answers are Nei', async () => {
