@@ -4,5 +4,7 @@ allowBuilds:
   protobufjs: true
   sharp: true
   unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@navikt/*'
 overrides:
   'protobufjs': '^8.4.2'
