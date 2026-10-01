@@ -44,12 +44,6 @@ test.describe('Utfylling og innsending av skjema', () => {
     await expect(page.locator('[data-cy="innsendernavn"]')).toHaveText('Test Testesen');
     await expect(page.getByLabel('Telefon innsender')).toHaveValue('12345678');
 
-    // Egenmelding periods
-    // await expect(page.locator('[data-cy="egenmelding-0-fra"]').first()).toHaveText('Fra');
-    // await expect(page.locator('[data-cy="egenmelding-0-til"]').last()).toHaveText('Til');
-    // await expect(page.locator('[data-cy="egenmelding-0-fra-dato"]')).toHaveText('01.02.2023');
-    // await expect(page.locator('[data-cy="egenmelding-0-til-dato"]')).toHaveText('03.02.2023');
-
     // Sykmelding periods
     await expect(page.locator('[data-cy="sykmelding-0-fra"]')).toHaveText('Fra');
     await expect(page.locator('[data-cy="sykmelding-0-til"]')).toHaveText('Til');
@@ -77,7 +71,10 @@ test.describe('Utfylling og innsending av skjema', () => {
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 
     await formPage.checkRadioButton('Har ansatt lik eller tilnærmet lik lønn i arbeidsforholdene (timelønn)?', 'Nei');
-    await formPage.checkRadioButton('Er personen sykmeldt fra alle arbeidsforhold i underenheten?', 'Nei');
+    await formPage.checkRadioButton(
+      'Er personen sykmeldt fra alle arbeidsforhold i "Veldig ampert piggsvin barnehage"?',
+      'Nei'
+    );
 
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
 
