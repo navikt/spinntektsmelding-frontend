@@ -19,6 +19,10 @@ updates:
         versions: ['9.x', '10.x']
     schedule:
       interval: 'daily'
+    cooldown:
+      default-days: 3
+      exclude:
+        - '@navikt/*'
     groups:
       aksel:
         patterns:
