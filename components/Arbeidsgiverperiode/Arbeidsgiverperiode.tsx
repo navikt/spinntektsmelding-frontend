@@ -92,6 +92,7 @@ export default function Arbeidsgiverperiode({
     control,
     register,
     setValue,
+    resetField,
     formState: { errors }
   } = useFormContext();
 
@@ -126,7 +127,7 @@ export default function Arbeidsgiverperiode({
   };
 
   const antallDagerIArbeidsgiverperioder = (perioder: Array<Periode> | undefined) => {
-    if (typeof perioder === 'undefined') {
+    if (perioder === undefined) {
       return 0;
     }
 
@@ -191,6 +192,9 @@ export default function Arbeidsgiverperiode({
     } else {
       setArbeidsgiverperiodeDisabled(false);
       tilbakestillArbeidsgiverperiode();
+      resetField('agp.redusertLoennIAgp.begrunnelse', { defaultValue: undefined });
+      resetField('agp.redusertLoennIAgp.beloep', { defaultValue: undefined });
+      resetField('fullLonn', { defaultValue: undefined });
     }
   };
 
@@ -207,8 +211,9 @@ export default function Arbeidsgiverperiode({
       setValue('agp.redusertLoennIAgp.beloep', 0);
       slettAlleArbeidsgiverperioder();
     } else {
-      setValue('fullLonn', undefined);
-      setValue('agp.redusertLoennIAgp.beloep', undefined);
+      resetField('fullLonn', { defaultValue: undefined });
+      resetField('agp.redusertLoennIAgp.beloep', { defaultValue: undefined });
+      resetField('agp.redusertLoennIAgp.begrunnelse', { defaultValue: undefined });
       slettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
       setArbeidsgiverperiodeDisabled(false);
       if (skjemastatus !== SkjemaStatus.SELVBESTEMT) tilbakestillArbeidsgiverperiode();
@@ -264,6 +269,10 @@ export default function Arbeidsgiverperiode({
     }
   }, [antallDager, skjemastatus, arbeidsgiverperiodeDisabled]);
 
+  const onResetField = useEffectEvent((field: Parameters<typeof resetField>[0]) => {
+    resetField(field, { defaultValue: undefined });
+  });
+
   useEffect(() => {
     if (arbeidsgiverperioder && arbeidsgiverperioder?.length > 0) {
       onSetArbeidsgiverperiodeKort(antallDager < 16);
@@ -277,6 +286,9 @@ export default function Arbeidsgiverperiode({
         onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden('Nei');
       } else {
         onSlettArbeidsgiverBetalerFullLonnIArbeidsgiverperioden();
+        onResetField('agp.redusertLoennIAgp.begrunnelse');
+        onResetField('agp.redusertLoennIAgp.beloep');
+        onResetField('fullLonn');
       }
     }
   }, [antallDager, arbeidsgiverperioder, manuellEndring, arbeidsgiverperiodeDisabled]);
