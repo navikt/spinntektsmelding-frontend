@@ -66,6 +66,7 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
 
     // fill nye periode-datoer
     const skReqPromise = page.waitForRequest('*/**/api/inntektsdata');
+    const skResponsePromise = page.waitForResponse('*/**/api/inntektsdata');
     await page.getByRole('textbox', { name: 'Fra' }).first().fill('30.01.23');
     await page.getByRole('textbox', { name: 'Til' }).first().fill('14.02.23');
 
@@ -75,6 +76,11 @@ test.describe('Utfylling og innsending av skjema – endre lønn og refusjon', (
       forespoerselId: uuid,
       inntektsdato: '2023-01-30'
     });
+
+    const skResponse = await skResponsePromise;
+    expect(skResponse.ok()).toBe(true);
+    await expect(salaryInput).toHaveValue(/^84333[,.]33$/);
+    await formPage.checkRadioButton('Betaler arbeidsgiver ut full lønn i arbeidsgiverperioden?', 'Ja');
 
     // submit
     const txPromise = page.waitForRequest('*/**/api/innsendingInntektsmelding');
