@@ -372,7 +372,7 @@ export default function Arbeidsgiverperiode({
               </p>
               <p>
                 Hvis arbeidsgiverperioden er den samme som tidligere sykmeldingsperiode så skal arbeidsgiverperioden
-                ikke fylles ut. Da skal inntekstmeldingen sendes uten arbeidsgiverperiode.
+                ikke fylles ut. Da skal inntektsmeldingen sendes uten arbeidsgiverperiode.
               </p>
             </InfoCard.Message>
           </InfoCard>
