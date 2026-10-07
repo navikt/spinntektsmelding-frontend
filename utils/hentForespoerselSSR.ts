@@ -1,20 +1,18 @@
 import { MottattData } from '../schema/MottattDataSchema';
 import fetchDataSSR from './fetchDataSSR';
+import isValidUUID from './isValidUUID';
 
-export default async function hentForespoerselSSR(
-  pathSlug?: string | Array<string>,
-  token?: string
-): Promise<MottattData> {
-  if (Array.isArray(pathSlug)) {
-    throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
+export default async function hentForespoerselSSR(uuid?: string | Array<string>, token?: string): Promise<MottattData> {
+  if (Array.isArray(uuid)) {
+    throw new TypeError('Ugyldig uuid: må være en streng, ikke en array');
   }
 
-  if (pathSlug) {
+  if (uuid && isValidUUID(uuid)) {
     return fetchDataSSR(
       `http://${globalThis.process.env.IM_API_URI}${process.env.PREUTFYLT_INNTEKTSMELDING_API}`,
-      pathSlug,
+      uuid,
       token
     );
   }
-  throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
+  throw new TypeError('Ugyldig uuid: må være en gyldig UUID');
 }

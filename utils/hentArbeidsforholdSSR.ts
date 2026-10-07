@@ -1,24 +1,25 @@
 import { logger } from '@navikt/next-logger';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchDataSSR from './fetchDataSSR';
+import isValidUUID from './isValidUUID';
 
 export default async function hentArbeidsforholdSSR(
-  pathSlug?: string | Array<string>,
+  uuid?: string | Array<string>,
   token?: string
 ): Promise<Ansettelsesforhold> {
-  if (Array.isArray(pathSlug)) {
-    throw new TypeError('Ugyldig pathSlug: må være en streng, ikke en array');
+  if (Array.isArray(uuid)) {
+    throw new TypeError('Ugyldig uuid: må være en streng, ikke en array');
   }
 
-  if (pathSlug) {
+  if (uuid && isValidUUID(uuid)) {
     logger.info(
       `Henter arbeidsforhold for: http://${globalThis.process.env.IM_API_URI}${globalThis.process.env.ARBEIDSFORHOLD_API}`
     );
     return fetchDataSSR(
       `http://${globalThis.process.env.IM_API_URI}${globalThis.process.env.ARBEIDSFORHOLD_API}`,
-      pathSlug,
+      uuid,
       token
     );
   }
-  throw new Error('Ugyldig pathSlug: må være en streng, ikke en array');
+  throw new TypeError('Ugyldig uuid: må være en gyldig UUID');
 }

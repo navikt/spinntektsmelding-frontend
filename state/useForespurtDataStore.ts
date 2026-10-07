@@ -19,7 +19,7 @@ export interface ForespurtDataState {
     tidligereinntekter: HistoriskInntekt | null
   ) => void;
   hentOpplysningstyper: () => Array<Opplysningstype>;
-  hentPaakrevdOpplysningstyper: (forespurtfraBackend?: MottattForespurtData) => Array<Opplysningstype>;
+  hentPaakrevdOpplysningstyper: (forespurtFraBackend?: MottattForespurtData) => Array<Opplysningstype>;
   setPaakrevdeOpplysninger: (paakrevdeOpplysninger: Array<Opplysningstype>) => void;
   arbeidsgiverKreverRefusjon: () => boolean;
   arbeidsgiverRefusjonskravOpphører: () => boolean;
@@ -63,7 +63,7 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
 
     return [];
   },
-  hentPaakrevdOpplysningstyper: (forespurtfraBackend) => {
+  hentPaakrevdOpplysningstyper: (forespurtFraBackend) => {
     const forespurtData = get().forespurtData;
     const paakrevdeOpplysninger = get().paakrevdeOpplysninger;
 
@@ -73,10 +73,10 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
       return Object.keys(forespurtData).filter(
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
-    } else if (forespurtfraBackend) {
-      return Object.keys(forespurtfraBackend.forespurtData).filter(
+    } else if (forespurtFraBackend) {
+      return Object.keys(forespurtFraBackend.forespurtData).filter(
         (key) =>
-          forespurtfraBackend.forespurtData[key as keyof typeof forespurtfraBackend.forespurtData].paakrevd === true
+          forespurtFraBackend.forespurtData[key as keyof typeof forespurtFraBackend.forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
     }
 

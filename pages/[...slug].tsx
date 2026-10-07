@@ -833,11 +833,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   const isDevelopment = process.env.NODE_ENV === 'development';
   const faisuEnabled = true;
 
-  const { slug, endre } = context.query;
+  const { slug, endre, agi } = context.query;
   const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
   const erEndring = action === 'overskriv';
   const hasEndreQuery = Boolean(endre);
+  const hasAgiQuery = Boolean(agi);
   let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
   let forespurtStatus: number | undefined;
   const overskriv = erEndring;
@@ -854,9 +855,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   }
 
   const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
-    hentForespoerselSSR(uuid, auth.token),
-    faisuEnabled ? hentArbeidsforholdSSR(uuid, auth.token) : Promise.reject(new Error('faisu disabled'))
+    !hasAgiQuery ? hentForespoerselSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt')),
+    !hasAgiQuery ? hentArbeidsforholdSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt'))
   ]);
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
+  }
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
+  }
 
   forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
@@ -869,7 +876,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     return rejectedForespurtResponse;
   }
 
-  const harFlereArbeidsforhold = faisuEnabled && hasMultipleArbeidsforhold(ansettelsesforhold);
+  const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
   if (harFlereArbeidsforhold) {
     logger.info(
       'Forespurt data inneholder flere ansettelsesforhold: %j',
