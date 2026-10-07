@@ -345,7 +345,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     if (router.query.endre != null) {
       removeQueryParam('endre');
     }
-  }, [removeQueryParam, router.query.endre]);
+
+    if (router.query.agi != null) {
+      removeQueryParam('agi');
+    }
+  }, [removeQueryParam, router.query.endre, router.query.agi]);
 
   const onForespurtInit = useEffectEvent(() => {
     if (dataFraBackend && forespurt && !storeInitialized.current) {
