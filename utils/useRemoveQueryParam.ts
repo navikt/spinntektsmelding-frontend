@@ -5,9 +5,12 @@ export function useRemoveQueryParam() {
   const router = useRouter();
 
   return useCallback(
-    (param: string) => {
-      const { [param]: _, ...rest } = router.query;
-      router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+    (...params: string[]) => {
+      const rest = { ...router.query };
+      for (const param of params) {
+        delete rest[param];
+      }
+      void router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
     },
     [router]
   );

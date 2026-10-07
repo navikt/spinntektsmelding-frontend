@@ -14,6 +14,29 @@ describe('useRemoveQueryParam', () => {
     vi.clearAllMocks();
   });
 
+  it('should remove multiple query params in one replacement without mutating the query', () => {
+    const query = { endre: 'true', agi: 'true', fromSubmit: 'true', slug: ['test'] };
+    vi.mocked(useRouter).mockReturnValue({
+      query,
+      pathname: '/test',
+      replace: mockReplace
+    } as any);
+
+    const { result } = renderHook(() => useRemoveQueryParam());
+
+    act(() => {
+      result.current('endre', 'agi');
+    });
+
+    expect(mockReplace).toHaveBeenCalledTimes(1);
+    expect(mockReplace).toHaveBeenCalledWith(
+      { pathname: '/test', query: { fromSubmit: 'true', slug: ['test'] } },
+      undefined,
+      { shallow: true }
+    );
+    expect(query).toEqual({ endre: 'true', agi: 'true', fromSubmit: 'true', slug: ['test'] });
+  });
+
   it('should remove a single query param', () => {
     vi.mocked(useRouter).mockReturnValue({
       query: { foo: 'bar', baz: 'qux' },
