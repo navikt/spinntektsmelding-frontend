@@ -548,7 +548,7 @@ export default function Arbeidsgiverperiode({
           )}
         </>
       )}
-      {endretArbeidsgiverperiode && (
+      {endretArbeidsgiverperiode && !arbeidsgiverperiodeDisabled && (
         <div className={lokalStyling.endreknapper}>
           <Button
             variant='secondary'
