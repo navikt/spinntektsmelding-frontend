@@ -204,7 +204,7 @@ describe('Kvittering', () => {
     await user.click(endreButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true');
+      expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true');
     });
   });
 

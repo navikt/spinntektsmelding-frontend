@@ -224,28 +224,32 @@ describe('Home Page', () => {
     expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
-  it('removes endre=true from the URL without a full page reload', async () => {
-    router.setCurrentUrl('/550e8400-e29b-41d4-a716-446655440000?endre=true&fromSubmit=true');
-    const replaceSpy = vi.spyOn(router, 'replace');
+  it.each(['endre=true', 'agi=true', 'endre=true&agi=true'])(
+    'removes %s from the URL in one shallow replacement',
+    async (flags) => {
+      router.setCurrentUrl(`/550e8400-e29b-41d4-a716-446655440000?${flags}&fromSubmit=true`);
+      const replaceSpy = vi.spyOn(router, 'replace').mockResolvedValue(true);
 
-    try {
-      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
+      try {
+        render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
 
-      await waitFor(() => {
-        expect(replaceSpy).toHaveBeenCalledWith(
-          {
-            pathname: router.pathname,
-            query: { fromSubmit: 'true' }
-          },
-          undefined,
-          { shallow: true }
-        );
-      });
-    } finally {
-      replaceSpy.mockRestore();
-      router.reset();
+        await waitFor(() => {
+          expect(replaceSpy).toHaveBeenCalledTimes(1);
+          expect(replaceSpy).toHaveBeenCalledWith(
+            {
+              pathname: router.pathname,
+              query: { fromSubmit: 'true' }
+            },
+            undefined,
+            { shallow: true }
+          );
+        });
+      } finally {
+        replaceSpy.mockRestore();
+        router.reset();
+      }
     }
-  });
+  );
 
   it('renders confirmation checkbox', () => {
     render(<Home slug='123' erEndring={false} />);

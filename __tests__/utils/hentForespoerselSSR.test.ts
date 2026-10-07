@@ -12,23 +12,19 @@ describe('hentForespoerselSSR', () => {
   });
 
   it('should throw an error when pathSlug is an array', async () => {
-    await expect(hentForespoerselSSR(['slug1', 'slug2'], 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
-    );
+    await expect(
+      hentForespoerselSSR(['52ad58fb-a3cc-4c43-a20d-53fe74db31f9', '52ad58fb-a3cc-4c43-a20d-53fe74db31f9'], 'token')
+    ).rejects.toThrow('Ugyldig uuid: må være en streng, ikke en array');
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
   it('should throw an error when pathSlug is undefined', async () => {
-    await expect(hentForespoerselSSR(undefined, 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
-    );
+    await expect(hentForespoerselSSR(undefined, 'token')).rejects.toThrow('Ugyldig uuid: må være en gyldig UUID');
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
   it('should throw an error when pathSlug is empty string', async () => {
-    await expect(hentForespoerselSSR('', 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
-    );
+    await expect(hentForespoerselSSR('', 'token')).rejects.toThrow('Ugyldig uuid: må være en gyldig UUID');
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
@@ -36,9 +32,13 @@ describe('hentForespoerselSSR', () => {
     const mockData = { data: { id: '123' } };
     vi.mocked(fetchDataSSR).mockResolvedValue(mockData as any);
 
-    const result = await hentForespoerselSSR('test-slug', 'test-token');
+    const result = await hentForespoerselSSR('52ad58fb-a3cc-4c43-a20d-53fe74db31f9', 'test-token');
 
-    expect(fetchDataSSR).toHaveBeenCalledWith('http://api-host/api/inntektsmelding', 'test-slug', 'test-token');
+    expect(fetchDataSSR).toHaveBeenCalledWith(
+      'http://api-host/api/inntektsmelding',
+      '52ad58fb-a3cc-4c43-a20d-53fe74db31f9',
+      'test-token'
+    );
     expect(result).toEqual(mockData);
   });
 
@@ -46,9 +46,13 @@ describe('hentForespoerselSSR', () => {
     const mockData = { id: '456' };
     vi.mocked(fetchDataSSR).mockResolvedValue(mockData as any);
 
-    const result = await hentForespoerselSSR('test-slug', undefined);
+    const result = await hentForespoerselSSR('52ad58fb-a3cc-4c43-a20d-53fe74db31f9', undefined);
 
-    expect(fetchDataSSR).toHaveBeenCalledWith('http://api-host/api/inntektsmelding', 'test-slug', undefined);
+    expect(fetchDataSSR).toHaveBeenCalledWith(
+      'http://api-host/api/inntektsmelding',
+      '52ad58fb-a3cc-4c43-a20d-53fe74db31f9',
+      undefined
+    );
     expect(result).toEqual(mockData);
   });
 });

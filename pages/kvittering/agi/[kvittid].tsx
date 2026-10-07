@@ -57,12 +57,18 @@ import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
-import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
+import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
+import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
+import { SelvbestemtInntektsmeldingSchema, SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
+type KvitteringInitData =
+  | z.infer<typeof FullInnsendingSchema>
+  | z.infer<typeof AapenInnsendingSchema>
+  | z.infer<typeof SelvbestemtInntektsmeldingSchema>;
 
 type PersonData = {
   navn: string;
@@ -157,7 +163,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         innsenderTelefonNr: avsender.tlf
       };
 
-  const clickEndre = () => {
+  const clickEndre = async () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
@@ -171,7 +177,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
 
     if (isValidUUID(kvittid)) {
-      router.push(`/${kvittid}?endre=true`);
+      await router.push(`/${kvittid}?endre=true&agi=true`);
     }
   };
 
@@ -276,7 +282,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (kvitteringDokument?.refusjon?.sluttdato) {
       refusjonEndringer.push({
         beloep: 0,
-        startdato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)
+        startdato: parseIsoDate(kvitteringDokument.refusjon?.sluttdato)!
       });
     }
   } else if (kvitteringData?.refusjon?.sluttdato) {
@@ -446,7 +452,7 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: unknown, personData: PersonData): KvitteringNavNoSchema {
+function prepareForInitiering(kvitteringData: KvitteringInitData, personData: PersonData): KvitteringNavNoSchema {
   const kvittering: KvitteringNavNoSchema = {
     sykmeldt: { navn: personData.navn, fnr: personData.identitetsnummer },
     avsender: {

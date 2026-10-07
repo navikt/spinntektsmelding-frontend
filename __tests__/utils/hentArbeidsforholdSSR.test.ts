@@ -18,24 +18,20 @@ describe('hentArbeidsforholdSSR', () => {
     process.env.ARBEIDSFORHOLD_API = '/api/arbeidsforhold';
   });
 
-  it('throws when pathSlug is an array', async () => {
+  it('throws when uuid is an array', async () => {
     await expect(hentArbeidsforholdSSR(['a', 'b'], 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
+      'Ugyldig uuid: må være en streng, ikke en array'
     );
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
-  it('throws when pathSlug is undefined', async () => {
-    await expect(hentArbeidsforholdSSR(undefined, 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
-    );
+  it('throws when uuid is undefined', async () => {
+    await expect(hentArbeidsforholdSSR(undefined, 'token')).rejects.toThrow('Ugyldig uuid: må være en gyldig UUID');
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
-  it('throws when pathSlug is an empty string', async () => {
-    await expect(hentArbeidsforholdSSR('', 'token')).rejects.toThrow(
-      'Ugyldig pathSlug: må være en streng, ikke en array'
-    );
+  it('throws when uuid is an empty string', async () => {
+    await expect(hentArbeidsforholdSSR('', 'token')).rejects.toThrow('Ugyldig uuid: må være en gyldig UUID');
     expect(fetchDataSSR).not.toHaveBeenCalled();
   });
 
@@ -43,9 +39,13 @@ describe('hentArbeidsforholdSSR', () => {
     const mockData = { ansettelsesforhold: [] };
     vi.mocked(fetchDataSSR).mockResolvedValue(mockData as never);
 
-    const result = await hentArbeidsforholdSSR('test-slug', 'test-token');
+    const result = await hentArbeidsforholdSSR('52ad58fb-a3cc-4c43-a20d-53fe74db31f9', 'test-token');
 
-    expect(fetchDataSSR).toHaveBeenCalledWith('http://api-host/api/arbeidsforhold', 'test-slug', 'test-token');
+    expect(fetchDataSSR).toHaveBeenCalledWith(
+      'http://api-host/api/arbeidsforhold',
+      '52ad58fb-a3cc-4c43-a20d-53fe74db31f9',
+      'test-token'
+    );
     expect(result).toEqual(mockData);
   });
 
@@ -53,9 +53,13 @@ describe('hentArbeidsforholdSSR', () => {
     const mockData = { ansettelsesforhold: [] };
     vi.mocked(fetchDataSSR).mockResolvedValue(mockData as never);
 
-    const result = await hentArbeidsforholdSSR('test-slug');
+    const result = await hentArbeidsforholdSSR('52ad58fb-a3cc-4c43-a20d-53fe74db31f9');
 
-    expect(fetchDataSSR).toHaveBeenCalledWith('http://api-host/api/arbeidsforhold', 'test-slug', undefined);
+    expect(fetchDataSSR).toHaveBeenCalledWith(
+      'http://api-host/api/arbeidsforhold',
+      '52ad58fb-a3cc-4c43-a20d-53fe74db31f9',
+      undefined
+    );
     expect(result).toEqual(mockData);
   });
 });
