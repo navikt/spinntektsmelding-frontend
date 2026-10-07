@@ -57,13 +57,12 @@ import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
-import { SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
-import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
+import { SelvbestemtInntektsmeldingSchema, SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 type KvitteringInitData =
