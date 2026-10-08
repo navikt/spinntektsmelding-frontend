@@ -2,7 +2,8 @@ import formatDate from '../../utils/formatDate';
 import stringishToNumber from '../../utils/stringishToNumber';
 
 import TextLabel from '../TextLabel';
-import { Alert, BodyLong, Button, Checkbox } from '@navikt/ds-react';
+import { BodyLong, Button, Checkbox, InfoCard } from '@navikt/ds-react';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 import useBoundStore from '../../state/useBoundStore';
 import ButtonEndre from '../ButtonEndre';
 import Periodevelger, { PeriodeParam } from '../Bruttoinntekt/Periodevelger';
@@ -99,6 +100,8 @@ export default function Arbeidsgiverperiode({
   const [manuellEndring, setManuellEndring] = useState<boolean>(false);
 
   const analyticsComponent = 'Arbeidsgiverperiode';
+
+  const brukteArbeidsgiverperioder = arbeidsgiverperiodeDisabled ? [] : arbeidsgiverperioder;
 
   const antallDagerIArbeidsgiverperioderManuellJustering = (perioder: Array<Periode> | undefined) => {
     if (perioder === undefined) {
@@ -236,7 +239,7 @@ export default function Arbeidsgiverperiode({
       : '';
 
   const advarselKortPeriode =
-    antallDager < 16
+    antallDager < 16 && !arbeidsgiverperiodeDisabled
       ? `Du har lagt inn arbeidsgiverperiode på ${antallDager} dager. Angi begrunnelse for kort arbeidsgiverperiode hvis dette er korrekt.`
       : '';
 
@@ -361,19 +364,21 @@ export default function Arbeidsgiverperiode({
             av en tidligere sykeperiode. Hvis du mener dette er feil og at det skal være arbeidsgiverperiode kan du
             endre dette.
           </BodyLong>
-          <Alert variant='info' className={lokalStyling.infoAlert}>
-            <p>
-              Arbeidsgiverperiode skal fylles ut hvis sykmeldt har arbeidet i sykmeldingsperioden slik at første dag med
-              sykefravær er mer enn 16 dager etter forrige sykefravær.
-            </p>
-            <p>
-              Hvis arbeidsgiverperioden er den samme som tidligere sykmeldingsperiode så skal arbeidsgiverperioden ikke
-              fylles ut. Da skal inntekstmeldingen sendes uten arbeidsgiverperiode.
-            </p>
-          </Alert>
+          <InfoCard data-color='info' className={lokalStyling.infoAlert}>
+            <InfoCard.Message icon={<InformationSquareIcon aria-hidden />}>
+              <p>
+                Arbeidsgiverperiode skal fylles ut hvis sykmeldt har arbeidet i sykmeldingsperioden slik at første dag
+                med sykefravær er mer enn 16 dager etter forrige sykefravær.
+              </p>
+              <p>
+                Hvis arbeidsgiverperioden er den samme som tidligere sykmeldingsperiode så skal arbeidsgiverperioden
+                ikke fylles ut. Da skal inntektsmeldingen sendes uten arbeidsgiverperiode.
+              </p>
+            </InfoCard.Message>
+          </InfoCard>
         </>
       )}
-      {arbeidsgiverperioder?.map((periode, periodeIndex) => (
+      {brukteArbeidsgiverperioder?.map((periode, periodeIndex) => (
         <div key={periode.id} className={lokalStyling.dateWrapper}>
           {!endretArbeidsgiverperiode && (
             <div className={lokalStyling.endrearbeidsgiverperiode}>
@@ -414,14 +419,14 @@ export default function Arbeidsgiverperiode({
               fromDate={minFomDate}
               defaultMonth={
                 periodeIndex > 0
-                  ? arbeidsgiverperioder?.[periodeIndex - 1].tom
+                  ? brukteArbeidsgiverperioder?.[periodeIndex - 1].tom
                   : (sykmeldingsperioder?.[0].fom ?? undefined)
               }
             />
           )}
         </div>
       ))}
-      {(!arbeidsgiverperioder || arbeidsgiverperioder?.length === 0) && (
+      {(!brukteArbeidsgiverperioder || brukteArbeidsgiverperioder?.length === 0) && (
         <>
           {!endretArbeidsgiverperiode && (
             <div className={lokalStyling.endrearbeidsgiverperiode}>
@@ -475,9 +480,9 @@ export default function Arbeidsgiverperiode({
         </Feilmelding>
       )}
       {advarselOppholdHelg.length > 0 && (
-        <Alert variant='info' id={ensureValidHtmlId('arbeidsgiverperioder-helg')}>
-          {advarselOppholdHelg}
-        </Alert>
+        <InfoCard data-color='info' id={ensureValidHtmlId('arbeidsgiverperioder-helg')}>
+          <InfoCard.Message icon={<InformationSquareIcon aria-hidden />}>{advarselOppholdHelg}</InfoCard.Message>
+        </InfoCard>
       )}
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id={ensureValidHtmlId('arbeidsgiverperiode-lokal-feil')}>{advarselLangPeriode}</Feilmelding>
@@ -543,7 +548,7 @@ export default function Arbeidsgiverperiode({
           )}
         </>
       )}
-      {endretArbeidsgiverperiode && (
+      {endretArbeidsgiverperiode && !arbeidsgiverperiodeDisabled && (
         <div className={lokalStyling.endreknapper}>
           <Button
             variant='secondary'

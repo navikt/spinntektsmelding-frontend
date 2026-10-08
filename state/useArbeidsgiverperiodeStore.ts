@@ -55,14 +55,19 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
     arbeidsgiverperioder: undefined,
     endretArbeidsgiverperiode: false,
     arbeidsgiverperiodeKort: false,
-    setArbeidsgiverperioder: (arbeidsgiverperioder) =>
+    setArbeidsgiverperioder: (arbeidsgiverperioder) => {
+      if (get().arbeidsgiverperiodeDisabled) {
+        console.warn('Arbeidsgiverperioder er deaktivert.');
+        return;
+      }
       set(
         produce((state) => {
           state.arbeidsgiverperioder = arbeidsgiverperioder;
 
           return state;
         })
-      ),
+      );
+    },
     initArbeidsgiverperioder: (arbeidsgiverperioder) =>
       set(
         produce((state) => {
@@ -120,6 +125,9 @@ const useArbeidsgiverperioderStore: StateCreator<CompleteState, [], [], Arbeidsg
         })
       ),
     setArbeidsgiverperiodeDato: (dateValue: PeriodeParam | undefined, periodeId: string) => {
+      if (get().arbeidsgiverperiodeDisabled) {
+        return;
+      }
       const egenmeldingsperioder = get().egenmeldingsperioder;
       const sykmeldingsperioder = get().sykmeldingsperioder;
       const skjaeringstidspunkt = get().skjaeringstidspunkt;
