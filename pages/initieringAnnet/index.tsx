@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Link } from '@navikt/ds-react';
+import { LocalAlert, Box, Button, Link } from '@navikt/ds-react';
 import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
 import { NextPage } from 'next';
 import { z } from 'zod';
@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation';
 import {
   EndepunktSykepengesoeknader,
   EndepunktSykepengesoeknaderSchema,
+  Forespoersel,
   SoeknadArbeidstaker
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { logger } from '@navikt/next-logger';
@@ -39,6 +40,11 @@ import { visFomDato, visTomDato } from '../../utils/initieringPerioder';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
+
+export const finnForespoerselId = (soeknader: Forespoersel[], vedtaksperiodeId: string) => {
+  const soeknad = soeknader.find((s) => s.vedtaksperiodeId === vedtaksperiodeId);
+  return soeknad ? soeknad.forespoerselId : null;
+};
 
 const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -343,11 +349,18 @@ const InitieringAnnet: NextPage = () => {
                           forespoersler.length === 0)) &&
                         !arbeidsforholdIsLoading &&
                         !spIsLoading && (
-                          <Alert variant='error'>
-                            Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
-                            Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og at
-                            søknad om sykepenger er sendt inn.
-                          </Alert>
+                          <LocalAlert status='error'>
+                            <LocalAlert.Header>
+                              <LocalAlert.Title>
+                                Finner ingen sykepengesøknader for den valgte personen
+                              </LocalAlert.Title>
+                            </LocalAlert.Header>
+                            <LocalAlert.Content>
+                              Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
+                              Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og
+                              at søknad om sykepenger er sendt inn.
+                            </LocalAlert.Content>
+                          </LocalAlert>
                         )}
                     </>
                   )}
@@ -367,7 +380,9 @@ const InitieringAnnet: NextPage = () => {
                               key={periode.vedtaksperiodeId}
                             >
                               <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
-                              <Link href={`${environment.baseUrl}/${periode.forlengerVedtaksperiodeId}`}>
+                              <Link
+                                href={`${environment.baseUrl}/${finnForespoerselId(forespoersler, periode.forlengerVedtaksperiodeId)}`}
+                              >
                                 <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
                               </Link>
                               <p>
@@ -404,11 +419,15 @@ const InitieringAnnet: NextPage = () => {
             </form>
           </FormProvider>
           {antallDagerMellomSykmeldingsperioder > 16 && (
-            <Alert variant='error' className={lokalStyling.alertPadding}>
-              <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
-              Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
-              hver av periodene.
-            </Alert>
+            <LocalAlert status='error' className={lokalStyling.alertPadding}>
+              <LocalAlert.Header>
+                <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
+              </LocalAlert.Header>
+              <LocalAlert.Content>
+                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
+                for hver av periodene.
+              </LocalAlert.Content>
+            </LocalAlert>
           )}
           Du finner også forespurte inntektsmeldinger i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
           <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />

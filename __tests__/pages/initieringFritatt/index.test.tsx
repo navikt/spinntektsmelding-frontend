@@ -222,7 +222,8 @@ describe('InitieringFritatt page', () => {
           forespoerselId,
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: forespoerselId
         }
       ],
       soeknaderArbeidstaker: [
@@ -320,7 +321,8 @@ describe('InitieringFritatt page', () => {
           forespoerselId: '049c78f1-ab2d-4886-91dd-36bb8787b4a4',
           sykmeldingsperioder: [{ fom: '2025-04-01', tom: '2025-04-19' }],
           egenmeldingsperioder: [{ fom: '2025-03-30', tom: '2025-03-31' }],
-          erBesvart: true
+          erBesvart: true,
+          vedtaksperiodeId: '049c78f1-ab2d-4886-91dd-36bb8787b4a4'
         }
       ],
       soeknaderArbeidstaker: [

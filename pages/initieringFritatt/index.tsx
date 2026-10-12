@@ -47,6 +47,7 @@ import type { SoeknadArbeidstaker } from '../../schema/EndepunktSykepengesoeknad
 import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
+import { finnForespoerselId } from '../initieringAnnet';
 
 type SkjemaData = {
   organisasjonsnummer: string;
@@ -383,7 +384,9 @@ const InitieringFritatt: NextPage = () => {
                                   key={periode.vedtaksperiodeId}
                                 >
                                   <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
-                                  <Link href={`${environment.baseUrl}/${periode.forlengerVedtaksperiodeId}`}>
+                                  <Link
+                                    href={`${environment.baseUrl}/${finnForespoerselId(forespoersler, periode.forlengerVedtaksperiodeId)}`}
+                                  >
                                     <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
                                   </Link>
                                   <p>
