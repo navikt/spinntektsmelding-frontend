@@ -89,7 +89,8 @@ describe('InitieringFritatt page', () => {
             forespoerselId,
             sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
             egenmeldingsperioder: [],
-            erBesvart: false
+            erBesvart: false,
+            vedtaksperiodeId: forespoerselId
           }
         ],
         soeknaderArbeidstaker: [
