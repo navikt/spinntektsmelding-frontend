@@ -1,4 +1,4 @@
-import { Alert, Button, Link, LocalAlert } from '@navikt/ds-react';
+import { Button, Link, LocalAlert } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import {
@@ -281,7 +281,7 @@ const InitieringFritatt: NextPage = () => {
     const perioder = soeknaderArbeidstaker.filter((p) => value.includes(p.vedtaksperiodeId));
     const forlengelse = perioder.find((p) => p.forlengerVedtaksperiodeId);
     if (forlengelse?.forlengerVedtaksperiodeId) {
-      if (forespoersler.find((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
+      if (forespoersler.some((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
         setHarValgtPeriodeMedForlengelse(true);
       }
     } else {
