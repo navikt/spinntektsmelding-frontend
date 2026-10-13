@@ -1,4 +1,4 @@
-import { LocalAlert, Box, Button, Link } from '@navikt/ds-react';
+import { LocalAlert, Button, Link } from '@navikt/ds-react';
 import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
 import { NextPage } from 'next';
 import { z } from 'zod';
@@ -35,7 +35,7 @@ import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import useInitieringData from '../../utils/useInitieringData';
-import { OrganisasjonInfo, PersonInfo } from '../../components/Initiering/InitieringInfo';
+import ForlengetPeriodeInfo from '../../components/Initiering/ForlengetPeriodeInfo';
 import { visFomDato, visTomDato } from '../../utils/initieringPerioder';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
@@ -370,29 +370,24 @@ const InitieringAnnet: NextPage = () => {
                   {endreRefusjon === 'Ja' && (
                     <>
                       <AlertKorrigereRefusjon />
-                      {valgtePerioder.map(
-                        (periode) =>
-                          periode?.forlengerVedtaksperiodeId && (
-                            <Box
-                              paddingBlock='space-4'
-                              borderWidth='1'
-                              paddingInline='space-16'
-                              key={periode.vedtaksperiodeId}
-                            >
-                              <OrganisasjonInfo orgNr={organisasjonsnummer} arbeidsforhold={arbeidsforhold} />
-                              <Link
-                                href={`${environment.baseUrl}/${finnForespoerselId(forespoersler, periode.forlengerVedtaksperiodeId)}`}
-                              >
-                                <PersonInfo navn={fulltNavn} fnr={sykmeldt.fnr} />
-                              </Link>
-                              <p>
-                                Sykmeldingsperiode:{' '}
-                                {visFomDato(periode.forlengerVedtaksperiodeId, soeknaderArbeidstaker)} -{' '}
-                                {visTomDato(periode.forlengerVedtaksperiodeId, soeknaderArbeidstaker)}
-                              </p>
-                            </Box>
-                          )
-                      )}
+                      {valgtePerioder.map((periode) => {
+                        const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
+                        if (!vedtaksperiodeId) return null;
+
+                        const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
+                        return (
+                          <ForlengetPeriodeInfo
+                            key={periode.vedtaksperiodeId}
+                            orgNr={organisasjonsnummer}
+                            arbeidsforhold={arbeidsforhold}
+                            navn={fulltNavn}
+                            fnr={sykmeldt.fnr}
+                            href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
+                            fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                            tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                          />
+                        );
+                      })}
                     </>
                   )}
                   {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
