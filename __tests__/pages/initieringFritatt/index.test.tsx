@@ -242,7 +242,9 @@ describe('InitieringFritatt page', () => {
     const user = userEvent.setup();
     render(<InitieringFritatt />);
 
-    await waitFor(() => expect(screen.getByText(/Vi fant sykepengesøknader for disse periodene/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/Velg perioden du ønsker å sende inntektsmelding/)).toBeInTheDocument()
+    );
 
     await user.click(screen.getByLabelText(/Hvilken underenhet/));
     await user.click(
