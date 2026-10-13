@@ -1,4 +1,4 @@
-import { Alert, Button, Link } from '@navikt/ds-react';
+import { Button, Link, LocalAlert } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import {
@@ -281,7 +281,9 @@ const InitieringFritatt: NextPage = () => {
     const perioder = soeknaderArbeidstaker.filter((p) => value.includes(p.vedtaksperiodeId));
     const forlengelse = perioder.find((p) => p.forlengerVedtaksperiodeId);
     if (forlengelse?.forlengerVedtaksperiodeId) {
-      setHarValgtPeriodeMedForlengelse(true);
+      if (forespoersler.some((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
+        setHarValgtPeriodeMedForlengelse(true);
+      }
     } else {
       setHarValgtPeriodeMedForlengelse(false);
       setValue('endreRefusjon', undefined, { shouldValidate: true, shouldDirty: true });
@@ -349,11 +351,16 @@ const InitieringFritatt: NextPage = () => {
               {(harArbeidsforhold || kanVelgeUtenKobling) && (
                 <>
                   {harArbeidsforhold && (
-                    <Alert variant='warning' className={lokalStyling.alertPadding}>
-                      Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
-                      for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
-                      inntektsmelding for annen periode&quot;.
-                    </Alert>
+                    <LocalAlert status='warning' className={lokalStyling.alertPadding}>
+                      <LocalAlert.Header>
+                        <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
+                      </LocalAlert.Header>
+                      <LocalAlert.Content>
+                        Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
+                        for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
+                        &quot;Send inntektsmelding for annen periode&quot;.
+                      </LocalAlert.Content>
+                    </LocalAlert>
                   )}
                   <InitieringPeriodevelger
                     control={methods.control}

@@ -263,7 +263,9 @@ const InitieringAnnet: NextPage = () => {
     const perioder = soeknaderArbeidstaker.filter((p) => value.includes(p.vedtaksperiodeId));
     const forlengelse = perioder.find((p) => p.forlengerVedtaksperiodeId);
     if (forlengelse?.forlengerVedtaksperiodeId) {
-      setHarValgtPeriodeMedForlengelse(true);
+      if (forespoersler.some((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
+        setHarValgtPeriodeMedForlengelse(true);
+      }
     } else {
       setHarValgtPeriodeMedForlengelse(false);
       setValue('endreRefusjon', undefined, { shouldValidate: true, shouldDirty: true });
