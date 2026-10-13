@@ -4,6 +4,7 @@ export const isoDate = z.iso.date();
 
 const ForespoerselResponseSchema = z.object({
   forespoerselId: z.uuid(),
+  vedtaksperiodeId: z.uuid(),
   sykmeldingsperioder: z.array(
     z.object({
       fom: isoDate,

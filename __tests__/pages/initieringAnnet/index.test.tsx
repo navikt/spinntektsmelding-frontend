@@ -125,7 +125,8 @@ describe('InitieringAnnet page', () => {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
         }
       ],
       soeknaderArbeidstaker: [
@@ -204,13 +205,15 @@ describe('InitieringAnnet page', () => {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
         },
         {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
           sykmeldingsperioder: [{ fom: '2023-01-11', tom: '2023-01-20' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
         }
       ],
       soeknaderArbeidstaker: [
@@ -287,13 +290,15 @@ describe('InitieringAnnet page', () => {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
         },
         {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174001',
           sykmeldingsperioder: [{ fom: '2023-01-11', tom: '2023-01-20' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001'
         }
       ],
       soeknaderArbeidstaker: [
@@ -368,7 +373,8 @@ describe('InitieringAnnet page', () => {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-20' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
         }
       ],
       soeknaderArbeidstaker: [
@@ -422,7 +428,8 @@ describe('InitieringAnnet page', () => {
           forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-20' }],
           egenmeldingsperioder: [],
-          erBesvart: false
+          erBesvart: false,
+          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
         }
       ],
       soeknaderArbeidstaker: [
