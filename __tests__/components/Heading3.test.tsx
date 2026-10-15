@@ -14,6 +14,15 @@ describe('Heading3', () => {
     expect(HeadingTitle).toBeInTheDocument();
   });
 
+  it('forwards the id to the heading element', () => {
+    render(<Heading3 id='arbeidsgiverperioder'>Arbeidsgiverperiode</Heading3>);
+
+    expect(screen.getByRole('heading', { level: 3, name: 'Arbeidsgiverperiode' })).toHaveAttribute(
+      'id',
+      'arbeidsgiverperioder'
+    );
+  });
+
   it('still renders a title text', () => {
     render(<Heading3 className='Test'>Innholdstekst</Heading3>);
 

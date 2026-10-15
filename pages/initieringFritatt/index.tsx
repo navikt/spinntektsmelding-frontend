@@ -266,7 +266,7 @@ const InitieringFritatt: NextPage = () => {
   });
 
   useEffect(() => {
-    onResetField('forespurtSykepengePeriodeId', {});
+    onResetField('forespurtSykepengePeriodeId');
   }, [spError?.status, spData?.soeknaderArbeidstaker.length, arbeidsforhold.length]);
 
   const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {

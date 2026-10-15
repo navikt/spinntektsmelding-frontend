@@ -1,9 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-
-// Mock the dekoratoren SSR module to control CSP output
-vi.mock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
-  buildCspHeader: vi.fn(async () => 'mock-csp-header')
-}));
+const decoratorSsr = require('@navikt/nav-dekoratoren-moduler/ssr');
 
 const ORIGINAL_ENV = process.env;
 
@@ -16,10 +12,12 @@ const clearNextConfigCache = () => {
 describe('next.config core config and headers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(decoratorSsr, 'buildCspHeader').mockResolvedValue('mock-csp-header');
     process.env = { ...ORIGINAL_ENV };
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     process.env = ORIGINAL_ENV;
     clearNextConfigCache();
   });
@@ -38,13 +36,14 @@ describe('next.config core config and headers', () => {
   });
 
   it('headers() returns CSP and cache-control headers using buildCspHeader', async () => {
-    // const { buildCspHeader } = await vi.importMock('@navikt/nav-dekoratoren-moduler/ssr');
     process.env.ENVIRONMENT = 'dev-gcp';
+    process.env.NEXT_PUBLIC_DECORATOR_ENV = 'dev';
 
     clearNextConfigCache();
     const config = require('../next.config.js');
 
     const headers = await config.headers();
+    expect(decoratorSsr.buildCspHeader).toHaveBeenCalledWith(expect.any(Object), { env: 'dev' });
 
     // Should return two header rules
     expect(Array.isArray(headers)).toBe(true);

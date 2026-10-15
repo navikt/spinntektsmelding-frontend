@@ -13,7 +13,7 @@ const appDirectives = {
 
 const nextConfig = {
   async headers() {
-    const csp = await buildCspHeader(appDirectives, { env: process.env.ENVIRONMENT });
+    const csp = await buildCspHeader(appDirectives, { env: process.env.NEXT_PUBLIC_DECORATOR_ENV });
 
     return [
       {
