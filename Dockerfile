@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:26-bookworm-slim@sha256:662933cf47f013bc8e4beb31a6116448427a82057ba7c42c97e4c5ba766504c2 AS deps
+FROM node:26-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567 AS deps
 WORKDIR /app
 
 RUN npm install -g --force corepack && corepack enable
@@ -13,7 +13,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     rm -f /root/.npmrc
 
 # Rebuild the source code only when needed
-FROM node:26-bookworm-slim@sha256:662933cf47f013bc8e4beb31a6116448427a82057ba7c42c97e4c5ba766504c2 AS builder
+FROM node:26-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
