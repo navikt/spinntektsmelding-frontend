@@ -71,7 +71,7 @@ export default function useInitieringData(
   setError: UseFormSetError<any>,
   ignorerSjekkArbeidsforhold?: boolean
 ) {
-  const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, setError);
+  const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, ignorerSjekkArbeidsforhold ? undefined : setError);
   const arbeidsforholdData = useMemo(
     () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error),
     [arbeidsforholdResponse.data, arbeidsforholdResponse.error]
