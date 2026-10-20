@@ -23,17 +23,13 @@ export default function KvitteringAnnetSystem(props: Readonly<KvitteringAnnetSys
       <div className={lokalStyling.hovedinnhold}>
         <Heading2>Denne inntektsmeldingen er mottatt fra et eksternt system</Heading2>
         <BodyLong>
-          Vi har mottatt denne inntektsmeldingen fra {props.eksterntSystem}. Det er ikke mulig å gjøre endringer på
-          denne innsendingen.
+          Vi har mottatt denne inntektsmeldingen fra et system tilknyttet Altinn 2 (avviklet). Det er ikke mulig å gjøre
+          endringer på denne innsendingen.
         </BodyLong>
         <BodyShort className={lokalStyling.luftOver}>
           Du kan <Link href={`${basePath}/${props.kvitteringId}/overskriv`}>sende den inn på nytt.</Link> Skjemaet er da
           ikke fylt med data fra siste innsending.
         </BodyShort>
-
-        {props.arkivreferanse && (
-          <BodyShort className={lokalStyling.luftOver}>Arkivreferanse: [{props.arkivreferanse}]</BodyShort>
-        )}
 
         {props.lenkeTilKvittering && (
           <BodyShort>
