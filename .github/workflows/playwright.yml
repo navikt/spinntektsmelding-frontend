@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   playwright-version:
@@ -36,6 +35,9 @@ jobs:
 
   e2e:
     needs: playwright-version
+    permissions:
+      contents: read
+      pull-requests: write
     uses: navikt/helsearbeidsgiver-frontend-workflows/.github/workflows/playwright-reusable-pnpm.yml@main
     with:
       playwright-version: ${{ needs.playwright-version.outputs.image-tag }}
