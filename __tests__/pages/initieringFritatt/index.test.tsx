@@ -206,21 +206,70 @@ describe('InitieringFritatt page', () => {
     expect(await screen.findAllByText('Organisasjon er ikke valgt.')).toHaveLength(2);
   });
 
-  it('submits valid form and navigates correctly', async () => {
-    const mockData = {
-      fulltNavn: 'Ukjent navn',
-      fnr: testFnr.GyldigeFraDolly.TestPerson1,
-      underenheter: [
-        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
-        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
-      ]
-    };
-    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
-    (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: { status: 404 } });
+  it.each([
+    { underenheter: [] },
+    {
+      underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' }]
+    }
+  ])(
+    'submits valid form using the organisation name from tilganger with arbeidsforhold $underenheter',
+    async ({ underenheter }) => {
+      const mockData = {
+        fulltNavn: 'Ukjent navn',
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        underenheter
+      };
+      (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
+      (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: { status: 404 } });
+      const user = userEvent.setup();
+      render(<InitieringFritatt />);
+      // choose the nested unit
+      await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
+      await user.click(screen.getByLabelText(/Hvilken underenhet/));
+      await user.click(
+        await screen.findByRole('option', {
+          name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+        })
+      );
+
+      await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+      await waitFor(() => {
+        expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret');
+      });
+
+      // store setters called
+      expect(fakeStore.initPerson).toHaveBeenCalledWith(
+        'Ukjent navn',
+        testFnr.GyldigeFraDolly.TestPerson1,
+        testOrganisasjoner[0].organizationNumber,
+        'Child Org'
+      );
+      expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('UtenArbeidsforhold');
+      // navigation
+      await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+    }
+  );
+
+  it('stops submission when the selected organisation is no longer in tilganger', async () => {
+    vi.mocked(useArbeidsforhold).mockReturnValue({
+      data: { fulltNavn: 'Ukjent navn', underenheter: [] },
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
+    vi.mocked(useSykepengesoeknader).mockReturnValue({
+      data: undefined,
+      error: { status: 404 },
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
     const user = userEvent.setup();
-    render(<InitieringFritatt />);
-    // choose the nested unit
-    await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
+    const { rerender } = render(<InitieringFritatt />);
+
     await user.click(screen.getByLabelText(/Hvilken underenhet/));
     await user.click(
       await screen.findByRole('option', {
@@ -228,23 +277,21 @@ describe('InitieringFritatt page', () => {
       })
     );
 
-    await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
-
-    await waitFor(() => {
-      expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret');
+    vi.mocked(useMineTilganger).mockReturnValue({
+      data: [],
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
     });
+    rerender(<InitieringFritatt />);
+    await user.click(screen.getByRole('button', { name: 'Neste' }));
 
-    // store setters called
-    expect(fakeStore.initPerson).toHaveBeenCalledWith(
-      'Ukjent navn',
-      testFnr.GyldigeFraDolly.TestPerson1,
-      testOrganisasjoner[0].organizationNumber,
-      'Child Org'
-    );
-    expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('UtenArbeidsforhold');
-    // navigation
-    await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+    expect(
+      await screen.findAllByText('Valgt organisasjon finnes ikke i tilgangslisten. Velg organisasjon på nytt.')
+    ).toHaveLength(2);
+    expect(fakeStore.initPerson).not.toHaveBeenCalled();
+    expect(mockedRouter.push).not.toHaveBeenCalled();
   });
 
   it('shows forespurte perioder and navigates to the periode route', async () => {
@@ -306,7 +353,7 @@ describe('InitieringFritatt page', () => {
       fulltNavn: 'Ukjent navn',
       fnr: testFnr.GyldigeFraDolly.TestPerson1,
       underenheter: [
-        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' },
         { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
       ]
     };
@@ -343,6 +390,12 @@ describe('InitieringFritatt page', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending'));
+    expect(fakeStore.initPerson).toHaveBeenCalledWith(
+      'Ukjent navn',
+      testFnr.GyldigeFraDolly.TestPerson1,
+      testOrganisasjoner[0].organizationNumber,
+      'Child Org'
+    );
     expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
     expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith(uuid);
     expect(fakeStore.setHarGradertSykmelding).toHaveBeenCalledWith(true);

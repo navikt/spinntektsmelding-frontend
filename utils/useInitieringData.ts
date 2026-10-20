@@ -26,7 +26,7 @@ function getForespoerselId(forespoersler: Forespoersel[], fom: string): string |
     ?.forespoerselId;
 }
 
-function mapArbeidsforhold(data: unknown, hasError: boolean, valgtOrganisasjonsnummer: string | undefined) {
+function mapArbeidsforhold(data: unknown, hasError: boolean) {
   const parsed = EndepunktArbeidsforholdSchema.safeParse(data);
   if (!parsed.success || hasError) {
     return { arbeidsforhold: [], fulltNavn: '', orgnrUnderenhet: undefined, orgNavnMangler: false };
@@ -42,8 +42,7 @@ function mapArbeidsforhold(data: unknown, hasError: boolean, valgtOrganisasjonsn
   return {
     arbeidsforhold,
     fulltNavn: parsed.data.fulltNavn ?? 'Ukjent navn',
-    orgnrUnderenhet:
-      parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : valgtOrganisasjonsnummer,
+    orgnrUnderenhet: parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : undefined,
     orgNavnMangler: parsed.data.underenheter.some((arbeidsgiver) => arbeidsgiver?.orgnrUnderenhet === null)
   };
 }
@@ -74,8 +73,8 @@ export default function useInitieringData(
 ) {
   const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, ignorerSjekkArbeidsforhold ? undefined : setError);
   const arbeidsforholdData = useMemo(
-    () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error, valgtOrganisasjonsnummer),
-    [arbeidsforholdResponse.data, arbeidsforholdResponse.error, valgtOrganisasjonsnummer]
+    () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error),
+    [arbeidsforholdResponse.data, arbeidsforholdResponse.error]
   );
 
   const organisasjonsnummer = valgtOrganisasjonsnummer ?? arbeidsforholdData.orgnrUnderenhet;

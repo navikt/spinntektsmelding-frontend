@@ -122,7 +122,7 @@ const InitieringFritatt: NextPage = () => {
 
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
-  const { data: tilganger } = useMineTilganger(setError);
+  const { data: tilganger, error: tilgangerError } = useMineTilganger(setError);
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
   const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
@@ -142,7 +142,6 @@ const InitieringFritatt: NextPage = () => {
 
   const {
     data: arbeidsforholdData,
-    error: arbeidsforholdError,
     arbeidsforhold,
     fulltNavn,
     orgNavnMangler,
@@ -208,6 +207,19 @@ const InitieringFritatt: NextPage = () => {
     mottatteData: z.infer<typeof EndepunktArbeidsforholdSchema>,
     mottatteSykepengesoeknader: SoeknadArbeidstaker[] | undefined
   ) => {
+    const arbeidsgiver = arbeidsgiverTilganger.find(
+      (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === formData.organisasjonsnummer
+    );
+    if (!arbeidsgiver) {
+      logger.warn('Innsending avbrutt: valgt organisasjon finnes ikke i tilgangslisten');
+      setError('organisasjonsnummer', {
+        type: 'manual',
+        message: 'Valgt organisasjon finnes ikke i tilgangslisten. Velg organisasjon på nytt.'
+      });
+      return;
+    }
+    const orgNavn = arbeidsgiver.virksomhetsnavn;
+
     const skjemaData: SkjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData?.fulltNavn ?? 'Ukjent navn',
@@ -220,7 +232,7 @@ const InitieringFritatt: NextPage = () => {
     }
 
     if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
-      handleValidFormData(skjemaData, []);
+      handleValidFormData(skjemaData, [], orgNavn);
       return;
     }
 
@@ -238,9 +250,6 @@ const InitieringFritatt: NextPage = () => {
         return;
       }
 
-      const orgNavn = arbeidsforhold.find(
-        (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === skjemaData.organisasjonsnummer
-      )?.virksomhetsnavn!;
       initierMedArbeidsforhold(
         {
           initPerson,
@@ -276,15 +285,13 @@ const InitieringFritatt: NextPage = () => {
         sykepengePerioder.map((periode) => ({
           fom: formatIsoDate(periode.fom)!,
           tom: formatIsoDate(periode.tom)!
-        }))
+        })),
+        orgNavn
       );
     }
   };
 
-  const handleValidFormData = (validerteData: SkjemaData, sykmeldingsperiode: Periode[]) => {
-    const orgNavn = arbeidsforhold.find(
-      (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
-    )?.virksomhetsnavn!;
+  const handleValidFormData = (validerteData: SkjemaData, sykmeldingsperiode: Periode[], orgNavn: string) => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
@@ -372,8 +379,8 @@ const InitieringFritatt: NextPage = () => {
                   <p>{sykmeldt.fnr}</p>
                 </div>
               </div>
-              {!arbeidsforholdData && !arbeidsforholdError && <Loading />}
-              {arbeidsforholdData && (
+              {!tilganger && !tilgangerError && <Loading />}
+              {arbeidsgiverTilganger && (
                 <div>
                   <SelectArbeidsgiver
                     arbeidsforhold={arbeidsgiverTilganger}
