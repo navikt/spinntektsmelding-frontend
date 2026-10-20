@@ -19,7 +19,7 @@ import lokalStyling from './initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import SelectArbeidsgiver from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
 import useBoundStore from '../../state/useBoundStore';
@@ -48,6 +48,8 @@ import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusj
 import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
 import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
 import { finnForespoerselId } from '../initieringAnnet';
+import useMineTilganger from '../../utils/useMineTilganger';
+import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 
 type SkjemaData = {
   organisasjonsnummer: string;
@@ -120,13 +122,52 @@ const InitieringFritatt: NextPage = () => {
 
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
+  const { data: tilganger, error: tilgangerError } = useMineTilganger(setError);
+
+  const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
+  const forespurtSykepengePeriodeId: string | undefined = useWatch({
+    name: 'forespurtSykepengePeriodeId',
+    control: methods.control
+  });
+
+  const arbeidsgiverTilganger = useMemo<{ orgnrUnderenhet: string; virksomhetsnavn: string }[]>(() => {
+    if (!tilganger) return [];
+
+    return collectNestedOrgs(tilganger).map((org) => ({
+      orgnrUnderenhet: org.orgnr,
+      virksomhetsnavn: org.navn
+    }));
+  }, [tilganger]);
+
+  const {
+    data: arbeidsforholdData,
+    arbeidsforhold,
+    fulltNavn,
+    orgNavnMangler,
+    organisasjonsnummer,
+    spData,
+    spError,
+    spIsLoading: spLoading,
+    forespoersler,
+    soeknaderArbeidstaker,
+    sykepengePerioder
+  } = useInitieringData(sykmeldt.fnr, orgnr, setError, true);
+
+  const harArbeidsforhold = Boolean(
+    spData && (spData.soeknaderArbeidstaker.length > 0 || spData.forespoersler.length > 0) && arbeidsforholdData
+  );
+  const harSoeknaderEllerForespoersler = Boolean(
+    spError?.status === 404 || (spData?.soeknaderArbeidstaker.length === 0 && spData?.forespoersler.length === 0)
+  );
+
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    if (!data) {
+    if (!tilganger) {
       logger.warn('Fritatt fra aa-registeret. Innsending avbrutt: mangler tilgangsdata (data er undefined)');
       return;
     }
-    const mottatteArbeidsforhold = EndepunktArbeidsforholdSchema.safeParse(data);
-    if (!mottatteArbeidsforhold.success) {
+    const mottatteArbeidsforhold = EndepunktArbeidsforholdSchema.safeParse(arbeidsforholdData);
+    if (!mottatteArbeidsforhold.success && harArbeidsforhold) {
       logger.error(
         `Validering av innsendte skjemadata feilet: ${JSON.stringify(
           mottatteArbeidsforhold.error.issues ?? 'Ingen issues funnet'
@@ -134,11 +175,35 @@ const InitieringFritatt: NextPage = () => {
       );
       return;
     }
-    handleValidData(formData, mottatteArbeidsforhold.data, spData?.soeknaderArbeidstaker);
+    handleValidData(
+      formData,
+      mottatteArbeidsforhold?.data ?? { fulltNavn: 'Ukjent navn', underenheter: [] },
+      spData?.soeknaderArbeidstaker
+    );
   };
 
   const submitError: SubmitErrorHandler<Skjema> = (formErrors) => {
-    logger.error('Innsending feilet grunnet valideringsfeil i skjemaet: %j', formErrors);
+    const formData = methods.getValues();
+    logger.error(
+      {
+        skjemadata: {
+          organisasjonsnummer: formData.organisasjonsnummer,
+          endreRefusjon: formData.endreRefusjon,
+          forespurtSykepengePeriodeId: [undefined, 'utenKobling', 'andrePerioder'].includes(
+            formData.forespurtSykepengePeriodeId
+          )
+            ? formData.forespurtSykepengePeriodeId
+            : '[MASKERT]',
+          antallValgtePerioder: formData.sykepengePeriodeId?.length ?? 0
+        },
+        feil: Object.entries(formErrors).map(([felt, feil]) => ({
+          felt,
+          type: feil.type,
+          message: feil.message
+        }))
+      },
+      'Innsending feilet grunnet valideringsfeil i skjemaet...'
+    );
   };
 
   const handleValidData = (
@@ -146,9 +211,22 @@ const InitieringFritatt: NextPage = () => {
     mottatteData: z.infer<typeof EndepunktArbeidsforholdSchema>,
     mottatteSykepengesoeknader: SoeknadArbeidstaker[] | undefined
   ) => {
+    const arbeidsgiver = arbeidsgiverTilganger.find(
+      (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === formData.organisasjonsnummer
+    );
+    if (!arbeidsgiver) {
+      logger.warn('Innsending avbrutt: valgt organisasjon finnes ikke i tilgangslisten');
+      setError('organisasjonsnummer', {
+        type: 'manual',
+        message: 'Valgt organisasjon finnes ikke i tilgangslisten. Velg organisasjon på nytt.'
+      });
+      return;
+    }
+    const orgNavn = arbeidsgiver.virksomhetsnavn;
+
     const skjemaData: SkjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
-      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
+      fulltNavn: mottatteData?.fulltNavn ?? 'Ukjent navn',
       personnummer: sykmeldt.fnr!
     };
 
@@ -158,7 +236,7 @@ const InitieringFritatt: NextPage = () => {
     }
 
     if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
-      handleValidFormData(skjemaData, []);
+      handleValidFormData(skjemaData, [], orgNavn);
       return;
     }
 
@@ -176,9 +254,6 @@ const InitieringFritatt: NextPage = () => {
         return;
       }
 
-      const orgNavn = arbeidsforhold.find(
-        (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === skjemaData.organisasjonsnummer
-      )?.virksomhetsnavn!;
       initierMedArbeidsforhold(
         {
           initPerson,
@@ -214,15 +289,13 @@ const InitieringFritatt: NextPage = () => {
         sykepengePerioder.map((periode) => ({
           fom: formatIsoDate(periode.fom)!,
           tom: formatIsoDate(periode.tom)!
-        }))
+        })),
+        orgNavn
       );
     }
   };
 
-  const handleValidFormData = (validerteData: SkjemaData, sykmeldingsperiode: Periode[]) => {
-    const orgNavn = arbeidsforhold.find(
-      (arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === validerteData.organisasjonsnummer
-    )?.virksomhetsnavn!;
+  const handleValidFormData = (validerteData: SkjemaData, sykmeldingsperiode: Periode[], orgNavn: string) => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
     initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
@@ -232,42 +305,19 @@ const InitieringFritatt: NextPage = () => {
     router.push('/unntattAaRegisteret');
   };
 
-  const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
-  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
-  const forespurtSykepengePeriodeId: string | undefined = useWatch({
-    name: 'forespurtSykepengePeriodeId',
-    control: methods.control
+  const onSetValue = useEffectEvent((field: keyof Skjema, value: any) => {
+    setValue(field, value, { shouldValidate: true, shouldDirty: true });
   });
 
-  const {
-    data,
-    error,
-    arbeidsforhold,
-    fulltNavn,
-    orgNavnMangler,
-    organisasjonsnummer,
-    spData,
-    spError,
-    spIsLoading: spLoading,
-    forespoersler,
-    soeknaderArbeidstaker,
-    sykepengePerioder
-  } = useInitieringData(sykmeldt.fnr, orgnr, setError, true);
-
-  const harArbeidsforhold = Boolean(
-    spData && (spData.soeknaderArbeidstaker.length > 0 || spData.forespoersler.length > 0)
-  );
-  const kanVelgeUtenKobling = Boolean(
-    spError?.status === 404 || (spData?.soeknaderArbeidstaker.length === 0 && spData?.forespoersler.length === 0)
-  );
+  useEffect(() => {
+    if (arbeidsgiverTilganger?.length === 1) {
+      onSetValue('organisasjonsnummer', arbeidsgiverTilganger[0].orgnrUnderenhet);
+    }
+  }, [arbeidsgiverTilganger]);
 
   const onResetField = useEffectEvent((field: keyof Skjema) => {
     resetField(field, { defaultValue: undefined });
   });
-
-  useEffect(() => {
-    onResetField('forespurtSykepengePeriodeId');
-  }, [spError?.status, spData?.soeknaderArbeidstaker.length, arbeidsforhold.length]);
 
   const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
     resetField('sykepengePeriodeId', { defaultValue: undefined });
@@ -302,18 +352,13 @@ const InitieringFritatt: NextPage = () => {
     (spData?.forespoersler && spData?.forespoersler.length > 0) ||
     (spData?.soeknaderArbeidstaker && spData?.soeknaderArbeidstaker.length > 0);
 
-  const onSetValue = useEffectEvent((value: string) => {
-    setValue('forespurtSykepengePeriodeId', value, { shouldValidate: true, shouldDirty: true });
-  });
-
   useEffect(() => {
-    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404) {
-      onSetValue('utenKobling');
+    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404 || !arbeidsforholdData) {
+      onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [visUtenKobling, spLoading, spData, spError]);
-
+  }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData, arbeidsforhold.length]);
   return (
     <div className={styles.container}>
       <Head>
@@ -334,11 +379,11 @@ const InitieringFritatt: NextPage = () => {
                   <p>{sykmeldt.fnr}</p>
                 </div>
               </div>
-              {!data && !error && <Loading />}
-              {data && (
+              {!tilganger && !tilgangerError && <Loading />}
+              {arbeidsgiverTilganger && (
                 <div>
                   <SelectArbeidsgiver
-                    arbeidsforhold={arbeidsforhold}
+                    arbeidsforhold={arbeidsgiverTilganger}
                     id='organisasjonsnummer'
                     register={register}
                     error={errors.organisasjonsnummer?.message as string}
@@ -348,33 +393,32 @@ const InitieringFritatt: NextPage = () => {
                 </div>
               )}
               {spLoading && <Loading />}
-              {(harArbeidsforhold || kanVelgeUtenKobling) && (
+              {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
                 <>
                   {harArbeidsforhold && (
-                    <LocalAlert status='warning' className={lokalStyling.alertPadding}>
-                      <LocalAlert.Header>
-                        <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
-                      </LocalAlert.Header>
-                      <LocalAlert.Content>
-                        Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
-                        for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
-                        &quot;Send inntektsmelding for annen periode&quot;.
-                      </LocalAlert.Content>
-                    </LocalAlert>
-                  )}
-                  <InitieringPeriodevelger
-                    control={methods.control}
-                    errors={errors}
-                    forespoersler={forespoersler}
-                    perioder={sykepengePerioder}
-                    disablePeriodeCheck={disablePeriodeCheck}
-                    visUtenKobling={visUtenKobling}
-                    checkboxGroupClassName={lokalStyling.checkboxGroup}
-                    onRadioChange={onRadioChange}
-                    onCheckboxChange={onCheckboxChange}
-                  />
-                  {harArbeidsforhold && (
                     <>
+                      <LocalAlert status='warning' className={lokalStyling.alertPadding}>
+                        <LocalAlert.Header>
+                          <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
+                        </LocalAlert.Header>
+                        <LocalAlert.Content>
+                          Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
+                          for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
+                          &quot;Send inntektsmelding for annen periode&quot;.
+                        </LocalAlert.Content>
+                      </LocalAlert>
+
+                      <InitieringPeriodevelger
+                        control={methods.control}
+                        errors={errors}
+                        forespoersler={forespoersler}
+                        perioder={sykepengePerioder}
+                        disablePeriodeCheck={disablePeriodeCheck}
+                        visUtenKobling={visUtenKobling}
+                        checkboxGroupClassName={lokalStyling.checkboxGroup}
+                        onRadioChange={onRadioChange}
+                        onCheckboxChange={onCheckboxChange}
+                      />
                       {harValgtPeriodeMedForlengelse && (
                         <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
                       )}

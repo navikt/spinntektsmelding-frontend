@@ -9,3 +9,5 @@ export const ApiPeriodeSchema = z
     error: 'Fra dato må være før til dato',
     path: ['fom']
   });
+
+export type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;

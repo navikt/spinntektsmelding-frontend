@@ -1,5 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { FormPage } from './utils/formPage';
+import mineTilganger from '../mockdata/endepunktAltinnTilganger.json';
+import mineTilgangerEnkel from '../mockdata/endepunktAltinnTilganger-enkel.json';
 
 async function answerFullLonnIfVisible(page: Page) {
   const fullLonnGroup = page.getByRole('radiogroup', { name: /Betaler arbeidsgiver ut full lønn/i });
@@ -87,6 +89,11 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.route('*/**/api/aktiveorgnr', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(activeOrgnr) })
     );
+
+    await page.route('*/**/api/mine-tilganger', (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mineTilganger.hierarki) })
+    );
+
     // start on initialisering
     await page.goto('http://localhost:3000/im-dialog/initiering');
     // await page.waitForResponse('*/**/api/sp-soeknader');
@@ -363,6 +370,11 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({}) })
     );
+
+    await page.route('*/**/api/mine-tilganger', (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mineTilgangerEnkel.hierarki) })
+    );
+
     // fill personnummer and next
     const formPage = new FormPage(page);
     await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
@@ -427,7 +439,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       refusjon: null,
       sykmeldtFnr: '25087327879',
-      avsender: { orgnr: '810007842', tlf: '12345678' },
+      avsender: { orgnr: '314418778', tlf: '12345678' },
       sykmeldingsperioder: [
         {
           fom: '2024-09-06',
@@ -454,6 +466,10 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(spSoeknader) })
     );
+    await page.route('*/**/api/mine-tilganger', (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mineTilgangerEnkel.hierarki) })
+    );
+
     const formPage = new FormPage(page);
     await page.getByLabel('Ansattes fødselsnummer').fill('10107400090');
     await formPage.checkRadioButton(
@@ -529,7 +545,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       refusjon: null,
       sykmeldtFnr: '10107400090',
-      avsender: { orgnr: '810007842', tlf: '12345678' },
+      avsender: { orgnr: '314418778', tlf: '12345678' },
       sykmeldingsperioder: [
         {
           fom: '2024-09-06',
@@ -556,6 +572,9 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // fill personnummer and next
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(spSoeknader) })
+    );
+    await page.route('*/**/api/mine-tilganger', (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mineTilgangerEnkel.hierarki) })
     );
     const formPage = new FormPage(page);
     await page.getByLabel('Ansattes fødselsnummer').fill('10107400090');
@@ -623,7 +642,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       refusjon: null,
       sykmeldtFnr: '10107400090',
-      avsender: { orgnr: '810007842', tlf: '12345678' },
+      avsender: { orgnr: '314418778', tlf: '12345678' },
       sykmeldingsperioder: [
         {
           fom: '2024-09-11',
@@ -645,6 +664,9 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   test('selvbestemt med refusjon', async ({ page }) => {
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(spSoeknader) })
+    );
+    await page.route('*/**/api/mine-tilganger', (r) =>
+      r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mineTilgangerEnkel.hierarki) })
     );
     const formPage = new FormPage(page);
     // select fødselsnummer and next

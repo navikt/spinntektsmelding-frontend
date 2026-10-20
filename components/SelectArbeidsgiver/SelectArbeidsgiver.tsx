@@ -28,7 +28,7 @@ export default function SelectArbeidsgiver({
 }: Readonly<SelectArbeidsgiverProps>) {
   const visningLabel = label ?? 'Arbeidsgiver';
   const selectLabel = descriptionLabel ?? 'Organisasjon';
-  if (arbeidsforhold.length === 1) {
+  if (arbeidsforhold?.length === 1) {
     return (
       <>
         <TextLabel>{visningLabel}</TextLabel>
@@ -38,7 +38,9 @@ export default function SelectArbeidsgiver({
     );
   }
 
-  const sortedArbeidsforhold = [...arbeidsforhold].sort((a, b) => a.virksomhetsnavn.localeCompare(b.virksomhetsnavn));
+  const sortedArbeidsforhold = arbeidsforhold?.length
+    ? [...arbeidsforhold].sort((a, b) => a.virksomhetsnavn.localeCompare(b.virksomhetsnavn))
+    : [];
 
   const options = sortedArbeidsforhold.map((arbeidsgiver) => ({
     value: arbeidsgiver.orgnrUnderenhet,

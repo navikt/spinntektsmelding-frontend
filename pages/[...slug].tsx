@@ -729,7 +729,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <FormProvider {...methods}>
           <form
             className={styles.padded}
-            onSubmit={handleSubmit(submitForm, (errors) => console.log('Submit feil:', errors))}
+            onSubmit={handleSubmit(submitForm, (errors) => logger.info('Submit feil: %j', errors))}
           >
             <Person />
             <Skillelinje />

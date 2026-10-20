@@ -2,6 +2,7 @@ import formatDate from './formatDate';
 import parseIsoDate from './parseIsoDate';
 import type { SoeknadArbeidstaker } from '../schema/EndepunktSykepengesoeknaderSchema';
 import formatIsoDate from './formatIsoDate';
+import { ApiPeriode, ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 
 export type Periode = {
   fom: string | Date;
@@ -24,11 +25,13 @@ function visDato(id: string, perioder: SoeknadArbeidstaker[], key: 'fom' | 'tom'
 export const visFomDato = (id: string, perioder: SoeknadArbeidstaker[]) => visDato(id, perioder, 'fom');
 export const visTomDato = (id: string, perioder: SoeknadArbeidstaker[]) => visDato(id, perioder, 'tom');
 
-export function getFravaersperioder<T extends Periode>(perioder: T[]) {
-  return perioder.map((periode) => ({
-    fom: formatIsoDate(parseIsoDate(periode.fom)!),
-    tom: formatIsoDate(parseIsoDate(periode.tom)!)
+export function getFravaersperioder(perioder: readonly Periode[]): ApiPeriode[] {
+  const fravaersperioder = perioder.map((periode) => ({
+    fom: formatIsoDate(parseIsoDate(periode.fom)),
+    tom: formatIsoDate(parseIsoDate(periode.tom))
   }));
+
+  return ApiPeriodeSchema.array().parse(fravaersperioder);
 }
 
 function formaterPeriode(periode: Periode) {

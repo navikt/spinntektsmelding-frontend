@@ -41,7 +41,7 @@ function mapArbeidsforhold(data: unknown, hasError: boolean) {
 
   return {
     arbeidsforhold,
-    fulltNavn: parsed.data.fulltNavn,
+    fulltNavn: parsed.data.fulltNavn ?? 'Ukjent navn',
     orgnrUnderenhet: parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : undefined,
     orgNavnMangler: parsed.data.underenheter.some((arbeidsgiver) => arbeidsgiver?.orgnrUnderenhet === null)
   };
@@ -71,12 +71,14 @@ export default function useInitieringData(
   setError: UseFormSetError<any>,
   ignorerSjekkArbeidsforhold?: boolean
 ) {
-  const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, setError);
+  const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, ignorerSjekkArbeidsforhold ? undefined : setError);
   const arbeidsforholdData = useMemo(
     () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error),
     [arbeidsforholdResponse.data, arbeidsforholdResponse.error]
   );
+
   const organisasjonsnummer = valgtOrganisasjonsnummer ?? arbeidsforholdData.orgnrUnderenhet;
+
   const sykepengesoeknaderResponse = useSykepengesoeknader(
     identitetsnummer,
     organisasjonsnummer ?? '',
