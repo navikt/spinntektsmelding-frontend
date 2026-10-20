@@ -27,6 +27,11 @@ import useBoundStore from '../../../state/useBoundStore';
 import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
+import useMineTilganger from '../../../utils/useMineTilganger';
+
+vi.mock('../../../utils/useMineTilganger', () => ({
+  default: vi.fn()
+}));
 
 // Mock useBoundStore to apply selector on fakeStore
 // Mock store and hooks
@@ -61,6 +66,27 @@ describe('InitieringFritatt page', () => {
     vi.clearAllMocks();
     mockedRouter.push.mockClear();
 
+    vi.mocked(useMineTilganger).mockReturnValue({
+      data: [
+        {
+          orgnr: '810007702',
+          navn: 'Parent Org',
+          underenheter: [
+            {
+              orgnr: testOrganisasjoner[0].organizationNumber,
+              navn: 'Child Org',
+              underenheter: []
+            },
+            {
+              orgnr: testOrganisasjoner[1].organizationNumber,
+              navn: 'Child Org 2',
+              underenheter: []
+            }
+          ]
+        }
+      ]
+    });
+
     (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(fakeStore));
     (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: undefined });
   });
@@ -72,6 +98,22 @@ describe('InitieringFritatt page', () => {
   });
 
   it('does not select utenKobling when sickness-benefit data arrives later', async () => {
+    vi.mocked(useMineTilganger).mockReturnValue({
+      data: [
+        {
+          orgnr: '810007702',
+          navn: 'Parent Org',
+          underenheter: [
+            {
+              orgnr: testOrganisasjoner[0].organizationNumber,
+              navn: 'Child Org',
+              underenheter: []
+            }
+          ]
+        }
+      ]
+    });
+
     const mockData = {
       fulltNavn: 'Ukjent navn',
       fnr: testFnr.GyldigeFraDolly.TestPerson1,

@@ -26,7 +26,15 @@ function getForespoerselId(forespoersler: Forespoersel[], fom: string): string |
     ?.forespoerselId;
 }
 
-function mapArbeidsforhold(data: unknown, hasError: boolean) {
+function mapArbeidsforhold(data: unknown, hasError: boolean, valgtOrganisasjonsnummer: string | undefined) {
+  console.log(
+    'mapArbeidsforhold called with data:',
+    data,
+    'hasError:',
+    hasError,
+    'valgtOrganisasjonsnummer:',
+    valgtOrganisasjonsnummer
+  );
   const parsed = EndepunktArbeidsforholdSchema.safeParse(data);
   if (!parsed.success || hasError) {
     return { arbeidsforhold: [], fulltNavn: '', orgnrUnderenhet: undefined, orgNavnMangler: false };
@@ -41,8 +49,9 @@ function mapArbeidsforhold(data: unknown, hasError: boolean) {
 
   return {
     arbeidsforhold,
-    fulltNavn: parsed.data.fulltNavn,
-    orgnrUnderenhet: parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : undefined,
+    fulltNavn: parsed.data.fulltNavn ?? 'Ukjent navn',
+    orgnrUnderenhet:
+      parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : valgtOrganisasjonsnummer,
     orgNavnMangler: parsed.data.underenheter.some((arbeidsgiver) => arbeidsgiver?.orgnrUnderenhet === null)
   };
 }
@@ -73,10 +82,12 @@ export default function useInitieringData(
 ) {
   const arbeidsforholdResponse = useArbeidsforhold(identitetsnummer, ignorerSjekkArbeidsforhold ? undefined : setError);
   const arbeidsforholdData = useMemo(
-    () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error),
-    [arbeidsforholdResponse.data, arbeidsforholdResponse.error]
+    () => mapArbeidsforhold(arbeidsforholdResponse.data, !!arbeidsforholdResponse.error, valgtOrganisasjonsnummer),
+    [arbeidsforholdResponse.data, arbeidsforholdResponse.error, valgtOrganisasjonsnummer]
   );
+
   const organisasjonsnummer = valgtOrganisasjonsnummer ?? arbeidsforholdData.orgnrUnderenhet;
+
   const sykepengesoeknaderResponse = useSykepengesoeknader(
     identitetsnummer,
     organisasjonsnummer ?? '',
