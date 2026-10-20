@@ -167,6 +167,47 @@ describe('InitieringFritatt page', () => {
     await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
   });
 
+  it('keeps utenKobling selected when arbeidsforhold arrive after a 404 response', async () => {
+    vi.mocked(useArbeidsforhold).mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+      isValidating: true,
+      mutate: vi.fn()
+    });
+    vi.mocked(useSykepengesoeknader).mockReturnValue({
+      data: undefined,
+      error: { status: 404 },
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
+    const user = userEvent.setup();
+    const { rerender } = render(<InitieringFritatt />);
+
+    await user.click(screen.getByLabelText(/Hvilken underenhet/));
+    await user.click(
+      await screen.findByRole('option', {
+        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+      })
+    );
+
+    vi.mocked(useArbeidsforhold).mockReturnValue({
+      data: {
+        fulltNavn: 'Ukjent navn',
+        underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' }]
+      },
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
+    rerender(<InitieringFritatt />);
+    await user.click(screen.getByRole('button', { name: 'Neste' }));
+
+    await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+  });
+
   it('validates form and shows error if no selection', async () => {
     const mockData = {
       fulltNavn: 'Ukjent navn',

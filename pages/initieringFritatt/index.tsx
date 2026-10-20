@@ -319,10 +319,6 @@ const InitieringFritatt: NextPage = () => {
     resetField(field, { defaultValue: undefined });
   });
 
-  useEffect(() => {
-    onResetField('forespurtSykepengePeriodeId');
-  }, [spError?.status, spData?.soeknaderArbeidstaker.length, arbeidsforhold.length]);
-
   const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
     resetField('sykepengePeriodeId', { defaultValue: undefined });
     resetField('endreRefusjon', { defaultValue: undefined });
@@ -362,7 +358,7 @@ const InitieringFritatt: NextPage = () => {
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData]);
+  }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData, arbeidsforhold.length]);
   return (
     <div className={styles.container}>
       <Head>
