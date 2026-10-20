@@ -31,7 +31,7 @@ describe('register', () => {
 
     await register();
 
-    expect(mockListen).toHaveBeenCalledWith({ onUnhandledRequest: 'bypass' });
+    expect(mockListen).toHaveBeenCalledWith({ onUnhandledFrame: 'bypass' });
     expect(console.log).toHaveBeenCalledWith('MSW server started for development');
   });
 
