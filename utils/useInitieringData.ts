@@ -27,14 +27,6 @@ function getForespoerselId(forespoersler: Forespoersel[], fom: string): string |
 }
 
 function mapArbeidsforhold(data: unknown, hasError: boolean, valgtOrganisasjonsnummer: string | undefined) {
-  console.log(
-    'mapArbeidsforhold called with data:',
-    data,
-    'hasError:',
-    hasError,
-    'valgtOrganisasjonsnummer:',
-    valgtOrganisasjonsnummer
-  );
   const parsed = EndepunktArbeidsforholdSchema.safeParse(data);
   if (!parsed.success || hasError) {
     return { arbeidsforhold: [], fulltNavn: '', orgnrUnderenhet: undefined, orgNavnMangler: false };

@@ -140,8 +140,6 @@ const InitieringFritatt: NextPage = () => {
     }));
   }, [tilganger]);
 
-  console.log('arbeidsgiverTilganger', arbeidsgiverTilganger, tilganger);
-
   const {
     data: arbeidsforholdData,
     error: arbeidsforholdError,
@@ -165,8 +163,6 @@ const InitieringFritatt: NextPage = () => {
   );
 
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
-    console.log('submitForm called with formData:', formData);
-    console.log('submitForm called with harArbeidsforhold:', harArbeidsforhold);
     if (!tilganger) {
       logger.warn('Fritatt fra aa-registeret. Innsending avbrutt: mangler tilgangsdata (data er undefined)');
       return;
@@ -212,9 +208,6 @@ const InitieringFritatt: NextPage = () => {
     mottatteData: z.infer<typeof EndepunktArbeidsforholdSchema>,
     mottatteSykepengesoeknader: SoeknadArbeidstaker[] | undefined
   ) => {
-    console.log('formData', formData);
-    console.log('mottatteData', mottatteData);
-    console.log('mottatteSykepengesoeknader', mottatteSykepengesoeknader);
     const skjemaData: SkjemaData = {
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData?.fulltNavn ?? 'Ukjent navn',
@@ -306,7 +299,6 @@ const InitieringFritatt: NextPage = () => {
   });
 
   useEffect(() => {
-    console.log('arbeidsgiverTilganger', arbeidsgiverTilganger);
     if (arbeidsgiverTilganger?.length === 1) {
       onSetValue('organisasjonsnummer', arbeidsgiverTilganger[0].orgnrUnderenhet);
     }
@@ -360,7 +352,6 @@ const InitieringFritatt: NextPage = () => {
       onResetField('forespurtSykepengePeriodeId');
     }
   }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData]);
-  console.log('arbeidsgiverTilganger', arbeidsgiverTilganger);
   return (
     <div className={styles.container}>
       <Head>
