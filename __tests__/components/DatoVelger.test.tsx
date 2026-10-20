@@ -7,16 +7,23 @@ const mockReset = vi.fn();
 const mockUseDatepicker = vi.fn();
 
 vi.mock('@navikt/ds-react', () => {
-  const DatePicker = function MockDatePicker({ children }) {
+  const DatePicker = function MockDatePicker({ children }: React.PropsWithChildren) {
     return <div>{children}</div>;
   };
-  DatePicker.Input = function MockDatePickerInput(props) {
-    return <input {...props} />;
+  DatePicker.Input = function MockDatePickerInput({
+    label,
+    id,
+    value,
+    onChange,
+    onBlur,
+    disabled
+  }: React.ComponentProps<'input'> & { label: string }) {
+    return <input aria-label={label} id={id} value={value} onChange={onChange} onBlur={onBlur} disabled={disabled} />;
   };
 
   return {
     DatePicker,
-    useDatepicker: (...args) => mockUseDatepicker(...args)
+    useDatepicker: (...args: any) => mockUseDatepicker(...args)
   };
 });
 
