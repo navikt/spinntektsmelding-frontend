@@ -400,30 +400,29 @@ const InitieringFritatt: NextPage = () => {
               {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
                 <>
                   {harArbeidsforhold && (
-                    <LocalAlert status='warning' className={lokalStyling.alertPadding}>
-                      <LocalAlert.Header>
-                        <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
-                      </LocalAlert.Header>
-                      <LocalAlert.Content>
-                        Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
-                        for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
-                        &quot;Send inntektsmelding for annen periode&quot;.
-                      </LocalAlert.Content>
-                    </LocalAlert>
-                  )}
-                  <InitieringPeriodevelger
-                    control={methods.control}
-                    errors={errors}
-                    forespoersler={forespoersler}
-                    perioder={sykepengePerioder}
-                    disablePeriodeCheck={disablePeriodeCheck}
-                    visUtenKobling={visUtenKobling}
-                    checkboxGroupClassName={lokalStyling.checkboxGroup}
-                    onRadioChange={onRadioChange}
-                    onCheckboxChange={onCheckboxChange}
-                  />
-                  {harArbeidsforhold && (
                     <>
+                      <LocalAlert status='warning' className={lokalStyling.alertPadding}>
+                        <LocalAlert.Header>
+                          <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
+                        </LocalAlert.Header>
+                        <LocalAlert.Content>
+                          Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
+                          for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
+                          &quot;Send inntektsmelding for annen periode&quot;.
+                        </LocalAlert.Content>
+                      </LocalAlert>
+
+                      <InitieringPeriodevelger
+                        control={methods.control}
+                        errors={errors}
+                        forespoersler={forespoersler}
+                        perioder={sykepengePerioder}
+                        disablePeriodeCheck={disablePeriodeCheck}
+                        visUtenKobling={visUtenKobling}
+                        checkboxGroupClassName={lokalStyling.checkboxGroup}
+                        onRadioChange={onRadioChange}
+                        onCheckboxChange={onCheckboxChange}
+                      />
                       {harValgtPeriodeMedForlengelse && (
                         <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
                       )}
