@@ -67,6 +67,10 @@ describe('InitieringFritatt page', () => {
     mockedRouter.push.mockClear();
 
     vi.mocked(useMineTilganger).mockReturnValue({
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn(),
       data: [
         {
           orgnr: '810007702',
@@ -99,6 +103,10 @@ describe('InitieringFritatt page', () => {
 
   it('does not select utenKobling when sickness-benefit data arrives later', async () => {
     vi.mocked(useMineTilganger).mockReturnValue({
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn(),
       data: [
         {
           orgnr: '810007702',

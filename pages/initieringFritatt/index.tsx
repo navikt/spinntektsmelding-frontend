@@ -157,7 +157,7 @@ const InitieringFritatt: NextPage = () => {
   const harArbeidsforhold = Boolean(
     spData && (spData.soeknaderArbeidstaker.length > 0 || spData.forespoersler.length > 0) && arbeidsforholdData
   );
-  const kanVelgeUtenKobling = Boolean(
+  const harSoeknaderEllerForespoersler = Boolean(
     spError?.status === 404 || (spData?.soeknaderArbeidstaker.length === 0 && spData?.forespoersler.length === 0)
   );
 
@@ -175,7 +175,11 @@ const InitieringFritatt: NextPage = () => {
       );
       return;
     }
-    handleValidData(formData, mottatteArbeidsforhold?.data ?? {}, spData?.soeknaderArbeidstaker);
+    handleValidData(
+      formData,
+      mottatteArbeidsforhold?.data ?? { fulltNavn: 'Ukjent navn', underenheter: [] },
+      spData?.soeknaderArbeidstaker
+    );
   };
 
   const submitError: SubmitErrorHandler<Skjema> = (formErrors) => {
@@ -393,7 +397,7 @@ const InitieringFritatt: NextPage = () => {
                 </div>
               )}
               {spLoading && <Loading />}
-              {(harArbeidsforhold || kanVelgeUtenKobling) && (
+              {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
                 <>
                   {harArbeidsforhold && (
                     <LocalAlert status='warning' className={lokalStyling.alertPadding}>
