@@ -353,7 +353,7 @@ const InitieringFritatt: NextPage = () => {
     (spData?.soeknaderArbeidstaker && spData?.soeknaderArbeidstaker.length > 0);
 
   useEffect(() => {
-    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404 || !arbeidsforholdData) {
+    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404) {
       onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
     } else {
       onResetField('forespurtSykepengePeriodeId');
