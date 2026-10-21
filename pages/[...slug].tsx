@@ -451,8 +451,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         }
       }
 
+      let erAktiv = true;
+
       fetchArbeidsforhold(orgnr, fnr, fom, tom)
         .then((response) => {
+          if (!erAktiv) {
+            return;
+          }
+
           setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
 
           const arbeidsforhold = mapArbeidsforhold(response);
@@ -465,6 +471,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         .catch((error) => {
           logger.warn({ err: error }, 'Feil ved henting av arbeidsforhold i hovedskjema');
         });
+
+      return () => {
+        erAktiv = false;
+      };
     }
   }, [dataFraBackend, sykmeldingsperioder]);
 

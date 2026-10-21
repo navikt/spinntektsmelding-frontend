@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 import Home, { getServerSideProps } from '../../pages/[...slug]';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
@@ -169,7 +170,17 @@ vi.mock('../../components/Heading3', () => ({
 
 vi.mock('../../components/Faisu/Faisu', () => ({
   __esModule: true,
-  default: () => <div data-testid='faisu'>Faisu Component</div>
+  default: function MockFaisu({ harGradertSykmeldingOgFlereArbeidsforhold }) {
+    const { control } = useFormContext();
+    const arbeidsforhold = useWatch({ control, name: 'flereArbeidsforhold.arbeidsforhold' });
+
+    return (
+      <div data-testid='faisu' data-flere-arbeidsforhold={harGradertSykmeldingOgFlereArbeidsforhold}>
+        Faisu Component
+        <span data-testid='arbeidsforhold'>{JSON.stringify(arbeidsforhold)}</span>
+      </div>
+    );
+  }
 }));
 
 vi.mock('../../utils/fetchInntektsdata', () => ({
@@ -241,6 +252,57 @@ describe('Home Page', () => {
     } finally {
       warnSpy.mockRestore();
     }
+  });
+
+  it('ignores an older arbeidsforhold response after the periods change', async () => {
+    type Response = Awaited<ReturnType<typeof fetchArbeidsforhold>>;
+    let resolveOlder!: (response: Response) => void;
+    let resolveNewer!: (response: Response) => void;
+    vi.mocked(fetchArbeidsforhold)
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveOlder = resolve;
+          })
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveNewer = resolve;
+          })
+      );
+
+    let state = createMockState();
+    (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
+    const { rerender } = render(<Home slug='123' erEndring={false} />);
+
+    state = {
+      ...state,
+      sykmeldingsperioder: [{ id: 'periode-2', fom: parseIsoDate('2023-04-01'), tom: parseIsoDate('2023-04-10') }]
+    };
+    rerender(<Home slug='123' erEndring={false} />);
+    expect(fetchArbeidsforhold).toHaveBeenCalledTimes(2);
+
+    const newerResponse: Response = {
+      ansettelsesforhold: [
+        { startdato: '2023-01-01', yrkesbeskrivelse: 'Ny stilling', stillingsprosent: 50 },
+        { startdato: '2023-01-01', yrkesbeskrivelse: 'Annen stilling', stillingsprosent: 50 }
+      ]
+    };
+    await act(async () => resolveNewer(newerResponse));
+
+    expect(screen.getByTestId('faisu')).toHaveAttribute('data-flere-arbeidsforhold', 'true');
+    const newerFormData = screen.getByTestId('arbeidsforhold').textContent;
+    expect(newerFormData).toContain('Ny stilling');
+
+    await act(async () =>
+      resolveOlder({
+        ansettelsesforhold: [{ startdato: '2023-01-01', yrkesbeskrivelse: 'Gammel stilling', stillingsprosent: 100 }]
+      })
+    );
+
+    expect(screen.getByTestId('faisu')).toHaveAttribute('data-flere-arbeidsforhold', 'true');
+    expect(screen.getByTestId('arbeidsforhold').textContent).toBe(newerFormData);
   });
 
   it.each(['endre=true', 'agi=true', 'endre=true&agi=true'])(
