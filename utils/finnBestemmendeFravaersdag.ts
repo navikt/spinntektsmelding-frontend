@@ -103,21 +103,24 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   const sorterteArbeidsgiverperioder = (arbeidsgiverperiode ?? []).filter(erGyldigTidPeriode).sort(sorterFomSynkende);
   const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
 
-  let perioderEtterAgp = [];
-  if (sisteDagArbeidsgiverperiode) {
-    perioderEtterAgp = sorterteSykmeldingPerioder.map((periode) => ({
-      ...periode,
-      fom: new Date(Math.max(periode.fom!.getTime(), sisteDagArbeidsgiverperiode.getTime())),
-      tom: new Date(Math.max(periode.tom!.getTime(), sisteDagArbeidsgiverperiode.getTime()))
-    }));
-  } else {
-    perioderEtterAgp = sorterteSykmeldingPerioder;
-  }
+  const perioderEtterAgp = sisteDagArbeidsgiverperiode
+    ? sorterteSykmeldingPerioder.map((periode) => ({
+        ...periode,
+        fom: new Date(Math.max(periode.fom!.getTime(), sisteDagArbeidsgiverperiode.getTime())),
+        tom: new Date(Math.max(periode.tom!.getTime(), sisteDagArbeidsgiverperiode.getTime()))
+      }))
+    : sorterteSykmeldingPerioder;
+  const foerstePeriodeEtterAgp = perioderEtterAgp[0];
+
   if (
     sisteDagArbeidsgiverperiode &&
-    differenceInBusinessDays(perioderEtterAgp[0].fom!, sisteDagArbeidsgiverperiode) <= 1
+    foerstePeriodeEtterAgp &&
+    differenceInBusinessDays(foerstePeriodeEtterAgp.fom!, sisteDagArbeidsgiverperiode) <= 1
   ) {
-    perioderEtterAgp[0].fom = sisteDagArbeidsgiverperiode;
+    perioderEtterAgp[0] = {
+      ...foerstePeriodeEtterAgp,
+      fom: sisteDagArbeidsgiverperiode
+    };
   }
 
   const agpOgSykPerioder = finnSammenhengendePeriode(
@@ -125,27 +128,20 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   );
 
   let antallDager = 0;
-  let bestemmendeFravaersdag = '';
-  let laasResultat = false;
+  let bestemmendePeriode: (typeof agpOgSykPerioder)[number] | undefined;
 
-  agpOgSykPerioder.forEach((element) => {
-    antallDager += differenceInDays(element.tom!, element.fom!) + 1;
+  for (const periode of agpOgSykPerioder) {
+    antallDager += differenceInDays(periode.tom!, periode.fom!) + 1;
 
-    if (antallDager > 16) {
-      if (!laasResultat) {
-        bestemmendeFravaersdag = formatISO9075(element.fom as Date, {
-          representation: 'date'
-        });
-        laasResultat = true;
-      }
+    if (antallDager > 16 && !bestemmendePeriode) {
+      bestemmendePeriode = periode;
     }
-  });
-
-  if (antallDager <= 16) {
-    bestemmendeFravaersdag = formatISO9075(agpOgSykPerioder.at(-1)!.fom as Date, {
-      representation: 'date'
-    });
   }
+
+  const sistePeriode = agpOgSykPerioder.at(-1)!;
+  const bestemmendeFravaersdag = formatISO9075((bestemmendePeriode ?? sistePeriode).fom as Date, {
+    representation: 'date'
+  });
 
   if (!arbeidsgiverKanFlytteBFD) {
     if (typeof forespurtBestemmendeFraværsdag === 'string') {

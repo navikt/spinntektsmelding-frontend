@@ -646,7 +646,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
     if (arbeidsgiverperiodeDisabled) {
-      console.log('arbeidsgiverperiodeDisabled is true', mottattBestemmendeFravaersdag);
       return parseIsoDate(mottattBestemmendeFravaersdag);
     }
     if (!harForespurtArbeidsgiverperiode && !overstyrSkalViseAgp) {
