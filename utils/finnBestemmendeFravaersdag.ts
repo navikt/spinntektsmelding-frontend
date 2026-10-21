@@ -15,7 +15,7 @@ function finnDatoEtterArbeidsgiverperiode<T extends TidPeriode>(
   sykmeldingsperioder: Array<GyldigTidPeriode<T>>,
   arbeidsgiverperioder: Array<GyldigTidPeriode<T>>
 ): string {
-  const sorterteArbeidsgiverperioder = arbeidsgiverperioder.sort(sorterFomSynkende);
+  const sorterteArbeidsgiverperioder = arbeidsgiverperioder.toSorted(sorterFomSynkende);
   const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
   const perioderEtterAgp = sisteDagArbeidsgiverperiode
     ? sykmeldingsperioder.map((periode) => ({
