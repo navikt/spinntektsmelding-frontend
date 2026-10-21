@@ -9,6 +9,8 @@ import useBoundStore from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
 import forespoerselType from '../../config/forespoerselType';
 import router from 'next-router-mock';
+import { logger } from '@navikt/next-logger';
+import fetchArbeidsforhold from '../../utils/fetchArbeidsforhold';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -222,6 +224,23 @@ describe('Home Page', () => {
     expect(screen.getByTestId('refusjon')).toBeInTheDocument();
     expect(screen.getByTestId('naturalytelser')).toBeInTheDocument();
     expect(screen.getByText('Send')).toBeInTheDocument();
+  });
+
+  it('logs errors when fetching arbeidsforhold fails', async () => {
+    const error = new Error('Kunne ikke hente arbeidsforhold');
+    vi.mocked(fetchArbeidsforhold).mockRejectedValueOnce(error);
+    const warnSpy = vi.spyOn(logger, 'warn');
+
+    try {
+      render(<Home slug='123' erEndring={false} />);
+
+      await waitFor(() => {
+        expect(warnSpy).toHaveBeenCalledWith({ err: error }, 'Feil ved henting av arbeidsforhold i hovedskjema');
+      });
+      expect(screen.getByText('Send')).toBeInTheDocument();
+    } finally {
+      warnSpy.mockRestore();
+    }
   });
 
   it.each(['endre=true', 'agi=true', 'endre=true&agi=true'])(

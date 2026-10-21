@@ -225,7 +225,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.inngangFraKvittering
   ]);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const setTidligereInntekter = useBoundStore((state) => state.setTidligereInntekter);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
@@ -233,7 +232,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const [
     hentPaakrevdOpplysningstyper,
     arbeidsgiverKanFlytteSkjæringstidspunkt,
-    initBruttoinntekt,
     bruttoinntekt,
     beloepArbeidsgiverBetalerISykefravaeret,
     avsender,
@@ -247,7 +245,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-    state.initBruttoinntekt,
     state.bruttoinntekt,
     state.beloepArbeidsgiverBetalerISykefravaeret,
     state.avsender,
@@ -259,9 +256,6 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.setBehandlingsdager,
     state.setArbeidsgiverperiodeDisabled
   ]);
-
-  const sisteInntektsdatoRef = useRef<Date | undefined>(undefined);
-  const hentInntektEnGangRef = useRef(inngangFraKvittering);
 
   const storeInitialized = useRef(false);
   const agpValuesInitialized = useRef(false);
@@ -275,7 +269,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  let opplysningstyper = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = hentPaakrevdOpplysningstyper();
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -461,29 +455,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         .then((response) => {
           setHarFlereArbeidsforhold(response.ansettelsesforhold != null && response.ansettelsesforhold.length > 1);
 
-          const arbeidsforhold = response.ansettelsesforhold?.map((periode) => ({
-            inntekt: undefined,
-            yrkesbeskrivelse: periode.yrkesbeskrivelse,
-            stillingsprosent: periode.stillingsprosent,
-            inkludertISykefravaer: undefined
-          }));
+          const arbeidsforhold = mapArbeidsforhold(response);
+
           onSetValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
             shouldDirty: true,
             shouldValidate: true
           });
         })
-        .catch(() => undefined);
+        .catch((error) => {
+          logger.warn({ err: error }, 'Feil ved henting av arbeidsforhold i hovedskjema');
+        });
     }
   }, [dataFraBackend, sykmeldingsperioder]);
 
   useEffect(() => {
     if (ansettelsesforhold) {
-      const arbeidsforhold = ansettelsesforhold.ansettelsesforhold.map((periode) => ({
-        inntekt: undefined,
-        yrkesbeskrivelse: periode.yrkesbeskrivelse,
-        stillingsprosent: periode.stillingsprosent,
-        inkludertISykefravaer: undefined
-      }));
+      const arbeidsforhold = mapArbeidsforhold(ansettelsesforhold);
       onSetValue('flereArbeidsforhold.arbeidsforhold', arbeidsforhold, {
         shouldDirty: true,
         shouldValidate: true
@@ -673,38 +660,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     return beregnetBestemmendeFraværsdag ? startOfMonth(beregnetBestemmendeFraværsdag) : undefined;
   }, [beregnetBestemmendeFraværsdag]);
 
+  const onSetPaakrevdeOpplysninger = useEffectEvent(() => {
+    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
+  });
+
   useEffect(() => {
     if (!isValidUUID(slug) && !selvbestemtInnsending) {
       return;
     }
 
-    const sisteInntektsdato = sisteInntektsdatoRef.current;
-
-    if (sykmeldingsperioder && sisteInntektsdato && inntektsdato && !isEqual(inntektsdato, sisteInntektsdato)) {
-      const skalHenteEnGang = hentInntektEnGangRef.current;
-
-      if (inntektsdato && (harForespurtArbeidsgiverperiode || skalHenteEnGang) && isValidUUID(slug)) {
-        hentInntektEnGangRef.current = false;
-
-        fetchInntektsdata(environment.inntektsdataUrl, slug, inntektsdato)
-          .then((inntektSisteTreMnd) => {
-            const tidligereInntekt = new Map<string, number>(inntektSisteTreMnd.data.historikk);
-            const tidligereInntektRecord = Object.fromEntries(tidligereInntekt) as Record<string, number | null>;
-
-            setTidligereInntekter(tidligereInntektRecord);
-            initBruttoinntekt(inntektSisteTreMnd.data.gjennomsnitt, tidligereInntektRecord, inntektsdato);
-          })
-          .catch((error) => {
-            logger.warn('Feil ved henting av tidligere inntektsdata i hovedskjema' + JSON.stringify(error));
-          });
-      }
-      sisteInntektsdatoRef.current = inntektsdato;
-    }
-
-    setPaakrevdeOpplysninger(hentPaakrevdOpplysningstyper());
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug, skjemastatus, inntektsdato, sykmeldingsperioder]);
+    onSetPaakrevdeOpplysninger();
+  }, [slug, selvbestemtInnsending]);
 
   const { data, error } = useTidligereInntektsdata(
     sykmeldt.fnr ?? '',
@@ -828,6 +794,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 };
 
 export default Home;
+
+function mapArbeidsforhold(ansettelsesforhold: {
+  ansettelsesforhold: { startdato: string; yrkesbeskrivelse: string; stillingsprosent: number }[];
+}) {
+  return ansettelsesforhold.ansettelsesforhold.map((periode) => ({
+    inntekt: undefined,
+    yrkesbeskrivelse: periode.yrkesbeskrivelse,
+    stillingsprosent: periode.stillingsprosent,
+    inkludertISykefravaer: undefined
+  }));
+}
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const isDevelopment = process.env.NODE_ENV === 'development';
