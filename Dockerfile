@@ -60,7 +60,7 @@ RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version
     && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
 
 # Production image, copy all the files and run next
-FROM cgr.dev/chainguard/node:26 AS runner
+FROM cgr.dev/chainguard/node:latest AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
