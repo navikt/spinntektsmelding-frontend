@@ -505,13 +505,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
 
     agpValuesInitialized.current = true;
-    console.log(
-      'Initializing AGP values',
-      kvitteringData?.agp?.redusertLoennIAgp,
-      dataFraBackend,
-      selvbestemtInnsending,
-      erEndring
-    );
+
     if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp && (!selvbestemtInnsending || erEndring)) {
       onSetValue('fullLonn', 'Ja');
     } else if (kvitteringData?.agp?.redusertLoennIAgp) {
