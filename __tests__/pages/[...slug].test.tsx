@@ -785,10 +785,11 @@ describe('getServerSideProps', () => {
     expect(result.props.erEndring).toBe(false);
   });
 
-  it('returns erEndring true when slug[1] is overskriv', async () => {
+  it('returns erEndring true when endre is true', async () => {
     const context = createServerSideContext({
       query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
+        slug: ['550e8400-e29b-41d4-a716-446655440000'],
+        endre: 'true'
       }
     });
 
@@ -946,7 +947,8 @@ describe('getServerSideProps', () => {
 
     const context = createServerSideContext({
       query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv']
+        slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv'],
+        endre: 'true'
       },
       req: {
         headers: {
