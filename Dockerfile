@@ -3,10 +3,10 @@ FROM cgr.dev/chainguard/node:latest-dev AS deps
 USER root
 WORKDIR /app
 
-RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
-
 # Copy only dependency-related files for better layer caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+
+RUN npm install -g --force --ignore-scripts "$(node -p "require('./package.json').packageManager.split('+')[0]")"
 
 RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     printf '//npm.pkg.github.com/:_authToken=%s\n' "$(cat /run/secrets/NODE_AUTH_TOKEN)" > /root/.npmrc && \
@@ -46,7 +46,7 @@ RUN echo "BUILDMODE" "${BUILDMODE}"
 
 COPY ${BUILDMODE}.env .env
 
-RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
+RUN npm install -g --force --ignore-scripts "$(node -p "require('./package.json').packageManager.split('+')[0]")"
 
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
