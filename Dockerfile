@@ -1,8 +1,8 @@
 # Install dependencies only when needed
-FROM node:26-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567 AS deps
+FROM cgr.dev/chainguard/node:latest-dev AS deps
 WORKDIR /app
 
-RUN npm install -g --force corepack && corepack enable
+RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
 
 # Copy only dependency-related files for better layer caching
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
@@ -13,7 +13,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
     rm -f /root/.npmrc
 
 # Rebuild the source code only when needed
-FROM node:26-bookworm-slim@sha256:86f07bc9c5dce4578cf37e5a418b7bfc7f817cda25cde66e2b66e95ed86c4567 AS builder
+FROM cgr.dev/chainguard/node:latest-dev AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
@@ -44,7 +44,7 @@ RUN echo "BUILDMODE" "${BUILDMODE}"
 
 COPY ${BUILDMODE}.env .env
 
-RUN npm install -g --force --ignore-scripts corepack && corepack enable
+RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
 
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
@@ -60,7 +60,7 @@ RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version
     && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
 
 # Production image, copy all the files and run next
-FROM gcr.io/distroless/nodejs24-debian12@sha256:61f4f4341db81820c24ce771b83d202eb6452076f58628cd536cc7d94a10978b AS runner
+FROM cgr.dev/chainguard/node:26 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
