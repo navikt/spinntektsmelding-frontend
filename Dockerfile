@@ -1,5 +1,6 @@
 # Install dependencies only when needed
 FROM cgr.dev/chainguard/node:latest-dev AS deps
+USER root
 WORKDIR /app
 
 RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
@@ -14,6 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
 
 # Rebuild the source code only when needed
 FROM cgr.dev/chainguard/node:latest-dev AS builder
+USER root
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
@@ -60,21 +62,21 @@ RUN PS_VER=$(node -p "require('./node_modules/pino-socket/package.json').version
     && cp -R /tmp/pino-socket/node_modules/. /app/.next/standalone/node_modules/
 
 # Production image, copy all the files and run next
-FROM cgr.dev/chainguard/node:26 AS runner
+FROM cgr.dev/chainguard/node:latest AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/public ./public
+COPY --from=builder --chown=node:node --chmod=0555 /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/.next/standalone ./
-COPY --from=builder --chown=nonroot:nonroot --chmod=0555 /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node --chmod=0555 /app/.next/standalone ./
+COPY --from=builder --chown=node:node --chmod=0555 /app/.next/static ./.next/static
 
-USER nonroot
+USER node
 
 EXPOSE 3000
 
