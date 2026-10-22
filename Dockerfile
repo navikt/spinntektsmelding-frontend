@@ -1,5 +1,6 @@
 # Install dependencies only when needed
 FROM cgr.dev/chainguard/node:latest-dev AS deps
+USER root
 WORKDIR /app
 
 RUN npm install -g --force --ignore-scripts corepack@0.34.0 && corepack enable
@@ -14,6 +15,7 @@ RUN --mount=type=secret,id=NODE_AUTH_TOKEN \
 
 # Rebuild the source code only when needed
 FROM cgr.dev/chainguard/node:latest-dev AS builder
+USER root
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 
