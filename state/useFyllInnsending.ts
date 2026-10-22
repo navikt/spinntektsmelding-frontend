@@ -29,11 +29,13 @@ export default function useFyllInnsending() {
   const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
+  const mottattBestemmendeFravaersdag = useBoundStore((state) => state.mottattBestemmendeFravaersdag);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
     (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
   );
+  const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
   const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser, setKvitteringData] =
     useBoundStore((state) => [
       state.setEndringAarsaker,
@@ -86,17 +88,19 @@ export default function useFyllInnsending() {
 
       beregnetSkjaeringstidspunkt = parseIsoDate(foreslaattBestemmendeFravaersdag);
     }
-    const bestemmendeFraværsdag = hentBestemmendeFraværsdag(
-      harForespurtArbeidsgiverperiode,
-      perioder,
-      formatertePerioder,
-      skjaeringstidspunkt,
-      arbeidsgiverKanFlytteSkjæringstidspunkt(),
-      inngangFraKvittering,
-      undefined,
-      beregnetSkjaeringstidspunkt,
-      erBegrensetForespoersel
-    );
+    const bestemmendeFraværsdag = arbeidsgiverperiodeDisabled
+      ? mottattBestemmendeFravaersdag
+      : hentBestemmendeFraværsdag(
+          harForespurtArbeidsgiverperiode,
+          perioder,
+          formatertePerioder,
+          skjaeringstidspunkt,
+          arbeidsgiverKanFlytteSkjæringstidspunkt(),
+          inngangFraKvittering,
+          undefined,
+          beregnetSkjaeringstidspunkt,
+          erBegrensetForespoersel
+        );
     const endringAarsakerParsed = skjemaData.inntekt?.endringAarsaker
       ? skjemaData.inntekt?.endringAarsaker.map((endringAarsak) => {
           return KonverterEndringAarsakSchema.parse(endringAarsak);
@@ -247,8 +251,8 @@ export function konverterPerioderFraMottattTilInterntFormat(
 ) {
   return innsendbarArbeidsgiverperioder
     ? innsendbarArbeidsgiverperioder?.map((periode) => ({
-        fom: parseIsoDate(periode.fom),
-        tom: parseIsoDate(periode.tom),
+        fom: parseIsoDate(periode.fom)!,
+        tom: parseIsoDate(periode.tom)!,
         id: 'id'
       }))
     : undefined;

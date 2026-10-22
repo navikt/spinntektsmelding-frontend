@@ -229,6 +229,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
+  const mottattBestemmendeFravaersdag = useBoundStore((state) => state.mottattBestemmendeFravaersdag);
 
   const [
     hentPaakrevdOpplysningstyper,
@@ -243,7 +244,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     selvbestemtType,
     kvitteringData,
     setBehandlingsdager,
-    setArbeidsgiverperiodeDisabled
+    setArbeidsgiverperiodeDisabled,
+    arbeidsgiverperiodeDisabled
   ] = useBoundStore((state) => [
     state.hentPaakrevdOpplysningstyper,
     state.arbeidsgiverKanFlytteSkjæringstidspunkt,
@@ -257,7 +259,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.selvbestemtType,
     state.kvitteringData,
     state.setBehandlingsdager,
-    state.setArbeidsgiverperiodeDisabled
+    state.setArbeidsgiverperiodeDisabled,
+    state.arbeidsgiverperiodeDisabled
   ]);
 
   const sisteInntektsdatoRef = useRef<Date | undefined>(undefined);
@@ -642,6 +645,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   };
 
   const mellomregningBeregnetBestemmendeFraværsdag = useMemo(() => {
+    if (arbeidsgiverperiodeDisabled && mottattBestemmendeFravaersdag) {
+      return parseIsoDate(mottattBestemmendeFravaersdag);
+    }
     if (!harForespurtArbeidsgiverperiode && !overstyrSkalViseAgp) {
       return parseIsoDate(foreslaattBestemmendeFravaersdag);
     }
@@ -655,14 +661,16 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
   }, [
-    arbeidsgiverperioder,
-    egenmeldingsperioder,
-    foreslaattBestemmendeFravaersdag,
-    sykmeldingsperioder,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    arbeidsgiverperiodeDisabled,
     harForespurtArbeidsgiverperiode,
+    overstyrSkalViseAgp,
+    sykmeldingsperioder,
+    egenmeldingsperioder,
+    arbeidsgiverperioder,
+    foreslaattBestemmendeFravaersdag,
+    arbeidsgiverKanFlytteSkjæringstidspunkt,
     begrensetForespoersel,
-    overstyrSkalViseAgp
+    mottattBestemmendeFravaersdag
   ]);
 
   const beregnetBestemmendeFraværsdag = behandlingsdagerInnsending

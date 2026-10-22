@@ -101,6 +101,49 @@ describe('InitieringFritatt page', () => {
     expect(screen.getByText(/Opprett inntektsmelding for et sykefravær/)).toBeInTheDocument();
   });
 
+  it('does not default to utenKobling while employment data is loading', async () => {
+    vi.mocked(useMineTilganger).mockReturnValue({
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn(),
+      data: [
+        {
+          orgnr: '810007702',
+          navn: 'Parent Org',
+          underenheter: [
+            {
+              orgnr: testOrganisasjoner[0].organizationNumber,
+              navn: 'Child Org',
+              underenheter: []
+            }
+          ]
+        }
+      ]
+    });
+    vi.mocked(useArbeidsforhold).mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+      isValidating: true,
+      mutate: vi.fn()
+    });
+    vi.mocked(useSykepengesoeknader).mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+      isValidating: true,
+      mutate: vi.fn()
+    });
+
+    const user = userEvent.setup();
+    render(<InitieringFritatt />);
+    await user.click(screen.getByRole('button', { name: 'Neste' }));
+
+    expect(await screen.findByText('Du må velge hva du vil gjøre videre')).toBeInTheDocument();
+    expect(mockedRouter.push).not.toHaveBeenCalled();
+  });
+
   it('does not select utenKobling when sickness-benefit data arrives later', async () => {
     vi.mocked(useMineTilganger).mockReturnValue({
       error: undefined,

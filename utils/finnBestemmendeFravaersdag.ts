@@ -11,6 +11,61 @@ function erGyldigTidPeriode<T extends TidPeriode>(periode: T): periode is Gyldig
   return Boolean(periode.fom && periode.tom);
 }
 
+function finnDatoEtterArbeidsgiverperiode<T extends TidPeriode>(
+  sykmeldingsperioder: Array<GyldigTidPeriode<T>>,
+  arbeidsgiverperioder: Array<GyldigTidPeriode<T>>
+): string {
+  const sorterteArbeidsgiverperioder = arbeidsgiverperioder.toSorted(sorterFomSynkende);
+  const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
+  const perioderEtterAgp = sisteDagArbeidsgiverperiode
+    ? sykmeldingsperioder.map((periode) => ({
+        ...periode,
+        fom: new Date(Math.max(periode.fom.getTime(), sisteDagArbeidsgiverperiode.getTime())),
+        tom: new Date(Math.max(periode.tom.getTime(), sisteDagArbeidsgiverperiode.getTime()))
+      }))
+    : sykmeldingsperioder;
+  const foerstePeriodeEtterAgp = perioderEtterAgp[0];
+
+  if (
+    sisteDagArbeidsgiverperiode &&
+    foerstePeriodeEtterAgp &&
+    differenceInBusinessDays(foerstePeriodeEtterAgp.fom, sisteDagArbeidsgiverperiode) <= 1
+  ) {
+    perioderEtterAgp[0] = { ...foerstePeriodeEtterAgp, fom: sisteDagArbeidsgiverperiode };
+  }
+
+  const agpOgSykPerioder = finnSammenhengendePeriode(
+    perioderEtterAgp.concat(sorterteArbeidsgiverperioder).filter(erGyldigTidPeriode)
+  );
+  let antallDager = 0;
+  let bestemmendePeriode: (typeof agpOgSykPerioder)[number] | undefined;
+
+  for (const periode of agpOgSykPerioder) {
+    antallDager += differenceInDays(periode.tom!, periode.fom!) + 1;
+    if (antallDager > 16 && !bestemmendePeriode) bestemmendePeriode = periode;
+  }
+
+  const sistePeriode = agpOgSykPerioder.at(-1)!;
+  return formatISO9075((bestemmendePeriode ?? sistePeriode).fom as Date, { representation: 'date' });
+}
+
+function velgForespurtDatoHvisTidligere(bestemmendeFravaersdag: string, forespurtDato?: string | Date): string {
+  if (typeof forespurtDato === 'string') {
+    forespurtDato = parseIsoDate(forespurtDato);
+  }
+  if (forespurtDato && isBefore(forespurtDato, parseIsoDate(bestemmendeFravaersdag)!)) {
+    return formatISO9075(forespurtDato, { representation: 'date' });
+  }
+  return bestemmendeFravaersdag;
+}
+
+function finnBestemmendeFravaersdagForBegrensetForespoersel<T extends TidPeriode>(
+  perioder: Array<GyldigTidPeriode<T>>
+): string | undefined {
+  const sistePeriode = perioder.at(-1);
+  return sistePeriode ? formatISO9075(sistePeriode.fom, { representation: 'date' }) : undefined;
+}
+
 export function overlappendePeriode<T extends TidPeriode>(ene: T, andre: T): T | null {
   if (!ene || !andre) return null;
   if (!ene.tom || !ene.fom || !andre.tom || !andre.fom) return null;
@@ -91,77 +146,19 @@ function finnBestemmendeFravaersdag<T extends TidPeriode>(
   const sorterteSykmeldingPerioder = finnSammenhengendePeriode(gyldigeFravaerPerioder);
 
   if (erBegrensetForespoersel) {
-    const sistePeriode = sorterteSykmeldingPerioder.at(-1);
-
-    if (sistePeriode) {
-      return formatISO9075(sistePeriode.fom as Date, {
-        representation: 'date'
-      });
-    }
+    const bestemmendeFravaersdagForBegrensetForespoersel =
+      finnBestemmendeFravaersdagForBegrensetForespoersel(sorterteSykmeldingPerioder);
+    if (bestemmendeFravaersdagForBegrensetForespoersel) return bestemmendeFravaersdagForBegrensetForespoersel;
   }
 
-  const sorterteArbeidsgiverperioder = (arbeidsgiverperiode ?? []).filter(erGyldigTidPeriode).sort(sorterFomSynkende);
-  const sisteDagArbeidsgiverperiode = sorterteArbeidsgiverperioder[0]?.tom;
-
-  let perioderEtterAgp = [];
-  if (sisteDagArbeidsgiverperiode) {
-    perioderEtterAgp = sorterteSykmeldingPerioder.map((periode) => ({
-      ...periode,
-      fom: new Date(Math.max(periode.fom!.getTime(), sisteDagArbeidsgiverperiode.getTime())),
-      tom: new Date(Math.max(periode.tom!.getTime(), sisteDagArbeidsgiverperiode.getTime()))
-    }));
-  } else {
-    perioderEtterAgp = sorterteSykmeldingPerioder;
-  }
-  if (
-    sisteDagArbeidsgiverperiode &&
-    differenceInBusinessDays(perioderEtterAgp[0].fom!, sisteDagArbeidsgiverperiode) <= 1
-  ) {
-    perioderEtterAgp[0].fom = sisteDagArbeidsgiverperiode;
-  }
-
-  const agpOgSykPerioder = finnSammenhengendePeriode(
-    perioderEtterAgp.concat(sorterteArbeidsgiverperioder).filter(erGyldigTidPeriode)
+  const bestemmendeFravaersdag = finnDatoEtterArbeidsgiverperiode(
+    sorterteSykmeldingPerioder,
+    (arbeidsgiverperiode ?? []).filter(erGyldigTidPeriode)
   );
 
-  let antallDager = 0;
-  let bestemmendeFravaersdag = '';
-  let laasResultat = false;
-
-  agpOgSykPerioder.forEach((element) => {
-    antallDager += differenceInDays(element.tom!, element.fom!) + 1;
-
-    if (antallDager > 16) {
-      if (!laasResultat) {
-        bestemmendeFravaersdag = formatISO9075(element.fom as Date, {
-          representation: 'date'
-        });
-        laasResultat = true;
-      }
-    }
-  });
-
-  if (antallDager <= 16) {
-    bestemmendeFravaersdag = formatISO9075(agpOgSykPerioder.at(-1)!.fom as Date, {
-      representation: 'date'
-    });
-  }
-
-  if (!arbeidsgiverKanFlytteBFD) {
-    if (typeof forespurtBestemmendeFraværsdag === 'string') {
-      forespurtBestemmendeFraværsdag = parseIsoDate(forespurtBestemmendeFraværsdag);
-    }
-    if (
-      forespurtBestemmendeFraværsdag &&
-      isBefore(forespurtBestemmendeFraværsdag, parseIsoDate(bestemmendeFravaersdag)!)
-    ) {
-      return formatISO9075(forespurtBestemmendeFraværsdag, {
-        representation: 'date'
-      });
-    }
-  }
-
-  return bestemmendeFravaersdag;
+  return arbeidsgiverKanFlytteBFD
+    ? bestemmendeFravaersdag
+    : velgForespurtDatoHvisTidligere(bestemmendeFravaersdag, forespurtBestemmendeFraværsdag);
 }
 
 export default finnBestemmendeFravaersdag;

@@ -40,6 +40,7 @@ export default function useKvitteringInit() {
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
   const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
+  const setMottattBestemmendeFravaersdag = useBoundStore((state) => state.setMottattBestemmendeFravaersdag);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
@@ -98,6 +99,7 @@ export default function useKvitteringInit() {
     const bestemmendeFravaersdag = jsonData.skjema.inntekt?.inntektsdato;
     if (bestemmendeFravaersdag) {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
+      setMottattBestemmendeFravaersdag(bestemmendeFravaersdag);
     }
   }
 
