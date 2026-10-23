@@ -187,7 +187,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData);
-    kvitteringInit({ kvitteringNavNo: kvittering, kvitteringDokument: null, kvitteringEkstern: null });
+    kvitteringInit({ kvitteringNavNo: kvittering, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
       setArbeidsgiverperiodeDisabled(true);

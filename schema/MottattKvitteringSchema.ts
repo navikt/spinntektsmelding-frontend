@@ -1,7 +1,5 @@
 import { z } from 'zod';
 import { ApiPeriodeSchema } from './ApiPeriodeSchema';
-import { PersonnummerSchema } from './PersonnummerSchema';
-import { OrganisasjonsnummerSchema } from './OrganisasjonsnummerSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
@@ -60,35 +58,6 @@ export const KvitteringEksternSchema = z.object({
 });
 
 export const MottattKvitteringSchema = z.object({
-  kvitteringDokument: z
-    .object({
-      orgnrUnderenhet: OrganisasjonsnummerSchema,
-      identitetsnummer: PersonnummerSchema,
-      fulltNavn: z.string().min(1),
-      telefonnummer: TelefonNummerSchema,
-      innsenderNavn: z.string().min(1),
-      virksomhetNavn: z.string().min(1),
-      egenmeldingsperioder: z.array(ApiPeriodeSchema),
-      arbeidsgiverperioder: z.array(ApiPeriodeSchema),
-      bestemmendeFraværsdag: z.string().min(1),
-      fraværsperioder: z.array(ApiPeriodeSchema),
-      inntekt: z.object({
-        bekreftet: z.boolean(),
-        beregnetInntekt: z.number(),
-        manueltKorrigert: z.boolean()
-      }),
-      fullLønnIArbeidsgiverPerioden: z.object({
-        utbetalerFullLønn: z.boolean()
-      }),
-      refusjon: z.object({
-        utbetalerHeleEllerDeler: z.boolean()
-      }),
-      årsakInnsending: z.enum(['NY', 'ENDRING']),
-      bekreftOpplysninger: z.boolean(),
-      tidspunkt: z.string(),
-      forespurtData: z.array(z.string())
-    })
-    .nullable(),
   kvitteringEkstern: KvitteringEksternSchema.nullable(),
   kvitteringNavNo: KvitteringNavNoSchema.nullable()
 });
