@@ -6,6 +6,7 @@ import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
+import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 
 const SelvbestemtAvsenderSchema = AvsenderSchema.extend({
   tlf: TelefonNummerSchema
@@ -23,7 +24,7 @@ const SelvbestemtAgpSchema = z
     redusertLoennIAgp: z
       .object({
         beloep: z.number().min(0),
-        begrunnelse: z.string().min(1)
+        begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp)
       })
       .nullable()
   })

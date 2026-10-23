@@ -115,12 +115,28 @@ describe('SelvbestemtKvitteringSchema', () => {
           egenmeldinger: [],
           redusertLoennIAgp: {
             beloep: 10000,
-            begrunnelse: 'Test begrunnelse'
+            begrunnelse: 'ArbeidOpphoert'
           }
         }
       };
       const result = SelvbestemtInntektsmeldingSchema.safeParse(withRedusertLoenn);
       expect(result.success).toBe(true);
+    });
+
+    it('should reject an unknown redusertLoennIAgp begrunnelse', () => {
+      const invalid = {
+        ...validSelvbestemtInntektsmelding,
+        agp: {
+          perioder: [{ fom: '2024-01-01', tom: '2024-01-16' }],
+          egenmeldinger: [],
+          redusertLoennIAgp: {
+            beloep: 10000,
+            begrunnelse: 'UkjentBegrunnelse'
+          }
+        }
+      };
+      const result = SelvbestemtInntektsmeldingSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
     });
 
     it('should reject redusertLoennIAgp with negative beloep', () => {
@@ -131,7 +147,7 @@ describe('SelvbestemtKvitteringSchema', () => {
           egenmeldinger: [],
           redusertLoennIAgp: {
             beloep: -100,
-            begrunnelse: 'Test'
+            begrunnelse: 'ArbeidOpphoert'
           }
         }
       };

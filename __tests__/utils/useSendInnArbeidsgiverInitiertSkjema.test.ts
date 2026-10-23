@@ -38,7 +38,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
         feilVedLasting: { persondata: null, arbeidsgiverdata: null },
         fyllFeilmeldinger: vi.fn(),
         setSkalViseFeilmeldinger: vi.fn(),
-        setKvitteringInnsendt: vi.fn(),
+        setMottatt: vi.fn(),
         harRefusjonEndringer: vi.fn(),
         arbeidsgiverKanFlytteSkjæringstidspunkt: vi.fn(),
         setEndringAarsaker: vi.fn(),

@@ -30,7 +30,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
-  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setMottatt = useBoundStore((state) => state.setMottatt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
   const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
   const errorResponse = useErrorRespons();
@@ -142,7 +142,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async (body) => {
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
-        setKvitteringInnsendt(new Date());
+        setMottatt(new Date());
         if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
           await router.push(`/kvittering/agi/${pathSlug}`);
         } else {
