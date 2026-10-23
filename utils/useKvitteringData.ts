@@ -18,7 +18,7 @@ interface StoreData {
   sykmeldingsperioder: Periode[] | undefined;
   naturalytelser?: Array<Naturalytelse>;
   arbeidsgiverperioder: Periode[] | undefined;
-  kvitteringInnsendt: Date | undefined;
+  mottatt: Date | undefined;
   kvitteringEksterntSystem: KvitteringEksterntSystem | undefined;
   gammeltSkjaeringstidspunkt: Date | undefined;
   kvitteringData: any;
@@ -32,15 +32,13 @@ interface UseKvitteringDataParams {
 
 function getStoreInnsendingTidspunkt(
   kvitteringEksterntSystem: KvitteringEksterntSystem | undefined,
-  kvitteringInnsendt: Date | undefined
+  mottatt: Date | undefined
 ): string {
-  if (kvitteringEksterntSystem?.tidspunkt) {
-    const tidspunkt = new Date(kvitteringEksterntSystem.tidspunkt);
-    return tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
+  if (kvitteringEksterntSystem?.mottatt) {
+    const mottatt = new Date(kvitteringEksterntSystem.mottatt);
+    return isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
   }
-  return kvitteringInnsendt && isValid(kvitteringInnsendt)
-    ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
-    : '';
+  return mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
 }
 
 export function useKvitteringData({ kvittering, dataFraBackend, storeData }: UseKvitteringDataParams) {
@@ -51,13 +49,13 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     sykmeldingsperioder,
     naturalytelser,
     arbeidsgiverperioder,
-    kvitteringInnsendt,
+    mottatt,
     kvitteringEksterntSystem,
     gammeltSkjaeringstidspunkt,
     kvitteringData
   } = storeData;
 
-  const storeInnsendingTidspunkt = getStoreInnsendingTidspunkt(kvitteringEksterntSystem, kvitteringInnsendt);
+  const storeInnsendingTidspunkt = getStoreInnsendingTidspunkt(kvitteringEksterntSystem, mottatt);
 
   const bestemmendeFravaersdag = kvitteringData
     ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
@@ -147,10 +145,9 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
     };
 
-    const mottatt = (ssrData?.skjema as any)?.mottatt;
-    const ssrInnsendingTidspunkt = mottatt
-      ? ` - ${formatDate(new Date(mottatt))} kl. ${formatTime(new Date(mottatt))}`
-      : '';
+    const mottatt = parseIsoDate(kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt);
+    const ssrInnsendingTidspunkt =
+      mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
 
     const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer
       ? ssrData?.skjema?.refusjon?.endringer.map((endringer) => ({
@@ -173,6 +170,7 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     };
   }, [
     dataFraBackend,
+    kvittering?.kvitteringEkstern?.mottatt,
     ssrData,
     kvitteringData,
     sykmeldingsperioder,

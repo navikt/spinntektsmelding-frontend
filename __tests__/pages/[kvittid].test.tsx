@@ -20,9 +20,9 @@ vi.mock('../../utils/hentKvitteringsdataSSR', () => ({
     Promise.resolve({
       data: {
         kvitteringNavNo: {
+          mottatt: '2023-01-20T10:00:00Z',
           sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-15' }],
           skjema: {
-            mottatt: '2023-01-20T10:00:00Z',
             inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
             agp: { perioder: [{ fom: '2023-01-01', tom: '2023-01-16' }] },
             refusjon: { beloepPerMaaned: 50000 }

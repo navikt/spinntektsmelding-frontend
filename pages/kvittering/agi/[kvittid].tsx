@@ -130,11 +130,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     ])
   );
   const kvitteringInit = useKvitteringInit();
+  const lagretMottatt = useBoundStore((state) => state.mottatt);
 
   const kvitteringDokument = kvittering ?? kvitteringData;
 
   const visningdata = dataFraBackend
     ? {
+        mottatt: parseIsoDate(kvitteringDokument.mottatt),
         personData: {
           navn: kvitteringDokument.sykmeldt.navn,
           identitetsnummer: kvitteringDokument.sykmeldt.fnr,
@@ -154,6 +156,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
         harRefusjon: Boolean(kvitteringDokument.refusjon)
       }
     : {
+        mottatt: lagretMottatt,
         personData: {
           navn: sykmeldt.navn,
           identitetsnummer: sykmeldt.fnr,
@@ -177,8 +180,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setVedtaksperiodeId(kvitteringDokument.vedtaksperiodeId);
   }
 
-  const kvitteringInnsendt = new Date(kvitteringDokument?.tidspunkt);
-  const { personData, arbeidsgiverperioder } = visningdata;
+  const { personData, arbeidsgiverperioder, mottatt } = visningdata;
   const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
   const bestemmendeFravaersdag = visningdata.bestemmendeFravaersdag;
   console.log('kvitteringDokument:', kvitteringDokument);
@@ -186,7 +188,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const clickEndre = async () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(input, personData);
+    const kvittering = prepareForInitiering(input, personData, mottatt);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
@@ -201,10 +203,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
   };
 
-  const innsendingTidspunkt =
-    kvitteringInnsendt && isValid(kvitteringInnsendt)
-      ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
-      : '';
+  const innsendingTidspunkt = mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
 
   const paakrevdeOpplysninger = ['arbeidsgiverperiode', 'naturalytelser', 'refusjon'];
 
@@ -401,7 +400,15 @@ export default Kvittering;
 
 type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 
-function prepareForInitiering(kvitteringData: KvitteringInitData, personData: PersonData): KvitteringNavNoSchema {
+function prepareForInitiering(
+  kvitteringData: KvitteringInitData,
+  personData: PersonData,
+  mottatt: Date | undefined
+): KvitteringNavNoSchema {
+  if (!mottatt || !isValid(mottatt)) {
+    throw new Error('Kan ikke initialisere kvitteringen uten gyldig mottaksdato');
+  }
+
   const kvittering: KvitteringNavNoSchema = {
     sykmeldt: { navn: personData.navn, fnr: personData.identitetsnummer },
     avsender: {
@@ -422,7 +429,7 @@ function prepareForInitiering(kvitteringData: KvitteringInitData, personData: Pe
         : null,
       naturalytelser: kvitteringData.naturalytelser ?? null
     },
-    mottatt: kvitteringData.tidspunkt
+    mottatt: mottatt.toISOString()
   };
 
   return kvittering;

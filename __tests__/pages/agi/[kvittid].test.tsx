@@ -4,6 +4,8 @@ import Kvittering, { getServerSideProps } from '../../../pages/kvittering/agi/[k
 import { expect, vi, describe, it, beforeAll, beforeEach, afterEach } from 'vitest';
 import useBoundStore from '../../../state/useBoundStore';
 import env from '../../../config/environment';
+import formatDate from '../../../utils/formatDate';
+import formatTime from '../../../utils/formatTime';
 
 import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
 import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
@@ -28,7 +30,7 @@ vi.mock('../../../utils/hentKvitteringsdataAgiSSR', () => ({
             agp: { perioder: [], egenmeldinger: [] },
             inntekt: { beloep: 50000, inntektsdato: '2023-01-01' },
             refusjon: { beloepPerMaaned: 50000 },
-            tidspunkt: '2023-01-20T10:00:00Z'
+            mottatt: '2023-01-20T10:00:00Z'
           }
         }
       }
@@ -206,6 +208,7 @@ describe('Kvittering', () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true');
     });
+    expect(useBoundStore.getState().mottatt).toEqual(new Date(source.mottatt));
   });
 
   it('renders refusjon section', () => {
@@ -288,6 +291,39 @@ describe('Kvittering', () => {
     // Should still render the page structure
     const kvitteringHeadings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
     expect(kvitteringHeadings.length).toBeGreaterThan(0);
+  });
+
+  it('renders the received date from the backend', () => {
+    const mottatt = new Date(kvitteringsdata.selvbestemtInntektsmelding.mottatt);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvitteringsdata.selvbestemtInntektsmelding}
+        kvitteringStatus={200}
+        dataFraBackend={true}
+      />
+    );
+
+    expect(
+      screen.getByText(`Inntektsmelding innsendt - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}`)
+    ).toBeInTheDocument();
+  });
+
+  it('renders the received date from the store after submission', () => {
+    const mottatt = new Date('2026-10-23T10:30:00Z');
+    useBoundStore.setState({ mottatt });
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+
+    expect(
+      screen.getByText(`Inntektsmelding innsendt - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}`)
+    ).toBeInTheDocument();
+  });
+
+  it('does not invent a received date when the store has none', () => {
+    useBoundStore.setState({ mottatt: undefined });
+    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+
+    expect(screen.getByText('Inntektsmelding innsendt', { exact: true })).toBeInTheDocument();
   });
 
   it('setter arbeidsgiverperiodeDisabled til true når Endre klikkes og AGP ikke har perioder', async () => {

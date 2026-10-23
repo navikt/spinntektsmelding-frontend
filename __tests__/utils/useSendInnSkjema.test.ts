@@ -13,7 +13,7 @@ type FullInnsendingType = z.infer<typeof HovedskjemaSchema>;
 
 const mockFyllFeilmeldinger = vi.fn();
 const mockSetSkalViseFeilmeldinger = vi.fn();
-const mockSetKvitteringInnsendt = vi.fn();
+const mockSetMottatt = vi.fn();
 const mockFullLonnIArbeidsgiverPerioden = { status: 'Ja', begrunnelse: undefined, utbetalt: undefined };
 const mockLonnISykefravaeret = { status: 'Ja' };
 const mockHarRefusjonEndringer = 'Nei';
@@ -37,7 +37,7 @@ vi.mock('../../state/useBoundStore', () => ({
     const selectorName = selector.toString();
     if (selectorName.includes('fyllFeilmeldinger')) return mockFyllFeilmeldinger;
     if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
-    if (selectorName.includes('setKvitteringInnsendt')) return mockSetKvitteringInnsendt;
+    if (selectorName.includes('setMottatt')) return mockSetMottatt;
     if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
     if (selectorName.includes('lonnISykefravaeret')) return mockLonnISykefravaeret;
     if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;
@@ -297,7 +297,7 @@ describe('useSendInnSkjema', () => {
       await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData, false);
     });
 
-    expect(mockSetKvitteringInnsendt).toHaveBeenCalled();
+    expect(mockSetMottatt).toHaveBeenCalled();
     expect(mockRouterPush).toHaveBeenCalledWith(`/kvittering/${pathSlug}?fromSubmit=true`);
   });
 
@@ -393,7 +393,7 @@ describe('useSendInnSkjema', () => {
       const selectorName = selector.toString();
       if (selectorName.includes('fyllFeilmeldinger')) return mockFyllFeilmeldinger;
       if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
-      if (selectorName.includes('setKvitteringInnsendt')) return mockSetKvitteringInnsendt;
+      if (selectorName.includes('setMottatt')) return mockSetMottatt;
       if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
       if (selectorName.includes('lonnISykefravaeret')) return undefined;
       if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;

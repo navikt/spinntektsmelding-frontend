@@ -48,13 +48,13 @@ export const KvitteringNavNoSchema = z.object({
       .nullable(),
     naturalytelser: ApiNaturalytelserSchema
   }),
-  mottatt: z.iso.date()
+  mottatt: z.iso.datetime({ offset: true })
 });
 
 export const KvitteringEksternSchema = z.object({
   avsenderSystem: z.string(),
   referanse: z.string(),
-  tidspunkt: z.iso.datetime()
+  mottatt: z.iso.datetime({ offset: true })
 });
 
 export const MottattKvitteringSchema = z.object({

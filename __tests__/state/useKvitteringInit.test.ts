@@ -315,8 +315,8 @@ describe('useKvitteringInit', () => {
       kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
     });
 
-    expect(result.current.kvitteringInnsendt).toEqual(new Date(kvitteringMedRefusjonSluttdato.kvitteringNavNo.mottatt));
-    expect(result.current.kvitteringInnsendt).toBeInstanceOf(Date);
+    expect(result.current.mottatt).toEqual(new Date(kvitteringMedRefusjonSluttdato.kvitteringNavNo.mottatt));
+    expect(result.current.mottatt).toBeInstanceOf(Date);
   });
 
   it('should set the refusjon to yes if there are endringer', async () => {

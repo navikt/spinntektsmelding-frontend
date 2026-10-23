@@ -20,7 +20,7 @@ type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
 export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
-  setKvitteringInnsendt: (tidspunkt: string | Date) => void;
+  setMottatt: (mottatt: string | Date) => void;
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
@@ -35,7 +35,7 @@ export interface SkjemadataState {
   setSoeknadIder: (soeknadIder: string[]) => void;
   soeknadIder?: string[];
   henterInntektsdata: boolean;
-  kvitteringInnsendt?: Date;
+  mottatt?: Date;
   skjemaFeilet: boolean;
   skjemaType?: Array<Opplysningstype>;
   inngangFraKvittering: boolean;
@@ -71,11 +71,11 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setKvitteringInnsendt: (tidspunkt: string | Date) => {
+  setMottatt: (mottatt: string | Date) => {
     set(
       produce((state: SkjemadataState) => {
-        if (typeof tidspunkt === 'string') state.kvitteringInnsendt = new Date(tidspunkt);
-        else state.kvitteringInnsendt = tidspunkt;
+        if (typeof mottatt === 'string') state.mottatt = new Date(mottatt);
+        else state.mottatt = mottatt;
       })
     );
   },
