@@ -195,6 +195,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const { personData, arbeidsgiverperioder, mottatt } = visningdata;
   const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
 
+  if (dataFraBackend && kvitteringDokument?.vedtaksperiodeId) {
+    setVedtaksperiodeId(kvitteringDokument.vedtaksperiodeId);
+  }
+
   const clickEndre = async () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
     if (!input) {
