@@ -506,14 +506,14 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     agpValuesInitialized.current = true;
 
-    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp) {
+    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp && (!selvbestemtInnsending || erEndring)) {
       onSetValue('fullLonn', 'Ja');
     } else if (kvitteringData?.agp?.redusertLoennIAgp) {
       onSetValue('fullLonn', 'Nei');
       onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
       onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
     }
-  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend]);
+  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndring]);
 
   useEffect(() => {
     if (
@@ -885,7 +885,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   return {
     props: {
       slug: uuid,
-      erEndring,
+      erEndring: hasEndreQuery,
       forespurt: hasEndreQuery ? null : forespurt,
       forespurtStatus: forespurtStatus,
       dataFraBackend: !!forespurt && !hasEndreQuery,
