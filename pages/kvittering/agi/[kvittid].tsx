@@ -34,7 +34,7 @@ import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../..
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
 import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
-import hentKvitteringsdataAgiSSR from '../../../utils/hentKvitteringsdataAgiSSR';
+import hentKvitteringsdataAgiSSR, { SelvbestemtKvitteringResponse } from '../../../utils/hentKvitteringsdataAgiSSR';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
@@ -56,7 +56,7 @@ import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
-import { SelvbestemtInntektsmeldingSchema, SelvbestemtKvittering } from '../../../schema/SelvbestemtKvitteringSchema';
+import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 type KvitteringInitData =
@@ -132,61 +132,77 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringInit = useKvitteringInit();
   const lagretMottatt = useBoundStore((state) => state.mottatt);
 
-  const kvitteringDokument = kvittering ?? kvitteringData;
+  const kvitteringDokument = kvittering;
 
-  const visningdata = dataFraBackend
-    ? {
-        mottatt: parseIsoDate(kvitteringDokument.mottatt),
-        personData: {
-          navn: kvitteringDokument.sykmeldt.navn,
-          identitetsnummer: kvitteringDokument.sykmeldt.fnr,
-          orgnrUnderenhet: kvitteringDokument.avsender.orgnr,
-          virksomhetNavn: kvitteringDokument.avsender.orgNavn,
-          innsenderNavn: kvitteringDokument.avsender.navn,
-          innsenderTelefonNr: kvitteringDokument.avsender.tlf
-        },
-        bestemmendeFravaersdag: kvitteringDokument.inntekt.inntektsdato,
-        arbeidsgiverperioder: kvitteringDokument.agp?.perioder,
-        sykmeldingsperioder: kvitteringDokument.sykmeldingsperioder,
-        beregnetInntekt: kvitteringDokument.inntekt.beloep,
-        endringAarsaker: kvitteringDokument.inntekt.endringAarsaker,
-        redusertLoennIAgp: kvitteringDokument.agp?.redusertLoennIAgp,
-        naturalytelser: kvitteringDokument.naturalytelser,
-        refusjon: kvitteringDokument.refusjon,
-        harRefusjon: Boolean(kvitteringDokument.refusjon)
-      }
-    : {
-        mottatt: lagretMottatt,
-        personData: {
-          navn: sykmeldt.navn,
-          identitetsnummer: sykmeldt.fnr,
-          orgnrUnderenhet: avsender.orgnr,
-          virksomhetNavn: avsender.orgNavn,
-          innsenderNavn: avsender.navn,
-          innsenderTelefonNr: avsender.tlf
-        },
-        bestemmendeFravaersdag: kvitteringData?.inntekt?.inntektsdato,
-        arbeidsgiverperioder: kvitteringData?.agp?.perioder,
-        sykmeldingsperioder: kvitteringData?.sykmeldingsperioder,
-        beregnetInntekt: kvitteringData?.inntekt?.beloep,
-        endringAarsaker: kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker,
-        redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
-        naturalytelser: kvitteringData?.naturalytelser,
-        refusjon: kvitteringData?.refusjon,
-        harRefusjon: Boolean(kvitteringData?.refusjon?.beloepPerMaaned)
-      };
+  const visningdata =
+    dataFraBackend && kvitteringDokument
+      ? {
+          mottatt: parseIsoDate(kvitteringDokument.mottatt),
+          personData: {
+            navn: kvitteringDokument.sykmeldt.navn,
+            identitetsnummer: kvitteringDokument.sykmeldt.fnr,
+            orgnrUnderenhet: kvitteringDokument.avsender.orgnr,
+            virksomhetNavn: kvitteringDokument.avsender.orgNavn,
+            innsenderNavn: kvitteringDokument.avsender.navn,
+            innsenderTelefonNr: kvitteringDokument.avsender.tlf
+          },
+          bestemmendeFravaersdag: kvitteringDokument.inntekt.inntektsdato,
+          arbeidsgiverperioder: kvitteringDokument.agp?.perioder,
+          sykmeldingsperioder: kvitteringDokument.sykmeldingsperioder,
+          beregnetInntekt: kvitteringDokument.inntekt.beloep,
+          endringAarsaker: kvitteringDokument.inntekt.endringAarsaker,
+          redusertLoennIAgp: kvitteringDokument.agp?.redusertLoennIAgp,
+          naturalytelser: kvitteringDokument.naturalytelser,
+          refusjon: kvitteringDokument.refusjon,
+          harRefusjon: Boolean(kvitteringDokument.refusjon)
+        }
+      : {
+          mottatt: lagretMottatt,
+          personData: {
+            navn: sykmeldt.navn,
+            identitetsnummer: sykmeldt.fnr,
+            orgnrUnderenhet: avsender.orgnr,
+            virksomhetNavn: avsender.orgNavn,
+            innsenderNavn: avsender.navn,
+            innsenderTelefonNr: avsender.tlf
+          },
+          bestemmendeFravaersdag: kvitteringData?.inntekt?.inntektsdato,
+          arbeidsgiverperioder: kvitteringData?.agp?.perioder,
+          sykmeldingsperioder: kvitteringData?.sykmeldingsperioder,
+          beregnetInntekt: kvitteringData?.inntekt?.beloep,
+          endringAarsaker: kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker,
+          redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
+          naturalytelser: kvitteringData?.naturalytelser,
+          refusjon: kvitteringData?.refusjon,
+          harRefusjon: Boolean(kvitteringData?.refusjon?.beloepPerMaaned)
+        };
 
-  if (dataFraBackend && kvitteringDokument?.vedtaksperiodeId) {
-    setVedtaksperiodeId(kvitteringDokument.vedtaksperiodeId);
-  }
+  const vedtaksperiodeId =
+    kvitteringDokument &&
+    'vedtaksperiodeId' in kvitteringDokument &&
+    typeof kvitteringDokument.vedtaksperiodeId === 'string'
+      ? kvitteringDokument.vedtaksperiodeId
+      : undefined;
+
+  const onSetVedtaksperiodeId = useEffectEvent((vedtaksperiodeId: string) => {
+    setVedtaksperiodeId(vedtaksperiodeId);
+  });
+
+  useEffect(() => {
+    if (dataFraBackend && vedtaksperiodeId) {
+      onSetVedtaksperiodeId(vedtaksperiodeId);
+    }
+  }, [dataFraBackend, vedtaksperiodeId]);
 
   const { personData, arbeidsgiverperioder, mottatt } = visningdata;
   const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
   const bestemmendeFravaersdag = visningdata.bestemmendeFravaersdag;
-  console.log('kvitteringDokument:', kvitteringDokument);
 
   const clickEndre = async () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
+    if (!input) {
+      throw new Error('Kan ikke endre inntektsmeldingen uten kvitteringsdata');
+    }
     // Må lagre data som kan endres i hovedskjema - Start
     const kvittering = prepareForInitiering(input, personData, mottatt);
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringEkstern: null });
@@ -237,8 +253,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     beloep: visningdata.refusjon?.beloepPerMaaned
   };
   const refusjonEndringer: EndringsBeloep[] = [
-    ...(visningdata.refusjon?.endringer ?? []).map((endring: z.infer<typeof RefusjonEndringSchema>) => ({
-      startdato: parseIsoDate(endring.startdato),
+    ...(visningdata.refusjon?.endringer ?? []).map((endring) => ({
+      startdato: parseIsoDate(endring.startdato)!,
       beloep: endring.beloep
     })),
     ...(visningdata.refusjon?.sluttdato
@@ -436,14 +452,24 @@ function prepareForInitiering(
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ kvittid: string }>) {
-  const result = await getKvitteringServerSideProps<SelvbestemtKvittering>({
+  const result = await getKvitteringServerSideProps<SelvbestemtKvitteringResponse>({
     context,
     fetchKvittering: hentKvitteringsdataAgiSSR,
     checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!data?.success?.selvbestemtInntektsmelding,
     errorLogMessage: 'Error fetching selvbestemt kvittering:'
   });
 
-  const props = { ...result.props, kvittering: result.props?.kvittering?.success?.selvbestemtInntektsmelding ?? null };
+  if ('redirect' in result) {
+    return { redirect: result.redirect };
+  }
+  if ('notFound' in result) {
+    return { notFound: true as const };
+  }
 
-  return { ...result, props };
+  return {
+    props: {
+      ...result.props,
+      kvittering: result.props.kvittering?.success.selvbestemtInntektsmelding ?? null
+    }
+  };
 }
