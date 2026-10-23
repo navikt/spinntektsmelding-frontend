@@ -29,6 +29,6 @@ describe('MottattKvitteringSchema', () => {
     const result = MottattKvitteringSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0].path).toEqual(['kvitteringEkstern', 'mottatt']);
+    expect(result.error?.issues[0].path).toEqual(['kvitteringEkstern', 'tidspunkt']);
   });
 });
