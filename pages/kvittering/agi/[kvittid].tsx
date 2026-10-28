@@ -469,7 +469,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ kv
   return {
     props: {
       ...result.props,
-      kvittering: result.props.kvittering?.success.selvbestemtInntektsmelding ?? null
+      kvittering: result.props.kvittering?.success?.selvbestemtInntektsmelding ?? null
     }
   };
 }
