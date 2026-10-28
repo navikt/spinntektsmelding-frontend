@@ -104,9 +104,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     onSetOpprinneligNyMaanedsinntekt();
   }, []);
 
-  const clickEndre = () => {
+  const clickEndre = async () => {
     if (isValidUUID(kvittid)) {
-      router.push(`/${kvittid}?endre=true`);
+      await router.push(`/${kvittid}?endre=true`, `/${kvittid}`);
     }
   };
 

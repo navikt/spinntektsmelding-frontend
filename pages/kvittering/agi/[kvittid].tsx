@@ -217,7 +217,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     }
 
     if (isValidUUID(kvittid)) {
-      await router.push(`/${kvittid}?endre=true&agi=true`);
+      await router.push(`/${kvittid}?endre=true&agi=true`, `/${kvittid}`);
     }
   };
 

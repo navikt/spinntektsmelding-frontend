@@ -67,7 +67,7 @@ test.describe('Delvis skjema – Innlogging fra ekstern kvittering', () => {
     });
 
     // final confirmation
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="12345678"')).toBeVisible();
   });
