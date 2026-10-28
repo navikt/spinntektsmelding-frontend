@@ -5,6 +5,7 @@ import {
 } from '../../schema/SelvbestemtKvitteringSchema';
 import testFnr from '../../mockdata/testFnr';
 import testOrganisasjoner from '../../mockdata/testOrganisasjoner';
+import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 // import { SelvbestemtKvitteringSchema, SelvbestemtInntektsmeldingSchema } from './SelvbestemtKvitteringSchema';
 
@@ -12,7 +13,7 @@ describe('SelvbestemtKvitteringSchema', () => {
   const validSelvbestemtInntektsmelding = {
     id: '123e4567-e89b-12d3-a456-426614174000',
     type: {
-      type: 'Selvbestemt',
+      type: SelvbestemtTypeConst.MedArbeidsforhold,
       id: '123e4567-e89b-12d3-a456-426614174001'
     },
     sykmeldt: {
@@ -53,6 +54,27 @@ describe('SelvbestemtKvitteringSchema', () => {
   };
 
   describe('SelvbestemtInntektsmeldingSchema', () => {
+    it.each(Object.values(SelvbestemtTypeConst))('should accept selvbestemt type %s', (type) => {
+      const valid = {
+        ...validSelvbestemtInntektsmelding,
+        type: { ...validSelvbestemtInntektsmelding.type, type }
+      };
+
+      expect(SelvbestemtInntektsmeldingSchema.safeParse(valid).success).toBe(true);
+    });
+
+    it('should reject an unknown selvbestemt type', () => {
+      const invalid = {
+        ...validSelvbestemtInntektsmelding,
+        type: { ...validSelvbestemtInntektsmelding.type, type: 'UkjentType' }
+      };
+
+      const result = SelvbestemtInntektsmeldingSchema.safeParse(invalid);
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0].path).toEqual(['type', 'type']);
+    });
+
     it('should validate a valid inntektsmelding', () => {
       const result = SelvbestemtInntektsmeldingSchema.safeParse(validSelvbestemtInntektsmelding);
       expect(result.error).toBeUndefined();

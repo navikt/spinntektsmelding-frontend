@@ -45,7 +45,6 @@ import environment from '../../../config/environment';
 import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
-import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
 import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
@@ -57,7 +56,10 @@ import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
 import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
+import { EndringAarsak } from '../../../validators/validerAapenInnsending';
+import { ApiEndringAarsakSchema } from '../../../schema/ApiEndringAarsakSchema';
 
+type ApiEndringAarsak = z.infer<typeof ApiEndringAarsakSchema>;
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 type KvitteringInitData =
   | z.infer<typeof FullInnsendingSchema>
@@ -272,13 +274,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             !isEqual(endring.startdato, gammeltSkjaeringstidspunkt))
       )
     : innsendtRefusjonEndringerUtenSkjaeringstidspunkt;
-  const visningEndringAarsaker = visningdata.endringAarsaker;
+  const visningEndringAarsaker: (ApiEndringAarsak | EndringAarsak)[] | undefined = visningdata.endringAarsaker;
 
   const onsetSkjemaStatus = useEffectEvent(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
 
     if (dataFraBackend && kvitteringDokument?.type?.type) {
-      setSelvbestemtType(kvitteringDokument?.type?.type);
+      setSelvbestemtType(kvitteringDokument.type.type);
     }
   });
 
@@ -357,11 +359,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <BodyShort className={lokalStyling.uthevet}>Registrert inntekt</BodyShort>
           <BodyShort>{formatCurrency(inntekt.beregnetInntekt)} kr/måned</BodyShort>
 
-          {visningEndringAarsaker?.map((endring: EndringAarsak, endringIndex: number) => (
+          {visningEndringAarsaker?.map((endring, endringIndex) => (
             <Fragment key={endring?.aarsak + endringIndex}>
               <div className={lokalStyling.uthevet}>Endret med årsak</div>
 
-              {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak as string)}
+              {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak)}
               <EndringAarsakVisning endringAarsak={endring} />
             </Fragment>
           ))}

@@ -7,13 +7,14 @@ import { ApiNaturalytelserSchema } from './ApiNaturalytelserSchema';
 import { ApiEndringAarsakSchema } from './ApiEndringAarsakSchema';
 import { RefusjonEndringSchema } from './ApiRefusjonEndringSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
+import { SelvbestemtTypeConst } from './konstanter/selvbestemtType';
 
 const SelvbestemtAvsenderSchema = AvsenderSchema.extend({
   tlf: TelefonNummerSchema
 });
 
 const SelvbestemtTypeSchema = z.object({
-  type: z.string(),
+  type: z.enum(SelvbestemtTypeConst),
   id: z.uuid()
 });
 

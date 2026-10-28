@@ -4,9 +4,13 @@ import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import begrunnelseEndringBruttoinntekt from '../Bruttoinntekt/begrunnelseEndringBruttoinntekt';
 import PeriodeFraTil from '../PeriodeFraTil/PeriodeFraTil';
 import lokalStyle from './EndringAarsakVisning.module.css';
+import { z } from 'zod';
+import { ApiEndringAarsakSchema } from '../../schema/ApiEndringAarsakSchema';
+
+type ApiEndringAarsak = z.infer<typeof ApiEndringAarsakSchema>;
 
 interface EndringAarsakVisningProps {
-  endringAarsak: EndringAarsak;
+  endringAarsak: ApiEndringAarsak | EndringAarsak;
 }
 
 export default function EndringAarsakVisning({ endringAarsak }: Readonly<EndringAarsakVisningProps>) {
@@ -120,7 +124,7 @@ export default function EndringAarsakVisning({ endringAarsak }: Readonly<Endring
 
 function enforceDate(dato: Date | string): Date {
   if (typeof dato === 'string') {
-    return parseIsoDate(dato);
+    return parseIsoDate(dato)!;
   }
   return dato;
 }
