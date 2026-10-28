@@ -254,15 +254,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     status: visningdata.harRefusjon ? 'Ja' : 'Nei',
     beloep: visningdata.refusjon?.beloepPerMaaned
   };
-  const refusjonEndringer: EndringsBeloep[] = [
-    ...(visningdata.refusjon?.endringer ?? []).map((endring) => ({
-      startdato: parseIsoDate(endring.startdato)!,
-      beloep: endring.beloep
-    })),
-    ...(visningdata.refusjon?.sluttdato
-      ? [{ beloep: 0, startdato: parseIsoDate(visningdata.refusjon.sluttdato)! }]
-      : [])
-  ];
+  const refusjonEndringer: EndringsBeloep[] = (visningdata.refusjon?.endringer ?? []).map((endring) => ({
+    startdato: parseIsoDate(endring.startdato)!,
+    beloep: endring.beloep
+  }));
   const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
   const refusjonEndringerUtenSkjaeringstidspunkt = dataFraBackend
     ? refusjonEndringer.filter(
@@ -441,7 +436,7 @@ function prepareForInitiering(
       inntekt: { ...kvitteringData.inntekt },
       refusjon: kvitteringData.refusjon
         ? {
-            ...kvitteringData.refusjon,
+            beloepPerMaaned: kvitteringData.refusjon.beloepPerMaaned,
             endringer: kvitteringData.refusjon.endringer ? [...kvitteringData.refusjon.endringer] : undefined
           }
         : null,

@@ -11,6 +11,8 @@ import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
 import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
 import kvitteringsdataEksterntSystem from '../../../mockdata/kvittering-eksternt-system.json';
 import kvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behandlingsdager.json';
+import kvitteringsdataBackend from '../../../mockdata/kvittering-selvbestemt-format.json';
+import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -238,7 +240,10 @@ describe('Kvittering', () => {
     await user.click(endreButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true');
+      expect(mockPush).toHaveBeenCalledWith(
+        '/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true',
+        '/8d50ef20-37b5-4829-ad83-56219e70b375'
+      );
     });
     expect(useBoundStore.getState().mottatt).toEqual(new Date(source.mottatt));
   });
@@ -258,6 +263,39 @@ describe('Kvittering', () => {
     expect(
       screen.getByText(/Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden/i)
     ).toBeInTheDocument();
+  });
+
+  it('ignores legacy refusjon sluttdato in the receipt and when editing', async () => {
+    const user = userEvent.setup();
+    const kvittering = {
+      ...SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding),
+      refusjon: {
+        beloepPerMaaned: 12345,
+        endringer: [{ startdato: '2025-12-01', beloep: 0 }],
+        sluttdato: '2025-11-30'
+      }
+    };
+
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvittering={kvittering}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
+
+    expect(screen.getByText('01.12.2025')).toBeInTheDocument();
+    expect(screen.queryByText('30.11.2025')).not.toBeInTheDocument();
+
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    expect(useBoundStore.getState().refusjonEndringer).toHaveLength(1);
+    expect(useBoundStore.getState().kvitteringData?.refusjon).not.toHaveProperty('sluttdato');
+    expect(mockPush).toHaveBeenCalledWith(
+      '/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true',
+      '/8d50ef20-37b5-4829-ad83-56219e70b375'
+    );
   });
 
   it('renders naturalytelser section', () => {

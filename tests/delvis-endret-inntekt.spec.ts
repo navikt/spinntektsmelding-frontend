@@ -29,7 +29,7 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema (endret inntekt
 
     // click first "Endre"
     await page.getByRole('button', { name: 'Endre' }).first().click();
-    await page.waitForURL(`**/im-dialog/${uuid}?endre=true`);
+    await page.waitForURL(`**/im-dialog/${uuid}`);
 
     // adjust income
     const input = page.getByLabel('Månedslønn 02.01.2023');

@@ -267,8 +267,11 @@ export const InnsendingSchema = z.object({
 });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
+type InnsendingTilValidering = Omit<TInnsendingSchema, 'refusjon'> & {
+  refusjon: Omit<NonNullable<TInnsendingSchema['refusjon']>, 'sluttdato'> | null;
+};
 
-export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementCtx) {
+export function superRefineInnsending(val: InnsendingTilValidering, ctx: z.RefinementCtx) {
   if (
     val.inntekt?.beloep &&
     val.refusjon?.beloepPerMaaned &&

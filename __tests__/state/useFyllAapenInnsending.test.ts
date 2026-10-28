@@ -248,8 +248,7 @@ describe('useFyllAapenInnsending', () => {
               beloep: 12345,
               startdato: '2023-04-20'
             }
-          ],
-          sluttdato: null
+          ]
         },
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },
@@ -359,8 +358,7 @@ describe('useFyllAapenInnsending', () => {
               beloep: 12345,
               startdato: '2023-04-20'
             }
-          ],
-          sluttdato: null
+          ]
         },
         sykmeldtFnr: '25087327879',
         avsender: { orgnr: '911206722', tlf: '12345678' },

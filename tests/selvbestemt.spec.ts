@@ -755,8 +755,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       refusjon: {
         beloepPerMaaned: 7500,
-        endringer: [],
-        sluttdato: null
+        endringer: []
       },
       sykmeldtFnr: '25087327879',
       avsender: { orgnr: '810007842', tlf: '12345678' },
