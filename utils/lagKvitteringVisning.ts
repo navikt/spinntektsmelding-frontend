@@ -13,7 +13,7 @@ type KvitteringNavNo = z.infer<typeof KvitteringNavNoSchema>;
 type EndringAarsakVisning = z.infer<typeof ApiEndringAarsakSchema> | EndringAarsak;
 type PeriodeInput = { fom?: string | Date; tom?: string | Date; id?: string };
 export type NaturalytelseVisning = Omit<Naturalytelse, 'sluttdato'> & { sluttdato?: Date };
-export type FullLonnVisning = Omit<LonnIArbeidsgiverperioden, 'status' | 'begrunnelse'> & {
+type FullLonnVisning = Omit<LonnIArbeidsgiverperioden, 'status' | 'begrunnelse'> & {
   status: YesNo;
   begrunnelse?: string;
 };
@@ -26,7 +26,7 @@ interface KvitteringVisningInput {
   bestemmendeFravaersdag?: string | Date;
   redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } | null;
   naturalytelser?: readonly (Omit<Naturalytelse, 'sluttdato'> & { sluttdato?: string | Date })[] | null;
-  refusjon?: Parameters<typeof lagRefusjonVisning>[0];
+  refusjon: Parameters<typeof lagRefusjonVisning>[0];
   mottatt?: string | Date;
   sykmeldt?: KvitteringNavNo['sykmeldt'];
   avsender?: KvitteringNavNo['avsender'];
