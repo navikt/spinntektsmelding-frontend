@@ -28,8 +28,8 @@ import formatDate from '../../../utils/formatDate';
 import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
 import formatTime from '../../../utils/formatTime';
 import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
-import { isEqual, isValid } from 'date-fns';
-import { LonnIArbeidsgiverperioden, LonnISykefravaeret, Periode } from '../../../state/state';
+import { isValid } from 'date-fns';
+import { LonnIArbeidsgiverperioden, Periode } from '../../../state/state';
 
 import isValidUUID from '../../../utils/isValidUUID';
 import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
@@ -45,12 +45,11 @@ import environment from '../../../config/environment';
 import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
-import useRefusjonEndringerUtenSkjaeringstidspunkt from '../../../utils/useRefusjonEndringerUtenSkjaeringstidspunkt';
+import { lagRefusjonVisning } from '../../../utils/lagRefusjonVisning';
 import { PeriodeSchema } from '../../../schema/KonverterPeriodeSchema';
 import { useShallow } from 'zustand/react/shallow';
 import { ApiNaturalytelserSchema } from '../../../schema/ApiNaturalytelserSchema';
 import NaturalytelserSchema from '../../../schema/NaturalytelserSchema';
-import { RefusjonEndringSchema } from '../../../schema/RefusjonEndringSchema';
 import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
@@ -60,7 +59,6 @@ import { EndringAarsak } from '../../../validators/validerAapenInnsending';
 import { ApiEndringAarsakSchema } from '../../../schema/ApiEndringAarsakSchema';
 
 type ApiEndringAarsak = z.infer<typeof ApiEndringAarsakSchema>;
-type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 type KvitteringInitData =
   | z.infer<typeof FullInnsendingSchema>
   | z.infer<typeof AapenInnsendingSchema>
@@ -114,7 +112,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     setBehandlingsdager,
     sykmeldt,
     avsender,
-    gammeltSkjaeringstidspunkt,
     setArbeidsgiverperiodeDisabled
   ] = useBoundStore(
     useShallow((state) => [
@@ -127,7 +124,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       state.setBehandlingsdager,
       state.sykmeldt,
       state.avsender,
-      state.gammeltSkjaeringstidspunkt,
       state.setArbeidsgiverperiodeDisabled
     ])
   );
@@ -155,8 +151,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           endringAarsaker: kvitteringDokument.inntekt.endringAarsaker,
           redusertLoennIAgp: kvitteringDokument.agp?.redusertLoennIAgp,
           naturalytelser: kvitteringDokument.naturalytelser,
-          refusjon: kvitteringDokument.refusjon,
-          harRefusjon: Boolean(kvitteringDokument.refusjon)
+          refusjon: kvitteringDokument.refusjon
         }
       : {
           mottatt: lagretMottatt,
@@ -175,8 +170,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           endringAarsaker: kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker,
           redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
           naturalytelser: kvitteringData?.naturalytelser,
-          refusjon: kvitteringData?.refusjon,
-          harRefusjon: Boolean(kvitteringData?.refusjon?.beloepPerMaaned)
+          refusjon: kvitteringData?.refusjon
         };
 
   const vedtaksperiodeId =
@@ -198,7 +192,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const { personData, arbeidsgiverperioder, mottatt } = visningdata;
   const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
-  const bestemmendeFravaersdag = visningdata.bestemmendeFravaersdag;
 
   const clickEndre = async () => {
     const input = dataFraBackend ? kvitteringDokument : kvitteringData;
@@ -250,25 +243,10 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     begrunnelse: visningdata.redusertLoennIAgp?.begrunnelse
   };
   const visningNaturalytelser = mapNaturalytelserTilInterntFormat(visningdata.naturalytelser);
-  const loenn: LonnISykefravaeret = {
-    status: visningdata.harRefusjon ? 'Ja' : 'Nei',
-    beloep: visningdata.refusjon?.beloepPerMaaned
-  };
-  const refusjonEndringer: EndringsBeloep[] = (visningdata.refusjon?.endringer ?? []).map((endring) => ({
-    startdato: parseIsoDate(endring.startdato)!,
-    beloep: endring.beloep
-  }));
-  const innsendtRefusjonEndringerUtenSkjaeringstidspunkt = useRefusjonEndringerUtenSkjaeringstidspunkt();
-  const refusjonEndringerUtenSkjaeringstidspunkt = dataFraBackend
-    ? refusjonEndringer.filter(
-        (endring) =>
-          !endring.startdato ||
-          !bestemmendeFravaersdag ||
-          !gammeltSkjaeringstidspunkt ||
-          (!isEqual(endring.startdato, bestemmendeFravaersdag) &&
-            !isEqual(endring.startdato, gammeltSkjaeringstidspunkt))
-      )
-    : innsendtRefusjonEndringerUtenSkjaeringstidspunkt;
+  const { loenn, endringer: refusjonEndringer } = lagRefusjonVisning(
+    visningdata.refusjon,
+    visningdata.bestemmendeFravaersdag
+  );
   const visningEndringAarsaker: (ApiEndringAarsak | EndringAarsak)[] | undefined = visningdata.endringAarsaker;
 
   const onsetSkjemaStatus = useEffectEvent(() => {
@@ -375,8 +353,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           )}
           <LonnUnderSykefravaeret
             loenn={loenn}
-            harRefusjonEndringer={harGyldigeRefusjonEndringer(refusjonEndringerUtenSkjaeringstidspunkt) ? 'Ja' : 'Nei'}
-            refusjonEndringer={refusjonEndringerUtenSkjaeringstidspunkt}
+            harRefusjonEndringer={harGyldigeRefusjonEndringer(refusjonEndringer) ? 'Ja' : 'Nei'}
+            refusjonEndringer={refusjonEndringer}
           />
           {visNaturalytelser && (
             <>

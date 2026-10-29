@@ -351,7 +351,7 @@ describe('useKvitteringInit', () => {
     expect(result.current.lonnISykefravaeret?.beloep).toBe(0.0);
   });
 
-  it('should set the refusjon to No if there are no endringer', async () => {
+  it('should preserve zero refund even if there are no endringer', async () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 
     const { result: resp } = renderHook(() => useKvitteringInit());
@@ -370,6 +370,7 @@ describe('useKvitteringInit', () => {
 
     expect(result.current.harRefusjonEndringer).toBe('Nei');
     expect(result.current.refusjonEndringer).toEqual([]);
+    expect(result.current.lonnISykefravaeret?.status).toBe('Ja');
     expect(result.current.lonnISykefravaeret?.beloep).toBe(0.0);
   });
 

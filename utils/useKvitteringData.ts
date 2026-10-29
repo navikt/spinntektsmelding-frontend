@@ -8,6 +8,7 @@ import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
 import z from 'zod';
 import { MottattKvittering } from '../state/useKvitteringInit';
 import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
+import { lagRefusjonVisning } from './lagRefusjonVisning';
 
 type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
 type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
@@ -62,6 +63,10 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     : gammeltSkjaeringstidspunkt;
 
   return useMemo(() => {
+    const { loenn, endringer } = lagRefusjonVisning(
+      dataFraBackend ? ssrData?.skjema?.refusjon : kvitteringData?.refusjon,
+      dataFraBackend ? ssrData?.skjema?.inntekt?.inntektsdato : bestemmendeFravaersdag
+    );
     if (!dataFraBackend) {
       return {
         aktiveSykmeldingsperioder: sykmeldingsperioder,
@@ -80,22 +85,11 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
               utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
             }
           : { status: 'Ja' as YesNo, begrunnelse: undefined, utbetalt: undefined },
-        aktivLonnISykefravaeret: {
-          status:
-            kvitteringData?.refusjon?.beloepPerMaaned !== undefined &&
-            kvitteringData?.refusjon?.beloepPerMaaned !== null
-              ? ('Ja' as YesNo)
-              : ('Nei' as YesNo),
-          beloep: kvitteringData?.refusjon?.beloepPerMaaned
-        },
+        aktivLonnISykefravaeret: loenn,
         aktivInnsendingTidspunkt: storeInnsendingTidspunkt,
         aktivAvsender: undefined,
         aktivSykmeldt: undefined,
-        aktivRefusjonEndringer:
-          kvitteringData?.refusjon?.endringer?.map((endring: any) => ({
-            beloep: endring.beloep,
-            startdato: parseIsoDate(endring.startdato)
-          })) || []
+        aktivRefusjonEndringer: endringer
       };
     }
 
@@ -137,24 +131,10 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
     };
 
-    const aktivLonnISykefravaeret = {
-      status:
-        ssrData?.skjema?.refusjon?.beloepPerMaaned !== undefined && ssrData?.skjema?.refusjon?.beloepPerMaaned !== null
-          ? ('Ja' as YesNo)
-          : ('Nei' as YesNo),
-      beloep: ssrData?.skjema?.refusjon?.beloepPerMaaned
-    };
-
     const mottatt = parseIsoDate(kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt);
     const ssrInnsendingTidspunkt =
       mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
 
-    const aktivRefusjonEndringer = ssrData?.skjema?.refusjon?.endringer
-      ? ssrData?.skjema?.refusjon?.endringer.map((endringer) => ({
-          beloep: endringer.beloep,
-          startdato: parseIsoDate(endringer.startdato)
-        }))
-      : [];
     return {
       aktiveSykmeldingsperioder,
       aktiveArbeidsgiverperioder,
@@ -162,11 +142,11 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
       aktivBestemmendeFravaersdag,
       aktiveNaturalytelser,
       aktivFullLonnIArbeidsgiverPerioden,
-      aktivLonnISykefravaeret,
+      aktivLonnISykefravaeret: loenn,
       aktivInnsendingTidspunkt: ssrInnsendingTidspunkt,
       aktivAvsender: ssrData?.avsender,
       aktivSykmeldt: ssrData?.sykmeldt,
-      aktivRefusjonEndringer
+      aktivRefusjonEndringer: endringer
     };
   }, [
     dataFraBackend,

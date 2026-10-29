@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { useKvitteringData } from '../../utils/useKvitteringData';
 import formatDate from '../../utils/formatDate';
 import formatTime from '../../utils/formatTime';
+import parseIsoDate from '../../utils/parseIsoDate';
+import { MottattKvittering } from '../../state/useKvitteringInit';
 
 const storeData = {
   bruttoinntekt: { manueltKorrigert: false },
@@ -14,6 +16,62 @@ const storeData = {
   gammeltSkjaeringstidspunkt: undefined,
   kvitteringData: undefined
 };
+
+describe('useKvitteringData refusjon', () => {
+  const skjema = {
+    agp: null,
+    refusjon: {
+      beloepPerMaaned: 0,
+      sluttdato: '2024-06-30',
+      endringer: [
+        { startdato: '2024-05-31', beloep: 100 },
+        { startdato: '2024-06-01', beloep: 200 },
+        { startdato: '2024-06-02', beloep: 0 }
+      ]
+    },
+    naturalytelser: [],
+    inntekt: {
+      beloep: 50000,
+      inntektsdato: '2024-06-01',
+      naturalytelser: [],
+      endringAarsak: { aarsak: 'Bonus' },
+      endringAarsaker: []
+    }
+  } satisfies NonNullable<MottattKvittering['kvitteringNavNo']>['skjema'];
+  const kvittering: MottattKvittering = {
+    kvitteringEkstern: null,
+    kvitteringNavNo: {
+      mottatt: '2024-06-03T10:00:00+02:00',
+      sykmeldt: { navn: 'Test', fnr: '12345678901' },
+      avsender: { navn: 'Test', orgnr: '123456789', orgNavn: 'Test', tlf: '12345678' },
+      sykmeldingsperioder: [],
+      skjema
+    }
+  };
+
+  it.each([true, false])(
+    'preserves zero refund and filters by the determining absence day with dataFraBackend=%s',
+    (dataFraBackend) => {
+      const { result } = renderHook(() =>
+        useKvitteringData({
+          dataFraBackend,
+          kvittering: dataFraBackend ? kvittering : null,
+          storeData: {
+            ...storeData,
+            kvitteringData: skjema,
+            gammeltSkjaeringstidspunkt: new Date(2030, 0, 1)
+          }
+        })
+      );
+
+      expect(result.current.aktivLonnISykefravaeret).toEqual({ status: 'Ja', beloep: 0 });
+      expect(result.current.aktivRefusjonEndringer).toEqual([
+        { startdato: parseIsoDate('2024-06-01'), beloep: 200 },
+        { startdato: parseIsoDate('2024-06-02'), beloep: 0 }
+      ]);
+    }
+  );
+});
 
 describe('useKvitteringData mottatt', () => {
   const mottatt = '2026-10-23T13:30:00+02:00';
