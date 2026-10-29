@@ -1,37 +1,20 @@
-import { Fragment, useEffect, useEffectEvent } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import { InferGetServerSidePropsType, NextPage, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
 import BannerUtenVelger from '../../../components/BannerUtenVelger/BannerUtenVelger';
 import PageContent from '../../../components/PageContent/PageContent';
 
-import lokalStyling from '../Kvittering.module.css';
 import styles from '../../../styles/Home.module.css';
 
-import Heading2 from '../../../components/Heading2/Heading2';
-import { BodyLong, BodyShort, Button, HStack } from '@navikt/ds-react';
-
 import Skillelinje from '../../../components/Skillelinje/Skillelinje';
-import PeriodeFraTil from '../../../components/PeriodeFraTil/PeriodeFraTil';
-import formatCurrency from '../../../utils/formatCurrency';
 import { useRouter } from 'next/router';
-import BortfallNaturalytelser from '../../../components/BortfallNaturalytelser/BortfallNaturalytelser';
-import FullLonnIArbeidsgiverperioden from '../../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
-import LonnUnderSykefravaeret from '../../../components/LonnUnderSykefravaeret/LonnUnderSykefravaeret';
 
 import useBoundStore from '../../../state/useBoundStore';
 
-import ButtonPrint from '../../../components/ButtonPrint';
-
-import ButtonEndre from '../../../components/ButtonEndre';
-import formatDate from '../../../utils/formatDate';
-import formatBegrunnelseEndringBruttoinntekt from '../../../utils/formatBegrunnelseEndringBruttoinntekt';
-import EndringAarsakVisning from '../../../components/EndringAarsakVisning/EndringAarsakVisning';
 import { isValid } from 'date-fns';
 
 import isValidUUID from '../../../utils/isValidUUID';
-import Fravaersperiode from '../../../components/kvittering/Fravaersperiode';
-import { harGyldigeRefusjonEndringer } from '../../../utils/harGyldigeRefusjonEndringer';
 import hentKvitteringsdataAgiSSR, { SelvbestemtKvitteringResponse } from '../../../utils/hentKvitteringsdataAgiSSR';
 import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
@@ -45,6 +28,12 @@ import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { lagKvitteringVisning } from '../../../utils/lagKvitteringVisning';
 import { useShallow } from 'zustand/react/shallow';
 import KvitteringFeil from '../../../components/kvittering/KvitteringFeil';
+import KvitteringHeader from '../../../components/kvittering/KvitteringHeader';
+import KvitteringFravaer from '../../../components/kvittering/KvitteringFravaer';
+import KvitteringInntekt from '../../../components/kvittering/KvitteringInntekt';
+import KvitteringRefusjon from '../../../components/kvittering/KvitteringRefusjon';
+import KvitteringNaturalytelser from '../../../components/kvittering/KvitteringNaturalytelser';
+import KvitteringFooter from '../../../components/kvittering/KvitteringFooter';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
@@ -121,7 +110,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     bestemmendeFravaersdag: visningBestemmendeFravaersdag,
     naturalytelser: visningNaturalytelser,
     fullLonnIArbeidsgiverperioden: fullLoennIArbeidsgiverPerioden,
-    refusjon: { loenn, endringer: refusjonEndringer },
+    refusjon,
     mottatt,
     innsendingTidspunkt
   } = lagKvitteringVisning({
@@ -193,9 +182,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const visArbeidsgiverperiode = true;
   const visFullLonnIArbeidsgiverperioden = true;
 
-  const classNameWrapperFravaer = visArbeidsgiverperiode ? lokalStyling.fravaerswrapperwrapper : '';
-  const classNameWrapperSkjaeringstidspunkt = visArbeidsgiverperiode ? lokalStyling.infoboks : '';
-
   const onsetSkjemaStatus = useEffectEvent(() => {
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
 
@@ -219,99 +205,37 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
       <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
-          <div className='page-kvittering-header'>
-            <Heading2>Kvittering - innsendt inntektsmelding</Heading2>
-            <div className='page-content-header-extra'>
-              <ButtonEndre onClick={clickEndre} />
-            </div>
-          </div>
+          <KvitteringHeader onEndre={clickEndre} />
 
           <PersonVisning {...personData} />
           <Skillelinje />
-          <div className={classNameWrapperFravaer}>
-            {visArbeidsgiverperiode && (
-              <Fravaersperiode
-                sykmeldingsperioder={sykmeldingsperioder}
-                paakrevdeOpplysninger={paakrevdeOpplysninger}
-              />
-            )}
-
-            <div className={classNameWrapperSkjaeringstidspunkt}>
-              <div className={lokalStyling.ytterstefravaerwrapper}>
-                <div className={lokalStyling.ytrefravaerswrapper}>
-                  <Heading2 className={lokalStyling.fravaerstyper}>Bestemmende fraværsdag</Heading2>
-                  <BodyLong>Bestemmende fraværsdag angir den dato som sykelønn skal beregnes utfra.</BodyLong>
-                  <div className={lokalStyling.fravaerwrapper}>
-                    <div className={lokalStyling.fravaertid}>Dato</div>
-                    <div data-cy='bestemmendefravaersdag'>{formatDate(visningBestemmendeFravaersdag)} </div>
-                  </div>
-                </div>
-                {visArbeidsgiverperiode && (
-                  <div className={lokalStyling.arbeidsgiverperiode}>
-                    <Heading2 className={lokalStyling.fravaerstyper}>Arbeidsgiverperiode</Heading2>
-                    {!ingenArbeidsgiverperioder && (
-                      <BodyLong>
-                        Arbeidsgiver er ansvarlig for å betale ut lønn til den sykmeldte under arbeidsgiverpeioden.
-                        Deretter betaler Nav lønn til den syke eller refunderer bedriften.
-                      </BodyLong>
-                    )}
-                    {ingenArbeidsgiverperioder && <BodyLong>Det er ikke arbeidsgiverperiode.</BodyLong>}
-                    {arbeidsgiverperioder?.map((periode) => (
-                      <PeriodeFraTil fom={periode.fom} tom={periode.tom} key={periode.id} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <Skillelinje />
-          <Heading2>Beregnet månedslønn</Heading2>
-          <BodyShort className={lokalStyling.uthevet}>Registrert inntekt</BodyShort>
-          <BodyShort>{formatCurrency(inntekt.beloep)} kr/måned</BodyShort>
-
-          {inntekt.endringAarsaker.map((endring, endringIndex) => (
-            <Fragment key={endring?.aarsak + endringIndex}>
-              <div className={lokalStyling.uthevet}>Endret med årsak</div>
-
-              {formatBegrunnelseEndringBruttoinntekt(endring?.aarsak)}
-              <EndringAarsakVisning endringAarsak={endring} />
-            </Fragment>
-          ))}
+          <KvitteringFravaer
+            sykmeldingsperioder={sykmeldingsperioder}
+            arbeidsgiverperioder={arbeidsgiverperioder}
+            bestemmendeFravaersdag={visningBestemmendeFravaersdag}
+            paakrevdeOpplysninger={paakrevdeOpplysninger}
+            visArbeidsgiverperiode={visArbeidsgiverperiode}
+            visBestemmendeFravaersdag
+            ingenArbeidsgiverperioder={ingenArbeidsgiverperioder}
+          />
+          <KvitteringInntekt inntekt={inntekt} />
           <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
-          <Skillelinje />
-          <Heading2>Refusjon</Heading2>
-          {visFullLonnIArbeidsgiverperioden && (
-            <>
-              <div className={lokalStyling.uthevet}>
-                Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
-              </div>
-              <FullLonnIArbeidsgiverperioden lonnIPerioden={fullLoennIArbeidsgiverPerioden} />
-            </>
-          )}
-          <LonnUnderSykefravaeret
-            loenn={loenn}
-            harRefusjonEndringer={harGyldigeRefusjonEndringer(refusjonEndringer) ? 'Ja' : 'Nei'}
-            refusjonEndringer={refusjonEndringer}
+          <KvitteringRefusjon
+            refusjon={refusjon}
+            fullLonnIArbeidsgiverperioden={
+              visFullLonnIArbeidsgiverperioden ? fullLoennIArbeidsgiverPerioden : undefined
+            }
           />
           {visNaturalytelser && (
-            <>
-              <Skillelinje />
-              <Heading2>Eventuelle naturalytelser</Heading2>
-              <BortfallNaturalytelser ytelser={visningNaturalytelser} />
-            </>
+            <KvitteringNaturalytelser tittel='Eventuelle naturalytelser' naturalytelser={visningNaturalytelser} />
           )}
           <Skillelinje />
 
-          <BodyShort>Inntektsmelding innsendt{innsendingTidspunkt}</BodyShort>
-          <HStack justify='space-between' className={lokalStyling.buttonWrapper + ' skjul-fra-print'}>
-            <HStack gap='space-64'>
-              <ButtonEndre onClick={clickEndre} />
-              <Button variant='tertiary' as='a' href={environment.saksoversiktUrl}>
-                Lukk
-              </Button>
-            </HStack>
-            <ButtonPrint className={lokalStyling.skrivutknapp}>Skriv ut</ButtonPrint>
-          </HStack>
+          <KvitteringFooter
+            innsendingTidspunkt={innsendingTidspunkt}
+            saksoversiktUrl={environment.saksoversiktUrl}
+            onEndre={clickEndre}
+          />
         </div>
         <KvitteringFeil kvitteringStatus={kvitteringStatus} />
       </PageContent>
