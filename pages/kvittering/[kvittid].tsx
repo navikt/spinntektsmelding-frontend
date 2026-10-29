@@ -38,7 +38,6 @@ import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
 import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
 import PersonVisning from '../../components/Person/PersonVisning';
-import { EndringAarsak } from '../../validators/validerAapenInnsending';
 import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
 import { getKvitteringServerSideProps } from '../../utils/getKvitteringServerSideProps';
@@ -60,7 +59,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
@@ -139,23 +137,21 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   // Bruk custom hook for å håndtere data fra enten SSR eller store
   const {
-    aktiveSykmeldingsperioder,
-    aktiveArbeidsgiverperioder,
-    aktivBruttoinntekt,
-    aktivBestemmendeFravaersdag,
-    aktiveNaturalytelser,
-    aktivFullLonnIArbeidsgiverPerioden,
-    aktivLonnISykefravaeret,
-    aktivInnsendingTidspunkt,
-    aktivAvsender,
-    aktivSykmeldt,
-    aktivRefusjonEndringer
+    sykmeldingsperioder: aktiveSykmeldingsperioder,
+    arbeidsgiverperioder: aktiveArbeidsgiverperioder,
+    inntekt: aktivInntekt,
+    bestemmendeFravaersdag: aktivBestemmendeFravaersdag,
+    naturalytelser: aktiveNaturalytelser,
+    fullLonnIArbeidsgiverperioden: aktivFullLonnIArbeidsgiverPerioden,
+    refusjon: { loenn: aktivLonnISykefravaeret, endringer: aktivRefusjonEndringer },
+    innsendingTidspunkt: aktivInnsendingTidspunkt,
+    avsender: aktivAvsender,
+    sykmeldt: aktivSykmeldt
   } = useKvitteringData({
     kvittering,
     dataFraBackend,
     storeData: {
       bruttoinntekt,
-      lonnISykefravaeret,
       sykmeldingsperioder,
       naturalytelser,
       arbeidsgiverperioder,
@@ -264,13 +260,13 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                   <Skillelinje />
                   <Heading2>Beregnet månedslønn</Heading2>
                   <BodyShort className={lokalStyling.uthevet}>Registrert inntekt</BodyShort>
-                  <BodyShort>{formatCurrency(aktivBruttoinntekt?.bruttoInntekt)} kr/måned</BodyShort>
-                  {aktivBruttoinntekt?.endringAarsaker?.map((endring, endringIndex) => (
+                  <BodyShort>{formatCurrency(aktivInntekt.beloep)} kr/måned</BodyShort>
+                  {aktivInntekt.endringAarsaker.map((endring, endringIndex) => (
                     <Fragment key={endring.aarsak + endringIndex}>
                       <div className={lokalStyling.uthevet}>Endret med årsak</div>
 
-                      {formatBegrunnelseEndringBruttoinntekt(endring.aarsak as string)}
-                      <EndringAarsakVisning endringAarsak={endring as EndringAarsak} />
+                      {formatBegrunnelseEndringBruttoinntekt(endring.aarsak)}
+                      <EndringAarsakVisning endringAarsak={endring} />
                     </Fragment>
                   ))}
                 </>
@@ -285,15 +281,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                       <div className={lokalStyling.uthevet}>
                         Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden?
                       </div>
-                      <FullLonnIArbeidsgiverperioden
-                        lonnIPerioden={
-                          aktivFullLonnIArbeidsgiverPerioden?.status &&
-                          (aktivFullLonnIArbeidsgiverPerioden.status === 'Ja' ||
-                            aktivFullLonnIArbeidsgiverPerioden.status === 'Nei')
-                            ? aktivFullLonnIArbeidsgiverPerioden
-                            : undefined
-                        }
-                      />
+                      <FullLonnIArbeidsgiverperioden lonnIPerioden={aktivFullLonnIArbeidsgiverPerioden} />
                     </>
                   )}
                   <LonnUnderSykefravaeret

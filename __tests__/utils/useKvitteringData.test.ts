@@ -8,7 +8,6 @@ import { MottattKvittering } from '../../state/useKvitteringInit';
 
 const storeData = {
   bruttoinntekt: { manueltKorrigert: false },
-  lonnISykefravaeret: undefined,
   sykmeldingsperioder: [],
   arbeidsgiverperioder: [],
   mottatt: undefined,
@@ -58,14 +57,18 @@ describe('useKvitteringData refusjon', () => {
           kvittering: dataFraBackend ? kvittering : null,
           storeData: {
             ...storeData,
-            kvitteringData: skjema,
+            kvitteringData: {
+              ...skjema,
+              forespoerselId: '550e8400-e29b-41d4-a716-446655440000',
+              avsenderTlf: '12345678'
+            },
             gammeltSkjaeringstidspunkt: new Date(2030, 0, 1)
           }
         })
       );
 
-      expect(result.current.aktivLonnISykefravaeret).toEqual({ status: 'Ja', beloep: 0 });
-      expect(result.current.aktivRefusjonEndringer).toEqual([
+      expect(result.current.refusjon.loenn).toEqual({ status: 'Ja', beloep: 0 });
+      expect(result.current.refusjon.endringer).toEqual([
         { startdato: parseIsoDate('2024-06-01'), beloep: 200 },
         { startdato: parseIsoDate('2024-06-02'), beloep: 0 }
       ]);
@@ -108,7 +111,7 @@ describe('useKvitteringData mottatt', () => {
       })
     );
 
-    expect(result.current.aktivInnsendingTidspunkt).toBe(forventet);
+    expect(result.current.innsendingTidspunkt).toBe(forventet);
   });
 
   it('reads mottatt from an external backend receipt', () => {
@@ -120,7 +123,7 @@ describe('useKvitteringData mottatt', () => {
       })
     );
 
-    expect(result.current.aktivInnsendingTidspunkt).toBe(forventet);
+    expect(result.current.innsendingTidspunkt).toBe(forventet);
   });
 
   it('reads mottatt from a stored external receipt', () => {
@@ -132,12 +135,12 @@ describe('useKvitteringData mottatt', () => {
       })
     );
 
-    expect(result.current.aktivInnsendingTidspunkt).toBe(forventet);
+    expect(result.current.innsendingTidspunkt).toBe(forventet);
   });
 
   it('leaves the received date empty when it is missing', () => {
     const { result } = renderHook(() => useKvitteringData({ dataFraBackend: true, storeData, kvittering: null }));
 
-    expect(result.current.aktivInnsendingTidspunkt).toBe('');
+    expect(result.current.innsendingTidspunkt).toBe('');
   });
 });

@@ -1,28 +1,15 @@
-import { isValid } from 'date-fns';
 import { useMemo } from 'react';
-import { Begrunnelse, Inntekt, LonnISykefravaeret, Naturalytelse, Periode, YesNo } from '../state/state';
-import parseIsoDate from './parseIsoDate';
-import formatDate from './formatDate';
-import formatTime from './formatTime';
-import { ApiPeriodeSchema } from '../schema/ApiPeriodeSchema';
-import z from 'zod';
+import { Inntekt, Naturalytelse, Periode } from '../state/state';
 import { MottattKvittering } from '../state/useKvitteringInit';
-import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
-import { lagRefusjonVisning } from './lagRefusjonVisning';
+import { SkjemadataState } from '../state/useSkjemadataStore';
+import { KvitteringVisning, lagKvitteringVisning } from './lagKvitteringVisning';
 
-type KvitteringEksterntSystem = z.infer<typeof KvitteringEksternSchema>;
-type ApiPeriode = z.infer<typeof ApiPeriodeSchema>;
-
-interface StoreData {
+interface StoreData extends Pick<SkjemadataState, 'mottatt' | 'kvitteringEksterntSystem' | 'kvitteringData'> {
   bruttoinntekt: Inntekt;
-  lonnISykefravaeret: LonnISykefravaeret | undefined;
   sykmeldingsperioder: Periode[] | undefined;
-  naturalytelser?: Array<Naturalytelse>;
+  naturalytelser?: Naturalytelse[];
   arbeidsgiverperioder: Periode[] | undefined;
-  mottatt: Date | undefined;
-  kvitteringEksterntSystem: KvitteringEksterntSystem | undefined;
   gammeltSkjaeringstidspunkt: Date | undefined;
-  kvitteringData: any;
 }
 
 interface UseKvitteringDataParams {
@@ -31,20 +18,12 @@ interface UseKvitteringDataParams {
   storeData: StoreData;
 }
 
-function getStoreInnsendingTidspunkt(
-  kvitteringEksterntSystem: KvitteringEksterntSystem | undefined,
-  mottatt: Date | undefined
-): string {
-  if (kvitteringEksterntSystem?.mottatt) {
-    const mottatt = new Date(kvitteringEksterntSystem.mottatt);
-    return isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
-  }
-  return mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
-}
-
-export function useKvitteringData({ kvittering, dataFraBackend, storeData }: UseKvitteringDataParams) {
+export function useKvitteringData({
+  kvittering,
+  dataFraBackend,
+  storeData
+}: UseKvitteringDataParams): KvitteringVisning {
   const ssrData = kvittering?.kvitteringNavNo;
-
   const {
     bruttoinntekt,
     sykmeldingsperioder,
@@ -56,98 +35,34 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     kvitteringData
   } = storeData;
 
-  const storeInnsendingTidspunkt = getStoreInnsendingTidspunkt(kvitteringEksterntSystem, mottatt);
-
-  const bestemmendeFravaersdag = kvitteringData
-    ? parseIsoDate(kvitteringData?.inntekt?.inntektsdato)
-    : gammeltSkjaeringstidspunkt;
-
   return useMemo(() => {
-    const { loenn, endringer } = lagRefusjonVisning(
-      dataFraBackend ? ssrData?.skjema?.refusjon : kvitteringData?.refusjon,
-      dataFraBackend ? ssrData?.skjema?.inntekt?.inntektsdato : bestemmendeFravaersdag
-    );
     if (!dataFraBackend) {
-      return {
-        aktiveSykmeldingsperioder: sykmeldingsperioder,
-        aktiveArbeidsgiverperioder: arbeidsgiverperioder,
-        aktivBruttoinntekt: bruttoinntekt,
-        aktivBestemmendeFravaersdag: bestemmendeFravaersdag,
-        aktiveNaturalytelser: naturalytelser ?? [],
-        aktivFullLonnIArbeidsgiverPerioden: kvitteringData?.agp?.redusertLoennIAgp
-          ? {
-              status:
-                kvitteringData?.agp?.redusertLoennIAgp?.beloep === undefined ||
-                kvitteringData?.agp?.redusertLoennIAgp?.beloep === null
-                  ? ('Ja' as YesNo)
-                  : ('Nei' as YesNo),
-              begrunnelse: kvitteringData?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
-              utbetalt: kvitteringData?.agp?.redusertLoennIAgp?.beloep
-            }
-          : { status: 'Ja' as YesNo, begrunnelse: undefined, utbetalt: undefined },
-        aktivLonnISykefravaeret: loenn,
-        aktivInnsendingTidspunkt: storeInnsendingTidspunkt,
-        aktivAvsender: undefined,
-        aktivSykmeldt: undefined,
-        aktivRefusjonEndringer: endringer
-      };
+      return lagKvitteringVisning({
+        sykmeldingsperioder,
+        arbeidsgiverperioder,
+        inntektBeloep: bruttoinntekt.bruttoInntekt,
+        endringAarsaker: bruttoinntekt.endringAarsaker,
+        bestemmendeFravaersdag: kvitteringData ? kvitteringData.inntekt?.inntektsdato : gammeltSkjaeringstidspunkt,
+        naturalytelser,
+        redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
+        refusjon: kvitteringData?.refusjon,
+        mottatt: kvitteringEksterntSystem?.mottatt ?? mottatt
+      });
     }
 
-    const aktiveSykmeldingsperioder = ssrData?.sykmeldingsperioder.map((periode: ApiPeriode) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom)
-    })) as Periode[];
-
-    const aktiveArbeidsgiverperioder = ssrData?.skjema?.agp?.perioder?.map((periode, index) => ({
-      fom: parseIsoDate(periode.fom),
-      tom: parseIsoDate(periode.tom),
-      id: `agp-${index}`
-    }));
-
-    const aktivBruttoinntekt = {
-      bruttoInntekt: ssrData?.skjema?.inntekt?.beloep,
-      endringAarsaker: ssrData?.skjema?.inntekt?.endringAarsaker ?? []
-    };
-
-    const aktivBestemmendeFravaersdag = parseIsoDate(ssrData?.skjema?.inntekt?.inntektsdato);
-
-    const aktiveNaturalytelser: Naturalytelse[] =
-      ssrData?.skjema?.naturalytelser && Array.isArray(ssrData.skjema.naturalytelser)
-        ? ssrData.skjema.naturalytelser
-            .map((ytelse) => ({
-              ...ytelse,
-              sluttdato: ytelse.sluttdato ? parseIsoDate(ytelse.sluttdato) : undefined
-            }))
-            .filter((ytelse): ytelse is Naturalytelse => ytelse.sluttdato instanceof Date)
-        : [];
-
-    const aktivFullLonnIArbeidsgiverPerioden = {
-      status:
-        ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === undefined ||
-        ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep === null
-          ? ('Ja' as YesNo)
-          : ('Nei' as YesNo),
-      begrunnelse: ssrData?.skjema?.agp?.redusertLoennIAgp?.begrunnelse as Begrunnelse | undefined,
-      utbetalt: ssrData?.skjema?.agp?.redusertLoennIAgp?.beloep
-    };
-
-    const mottatt = parseIsoDate(kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt);
-    const ssrInnsendingTidspunkt =
-      mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
-
-    return {
-      aktiveSykmeldingsperioder,
-      aktiveArbeidsgiverperioder,
-      aktivBruttoinntekt,
-      aktivBestemmendeFravaersdag,
-      aktiveNaturalytelser,
-      aktivFullLonnIArbeidsgiverPerioden,
-      aktivLonnISykefravaeret: loenn,
-      aktivInnsendingTidspunkt: ssrInnsendingTidspunkt,
-      aktivAvsender: ssrData?.avsender,
-      aktivSykmeldt: ssrData?.sykmeldt,
-      aktivRefusjonEndringer: endringer
-    };
+    return lagKvitteringVisning({
+      sykmeldingsperioder: ssrData?.sykmeldingsperioder,
+      arbeidsgiverperioder: ssrData?.skjema.agp?.perioder,
+      inntektBeloep: ssrData?.skjema.inntekt?.beloep,
+      endringAarsaker: ssrData?.skjema.inntekt?.endringAarsaker,
+      bestemmendeFravaersdag: ssrData?.skjema.inntekt?.inntektsdato,
+      naturalytelser: ssrData?.skjema.naturalytelser?.filter((ytelse) => ytelse.sluttdato),
+      redusertLoennIAgp: ssrData?.skjema.agp?.redusertLoennIAgp,
+      refusjon: ssrData?.skjema.refusjon,
+      mottatt: kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt,
+      avsender: ssrData?.avsender,
+      sykmeldt: ssrData?.sykmeldt
+    });
   }, [
     dataFraBackend,
     kvittering?.kvitteringEkstern?.mottatt,
@@ -156,8 +71,9 @@ export function useKvitteringData({ kvittering, dataFraBackend, storeData }: Use
     sykmeldingsperioder,
     arbeidsgiverperioder,
     bruttoinntekt,
-    bestemmendeFravaersdag,
+    gammeltSkjaeringstidspunkt,
     naturalytelser,
-    storeInnsendingTidspunkt
+    mottatt,
+    kvitteringEksterntSystem?.mottatt
   ]);
 }
