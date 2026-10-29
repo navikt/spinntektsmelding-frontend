@@ -44,7 +44,7 @@ import { z } from 'zod';
 import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import { lagKvitteringVisning } from '../../../utils/lagKvitteringVisning';
 import { useShallow } from 'zustand/react/shallow';
-import HentingAvDataFeilet from '../../../components/HentingAvDataFeilet';
+import KvitteringFeil from '../../../components/kvittering/KvitteringFeil';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
@@ -208,12 +208,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     onsetSkjemaStatus();
   }, []);
 
-  const lukkHentingFeiletModal = () => {
-    if (environment.saksoversiktUrl !== undefined && globalThis.window?.location !== undefined) {
-      globalThis.window.location.href = environment.saksoversiktUrl;
-    }
-  };
-
   return (
     <div className={styles.container}>
       <Head>
@@ -319,12 +313,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <ButtonPrint className={lokalStyling.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
-        <HentingAvDataFeilet
-          open={kvitteringStatus === 500}
-          handleCloseModal={lukkHentingFeiletModal}
-          title='Henting av kvitteringen feilet'
-          ariaLabel='Henting av kvittering feilet'
-        />
+        <KvitteringFeil kvitteringStatus={kvitteringStatus} />
       </PageContent>
     </div>
   );

@@ -36,7 +36,7 @@ import forespoerselType from '../../config/forespoerselType';
 import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem';
 import isValidUUID from '../../utils/isValidUUID';
 import Fravaersperiode from '../../components/kvittering/Fravaersperiode';
-import HentingAvDataFeilet from '../../components/HentingAvDataFeilet';
+import KvitteringFeil from '../../components/kvittering/KvitteringFeil';
 import PersonVisning from '../../components/Person/PersonVisning';
 import useKvitteringInit, { MottattKvittering } from '../../state/useKvitteringInit';
 import hentKvitteringsdataSSR from '../../utils/hentKvitteringsdataSSR';
@@ -56,8 +56,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const storeInitialized = useRef(false);
 
   const bruttoinntekt = useBoundStore((state) => state.bruttoinntekt);
-  const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
 
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const naturalytelser = useBoundStore((state) => state.naturalytelser);
@@ -72,19 +70,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
   const setArbeidsgiverperiodeDisabled = useBoundStore((state) => state.setArbeidsgiverperiodeDisabled);
-
-  const onSetSkjemaFeilet = useEffectEvent(() => {
-    setSkjemaFeilet();
-  });
-
-  useEffect(() => {
-    if (kvitteringStatus === 500) {
-      const harDataIStore = sykmeldingsperioder && sykmeldingsperioder.length > 0;
-      if (!harDataIStore) {
-        onSetSkjemaFeilet();
-      }
-    }
-  }, [kvitteringStatus, sykmeldingsperioder]);
 
   const onSetNyInnsending = useEffectEvent((endring: boolean) => {
     setNyInnsending(endring);
@@ -106,11 +91,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     if (isValidUUID(kvittid)) {
       await router.push(`/${kvittid}?endre=true`, `/${kvittid}`);
     }
-  };
-
-  const lukkHentingFeiletModal = () => {
-    if (globalThis.window === undefined || !env.saksoversiktUrl) return;
-    globalThis.window.location.href = env.saksoversiktUrl;
   };
 
   let innsendingTidspunkt = mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
@@ -312,12 +292,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             <ButtonPrint className={lokalStyling.skrivutknapp}>Skriv ut</ButtonPrint>
           </HStack>
         </div>
-        <HentingAvDataFeilet
-          open={skjemaFeilet || kvitteringStatus === 500}
-          handleCloseModal={lukkHentingFeiletModal}
-          title='Henting av kvitteringen feilet'
-          ariaLabel='Henting av kvittering feilet'
-        />
+        <KvitteringFeil kvitteringStatus={kvitteringStatus} />
       </PageContent>
     </div>
   );
