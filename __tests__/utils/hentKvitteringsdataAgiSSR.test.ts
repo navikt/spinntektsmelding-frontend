@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import hentKvitteringsdataAgiSSR from '../../utils/hentKvitteringsdataAgiSSR';
 import fetchKvitteringsdataSSR from '../../utils/fetchKvitteringsdataSSR';
+import kvittering from '../../mockdata/selvbestemt-kvittering.json';
 
 vi.mock('../../utils/fetchKvitteringsdataSSR');
 
@@ -30,18 +31,19 @@ describe('hentKvitteringsdataAgiSSR', () => {
   });
 
   it('should call fetchKvitteringsdataSSR with correct parameters when pathSlug is a string', async () => {
-    const mockData = { data: { id: '123' } };
-    vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData as any);
+    const mockData = { status: 200, data: { success: kvittering } };
+    vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData);
 
     const result = await hentKvitteringsdataAgiSSR('test-slug', 'test-token');
 
     expect(fetchKvitteringsdataSSR).toHaveBeenCalledWith('http://api-host/api/kvittering', 'test-slug', 'test-token');
     expect(result).toEqual(mockData);
+    expect(result.data?.success.selvbestemtInntektsmelding.mottatt).toBe(kvittering.selvbestemtInntektsmelding.mottatt);
   });
 
   it('should call fetchKvitteringsdataSSR without token when token is undefined', async () => {
-    const mockData = { data: { id: '456' } };
-    vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData as any);
+    const mockData = { status: 200, data: { success: kvittering } };
+    vi.mocked(fetchKvitteringsdataSSR).mockResolvedValue(mockData);
 
     const result = await hentKvitteringsdataAgiSSR('test-slug', undefined);
 

@@ -31,7 +31,7 @@ export default function useSendInnSkjema(
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
-  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setMottatt = useBoundStore((state) => state.setMottatt);
   const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const errorResponse = useErrorRespons();
   const router = useRouter();
@@ -141,7 +141,7 @@ export default function useSendInnSkjema(
       analyticsComponent,
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async () => {
-        setKvitteringInnsendt(new Date());
+        setMottatt(new Date());
         await router.push(`/kvittering/${pathSlug}?fromSubmit=true`);
       },
       mapValidationErrors,

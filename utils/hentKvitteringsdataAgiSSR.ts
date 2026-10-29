@@ -1,10 +1,14 @@
 import { SelvbestemtKvittering } from '../schema/SelvbestemtKvitteringSchema';
 import fetchKvitteringsdataSSR from './fetchKvitteringsdataSSR';
 
+export type SelvbestemtKvitteringResponse = {
+  success: SelvbestemtKvittering;
+};
+
 export default function hentKvitteringsdataAgiSSR(
   pathSlug?: string | Array<string>,
   token?: string
-): Promise<{ data: SelvbestemtKvittering | null }> {
+): Promise<{ data: SelvbestemtKvitteringResponse | null }> {
   if (Array.isArray(pathSlug)) {
     return Promise.resolve({ data: null });
   }

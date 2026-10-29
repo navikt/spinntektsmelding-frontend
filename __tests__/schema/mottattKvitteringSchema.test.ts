@@ -1,28 +1,34 @@
-import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
+import { KvitteringNavNoSchema, MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { expect } from 'vitest';
 
-import kvittering from '../../mockdata/kvittering-data.json';
+import kvittering from '../../mockdata/kvittering-eksternt-system.json';
 
 describe('MottattKvitteringSchema', () => {
-  it('should validate MottattKvitteringSchema', () => {
-    expect(MottattKvitteringSchema.safeParse(kvittering).success).toBe(true);
+  it('should preserve the received datetime and timezone', () => {
+    const schema = KvitteringNavNoSchema.pick({ mottatt: true });
+    const data = { mottatt: '2026-10-23T13:30:00+02:00' };
+
+    expect(schema.parse(data)).toEqual(data);
+    expect(schema.safeParse({ mottatt: '2026-10-23' }).success).toBe(false);
   });
 
-  it('should validate MottattKvitteringSchema with error on fnr', () => {
+  it('should validate MottattKvitteringSchema', () => {
     const data = {
-      ...kvittering
+      kvitteringEkstern: kvittering.kvitteringEkstern,
+      kvitteringNavNo: null
     };
-    data.kvitteringDokument.identitetsnummer = '12345678901';
+    expect(MottattKvitteringSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('should reject an invalid external receipt timestamp', () => {
+    const data = {
+      kvitteringEkstern: { ...kvittering.kvitteringEkstern, mottatt: 'ugyldig' },
+      kvitteringNavNo: null
+    };
 
     const result = MottattKvitteringSchema.safeParse(data);
 
     expect(result.success).toBe(false);
-    expect(result.error?.issues).toEqual([
-      {
-        code: 'custom',
-        message: 'Ugyldig fødselsnummer',
-        path: ['kvitteringDokument', 'identitetsnummer']
-      }
-    ]);
+    expect(result.error?.issues[0].path).toEqual(['kvitteringEkstern', 'mottatt']);
   });
 });

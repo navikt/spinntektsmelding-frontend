@@ -66,7 +66,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const setNyInnsending = useBoundStore((state) => state.setNyInnsending);
 
-  const kvitteringInnsendt = useBoundStore((state) => state.kvitteringInnsendt);
+  const mottatt = useBoundStore((state) => state.mottatt);
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
@@ -115,15 +115,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     globalThis.window.location.href = env.saksoversiktUrl;
   };
 
-  let innsendingTidspunkt =
-    kvitteringInnsendt && isValid(kvitteringInnsendt)
-      ? ` - ${formatDate(kvitteringInnsendt)} kl. ${formatTime(kvitteringInnsendt)}`
-      : '';
+  let innsendingTidspunkt = mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
 
-  if (kvitteringEksterntSystem?.tidspunkt) {
-    const tidspunkt = new Date(kvitteringEksterntSystem.tidspunkt);
-    innsendingTidspunkt =
-      tidspunkt && isValid(tidspunkt) ? ` - ${formatDate(tidspunkt)} kl. ${formatTime(tidspunkt)}` : '';
+  if (kvitteringEksterntSystem?.mottatt) {
+    const mottatt = new Date(kvitteringEksterntSystem.mottatt);
+    innsendingTidspunkt = isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
   }
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
@@ -163,7 +159,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       sykmeldingsperioder,
       naturalytelser,
       arbeidsgiverperioder,
-      kvitteringInnsendt,
+      mottatt,
       kvitteringEksterntSystem,
       gammeltSkjaeringstidspunkt,
       kvitteringData

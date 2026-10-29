@@ -30,7 +30,7 @@ export default function useKvitteringInit() {
   const initLonnISykefravaeret = useBoundStore((state) => state.initLonnISykefravaeret);
 
   const initNaturalytelser = useBoundStore((state) => state.initNaturalytelser);
-  const setKvitteringInnsendt = useBoundStore((state) => state.setKvitteringInnsendt);
+  const setMottatt = useBoundStore((state) => state.setMottatt);
   const setEndringAarsaker = useBoundStore((state) => state.setEndringAarsaker);
   const harArbeidsgiverperiodenBlittEndret = useBoundStore((state) => state.harArbeidsgiverperiodenBlittEndret);
 
@@ -67,7 +67,7 @@ export default function useKvitteringInit() {
     handleRefusjon(jsonData);
     handleNaturalytelser(jsonData);
     handleArbeidsgiverperioder(jsonData);
-    handleKvitteringInnsendtTidspunkt(jsonData);
+    handleMottatt(jsonData);
     handleTidligereInntektsdata(jsonData);
     handleFravaersperioder(jsonData);
   };
@@ -193,9 +193,9 @@ export default function useKvitteringInit() {
     harArbeidsgiverperiodenBlittEndret();
   }
 
-  function handleKvitteringInnsendtTidspunkt(jsonData: KvitteringNavNoSchema) {
+  function handleMottatt(jsonData: KvitteringNavNoSchema) {
     if (jsonData.mottatt) {
-      setKvitteringInnsendt(jsonData.mottatt);
+      setMottatt(jsonData.mottatt);
     }
   }
 
