@@ -151,7 +151,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           endringAarsaker: kvitteringDokument.inntekt.endringAarsaker,
           redusertLoennIAgp: kvitteringDokument.agp?.redusertLoennIAgp,
           naturalytelser: kvitteringDokument.naturalytelser,
-          refusjon: kvitteringDokument.refusjon
+          refusjon: kvitteringDokument.refusjon,
+          harRefusjon: Boolean(kvitteringDokument.refusjon)
         }
       : {
           mottatt: lagretMottatt,
@@ -170,7 +171,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           endringAarsaker: kvitteringData?.inntekt?.endringAarsaker ?? lagretEndringAarsaker,
           redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
           naturalytelser: kvitteringData?.naturalytelser,
-          refusjon: kvitteringData?.refusjon
+          refusjon: kvitteringData?.refusjon,
+          harRefusjon: Boolean(kvitteringData?.refusjon?.beloepPerMaaned)
         };
 
   const vedtaksperiodeId =
