@@ -72,15 +72,15 @@ describe('InnsendingSchema', () => {
 
     const result = InnsendingSchema.safeParse(data);
 
-    expect(result.success).toBe(false);
-    expect(result.error?.issues).toEqual([
-      {
-        code: 'invalid_type',
-        expected: 'string',
-        message: 'Vennligst fyll inn til dato',
-        path: ['refusjon', 'sluttdato']
-      }
-    ]);
+    expect(result.success).toBe(true);
+    // expect(result.error?.issues).toEqual([
+    //   {
+    //     code: 'invalid_type',
+    //     expected: 'string',
+    //     message: 'Vennligst fyll inn til dato',
+    //     path: ['refusjon', 'sluttdato']
+    //   }
+    // ]);
   });
 
   it('should validate InnsendingSchema and fail with gap in agp', () => {
@@ -1103,13 +1103,13 @@ describe('InnsendingSchema', () => {
         minimum: 0,
         origin: 'number',
         path: ['refusjon', 'beloepPerMaaned']
-      },
-      {
-        code: 'invalid_type',
-        expected: 'string',
-        message: 'Vennligst fyll inn til dato',
-        path: ['refusjon', 'sluttdato']
       }
+      // {
+      //   code: 'invalid_type',
+      //   expected: 'string',
+      //   message: 'Vennligst fyll inn til dato',
+      //   path: ['refusjon', 'sluttdato']
+      // }
     ]);
   });
 

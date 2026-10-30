@@ -8,7 +8,7 @@ import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 import { isBefore } from 'date-fns';
 
 const AapenInnsendingSchema = InnsendingSchema.extend({
-  refusjon: InnsendingSchema.shape.refusjon.unwrap().omit({ sluttdato: true }).nullable(),
+  refusjon: InnsendingSchema.shape.refusjon.unwrap().nullable(),
   sykmeldtFnr: PersonnummerSchema,
   avsender: z.object({
     orgnr: OrganisasjonsnummerSchema,
