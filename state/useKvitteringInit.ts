@@ -121,8 +121,7 @@ export default function useKvitteringInit() {
   function handleRefusjon(jsonData: KvitteringNavNoSchema) {
     initLonnISykefravaeret({
       status:
-        jsonData.skjema.refusjon?.beloepPerMaaned ||
-        (jsonData.skjema.refusjon?.endringer && jsonData.skjema.refusjon?.endringer.length > 0)
+        jsonData.skjema.refusjon?.beloepPerMaaned !== undefined && jsonData.skjema.refusjon?.beloepPerMaaned !== null
           ? 'Ja'
           : 'Nei',
       beloep: jsonData.skjema.refusjon?.beloepPerMaaned
@@ -134,22 +133,6 @@ export default function useKvitteringInit() {
           startdato: parseIsoDate(endring.startdato)
         }))
       : undefined;
-
-    if (jsonData.skjema.refusjon?.sluttdato) {
-      if (refusjonEndringer && refusjonEndringer.length > 0) {
-        refusjonEndringer.push({
-          beloep: 0,
-          startdato: parseIsoDate(jsonData.skjema.refusjon.sluttdato)!
-        });
-      } else {
-        refusjonEndringer = [
-          {
-            beloep: 0,
-            startdato: parseIsoDate(jsonData.skjema.refusjon?.sluttdato)!
-          }
-        ] as Array<RefusjonEndring>;
-      }
-    }
 
     if (refusjonEndringer) {
       const endringer = refusjonEndringer.map((endring) => ({

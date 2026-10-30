@@ -113,7 +113,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     });
 
     // verify receipt page
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -170,7 +170,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       flereArbeidsforhold: null
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91?fromSubmit=true');
+    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
@@ -238,7 +238,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
       flereArbeidsforhold: null
     });
     // final confirmation
-    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91?fromSubmit=true');
+    await expect(page).toHaveURL('/im-dialog/kvittering/f7a3c8e2-9d4b-4f1e-a6c5-8b2d7e0f3a91');
 
     await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText(/01\.07\.2023/);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();

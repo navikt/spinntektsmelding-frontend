@@ -45,7 +45,6 @@ describe('SelvbestemtKvitteringSchema', () => {
     },
     refusjon: {
       beloepPerMaaned: 50000,
-      sluttdato: null,
       endringer: []
     },
     naturalytelser: [],
@@ -79,6 +78,20 @@ describe('SelvbestemtKvitteringSchema', () => {
       const result = SelvbestemtInntektsmeldingSchema.safeParse(validSelvbestemtInntektsmelding);
       expect(result.error).toBeUndefined();
       expect(result.success).toBe(true);
+    });
+
+    it('should ignore legacy refusjon sluttdato and preserve explicit zero-amount changes', () => {
+      const endringer = [{ startdato: '2024-02-01', beloep: 0 }];
+      const result = SelvbestemtInntektsmeldingSchema.parse({
+        ...validSelvbestemtInntektsmelding,
+        refusjon: {
+          beloepPerMaaned: 50000,
+          endringer,
+          sluttdato: '2024-01-31'
+        }
+      });
+
+      expect(result.refusjon).toEqual({ beloepPerMaaned: 50000, endringer });
     });
 
     it('should reject invalid uuid for id', () => {

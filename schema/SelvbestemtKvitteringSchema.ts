@@ -41,7 +41,6 @@ const SelvbestemtInntektSchema = z.object({
 const SelvbestemtRefusjonSchema = z
   .object({
     beloepPerMaaned: z.number(),
-    sluttdato: z.iso.date().nullable(),
     endringer: z.array(RefusjonEndringSchema)
   })
   .nullable();
