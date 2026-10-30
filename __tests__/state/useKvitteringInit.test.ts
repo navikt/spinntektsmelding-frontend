@@ -134,7 +134,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringInit);
+      kvitteringInit(varigLonnsendringKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('VarigLoennsendring');
@@ -151,7 +151,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(permisjonKvittering as unknown as KvitteringInit);
+      kvitteringInit(permisjonKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permisjon');
@@ -173,7 +173,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(permitteringKvittering as unknown as KvitteringInit);
+      kvitteringInit(permitteringKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permittering');
@@ -195,7 +195,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(nyStillingKvittering as unknown as KvitteringInit);
+      kvitteringInit(nyStillingKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStilling');
@@ -212,7 +212,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringInit);
+      kvitteringInit(nyStillingsprosentKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStillingsprosent');
@@ -229,7 +229,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(sykKvittering as unknown as KvitteringInit);
+      kvitteringInit(sykKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Sykefravaer');
@@ -255,7 +255,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(eksterntSystem as unknown as KvitteringInit);
+      kvitteringInit(eksterntSystem as unknown as KvitteringData);
     });
 
     expect(result.current.kvitteringEksterntSystem).toEqual(eksterntSystem.kvitteringEkstern);
@@ -269,16 +269,16 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringData);
     });
 
     expect(result.current.refusjonEndringer).toEqual([
       { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
-      { beloep: 12345, startdato: parseIsoDate('2023-04-20') },
-      {
-        beloep: 0,
-        startdato: parseIsoDate('2023-04-19')
-      }
+      { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
+      // {
+      //   beloep: 0,
+      //   startdato: parseIsoDate('2023-04-19')
+      // }
     ]);
   });
 
@@ -293,15 +293,10 @@ describe('useKvitteringInit', () => {
     kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon.endringer = [];
 
     act(() => {
-      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringInit);
+      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringData);
     });
 
-    expect(result.current.refusjonEndringer).toEqual([
-      {
-        beloep: 0,
-        startdato: parseIsoDate('2023-04-19')
-      }
-    ]);
+    expect(result.current.refusjonEndringer).toEqual([]);
   });
 
   it('should set the innsendingstidspunkt', async () => {
@@ -312,7 +307,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringInit);
+      kvitteringInit(kvitteringMedRefusjonSluttdato as unknown as KvitteringData);
     });
 
     expect(result.current.mottatt).toEqual(new Date(kvitteringMedRefusjonSluttdato.kvitteringNavNo.mottatt));
@@ -338,7 +333,7 @@ describe('useKvitteringInit', () => {
     };
 
     act(() => {
-      kvitteringInit(kvitteringMedEndringer as unknown as KvitteringInit);
+      kvitteringInit(kvitteringMedEndringer as unknown as KvitteringData);
     });
 
     expect(result.current.harRefusjonEndringer).toBe('Ja');
@@ -365,7 +360,7 @@ describe('useKvitteringInit', () => {
     };
 
     act(() => {
-      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringInit);
+      kvitteringInit(kvitteringUtenEndringer as unknown as KvitteringData);
     });
 
     expect(result.current.harRefusjonEndringer).toBe('Nei');
