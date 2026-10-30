@@ -21,7 +21,6 @@ describe('useKvitteringData refusjon', () => {
     agp: null,
     refusjon: {
       beloepPerMaaned: 0,
-      sluttdato: '2024-06-30',
       endringer: [
         { startdato: '2024-05-31', beloep: 100 },
         { startdato: '2024-06-01', beloep: 200 },

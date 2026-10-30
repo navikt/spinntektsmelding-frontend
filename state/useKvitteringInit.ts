@@ -134,22 +134,6 @@ export default function useKvitteringInit() {
         }))
       : undefined;
 
-    if (jsonData.skjema.refusjon?.sluttdato) {
-      if (refusjonEndringer && refusjonEndringer.length > 0) {
-        refusjonEndringer.push({
-          beloep: 0,
-          startdato: parseIsoDate(jsonData.skjema.refusjon.sluttdato)!
-        });
-      } else {
-        refusjonEndringer = [
-          {
-            beloep: 0,
-            startdato: parseIsoDate(jsonData.skjema.refusjon?.sluttdato)!
-          }
-        ] as Array<RefusjonEndring>;
-      }
-    }
-
     if (refusjonEndringer) {
       const endringer = refusjonEndringer.map((endring) => ({
         beloep: endring.beloep,
