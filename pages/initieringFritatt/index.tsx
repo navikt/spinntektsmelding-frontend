@@ -1,14 +1,7 @@
 import { Button, Link, LocalAlert } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import {
-  useForm,
-  SubmitHandler,
-  SubmitErrorHandler,
-  FormProvider,
-  useWatch,
-  ControllerRenderProps
-} from 'react-hook-form';
+import { useForm, SubmitHandler, SubmitErrorHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import InitieringLayout from '../../components/Initiering/InitieringLayout';
@@ -28,27 +21,18 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { useRouter } from 'next/navigation';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import formatIsoDate from '../../utils/formatIsoDate';
-import {
-  finnForespoerselId,
-  getFravaersperioder,
-  visFomDato,
-  visTomDato,
-  type Periode
-} from '../../utils/initieringPerioder';
+import { getFravaersperioder, type Periode } from '../../utils/initieringPerioder';
 import { logger } from '@navikt/next-logger';
 import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import environment from '../../config/environment';
-import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
 import useInitieringData from '../../utils/useInitieringData';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
-import ForlengetPeriodeInfo from '../../components/Initiering/ForlengetPeriodeInfo';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import type { SoeknadArbeidstaker } from '../../schema/EndepunktSykepengesoeknaderSchema';
-import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
 import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
-import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
+import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 
@@ -116,9 +100,6 @@ const InitieringFritatt: NextPage = () => {
     formState: { errors }
   } = methods;
 
-  const [harValgtPeriodeMedForlengelse, setHarValgtPeriodeMedForlengelse] = useState(false);
-  const [valgtePerioderMedForlengelse, setValgtePerioderMedForlengelse] = useState<string[]>([]);
-
   const feilmeldinger = formatRHFFeilmeldinger(errors);
 
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
@@ -126,11 +107,6 @@ const InitieringFritatt: NextPage = () => {
   const { data: tilganger, error: tilgangerError } = useMineTilganger(setError);
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
-  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
-  const forespurtSykepengePeriodeId: string | undefined = useWatch({
-    name: 'forespurtSykepengePeriodeId',
-    control: methods.control
-  });
 
   const arbeidsgiverTilganger = useMemo<{ orgnrUnderenhet: string; virksomhetsnavn: string }[]>(() => {
     if (!tilganger) return [];
@@ -151,7 +127,6 @@ const InitieringFritatt: NextPage = () => {
     spError,
     spIsLoading: spLoading,
     forespoersler,
-    soeknaderArbeidstaker,
     sykepengePerioder
   } = useInitieringData(sykmeldt.fnr, orgnr, setError, true);
 
@@ -320,35 +295,6 @@ const InitieringFritatt: NextPage = () => {
     resetField(field, { defaultValue: undefined });
   });
 
-  const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
-    resetField('sykepengePeriodeId', { defaultValue: undefined });
-    resetField('endreRefusjon', { defaultValue: undefined });
-    setHarValgtPeriodeMedForlengelse(false);
-
-    field.onChange(value);
-  };
-
-  const onCheckboxChange = (value: string[], field: ControllerRenderProps<Skjema, 'sykepengePeriodeId'>) => {
-    const perioder = soeknaderArbeidstaker.filter((p) => value.includes(p.vedtaksperiodeId));
-    const forlengelse = perioder.find((p) => p.forlengerVedtaksperiodeId);
-    if (forlengelse?.forlengerVedtaksperiodeId) {
-      if (forespoersler.some((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
-        setHarValgtPeriodeMedForlengelse(true);
-      }
-    } else {
-      setHarValgtPeriodeMedForlengelse(false);
-      setValue('endreRefusjon', undefined, { shouldValidate: true, shouldDirty: true });
-    }
-    field.onChange(value);
-    setValgtePerioderMedForlengelse(value);
-  };
-
-  const disablePeriodeCheck = forespurtSykepengePeriodeId !== 'andrePerioder';
-
-  const valgtePerioder = soeknaderArbeidstaker.filter((periode) =>
-    valgtePerioderMedForlengelse.includes(periode.vedtaksperiodeId)
-  );
-
   const visUtenKobling =
     (spData?.forespoersler && spData?.forespoersler.length > 0) ||
     (spData?.soeknaderArbeidstaker && spData?.soeknaderArbeidstaker.length > 0);
@@ -401,43 +347,19 @@ const InitieringFritatt: NextPage = () => {
                   </LocalAlert>
 
                   <InitieringPeriodevelger
-                    control={methods.control}
-                    errors={errors}
                     forespoersler={forespoersler}
                     perioder={sykepengePerioder}
-                    disablePeriodeCheck={disablePeriodeCheck}
                     visUtenKobling={visUtenKobling}
-                    checkboxGroupClassName={lokalStyling.checkboxGroup}
-                    onRadioChange={onRadioChange}
-                    onCheckboxChange={onCheckboxChange}
                   />
-                  {harValgtPeriodeMedForlengelse && (
-                    <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
-                  )}
-                  {endreRefusjon === 'Ja' && (
-                    <>
-                      <AlertKorrigereRefusjon />
-                      {valgtePerioder.map((periode) => {
-                        const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
-                        if (!vedtaksperiodeId) return null;
-
-                        const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
-                        return (
-                          <ForlengetPeriodeInfo
-                            key={periode.vedtaksperiodeId}
-                            orgNr={organisasjonsnummer}
-                            arbeidsforhold={arbeidsforhold}
-                            navn={fulltNavn}
-                            fnr={sykmeldt.fnr}
-                            href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
-                            fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                            tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                  {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
+                  <InitieringRefusjon
+                    perioder={sykepengePerioder}
+                    forespoersler={forespoersler}
+                    organisasjonsnummer={organisasjonsnummer}
+                    arbeidsforhold={arbeidsforhold}
+                    fulltNavn={fulltNavn}
+                    fnr={sykmeldt.fnr}
+                    legend='Skal du endre refusjon for den ansatte?'
+                  />
                 </>
               )}
             </>

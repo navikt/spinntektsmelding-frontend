@@ -493,6 +493,88 @@ describe('InitieringFritatt page', () => {
     expect(fakeStore.setHarGradertSykmelding).toHaveBeenCalledWith(true);
   });
 
+  it('clears refund choices when changing the period choice and resetting the form', async () => {
+    (useArbeidsforhold as Mock).mockReturnValue({
+      data: {
+        fulltNavn: 'Testperson',
+        underenheter: [
+          { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+          { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+        ]
+      },
+      error: undefined
+    });
+    const forespoerselId = '123e4567-e89b-12d3-a456-426614174000';
+    (useSykepengesoeknader as Mock).mockReturnValue({
+      data: {
+        forespoersler: [
+          {
+            forespoerselId,
+            vedtaksperiodeId: forespoerselId,
+            sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+            egenmeldingsperioder: [],
+            erBesvart: false
+          }
+        ],
+        soeknaderArbeidstaker: [
+          {
+            vedtaksperiodeId: forespoerselId,
+            sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+            egenmeldingsperioder: [],
+            erGradert: false
+          },
+          {
+            vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174001',
+            forlengerVedtaksperiodeId: forespoerselId,
+            sykmeldingsperiode: { fom: '2023-01-11', tom: '2023-01-20' },
+            egenmeldingsperioder: [],
+            erGradert: false
+          }
+        ],
+        soeknaderBehandlingsdager: []
+      },
+      error: undefined
+    });
+
+    const user = userEvent.setup();
+    render(<InitieringFritatt />);
+
+    await user.click(await screen.findByLabelText(/Hvilken underenhet/));
+    await user.click(
+      await screen.findByRole('option', {
+        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+      })
+    );
+    await user.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+    await user.click(screen.getByRole('checkbox', { name: /Forlengelse/ }));
+    await user.click(screen.getByRole('radio', { name: 'Ja' }));
+
+    expect(screen.getByRole('link', { name: /Inntektsmelding Testperson/ })).toHaveAttribute(
+      'href',
+      expect.stringContaining(forespoerselId)
+    );
+    expect(screen.getByText('Sykmeldingsperiode: 01.01.2023 - 10.01.2023')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('radio', { name: 'Send inntektsmelding for annen periode' }));
+    expect(screen.queryByText('Skal du endre refusjon for den ansatte?')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Inntektsmelding Testperson/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /Forlengelse/ })).not.toBeChecked();
+
+    await user.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+    await user.click(screen.getByRole('checkbox', { name: /Forlengelse/ }));
+    expect(screen.getByRole('radio', { name: 'Ja' })).not.toBeChecked();
+    await user.click(screen.getByRole('radio', { name: 'Nei' }));
+    expect(screen.getByText('Du trenger ikke sende inn en ny inntektsmelding for denne perioden.')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Tilbakestill' }));
+    expect(screen.queryByText('Skal du endre refusjon for den ansatte?')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Du trenger ikke sende inn en ny inntektsmelding for denne perioden.')
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /Forlengelse/ })).not.toBeChecked();
+    expect(mockedRouter.push).not.toHaveBeenCalled();
+  });
+
   it('shows error when andrePerioder is selected without choosing a periode', async () => {
     const mockData = {
       fulltNavn: 'Ukjent navn',

@@ -1,35 +1,26 @@
 import { Checkbox, CheckboxGroup, Radio, RadioGroup } from '@navikt/ds-react';
-import type { ControllerRenderProps, FieldErrors } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import type { Forespoersel } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import type { SykepengePeriode } from '../../utils/useInitieringData';
 import formatDate from '../../utils/formatDate';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { formaterEgenmeldingsdager } from '../../utils/initieringPerioder';
+import useInitieringPeriodevalg, { type PeriodevalgSkjema } from '../../utils/useInitieringPeriodevalg';
+import lokalStyling from '../../styles/initiering.module.css';
 
 type Props = Readonly<{
-  control: any;
-  errors: FieldErrors<any>;
   forespoersler: Forespoersel[];
   perioder: SykepengePeriode[];
-  disablePeriodeCheck: boolean;
   visUtenKobling?: boolean;
-  checkboxGroupClassName?: string;
-  onRadioChange: (value: string, field: ControllerRenderProps<any, 'forespurtSykepengePeriodeId'>) => void;
-  onCheckboxChange?: (value: string[], field: ControllerRenderProps<any, 'sykepengePeriodeId'>) => void;
 }>;
 
-export default function InitieringPeriodevelger({
-  control,
-  errors,
-  forespoersler,
-  perioder,
-  disablePeriodeCheck,
-  visUtenKobling = false,
-  checkboxGroupClassName,
-  onRadioChange,
-  onCheckboxChange
-}: Props) {
+export default function InitieringPeriodevelger({ forespoersler, perioder, visUtenKobling = false }: Props) {
+  const {
+    control,
+    formState: { errors }
+  } = useFormContext<PeriodevalgSkjema>();
+  const { disablePeriodeCheck, onRadioChange, onCheckboxChange } = useInitieringPeriodevalg(perioder, forespoersler);
+
   return (
     <Controller
       name='forespurtSykepengePeriodeId'
@@ -85,12 +76,10 @@ export default function InitieringPeriodevelger({
                 id='sykepengePeriodeId'
                 error={errors.sykepengePeriodeId?.message as string}
                 value={periodeField.value ?? []}
-                onChange={(value) =>
-                  onCheckboxChange ? onCheckboxChange(value, periodeField) : periodeField.onChange(value)
-                }
+                onChange={(value) => onCheckboxChange(value, periodeField)}
                 onBlur={periodeField.onBlur}
                 ref={periodeField.ref}
-                className={checkboxGroupClassName}
+                className={lokalStyling.checkboxGroup}
               >
                 {perioder.map((periode) => (
                   <Checkbox key={periode.id} value={periode.id} disabled={disablePeriodeCheck}>
