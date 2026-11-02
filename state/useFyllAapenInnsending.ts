@@ -120,8 +120,6 @@ export default function useFyllAapenInnsending() {
         skjemaData?.kreverRefusjon === 'Ja'
           ? {
               beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
-              sluttdato: null,
-
               endringer: konverterRefusjonEndringer(skjemaData.refusjon?.harEndringer, skjemaData.refusjon?.endringer)
             }
           : null,

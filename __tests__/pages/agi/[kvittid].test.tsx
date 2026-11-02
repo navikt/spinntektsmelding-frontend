@@ -11,6 +11,9 @@ import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
 import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
 import kvitteringsdataEksterntSystem from '../../../mockdata/kvittering-eksternt-system.json';
 import kvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behandlingsdager.json';
+import kvitteringsdataBackend from '../../../mockdata/kvittering-selvbestemt-format.json';
+import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
+import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -238,7 +241,10 @@ describe('Kvittering', () => {
     await user.click(endreButton);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true');
+      expect(mockPush).toHaveBeenCalledWith(
+        '/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true',
+        '/8d50ef20-37b5-4829-ad83-56219e70b375'
+      );
     });
     expect(useBoundStore.getState().mottatt).toEqual(new Date(source.mottatt));
   });
@@ -259,6 +265,86 @@ describe('Kvittering', () => {
       screen.getByText(/Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden/i)
     ).toBeInTheDocument();
   });
+
+  // it('ignores legacy refusjon sluttdato in the receipt and when editing', async () => {
+  //   const user = userEvent.setup();
+  //   const kvittering = {
+  //     ...SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding),
+  //     refusjon: {
+  //       beloepPerMaaned: 12345,
+  //       endringer: [{ startdato: '2025-12-01', beloep: 0 }],
+  //       sluttdato: '2025-11-30'
+  //     }
+  //   };
+
+  //   render(
+  //     <Kvittering
+  //       kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+  //       kvittering={kvittering}
+  //       dataFraBackend={true}
+  //       kvitteringStatus={200}
+  //     />
+  //   );
+
+  //   expect(screen.getByText('01.12.2025')).toBeInTheDocument();
+  //   expect(screen.queryByText('30.11.2025')).not.toBeInTheDocument();
+
+  //   await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+  //   expect(useBoundStore.getState().refusjonEndringer).toHaveLength(1);
+  //   expect(useBoundStore.getState().kvitteringData?.refusjon).not.toHaveProperty('sluttdato');
+  //   expect(mockPush).toHaveBeenCalledWith(
+  //     '/8d50ef20-37b5-4829-ad83-56219e70b375?endre=true&agi=true',
+  //     '/8d50ef20-37b5-4829-ad83-56219e70b375'
+  //   );
+  // });
+
+  it.each([true, false])(
+    'shows zero refund and changes from the determining absence day with dataFraBackend=%s',
+    (dataFraBackend) => {
+      const kvittering = {
+        ...SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding),
+        refusjon: {
+          beloepPerMaaned: 0,
+          endringer: [
+            { startdato: '2025-10-31', beloep: 100 },
+            { startdato: '2025-11-01', beloep: 200 },
+            { startdato: '2025-11-02', beloep: 0 }
+          ]
+        }
+      };
+
+      useBoundStore.setState({
+        gammeltSkjaeringstidspunkt: new Date(2030, 0, 1),
+        refusjonEndringer: [{ startdato: new Date(2031, 0, 1), beloep: 999 }],
+        kvitteringData: AapenInnsendingSchema.parse({
+          ...kvittering,
+          sykmeldtFnr: kvittering.sykmeldt.fnr,
+          arbeidsforholdType: { type: 'Fisker' },
+          agp: null,
+          refusjon: {
+            ...kvittering.refusjon,
+            endringer: kvittering.refusjon.endringer.slice(1)
+          }
+        })
+      });
+
+      render(
+        <Kvittering
+          kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+          kvittering={dataFraBackend ? kvittering : null}
+          dataFraBackend={dataFraBackend}
+          kvitteringStatus={200}
+        />
+      );
+
+      expect(screen.getByText('0,00 kr/måned')).toBeInTheDocument();
+      expect(screen.queryByRole('cell', { name: '31.10.2025' })).not.toBeInTheDocument();
+      expect(screen.getByRole('row', { name: '01.11.2025 200,00' })).toBeInTheDocument();
+      expect(screen.getByRole('row', { name: '02.11.2025 0,00' })).toBeInTheDocument();
+      expect(screen.queryByRole('cell', { name: '01.01.2031' })).not.toBeInTheDocument();
+    }
+  );
 
   it('renders naturalytelser section', () => {
     render(

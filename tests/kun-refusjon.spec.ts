@@ -105,8 +105,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -174,8 +174,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -234,8 +234,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -295,8 +295,8 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await formPage.assertVisibleTextAtLeastOnce('Kvittering - innsendt inntektsmelding');
     await formPage.assertVisibleTextAtLeastOnce('Endret refusjonsbeløp');
     await formPage.assertVisibleTextAtLeastOnce('01.06.2025');

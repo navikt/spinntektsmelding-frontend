@@ -134,5 +134,10 @@ test('Delvis skjema - Utfylling og innsending av skjema', async ({ page, request
   await expect(page.locator('text="Bonus"')).toBeVisible();
   await expect(page.locator('text="50 000,00 kr/måned"').first()).toBeVisible();
   await expect(page.locator('text="45 000,00"').first()).toBeVisible();
-  await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+  await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
+
+  await page.reload();
+
+  await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText('20.05.2025');
+  await expect(page.getByText('41 000,40 kr/måned', { exact: true })).toBeVisible();
 });

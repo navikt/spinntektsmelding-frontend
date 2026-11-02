@@ -142,7 +142,7 @@ export default function useSendInnSkjema(
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async () => {
         setMottatt(new Date());
-        await router.push(`/kvittering/${pathSlug}?fromSubmit=true`);
+        await router.push(`/kvittering/${pathSlug}?fromSubmit=true`, `/kvittering/${pathSlug}`);
       },
       mapValidationErrors,
       setErrorResponse: errorResponse,

@@ -144,9 +144,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
         setMottatt(new Date());
         if (skjemastatus === SkjemaStatus.SELVBESTEMT) {
-          await router.push(`/kvittering/agi/${pathSlug}`);
+          await router.push(`/kvittering/agi/${pathSlug}?fromSubmit=true`, `/kvittering/agi/${pathSlug}`);
         } else {
-          await router.push(`/kvittering/${pathSlug}`);
+          await router.push(`/kvittering/${pathSlug}?fromSubmit=true`, `/kvittering/${pathSlug}`);
         }
       },
       mapValidationErrors,

@@ -61,7 +61,7 @@ test.describe('Utfylling og innsending av skjema – to arbeidsforhold', () => {
     });
 
     // verify receipt page
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
     await expect(page.locator('text="Sykmelding"')).toBeVisible();
 

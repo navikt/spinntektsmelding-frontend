@@ -1,11 +1,11 @@
-import { Naturalytelse } from '../../state/state';
+import { NaturalytelseVisning } from '../../utils/lagKvitteringVisning';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
 import naturalytelser from '../Naturalytelser/SelectNaturalytelser/naturalytelser';
 import lokalStyling from './BortfallNaturalytelser.module.css';
 
 interface BortfallNaturalytelserProps {
-  ytelser: Array<Naturalytelse>;
+  ytelser: NaturalytelseVisning[];
 }
 
 export default function BortfallNaturalytelser({ ytelser }: BortfallNaturalytelserProps) {

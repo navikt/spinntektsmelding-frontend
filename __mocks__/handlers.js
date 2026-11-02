@@ -91,7 +91,7 @@ export const handlers = [
 
   http.get('*/api/v1/selvbestemt-inntektsmelding/:kvittid', ({ params }) => {
     const { kvittid } = params;
-    const mockdataFile = kvitteringMockdataMap[kvittid] || 'kvittering-bug-endre';
+    const mockdataFile = kvitteringAgiMockdataMap[kvittid] || 'kvittering-selvbestemt-format';
     const data = readMockdata(mockdataFile);
 
     if (kvittid === '46B02DA3-ACA1-4133-9594-7C9B1B361357') {
@@ -99,7 +99,7 @@ export const handlers = [
     }
 
     if (data) {
-      return HttpResponse.json(data);
+      return HttpResponse.json({ success: data });
     }
     return new HttpResponse(null, { status: 404 });
   }),

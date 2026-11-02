@@ -228,12 +228,7 @@ export const InnsendingSchema = z.object({
       beloepPerMaaned: z
         .number({ error: 'Vennligst angi hvor mye som refunderes per måned' })
         .min(0, 'Refusjonsbeløpet må være større enn eller lik 0'),
-      endringer: z.array(RefusjonEndringSchema).nullable(),
-      sluttdato: z.iso
-        .date({
-          error: (issue) => (issue.input === undefined ? 'Vennligst fyll inn til dato' : 'Dette er ikke en gyldig dato')
-        })
-        .nullable()
+      endringer: z.array(RefusjonEndringSchema).nullable()
     })
   ),
   naturalytelser: ApiNaturalytelserSchema,
@@ -267,8 +262,11 @@ export const InnsendingSchema = z.object({
 });
 
 type TInnsendingSchema = z.infer<typeof InnsendingSchema>;
+type InnsendingTilValidering = Omit<TInnsendingSchema, 'refusjon'> & {
+  refusjon: Omit<NonNullable<TInnsendingSchema['refusjon']>, 'sluttdato'> | null;
+};
 
-export function superRefineInnsending(val: TInnsendingSchema, ctx: z.RefinementCtx) {
+export function superRefineInnsending(val: InnsendingTilValidering, ctx: z.RefinementCtx) {
   if (
     val.inntekt?.beloep &&
     val.refusjon?.beloepPerMaaned &&

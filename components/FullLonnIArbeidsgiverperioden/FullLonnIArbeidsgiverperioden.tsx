@@ -5,7 +5,7 @@ import begrunnelseIngenEllerRedusertUtbetalingListe from '../RefusjonArbeidsgive
 import lokalStyle from './FullLonnIArbeidsgiverperioden.module.css';
 
 interface FullLonnIArbeidsgiverperiodenProps {
-  lonnIPerioden?: LonnIArbeidsgiverperioden;
+  lonnIPerioden?: Omit<LonnIArbeidsgiverperioden, 'begrunnelse'> & { begrunnelse?: string };
 }
 
 const formaterBegrunnelse = (begrunnelseskode: string | undefined): string => {

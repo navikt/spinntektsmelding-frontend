@@ -67,7 +67,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -122,7 +122,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await page.waitForURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`, { timeout: 15000 });
+    await page.waitForURL(`/im-dialog/kvittering/${uuid}`, { timeout: 15000 });
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 
@@ -177,7 +177,7 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
     });
 
     // verify receipt page
-    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}?fromSubmit=true`);
+    await expect(page).toHaveURL(`/im-dialog/kvittering/${uuid}`);
     await expect(page.locator('text="Kvittering - innsendt inntektsmelding"')).toBeVisible();
   });
 });

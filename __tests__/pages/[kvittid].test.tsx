@@ -268,7 +268,10 @@ describe('kvittering', () => {
     endreButton.click();
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/550e8400-e29b-41d4-a716-446655440000?endre=true');
+      expect(mockPush).toHaveBeenCalledExactlyOnceWith(
+        '/550e8400-e29b-41d4-a716-446655440000?endre=true',
+        '/550e8400-e29b-41d4-a716-446655440000'
+      );
     });
   });
 

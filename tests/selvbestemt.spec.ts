@@ -186,6 +186,21 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
 
     // await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
     await expect(page).toHaveURL('/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
+    await expect(page.getByText('7 500,00 kr/måned', { exact: true })).toBeVisible();
+    await expect(page.getByText('01.07.2024', { exact: true })).toBeVisible();
+    await expect(page.getByText('07.07.2024', { exact: true })).toBeVisible();
+
+    await page.reload();
+
+    await expect(page.getByText('12 345,00 kr/måned', { exact: true })).toBeVisible();
+    await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText('01.11.2025');
+  });
+
+  test('viser backend-data ved direkte åpning av kvitteringen', async ({ page }) => {
+    await page.goto('http://localhost:3000/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
+
+    await expect(page.getByText('12 345,00 kr/måned', { exact: true })).toBeVisible();
+    await expect(page.locator('[data-cy="bestemmendefravaersdag"]')).toHaveText('01.11.2025');
   });
 
   test('selvbestemt med varig lønnsendring', async ({ page }) => {
@@ -740,8 +755,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
       },
       refusjon: {
         beloepPerMaaned: 7500,
-        endringer: [],
-        sluttdato: null
+        endringer: []
       },
       sykmeldtFnr: '25087327879',
       avsender: { orgnr: '810007842', tlf: '12345678' },

@@ -40,9 +40,6 @@ export const KvitteringNavNoSchema = z.object({
     refusjon: z
       .object({
         beloepPerMaaned: z.number(),
-        sluttdato: z.iso.date({
-          error: (issue) => (issue.input === undefined ? 'Sluttdato mangler' : 'Ugyldig sluttdato')
-        }),
         endringer: z.array(RefusjonEndringSchema)
       })
       .nullable(),

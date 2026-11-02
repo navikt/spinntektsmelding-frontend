@@ -298,7 +298,7 @@ describe('useSendInnSkjema', () => {
     });
 
     expect(mockSetMottatt).toHaveBeenCalled();
-    expect(mockRouterPush).toHaveBeenCalledWith(`/kvittering/${pathSlug}?fromSubmit=true`);
+    expect(mockRouterPush).toHaveBeenCalledWith(`/kvittering/${pathSlug}?fromSubmit=true`, `/kvittering/${pathSlug}`);
   });
 
   it('should call onUnauthorized callback on 401', async () => {

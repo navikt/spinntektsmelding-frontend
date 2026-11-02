@@ -99,7 +99,10 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
   });
 
-  it('should handle successful submission', async () => {
+  it.each([
+    { status: SkjemaStatus.FULL, receiptPath: '/kvittering' },
+    { status: SkjemaStatus.SELVBESTEMT, receiptPath: '/kvittering/agi' }
+  ])('should show submitted data at $receiptPath after successful submission', async ({ status, receiptPath }) => {
     setupMockStore();
     (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
@@ -115,19 +118,23 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, status)
     );
 
     global.fetch = vi.fn().mockResolvedValue({
       status: 201,
-      json: vi.fn().mockResolvedValue({})
+      json: vi.fn().mockResolvedValue({ selvbestemtId: 'f32852af-888e-4d0c-ad67-081f22ee5c12' })
     });
 
     await act(async () => {
       await result.current(true, pathSlug, true, defaultFormData);
     });
 
-    expect(mockRouter).toMatchObject({ route: `/kvittering/${pathSlug}` });
+    expect(mockRouter).toMatchObject({
+      route: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`,
+      query: { fromSubmit: 'true' },
+      asPath: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`
+    });
   });
 
   it('should handle server error 500', async () => {
