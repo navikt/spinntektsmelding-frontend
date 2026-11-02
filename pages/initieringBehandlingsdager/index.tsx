@@ -1,4 +1,4 @@
-import { Button, Alert, Link, RadioGroup, Radio } from '@navikt/ds-react';
+import { Button, LocalAlert, Link, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
@@ -8,7 +8,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyling from '../initieringAnnet/initiering.module.css';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -36,7 +36,7 @@ import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import sorterFomStigende from '../../utils/sorterFomStigende';
-import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
@@ -335,21 +335,31 @@ const InitieringBehandlingsdager: NextPage = () => {
                       </RadioGroup>
                       {sykepengePerioder.length > 0 &&
                         sykepengePerioder.every((periode) => periode.antallBehandlingsdager < 12) && (
-                          <Alert variant='warning'>
-                            Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
-                            kreves 12 eller flere behandlingsdager i sykmeldingsperioden for å kunne sende inn
-                            inntektsmelding for behandlingsdager.
-                          </Alert>
+                          <LocalAlert status='warning'>
+                            <LocalAlert.Header>
+                              <LocalAlert.Title>For få behandlingsdager</LocalAlert.Title>
+                            </LocalAlert.Header>
+                            <LocalAlert.Content>
+                              Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
+                              kreves 12 eller flere behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                              inntektsmelding for behandlingsdager.
+                            </LocalAlert.Content>
+                          </LocalAlert>
                         )}
                     </>
                   )}
 
                   {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
-                    <Alert variant='error'>
-                      Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
-                      Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
-                      behandlingsdager er sendt inn.
-                    </Alert>
+                    <LocalAlert status='error'>
+                      <LocalAlert.Header>
+                        <LocalAlert.Title>Finner ingen søknader om behandlingsdager</LocalAlert.Title>
+                      </LocalAlert.Header>
+                      <LocalAlert.Content>
+                        Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
+                        Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
+                        behandlingsdager er sendt inn.
+                      </LocalAlert.Content>
+                    </LocalAlert>
                   )}
                 </>
               )}
@@ -374,11 +384,15 @@ const InitieringBehandlingsdager: NextPage = () => {
             </form>
           </FormProvider>
           {antallDagerMellomSykmeldingsperioder > 16 && (
-            <Alert variant='error' className={lokalStyling.alertPadding}>
-              <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
-              Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
-              hver av periodene.
-            </Alert>
+            <LocalAlert status='error' className={lokalStyling.alertPadding}>
+              <LocalAlert.Header>
+                <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
+              </LocalAlert.Header>
+              <LocalAlert.Content>
+                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
+                for hver av periodene.
+              </LocalAlert.Content>
+            </LocalAlert>
           )}
           Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
           <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.

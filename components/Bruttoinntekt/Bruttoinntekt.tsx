@@ -1,4 +1,4 @@
-import { Alert, BodyLong, BodyShort } from '@navikt/ds-react';
+import { LocalAlert, BodyLong, BodyShort } from '@navikt/ds-react';
 import { useEffect, useMemo, useState } from 'react';
 import { HistoriskInntekt } from '../../schema/HistoriskInntektSchema';
 import useBoundStore from '../../state/useBoundStore';
@@ -102,10 +102,15 @@ export default function Bruttoinntekt({
         i de tre siste kalendermånedene før sykefraværet startet.
       </BodyLong>
       {feilHentingAvInntektsdata && (
-        <Alert variant='info'>
-          Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv eller
-          forsøke igjen senere.
-        </Alert>
+        <LocalAlert status='warning' as='div'>
+          <LocalAlert.Header>
+            <LocalAlert.Title as='h3'>Kunne ikke hente inntektsopplysninger</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Vi har problemer med å hente inntektsopplysninger akkurat nå. Du kan legge inn beregnet månedslønn selv
+            eller forsøke igjen senere.
+          </LocalAlert.Content>
+        </LocalAlert>
       )}
       {harTidligereInntekt && (
         <>

@@ -5,7 +5,12 @@
   gap: 1rem;
 }
 
-.personnummer {
+.startForm {
+  margin: 2.5rem 0;
+  gap: 2rem;
+}
+
+.personnummer input {
   max-width: 10rem;
 }
 
@@ -29,10 +34,10 @@
   gap: 1rem;
 }
 
-.checkboxGroup {
-  padding-left: 2rem;
+.alertPadding {
+  margin-bottom: 1rem;
 }
 
-.forlengerVedtaksperiodeIdBox {
-  margin-bottom: 1rem;
+.checkboxGroup {
+  padding-left: 2rem;
 }

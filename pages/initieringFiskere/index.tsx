@@ -8,7 +8,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyling from '../initieringAnnet/initiering.module.css';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -22,7 +22,7 @@ import Loading from '../../components/Loading/Loading';
 import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { useRouter } from 'next/navigation';
-import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';

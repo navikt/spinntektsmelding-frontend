@@ -1,4 +1,4 @@
-import { Alert, Button, Radio, RadioGroup } from '@navikt/ds-react';
+import { InfoCard, Button, Radio, RadioGroup } from '@navikt/ds-react';
 import { MouseEvent, useEffect } from 'react';
 import lokalStyling from './RefusjonArbeidsgiver.module.css';
 import styles from '../../styles/Home.module.css';
@@ -74,10 +74,12 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
       />
       {harRefusjonEndringer === 'Ja' && (
         <>
-          <Alert variant='info' className={lokalStyling.alertBox}>
-            Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta
-            over utbetalingen til den ansatte.
-          </Alert>
+          <InfoCard data-color='info' className={lokalStyling.alertBox}>
+            <InfoCard.Content>
+              Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta
+              over utbetalingen til den ansatte.
+            </InfoCard.Content>
+          </InfoCard>
           {fields.map((field, index) => (
             <div key={field.id} className={lokalStyling.beloepperiode}>
               <NumberField

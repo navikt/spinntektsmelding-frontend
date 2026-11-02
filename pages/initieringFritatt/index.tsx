@@ -15,7 +15,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyling from './initiering.module.css';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -32,7 +32,13 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { useRouter } from 'next/navigation';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import formatIsoDate from '../../utils/formatIsoDate';
-import { getFravaersperioder, visFomDato, visTomDato, type Periode } from '../../utils/initieringPerioder';
+import {
+  finnForespoerselId,
+  getFravaersperioder,
+  visFomDato,
+  visTomDato,
+  type Periode
+} from '../../utils/initieringPerioder';
 import { logger } from '@navikt/next-logger';
 import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
@@ -45,9 +51,8 @@ import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import type { SoeknadArbeidstaker } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
-import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
-import { finnForespoerselId } from '../initieringAnnet';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 
@@ -397,7 +402,7 @@ const InitieringFritatt: NextPage = () => {
                 <>
                   {harArbeidsforhold && (
                     <>
-                      <LocalAlert status='warning' className={lokalStyling.alertPadding}>
+                      <LocalAlert status='warning'>
                         <LocalAlert.Header>
                           <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
                         </LocalAlert.Header>

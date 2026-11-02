@@ -1,4 +1,4 @@
-import { Alert } from '@navikt/ds-react';
+import { LocalAlert } from '@navikt/ds-react';
 
 interface FeilVedHentingAvPersondataProps {
   fulltNavnMangler?: boolean;
@@ -25,7 +25,12 @@ export default function FeilVedHentingAvPersondata({
   return (
     <>
       {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-        <Alert variant='info'>{feilmeldingTekst}</Alert>
+        <LocalAlert status='warning'>
+          <LocalAlert.Header>
+            <LocalAlert.Title>Kunne ikke hente navn</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>{feilmeldingTekst}</LocalAlert.Content>
+        </LocalAlert>
       )}
     </>
   );

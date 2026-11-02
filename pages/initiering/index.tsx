@@ -1,4 +1,4 @@
-import { Alert, Button, TextField } from '@navikt/ds-react';
+import { InfoCard, Button, TextField } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import styles from '../../styles/Home.module.css';
-import lokalStyling from './initiering.module.css';
+import lokalStyling from '../../styles/initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
 
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -18,6 +18,7 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { PersonnummerSchema } from '../../schema/PersonnummerSchema';
 import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
@@ -75,13 +76,18 @@ const Initiering: NextPage = () => {
         <main className='main-content'>
           <div className={styles.padded}>
             <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>
-            <Alert variant='info'>
-              Du vil normalt få et varsel når Nav trenger inntektsmelding. Vi sender ut varsel når arbeidsgiverperioden
-              er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis du ikke fått denne oppgaven og du
-              mener at du skal levere inntektsmelding så er det mulig å opprette den manuelt.
-            </Alert>
+            <InfoCard data-color='info'>
+              <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
+                <InfoCard.Title>Du vil normalt få et varsel når Nav trenger inntektsmelding.</InfoCard.Title>
+              </InfoCard.Header>
+              <InfoCard.Content>
+                Vi sender ut varsel når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om
+                sykepenger. Hvis du ikke fått denne oppgaven og du mener at du skal levere inntektsmelding så er det
+                mulig å opprette den manuelt.
+              </InfoCard.Content>
+            </InfoCard>
             <FormProvider {...methods}>
-              <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
+              <form className={`${lokalStyling.form} ${lokalStyling.startForm}`} onSubmit={handleSubmit(submitForm)}>
                 <VelgAarsak legend='Årsak til at du vil opprette inntektsmelding.' name='aarsakInnsending' />
                 <TextField
                   label='Ansattes fødselsnummer'

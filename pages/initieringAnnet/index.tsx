@@ -9,7 +9,7 @@ import Heading1 from '../../components/Heading1/Heading1';
 import PageContent from '../../components/PageContent/PageContent';
 import Head from 'next/head';
 import styles from '../../styles/Home.module.css';
-import lokalStyling from './initiering.module.css';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
 import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
@@ -25,26 +25,20 @@ import { useRouter } from 'next/navigation';
 import {
   EndepunktSykepengesoeknader,
   EndepunktSykepengesoeknaderSchema,
-  Forespoersel,
   SoeknadArbeidstaker
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
 import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
-import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import useInitieringData from '../../utils/useInitieringData';
 import ForlengetPeriodeInfo from '../../components/Initiering/ForlengetPeriodeInfo';
-import { visFomDato, visTomDato } from '../../utils/initieringPerioder';
+import { finnForespoerselId, visFomDato, visTomDato } from '../../utils/initieringPerioder';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
-
-export const finnForespoerselId = (soeknader: Forespoersel[], vedtaksperiodeId: string) => {
-  const soeknad = soeknader.find((s) => s.vedtaksperiodeId === vedtaksperiodeId);
-  return soeknad ? soeknad.forespoerselId : null;
-};
 
 const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);

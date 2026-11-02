@@ -1,4 +1,4 @@
-import { Alert, BodyShort, Link } from '@navikt/ds-react';
+import { InfoCard, BodyShort, Link } from '@navikt/ds-react';
 import { LonnISykefravaeret, YesNo } from '../../state/state';
 import formatCurrency from '../../utils/formatCurrency';
 import formatDate from '../../utils/formatDate';
@@ -74,12 +74,14 @@ export default function LonnUnderSykefravaeret({
           </>
         )}
       </div>
-      <Alert variant='info'>
-        Husk å kontroller at du har rapportert inn korrekt kontonummer for å motta refusjon fra Nav. Dere finner{' '}
-        <Link href='https://www.nav.no/arbeidsgiver/endre-kontonummer' target='_blank'>
-          skjema for rapportering av kontonummer her.
-        </Link>
-      </Alert>
+      <InfoCard data-color='info'>
+        <InfoCard.Content>
+          Husk å kontroller at du har rapportert inn korrekt kontonummer for å motta refusjon fra Nav. Dere finner{' '}
+          <Link href='https://www.nav.no/arbeidsgiver/endre-kontonummer' target='_blank'>
+            skjema for rapportering av kontonummer her.
+          </Link>
+        </InfoCard.Content>
+      </InfoCard>
     </>
   );
 }
