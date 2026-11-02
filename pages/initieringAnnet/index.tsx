@@ -26,7 +26,10 @@ import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
 import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
-import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import {
+  InitieringAnnetSkjemaSchema,
+  type InitieringAnnetSkjema as Skjema
+} from '../../schema/InitieringPeriodevalgSchema';
 import useInitieringData from '../../utils/useInitieringData';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
@@ -45,38 +48,8 @@ const InitieringAnnet: NextPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const skjemaSchema = SkjemaInitieringSchema.safeExtend({
-    sykepengePeriodeId: z.array(z.uuid()).optional(),
-    forespurtSykepengePeriodeId: z.uuid().or(z.literal('andrePerioder')).optional(),
-    endreRefusjon: z.literal('Ja').or(z.literal('Nei')).or(z.literal('')).optional()
-  }).superRefine((data, ctx) => {
-    if (!data.forespurtSykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge hva du vil gjøre videre',
-        path: ['forespurtSykepengePeriodeId']
-      });
-    }
-    if (data.forespurtSykepengePeriodeId === 'andrePerioder' && !data.sykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge minst én periode du vil sende inntektsmelding for',
-        path: ['sykepengePeriodeId']
-      });
-    }
-    if (data.endreRefusjon === '') {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må svare på dette spørsmålet',
-        path: ['endreRefusjon']
-      });
-    }
-  });
-
-  type Skjema = z.infer<typeof skjemaSchema>;
-
   const methods = useForm<Skjema>({
-    resolver: zodResolver(skjemaSchema)
+    resolver: zodResolver(InitieringAnnetSkjemaSchema)
   });
 
   const {

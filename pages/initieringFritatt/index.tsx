@@ -19,7 +19,10 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 
 import { useRouter } from 'next/navigation';
-import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import {
+  InitieringFritattSkjemaSchema,
+  type InitieringFritattSkjema as Skjema
+} from '../../schema/InitieringPeriodevalgSchema';
 import formatIsoDate from '../../utils/formatIsoDate';
 import { getFravaersperioder, type Periode } from '../../utils/initieringPerioder';
 import { logger } from '@navikt/next-logger';
@@ -56,38 +59,8 @@ const InitieringFritatt: NextPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const skjemaSchema = SkjemaInitieringSchema.safeExtend({
-    sykepengePeriodeId: z.array(z.uuid()).optional(),
-    forespurtSykepengePeriodeId: z.uuid().or(z.literal('utenKobling')).or(z.literal('andrePerioder')).optional(),
-    endreRefusjon: z.literal('Ja').or(z.literal('Nei')).or(z.literal('')).optional()
-  }).superRefine((data, ctx) => {
-    if (!data.forespurtSykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge hva du vil gjøre videre',
-        path: ['forespurtSykepengePeriodeId']
-      });
-    }
-    if (data.forespurtSykepengePeriodeId === 'andrePerioder' && !data.sykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge periodene som det skal sendes inntektsmelding for',
-        path: ['sykepengePeriodeId']
-      });
-    }
-    if (data.endreRefusjon === '') {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må svare på dette spørsmålet',
-        path: ['endreRefusjon']
-      });
-    }
-  });
-
-  type Skjema = z.infer<typeof skjemaSchema>;
-
   const methods = useForm<Skjema>({
-    resolver: zodResolver(skjemaSchema)
+    resolver: zodResolver(InitieringFritattSkjemaSchema)
   });
 
   const {
@@ -281,7 +254,7 @@ const InitieringFritatt: NextPage = () => {
     router.push('/unntattAaRegisteret');
   };
 
-  const onSetValue = useEffectEvent((field: keyof Skjema, value: any) => {
+  const onSetValue = useEffectEvent((field: 'organisasjonsnummer' | 'forespurtSykepengePeriodeId', value: string) => {
     setValue(field, value, { shouldValidate: true, shouldDirty: true });
   });
 

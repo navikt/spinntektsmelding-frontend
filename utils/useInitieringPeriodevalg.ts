@@ -2,12 +2,9 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import type { ControllerRenderProps } from 'react-hook-form';
 import type { Forespoersel } from '../schema/EndepunktSykepengesoeknaderSchema';
 import type { SykepengePeriode } from './useInitieringData';
+import type { PeriodevalgSkjema } from '../schema/InitieringPeriodevalgSchema';
 
-export type PeriodevalgSkjema = {
-  forespurtSykepengePeriodeId?: string;
-  sykepengePeriodeId?: string[];
-  endreRefusjon?: 'Ja' | 'Nei' | '';
-};
+export type { PeriodevalgSkjema } from '../schema/InitieringPeriodevalgSchema';
 
 export default function useInitieringPeriodevalg(perioder: SykepengePeriode[], forespoersler: Forespoersel[]) {
   const { control, resetField, setValue } = useFormContext<PeriodevalgSkjema>();

@@ -622,7 +622,7 @@ describe('InitieringFritatt page', () => {
     await user.click(await screen.findByRole('radio', { name: /Eller velg en annen periode/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
-    expect(await screen.findAllByText('Du må velge periodene som det skal sendes inntektsmelding for')).toHaveLength(2);
+    expect(await screen.findAllByText('Du må velge minst én periode du vil sende inntektsmelding for')).toHaveLength(2);
     expect(mockedRouter.push).not.toHaveBeenCalled();
   });
 
@@ -665,7 +665,7 @@ describe('InitieringFritatt page', () => {
     await user.click(await screen.findByRole('radio', { name: /Velg en annen periode/ }));
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
-    expect(await screen.findAllByText('Du må velge periodene som det skal sendes inntektsmelding for')).toHaveLength(2);
+    expect(await screen.findAllByText('Du må velge minst én periode du vil sende inntektsmelding for')).toHaveLength(2);
     expect(mockedRouter.push).not.toHaveBeenCalled();
   });
 });
