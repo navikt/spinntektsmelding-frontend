@@ -7,6 +7,7 @@ import { getToken, requestOboToken, validateToken } from '@navikt/oasis';
 import isMod11Number from '../../../utils/isMod11Number';
 import isFnrNumber from '../../../utils/isFnrNumber';
 import safelyParseJSON from '../../../utils/safelyParseJson';
+import handler from '../../../pages/api/arbeidsforhold';
 
 vi.mock('@navikt/oasis', () => ({
   getToken: vi.fn(),
@@ -55,7 +56,6 @@ function createRes() {
 
 describe('arbeidsforhold API', () => {
   beforeEach(() => {
-    vi.resetModules();
     vi.resetAllMocks();
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_INGRESS', 'flex.example.no');
     vi.stubEnv('FLEX_SYKEPENGESOEKNAD_URL', '/sp/soeknader');
@@ -67,7 +67,9 @@ describe('arbeidsforhold API', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
   });
 
   it('returns mock payload in development when file exists', async () => {
@@ -75,7 +77,6 @@ describe('arbeidsforhold API', () => {
     vi.spyOn(fs, 'existsSync').mockReturnValue(true);
     vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify([{ id: 'x' }]));
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const { req, res } = createMocks({ method: 'POST', body: {} });
 
     await handler(req, res);
@@ -88,7 +89,6 @@ describe('arbeidsforhold API', () => {
     vi.stubEnv('NODE_ENV', 'development');
     vi.spyOn(fs, 'existsSync').mockReturnValue(false);
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const { req, res } = createMocks({ method: 'POST', body: {} });
 
     await handler(req, res);
@@ -101,7 +101,6 @@ describe('arbeidsforhold API', () => {
     vi.stubEnv('NODE_ENV', 'production');
     (getToken as unknown as Mock).mockReturnValue(undefined);
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({});
     const res = createRes();
 
@@ -113,7 +112,6 @@ describe('arbeidsforhold API', () => {
   it('returns 405 when method is not POST', async () => {
     vi.stubEnv('NODE_ENV', 'production');
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     req.method = 'GET';
     const res = createRes();
@@ -130,7 +128,6 @@ describe('arbeidsforhold API', () => {
     (validateToken as unknown as Mock).mockResolvedValue({ ok: true });
     (isMod11Number as unknown as Mock).mockReturnValue(false);
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '123', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
@@ -149,7 +146,6 @@ describe('arbeidsforhold API', () => {
     (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '111', eldsteFom: '2024-01-01' });
     const res = createRes();
 
@@ -168,7 +164,6 @@ describe('arbeidsforhold API', () => {
     (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as unknown as Mock).mockResolvedValue({ ok: true, token: 'obo-token' });
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: 'ugyldig-dato' });
     const res = createRes();
 
@@ -186,7 +181,6 @@ describe('arbeidsforhold API', () => {
     (fetch as unknown as Mock).mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' });
     (requestOboToken as unknown as Mock).mockResolvedValue({ ok: false, error: 'obo-error' });
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
@@ -210,7 +204,6 @@ describe('arbeidsforhold API', () => {
 
     (safelyParseJSON as unknown as Mock).mockResolvedValueOnce([{ vedtaksperiodeId: null }]);
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
@@ -240,7 +233,6 @@ describe('arbeidsforhold API', () => {
       ])
       .mockResolvedValueOnce([{ vedtaksperiodeId: 'vp1', forespoerselId: 'fp1' }]);
 
-    const { default: handler } = await import('../../../pages/api/arbeidsforhold');
     const req = createReq({ orgnummer: '810007982', fnr: '12345678910', eldsteFom: '2024-01-01' });
     const res = createRes();
 
