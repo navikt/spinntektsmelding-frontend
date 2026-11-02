@@ -4,14 +4,10 @@ import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
 import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -117,67 +113,56 @@ const InitieringFritatt: NextPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
-      <PageContent title='Inntektsmelding sykepenger'>
-        <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
-          <FormProvider {...methods}>
-            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
-              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyling.persondata}>
-                {/* <div className={lokalStyling.navn}>
+    <InitieringLayout>
+      <FormProvider {...methods}>
+        <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
+          <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
+          <div className={lokalStyling.persondata}>
+            {/* <div className={lokalStyling.navn}>
                   <TextLabel>Navn</TextLabel>
                   <p>{fulltNavn}</p>
                 </div> */}
-                <div>
-                  <TextLabel>Fødselsnummer</TextLabel>
-                  <p>{sykmeldt.fnr}</p>
-                </div>
-              </div>
-              {!data && !error && <Loading />}
-              {data && (
-                <div>
-                  <SelectArbeidsgiver
-                    arbeidsforhold={arbeidsforhold}
-                    id='organisasjonsnummer'
-                    register={register}
-                    error={errors.organisasjonsnummer?.message as string}
-                    description='Dette vil være  enheten du representerer når du sender inn inntektsmeldingen.'
-                    descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
-                  />
-                </div>
-              )}
+            <div>
+              <TextLabel>Fødselsnummer</TextLabel>
+              <p>{sykmeldt.fnr}</p>
+            </div>
+          </div>
+          {!data && !error && <Loading />}
+          {data && (
+            <div>
+              <SelectArbeidsgiver
+                arbeidsforhold={arbeidsforhold}
+                id='organisasjonsnummer'
+                register={register}
+                error={errors.organisasjonsnummer?.message as string}
+                description='Dette vil være  enheten du representerer når du sender inn inntektsmeldingen.'
+                descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
+              />
+            </div>
+          )}
 
-              <div className={lokalStyling.knapperad}>
-                <Button
-                  type='button'
-                  variant='tertiary'
-                  className={lokalStyling.primaryKnapp}
-                  onClick={() => history.back()}
-                >
-                  Tilbake
-                </Button>
-                <Button
-                  variant='primary'
-                  className={lokalStyling.primaryKnapp}
-                  loading={isLoading}
-                  disabled={blokkerInnsending}
-                >
-                  Neste
-                </Button>
-              </div>
-            </form>
-          </FormProvider>
-          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-        </div>
-      </PageContent>
-    </div>
+          <div className={lokalStyling.knapperad}>
+            <Button
+              type='button'
+              variant='tertiary'
+              className={lokalStyling.primaryKnapp}
+              onClick={() => history.back()}
+            >
+              Tilbake
+            </Button>
+            <Button
+              variant='primary'
+              className={lokalStyling.primaryKnapp}
+              loading={isLoading}
+              disabled={blokkerInnsending}
+            >
+              Neste
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+      <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+    </InitieringLayout>
   );
 };
 

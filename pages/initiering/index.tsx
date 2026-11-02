@@ -5,11 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
-import styles from '../../styles/Home.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
 import lokalStyling from '../../styles/initiering.module.css';
 import useBoundStore from '../../state/useBoundStore';
 
@@ -65,47 +61,34 @@ const Initiering: NextPage = () => {
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding sykepenger'} />
-      <PageContent title='Inntektsmelding'>
-        <main className='main-content'>
-          <div className={styles.padded}>
-            <Heading1>Opprett inntektsmelding for et sykefravær</Heading1>
-            <InfoCard data-color='info'>
-              <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
-                <InfoCard.Title>Du vil normalt få et varsel når Nav trenger inntektsmelding.</InfoCard.Title>
-              </InfoCard.Header>
-              <InfoCard.Content>
-                Vi sender ut varsel når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om
-                sykepenger. Hvis du ikke fått denne oppgaven og du mener at du skal levere inntektsmelding så er det
-                mulig å opprette den manuelt.
-              </InfoCard.Content>
-            </InfoCard>
-            <FormProvider {...methods}>
-              <form className={`${lokalStyling.form} ${lokalStyling.startForm}`} onSubmit={handleSubmit(submitForm)}>
-                <VelgAarsak legend='Årsak til at du vil opprette inntektsmelding.' name='aarsakInnsending' />
-                <TextField
-                  label='Ansattes fødselsnummer'
-                  description='(ddmmååxxxxx)'
-                  className={lokalStyling.personnummer}
-                  {...register('identitetsnummer')}
-                  error={errors.identitetsnummer?.message as string}
-                />
-                <Button variant='primary' className={lokalStyling.primaryKnapp}>
-                  Neste
-                </Button>
-              </form>
-            </FormProvider>
-            <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
-          </div>
-        </main>
-      </PageContent>
-    </div>
+    <InitieringLayout bannertittel='Inntektsmelding sykepenger' sidetittel='Inntektsmelding'>
+      <InfoCard data-color='info'>
+        <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
+          <InfoCard.Title>Du vil normalt få et varsel når Nav trenger inntektsmelding.</InfoCard.Title>
+        </InfoCard.Header>
+        <InfoCard.Content>
+          Vi sender ut varsel når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om sykepenger.
+          Hvis du ikke fått denne oppgaven og du mener at du skal levere inntektsmelding så er det mulig å opprette den
+          manuelt.
+        </InfoCard.Content>
+      </InfoCard>
+      <FormProvider {...methods}>
+        <form className={`${lokalStyling.form} ${lokalStyling.startForm}`} onSubmit={handleSubmit(submitForm)}>
+          <VelgAarsak legend='Årsak til at du vil opprette inntektsmelding.' name='aarsakInnsending' />
+          <TextField
+            label='Ansattes fødselsnummer'
+            description='(ddmmååxxxxx)'
+            className={lokalStyling.personnummer}
+            {...register('identitetsnummer')}
+            error={errors.identitetsnummer?.message as string}
+          />
+          <Button variant='primary' className={lokalStyling.primaryKnapp}>
+            Neste
+          </Button>
+        </form>
+      </FormProvider>
+      <FeilListe skalViseFeilmeldinger={feilmeldinger.length > 0} feilmeldinger={feilmeldinger ?? []} />
+    </InitieringLayout>
   );
 };
 

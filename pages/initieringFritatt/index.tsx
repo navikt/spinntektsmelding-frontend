@@ -11,14 +11,10 @@ import {
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
 import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import SelectArbeidsgiver from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -365,113 +361,102 @@ const InitieringFritatt: NextPage = () => {
     }
   }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData, arbeidsforhold.length]);
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
-      <PageContent title='Inntektsmelding sykepenger'>
-        <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
-          <FormProvider {...methods}>
-            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm, submitError)}>
-              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyling.persondata}>
-                <div>
-                  <TextLabel>Fødselsnummer</TextLabel>
-                  <p>{sykmeldt.fnr}</p>
-                </div>
-              </div>
-              {!tilganger && !tilgangerError && <Loading />}
-              {arbeidsgiverTilganger && (
-                <div>
-                  <SelectArbeidsgiver
-                    arbeidsforhold={arbeidsgiverTilganger}
-                    id='organisasjonsnummer'
-                    register={register}
-                    error={errors.organisasjonsnummer?.message as string}
-                    description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
-                    descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
-                  />
-                </div>
-              )}
-              {spLoading && <Loading />}
-              {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
+    <InitieringLayout>
+      <FormProvider {...methods}>
+        <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm, submitError)}>
+          <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
+          <div className={lokalStyling.persondata}>
+            <div>
+              <TextLabel>Fødselsnummer</TextLabel>
+              <p>{sykmeldt.fnr}</p>
+            </div>
+          </div>
+          {!tilganger && !tilgangerError && <Loading />}
+          {arbeidsgiverTilganger && (
+            <div>
+              <SelectArbeidsgiver
+                arbeidsforhold={arbeidsgiverTilganger}
+                id='organisasjonsnummer'
+                register={register}
+                error={errors.organisasjonsnummer?.message as string}
+                description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
+                descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
+              />
+            </div>
+          )}
+          {spLoading && <Loading />}
+          {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
+            <>
+              {harArbeidsforhold && (
                 <>
-                  {harArbeidsforhold && (
+                  <LocalAlert status='warning'>
+                    <LocalAlert.Header>
+                      <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
+                    </LocalAlert.Header>
+                    <LocalAlert.Content>
+                      Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
+                      for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du &quot;Send
+                      inntektsmelding for annen periode&quot;.
+                    </LocalAlert.Content>
+                  </LocalAlert>
+
+                  <InitieringPeriodevelger
+                    control={methods.control}
+                    errors={errors}
+                    forespoersler={forespoersler}
+                    perioder={sykepengePerioder}
+                    disablePeriodeCheck={disablePeriodeCheck}
+                    visUtenKobling={visUtenKobling}
+                    checkboxGroupClassName={lokalStyling.checkboxGroup}
+                    onRadioChange={onRadioChange}
+                    onCheckboxChange={onCheckboxChange}
+                  />
+                  {harValgtPeriodeMedForlengelse && (
+                    <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
+                  )}
+                  {endreRefusjon === 'Ja' && (
                     <>
-                      <LocalAlert status='warning'>
-                        <LocalAlert.Header>
-                          <LocalAlert.Title>Vi fant sykepengesøknader for disse periodene.</LocalAlert.Title>
-                        </LocalAlert.Header>
-                        <LocalAlert.Content>
-                          Vi fant sykepengesøknader for disse periodene. Velg perioden du ønsker å sende inntektsmelding
-                          for. Hvis ingen av periodene stemmer med inntektsmeldingen du ønsker å sende velger du
-                          &quot;Send inntektsmelding for annen periode&quot;.
-                        </LocalAlert.Content>
-                      </LocalAlert>
+                      <AlertKorrigereRefusjon />
+                      {valgtePerioder.map((periode) => {
+                        const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
+                        if (!vedtaksperiodeId) return null;
 
-                      <InitieringPeriodevelger
-                        control={methods.control}
-                        errors={errors}
-                        forespoersler={forespoersler}
-                        perioder={sykepengePerioder}
-                        disablePeriodeCheck={disablePeriodeCheck}
-                        visUtenKobling={visUtenKobling}
-                        checkboxGroupClassName={lokalStyling.checkboxGroup}
-                        onRadioChange={onRadioChange}
-                        onCheckboxChange={onCheckboxChange}
-                      />
-                      {harValgtPeriodeMedForlengelse && (
-                        <OrdinaryJaNei legend='Skal du endre refusjon for den ansatte?' name='endreRefusjon' />
-                      )}
-                      {endreRefusjon === 'Ja' && (
-                        <>
-                          <AlertKorrigereRefusjon />
-                          {valgtePerioder.map((periode) => {
-                            const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
-                            if (!vedtaksperiodeId) return null;
-
-                            const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
-                            return (
-                              <ForlengetPeriodeInfo
-                                key={periode.vedtaksperiodeId}
-                                orgNr={organisasjonsnummer}
-                                arbeidsforhold={arbeidsforhold}
-                                navn={fulltNavn}
-                                fnr={sykmeldt.fnr}
-                                href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
-                                fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                                tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                              />
-                            );
-                          })}
-                        </>
-                      )}
-                      {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
+                        const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
+                        return (
+                          <ForlengetPeriodeInfo
+                            key={periode.vedtaksperiodeId}
+                            orgNr={organisasjonsnummer}
+                            arbeidsforhold={arbeidsforhold}
+                            navn={fulltNavn}
+                            fnr={sykmeldt.fnr}
+                            href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
+                            fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                            tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                          />
+                        );
+                      })}
                     </>
                   )}
+                  {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
                 </>
               )}
-              <div className={lokalStyling.knapperad}>
-                <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
-                  Tilbake
-                </Button>
-                <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
-                  Neste
-                </Button>
-                <ButtonTilbakestill onClick={() => reset()} />
-              </div>
-            </form>
-          </FormProvider>
-          Inntektsmeldinger som allerede er forespurt, kan også finnes i{' '}
-          <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-        </div>
-      </PageContent>
-    </div>
+            </>
+          )}
+          <div className={lokalStyling.knapperad}>
+            <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
+              Tilbake
+            </Button>
+            <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
+              Neste
+            </Button>
+            <ButtonTilbakestill onClick={() => reset()} />
+          </div>
+        </form>
+      </FormProvider>
+      Inntektsmeldinger som allerede er forespurt, kan også finnes i{' '}
+      <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+      <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+    </InitieringLayout>
   );
 };
 

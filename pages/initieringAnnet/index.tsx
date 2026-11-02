@@ -5,14 +5,10 @@ import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch, ControllerRenderProps } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
 import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { useState } from 'react';
 import SelectArbeidsgiver from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -275,156 +271,143 @@ const InitieringAnnet: NextPage = () => {
   );
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
-      <PageContent title='Inntektsmelding sykepenger'>
-        <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
-          <FormProvider {...methods}>
-            <form
-              className={lokalStyling.form}
-              onSubmit={handleSubmit(submitForm, (formErrors) => {
-                logger.error(
-                  '[initieringAnnet] Submit stoppet: skjemaet er ugyldig' +
-                    JSON.stringify({
-                      values: methods.getValues(),
-                      errors: formErrors
-                    })
-                );
-              })}
-            >
-              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyling.persondata}>
-                <div className={lokalStyling.navn}>
-                  <TextLabel>Navn</TextLabel>
-                  <p>{fulltNavn}</p>
-                </div>
+    <InitieringLayout>
+      <FormProvider {...methods}>
+        <form
+          className={lokalStyling.form}
+          onSubmit={handleSubmit(submitForm, (formErrors) => {
+            logger.error(
+              '[initieringAnnet] Submit stoppet: skjemaet er ugyldig' +
+                JSON.stringify({
+                  values: methods.getValues(),
+                  errors: formErrors
+                })
+            );
+          })}
+        >
+          <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
+          <div className={lokalStyling.persondata}>
+            <div className={lokalStyling.navn}>
+              <TextLabel>Navn</TextLabel>
+              <p>{fulltNavn}</p>
+            </div>
+            <div>
+              <TextLabel>Fødselsnummer</TextLabel>
+              <p>{sykmeldt.fnr}</p>
+            </div>
+          </div>
+          {!data && !error && <Loading />}
+          {data && (
+            <>
+              <div>
                 <div>
-                  <TextLabel>Fødselsnummer</TextLabel>
-                  <p>{sykmeldt.fnr}</p>
+                  <SelectArbeidsgiver
+                    arbeidsforhold={arbeidsforhold}
+                    id='organisasjonsnummer'
+                    register={register}
+                    error={errors.organisasjonsnummer?.message as string}
+                    description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
+                    descriptionLabel='Hvilken underenhet er den ansatte sykmeldt fra?'
+                  />
                 </div>
               </div>
-              {!data && !error && <Loading />}
-              {data && (
+              {spIsLoading && <Loading />}
+              {spData && organisasjonsnummer && (
                 <>
-                  <div>
-                    <div>
-                      <SelectArbeidsgiver
-                        arbeidsforhold={arbeidsforhold}
-                        id='organisasjonsnummer'
-                        register={register}
-                        error={errors.organisasjonsnummer?.message as string}
-                        description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
-                        descriptionLabel='Hvilken underenhet er den ansatte sykmeldt fra?'
-                      />
-                    </div>
-                  </div>
-                  {spIsLoading && <Loading />}
-                  {spData && organisasjonsnummer && (
-                    <>
-                      <InitieringPeriodevelger
-                        control={methods.control}
-                        errors={errors}
-                        forespoersler={forespoersler}
-                        perioder={sykepengePerioder}
-                        disablePeriodeCheck={disablePeriodeCheck}
-                        checkboxGroupClassName={lokalStyling.checkboxGroup}
-                        onRadioChange={onRadioChange}
-                        onCheckboxChange={onCheckboxChange}
-                      />
+                  <InitieringPeriodevelger
+                    control={methods.control}
+                    errors={errors}
+                    forespoersler={forespoersler}
+                    perioder={sykepengePerioder}
+                    disablePeriodeCheck={disablePeriodeCheck}
+                    checkboxGroupClassName={lokalStyling.checkboxGroup}
+                    onRadioChange={onRadioChange}
+                    onCheckboxChange={onCheckboxChange}
+                  />
 
-                      {(error ||
-                        (organisasjonsnummer &&
-                          data &&
-                          soeknaderArbeidstaker.length === 0 &&
-                          forespoersler.length === 0)) &&
-                        !arbeidsforholdIsLoading &&
-                        !spIsLoading && (
-                          <LocalAlert status='error'>
-                            <LocalAlert.Header>
-                              <LocalAlert.Title>
-                                Finner ingen sykepengesøknader for den valgte personen
-                              </LocalAlert.Title>
-                            </LocalAlert.Header>
-                            <LocalAlert.Content>
-                              Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
-                              Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og
-                              at søknad om sykepenger er sendt inn.
-                            </LocalAlert.Content>
-                          </LocalAlert>
-                        )}
-                    </>
-                  )}
-                  {harValgtPeriodeMedForlengelse && (
-                    <OrdinaryJaNei legend='Skal du endre refusjonen for den ansatte?' name='endreRefusjon' />
-                  )}
-                  {endreRefusjon === 'Ja' && (
-                    <>
-                      <AlertKorrigereRefusjon />
-                      {valgtePerioder.map((periode) => {
-                        const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
-                        if (!vedtaksperiodeId) return null;
-
-                        const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
-                        return (
-                          <ForlengetPeriodeInfo
-                            key={periode.vedtaksperiodeId}
-                            orgNr={organisasjonsnummer}
-                            arbeidsforhold={arbeidsforhold}
-                            navn={fulltNavn}
-                            fnr={sykmeldt.fnr}
-                            href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
-                            fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                            tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                  {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
+                  {(error ||
+                    (organisasjonsnummer &&
+                      data &&
+                      soeknaderArbeidstaker.length === 0 &&
+                      forespoersler.length === 0)) &&
+                    !arbeidsforholdIsLoading &&
+                    !spIsLoading && (
+                      <LocalAlert status='error'>
+                        <LocalAlert.Header>
+                          <LocalAlert.Title>Finner ingen sykepengesøknader for den valgte personen</LocalAlert.Title>
+                        </LocalAlert.Header>
+                        <LocalAlert.Content>
+                          Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
+                          Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og at
+                          søknad om sykepenger er sendt inn.
+                        </LocalAlert.Content>
+                      </LocalAlert>
+                    )}
                 </>
               )}
-              <div className={lokalStyling.knapperad}>
-                <Button
-                  type='button'
-                  variant='tertiary'
-                  className={lokalStyling.primaryKnapp}
-                  onClick={() => history.back()}
-                >
-                  Tilbake
-                </Button>
-                <Button
-                  variant='primary'
-                  className={lokalStyling.primaryKnapp}
-                  loading={isLoading}
-                  // disabled={blokkerInnsending}
-                >
-                  Neste
-                </Button>
-              </div>
-            </form>
-          </FormProvider>
-          {antallDagerMellomSykmeldingsperioder > 16 && (
-            <LocalAlert status='error' className={lokalStyling.alertPadding}>
-              <LocalAlert.Header>
-                <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
-              </LocalAlert.Header>
-              <LocalAlert.Content>
-                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
-                for hver av periodene.
-              </LocalAlert.Content>
-            </LocalAlert>
+              {harValgtPeriodeMedForlengelse && (
+                <OrdinaryJaNei legend='Skal du endre refusjonen for den ansatte?' name='endreRefusjon' />
+              )}
+              {endreRefusjon === 'Ja' && (
+                <>
+                  <AlertKorrigereRefusjon />
+                  {valgtePerioder.map((periode) => {
+                    const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
+                    if (!vedtaksperiodeId) return null;
+
+                    const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
+                    return (
+                      <ForlengetPeriodeInfo
+                        key={periode.vedtaksperiodeId}
+                        orgNr={organisasjonsnummer}
+                        arbeidsforhold={arbeidsforhold}
+                        navn={fulltNavn}
+                        fnr={sykmeldt.fnr}
+                        href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
+                        fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                        tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
+            </>
           )}
-          Du finner også forespurte inntektsmeldinger i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-        </div>
-      </PageContent>
-    </div>
+          <div className={lokalStyling.knapperad}>
+            <Button
+              type='button'
+              variant='tertiary'
+              className={lokalStyling.primaryKnapp}
+              onClick={() => history.back()}
+            >
+              Tilbake
+            </Button>
+            <Button
+              variant='primary'
+              className={lokalStyling.primaryKnapp}
+              loading={isLoading}
+              // disabled={blokkerInnsending}
+            >
+              Neste
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+      {antallDagerMellomSykmeldingsperioder > 16 && (
+        <LocalAlert status='error' className={lokalStyling.alertPadding}>
+          <LocalAlert.Header>
+            <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
+            hver av periodene.
+          </LocalAlert.Content>
+        </LocalAlert>
+      )}
+      Du finner også forespurte inntektsmeldinger i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+      <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+    </InitieringLayout>
   );
 };
 
