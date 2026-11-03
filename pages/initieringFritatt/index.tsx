@@ -23,8 +23,6 @@ import {
   InitieringFritattSkjemaSchema,
   type InitieringFritattSkjema as Skjema
 } from '../../schema/InitieringPeriodevalgSchema';
-import formatIsoDate from '../../utils/formatIsoDate';
-import { getFravaersperioder, type Periode } from '../../utils/initieringPerioder';
 import { logger } from '@navikt/next-logger';
 import ButtonTilbakestill from '../../components/ButtonTilbakestill';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
@@ -39,11 +37,7 @@ import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { mapArbeidsgiverTilganger } from '../../utils/initieringArbeidsgivere';
 
-type SkjemaData = {
-  organisasjonsnummer: string;
-  fulltNavn: string;
-  personnummer: string;
-};
+type SkjemaData = z.infer<typeof InitieringSchema>;
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -166,81 +160,75 @@ const InitieringFritatt: NextPage = () => {
     }
     const orgNavn = arbeidsgiver.virksomhetsnavn;
 
-    const skjemaData: SkjemaData = {
+    if (
+      formData.forespurtSykepengePeriodeId !== 'utenKobling' &&
+      formData.forespurtSykepengePeriodeId !== 'andrePerioder'
+    ) {
+      if (formData.forespurtSykepengePeriodeId) {
+        router.push(`/${formData.forespurtSykepengePeriodeId}`);
+      }
+      return;
+    }
+
+    const validertePersondata = InitieringSchema.safeParse({
       organisasjonsnummer: formData.organisasjonsnummer,
       fulltNavn: mottatteData?.fulltNavn ?? 'Ukjent navn',
-      personnummer: sykmeldt.fnr!
-    };
-
-    const validationResult = InitieringSchema.safeParse(skjemaData);
-    if (!validationResult.success) {
-      logger.error('Validering av skjemadata feilet: %j', validationResult.error.issues);
+      personnummer: sykmeldt.fnr
+    });
+    if (!validertePersondata.success) {
+      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
+      return;
     }
 
     if (formData.forespurtSykepengePeriodeId === 'utenKobling') {
-      handleValidFormData(skjemaData, [], orgNavn);
-      return;
-    }
-
-    if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
-      const sykmeldingsperiode = formData.sykepengePeriodeId
-        ?.map((id) => mottatteSykepengesoeknader?.find((periode) => periode.vedtaksperiodeId === id))
-        .filter((periode): periode is SoeknadArbeidstaker => periode !== undefined);
-
-      if (!sykmeldingsperiode || sykmeldingsperiode.length === 0) {
-        logger.warn('Innsending feilet: ingen sykmeldingsperioder valgt.');
-        setError('sykepengePeriodeId', {
-          message: 'Ingen sykmeldingsperioder valgt',
-          type: 'manual'
-        });
-        return;
-      }
-
-      initierMedArbeidsforhold(
-        {
-          initPerson,
-          setSkjemaStatus,
-          initFravaersperiode,
-          initEgenmeldingsperiode,
-          tilbakestillArbeidsgiverperiode,
-          setVedtaksperiodeId,
-          setSelvbestemtType,
-          setHarGradertSykmelding
-        },
-        {
-          fulltNavn: skjemaData.fulltNavn,
-          personnummer: skjemaData.personnummer,
-          organisasjonsnummer: skjemaData.organisasjonsnummer,
-          orgNavn
-        },
-        sykmeldingsperiode
-      );
-      router.push('/arbeidsgiverInitiertInnsending');
-      return;
-    }
-
-    if (formData.forespurtSykepengePeriodeId) {
-      router.push(`/${formData.forespurtSykepengePeriodeId}`);
-      return;
-    }
-
-    if (validationResult.success) {
       setIsLoading(true);
-      handleValidFormData(
-        validationResult.data,
-        sykepengePerioder.map((periode) => ({
-          fom: formatIsoDate(periode.fom)!,
-          tom: formatIsoDate(periode.tom)!
-        })),
-        orgNavn
-      );
+      initierUtenArbeidsforhold(validertePersondata.data, orgNavn);
+      return;
     }
+
+    const sykmeldingsperioder = formData.sykepengePeriodeId
+      ?.map((id) => mottatteSykepengesoeknader?.find((periode) => periode.vedtaksperiodeId === id))
+      .filter((periode): periode is SoeknadArbeidstaker => periode !== undefined);
+
+    if (!sykmeldingsperioder?.length) {
+      logger.warn('Innsending feilet: ingen sykmeldingsperioder valgt.');
+      setError('sykepengePeriodeId', {
+        message: 'Ingen sykmeldingsperioder valgt',
+        type: 'manual'
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    initierValgtePerioder(validertePersondata.data, sykmeldingsperioder, orgNavn);
   };
 
-  const handleValidFormData = (validerteData: SkjemaData, sykmeldingsperiode: Periode[], orgNavn: string) => {
+  const initierValgtePerioder = (
+    validerteData: SkjemaData,
+    sykmeldingsperioder: SoeknadArbeidstaker[],
+    orgNavn: string
+  ) => {
+    initierMedArbeidsforhold(
+      {
+        initPerson,
+        setSkjemaStatus,
+        initFravaersperiode,
+        initEgenmeldingsperiode,
+        tilbakestillArbeidsgiverperiode,
+        setVedtaksperiodeId,
+        setSelvbestemtType,
+        setHarGradertSykmelding
+      },
+      { ...validerteData, orgNavn },
+      sykmeldingsperioder
+    );
+    router.push('/arbeidsgiverInitiertInnsending');
+  };
+
+  const initierUtenArbeidsforhold = (validerteData: SkjemaData, orgNavn: string) => {
     initPerson(validerteData.fulltNavn, validerteData.personnummer, validerteData.organisasjonsnummer, orgNavn);
     setSkjemaStatus(SkjemaStatus.SELVBESTEMT);
-    initFravaersperiode(getFravaersperioder(sykmeldingsperiode));
+    initFravaersperiode([]);
     initEgenmeldingsperiode([]);
     tilbakestillArbeidsgiverperiode();
     setSelvbestemtType(SelvbestemtTypeConst.UtenArbeidsforhold);

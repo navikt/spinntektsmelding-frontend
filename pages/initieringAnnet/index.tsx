@@ -103,75 +103,42 @@ const InitieringAnnet: NextPage = () => {
     mottatteData: z.infer<typeof EndepunktArbeidsforholdSchema>,
     mottatteSykepengesoeknader: EndepunktSykepengesoeknader | undefined
   ) => {
-    const skjemaData = {
-      organisasjonsnummer: formData.organisasjonsnummer,
-      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
-      personnummer: sykmeldt.fnr!
-    };
-    const sykepengePeriodeId = formData.sykepengePeriodeId || [];
-
-    const validertePersondata = InitieringSchema.safeParse(skjemaData);
-    if (!validertePersondata.success) {
-      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
-    }
-
-    if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
-      // Basert på søknader fra arbeidstakeren
-      const sykmeldingsperiode: SoeknadArbeidstaker[] = getSykmeldingsperiodeFraSoeknad(
-        formData,
-        mottatteSykepengesoeknader
-      );
-
-      if (sykepengePeriodeId.length === 0) {
-        logger.info(
-          '[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet' +
-            JSON.stringify({
-              formData,
-              sykepengesoknader: mottatteSykepengesoeknader
-            })
-        );
-        setError('sykepengePeriodeId', {
-          message: 'Ingen sykmeldingsperioder valgt',
-          type: 'manual'
-        });
-        return;
+    if (formData.forespurtSykepengePeriodeId !== 'andrePerioder') {
+      if (formData.forespurtSykepengePeriodeId) {
+        router.push(`/${formData.forespurtSykepengePeriodeId}`);
       }
-
-      if (validertePersondata.success) {
-        setIsLoading(true);
-        const sykmeldtePerioder = sykmeldingsperiode.map((periode) => ({
-          ...periode,
-          vedtaksperiodeId: periode.vedtaksperiodeId,
-          egenmeldingsperioder: periode.egenmeldingsperioder
-        }));
-
-        handleValidFormData(validertePersondata.data, sykmeldtePerioder);
-        return;
-      } else {
-        logger.error(
-          '[initieringAnnet] Submit stoppet: validering av skjema feilet' +
-            JSON.stringify(validertePersondata.error.issues)
-        );
-      }
+      return;
     }
-    if (formData.forespurtSykepengePeriodeId) {
-      router.push(`/${formData.forespurtSykepengePeriodeId}`);
-    }
-  };
 
-  const getSykmeldingsperiodeFraSoeknad = (
-    formData: Skjema,
-    mottatteSykepengesoeknader: EndepunktSykepengesoeknader | undefined
-  ) => {
-    const sykmeldingsperiode =
+    const sykmeldingsperioder =
       mottatteSykepengesoeknader?.soeknaderArbeidstaker.filter((soeknad) =>
         formData.sykepengePeriodeId?.includes(soeknad.vedtaksperiodeId)
       ) ?? [];
 
-    return sykmeldingsperiode;
+    if (sykmeldingsperioder.length === 0) {
+      logger.info('[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet');
+      setError('sykepengePeriodeId', {
+        message: 'Ingen sykmeldingsperioder valgt',
+        type: 'manual'
+      });
+      return;
+    }
+
+    const validertePersondata = InitieringSchema.safeParse({
+      organisasjonsnummer: formData.organisasjonsnummer,
+      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
+      personnummer: sykmeldt.fnr
+    });
+    if (!validertePersondata.success) {
+      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
+      return;
+    }
+
+    setIsLoading(true);
+    initierValgtePerioder(validertePersondata.data, sykmeldingsperioder);
   };
 
-  const handleValidFormData = (
+  const initierValgtePerioder = (
     validerteData: z.infer<typeof InitieringSchema>,
     sykmeldingsperiode: SoeknadArbeidstaker[]
   ): void => {
@@ -190,12 +157,7 @@ const InitieringAnnet: NextPage = () => {
         setSelvbestemtType,
         setHarGradertSykmelding
       },
-      {
-        fulltNavn: validerteData.fulltNavn,
-        personnummer: validerteData.personnummer,
-        organisasjonsnummer: validerteData.organisasjonsnummer,
-        orgNavn
-      },
+      { ...validerteData, orgNavn },
       sykmeldingsperiode
     );
     router.push('/arbeidsgiverInitiertInnsending');

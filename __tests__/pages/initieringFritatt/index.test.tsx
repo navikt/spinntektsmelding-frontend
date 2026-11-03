@@ -28,6 +28,7 @@ import { __mockedRouter as mockedRouter } from 'next/navigation';
 import testFnr from '../../../mockdata/testFnr';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import useMineTilganger from '../../../utils/useMineTilganger';
+import { logger } from '@navikt/next-logger';
 
 vi.mock('../../../utils/useMineTilganger', () => ({
   default: vi.fn()
@@ -299,15 +300,17 @@ describe('InitieringFritatt page', () => {
   });
 
   it.each([
-    { underenheter: [] },
+    { fulltNavn: 'Ukjent navn', underenheter: [] },
+    { fulltNavn: '', underenheter: [] },
     {
+      fulltNavn: 'Ukjent navn',
       underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' }]
     }
   ])(
-    'submits valid form using the organisation name from tilganger with arbeidsforhold $underenheter',
-    async ({ underenheter }) => {
+    'submits without arbeidsforhold using tilganger with name "$fulltNavn" and units $underenheter',
+    async ({ fulltNavn, underenheter }) => {
       const mockData = {
-        fulltNavn: 'Ukjent navn',
+        fulltNavn,
         fnr: testFnr.GyldigeFraDolly.TestPerson1,
         underenheter
       };
@@ -325,7 +328,18 @@ describe('InitieringFritatt page', () => {
       );
 
       await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+      const logError = vi.spyOn(logger, 'error');
       fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+      if (!fulltNavn) {
+        await waitFor(() =>
+          expect(logError).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
+        );
+        expect(fakeStore.initPerson).not.toHaveBeenCalled();
+        expect(mockedRouter.push).not.toHaveBeenCalled();
+        logError.mockRestore();
+        return;
+      }
 
       await waitFor(() => {
         expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret');
@@ -339,8 +353,15 @@ describe('InitieringFritatt page', () => {
         'Child Org'
       );
       expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('UtenArbeidsforhold');
+      expect(fakeStore.setSkjemaStatus).toHaveBeenCalledWith('SELVBESTEMT');
+      expect(fakeStore.initFravaersperiode).toHaveBeenCalledWith([]);
+      expect(fakeStore.initEgenmeldingsperiode).toHaveBeenCalledWith([]);
+      expect(fakeStore.tilbakestillArbeidsgiverperiode).toHaveBeenCalledOnce();
+      expect(fakeStore.setVedtaksperiodeId).not.toHaveBeenCalled();
+      expect(fakeStore.setHarGradertSykmelding).not.toHaveBeenCalled();
       // navigation
       await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
+      logError.mockRestore();
     }
   );
 
@@ -440,9 +461,9 @@ describe('InitieringFritatt page', () => {
     await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith(`/${forespoerselId}`));
   });
 
-  it('submits andrePerioder selection and navigates to arbeidsgiverInitiertInnsending', async () => {
+  it.each(['Ukjent navn', ''])('submits andrePerioder with person name "%s"', async (fulltNavn) => {
     const mockData = {
-      fulltNavn: 'Ukjent navn',
+      fulltNavn,
       fnr: testFnr.GyldigeFraDolly.TestPerson1,
       underenheter: [
         { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' },
@@ -479,7 +500,18 @@ describe('InitieringFritatt page', () => {
     await user.click(await screen.findByRole('radio', { name: /en annen periode/ }));
     await user.click(await screen.findByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
 
+    const logError = vi.spyOn(logger, 'error');
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+    if (!fulltNavn) {
+      await waitFor(() =>
+        expect(logError).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
+      );
+      expect(fakeStore.initPerson).not.toHaveBeenCalled();
+      expect(mockedRouter.push).not.toHaveBeenCalled();
+      logError.mockRestore();
+      return;
+    }
 
     await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending'));
     expect(fakeStore.initPerson).toHaveBeenCalledWith(
@@ -491,6 +523,7 @@ describe('InitieringFritatt page', () => {
     expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
     expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith(uuid);
     expect(fakeStore.setHarGradertSykmelding).toHaveBeenCalledWith(true);
+    logError.mockRestore();
   });
 
   it('clears refund choices when changing the period choice and resetting the form', async () => {
