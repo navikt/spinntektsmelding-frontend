@@ -83,9 +83,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
 
   test('No changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
-    await setIngenArbeidsgiverperiodeIfVisible(page);
-    await answerFullLonnIfVisible(page);
-    await fillKortAgpIfVisible(page);
+    await expect(
+      page.getByText('Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen.', { exact: false })
+    ).toBeVisible();
     // select "Nei" in refusjon group
     await formPage.checkRadioButton('Betaler arbeidsgiver lønn og krever refusjon under sykefraværet?', 'Nei');
 
@@ -93,7 +93,6 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
     await formPage.fillInput('Telefon innsender', '12345678');
     // confirm
     await formPage.checkCheckbox('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.');
-    await fillKortAgpIfVisible(page);
     // submit
     const req = await formPage.submitAndWaitForRequest('**/innsendingInntektsmelding');
     // assert request body

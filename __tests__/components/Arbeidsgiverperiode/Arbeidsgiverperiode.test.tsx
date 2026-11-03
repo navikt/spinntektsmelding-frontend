@@ -334,6 +334,10 @@ describe('TidligereInntekt', () => {
       { fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 21), id: '123' }
     ];
 
+    useBoundStore.setState({
+      sykmeldingsperioder: [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 21), id: '123' }]
+    });
+
     const { rerender } = render(
       <TestWrapper>
         <Arbeidsgiverperiode
@@ -350,6 +354,48 @@ describe('TidligereInntekt', () => {
     expect(useBoundStore.getState().arbeidsgiverperiodeKort).toBe(true);
     expect(useBoundStore.getState().fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
     expect(getFormValues()).toMatchObject({ fullLonn: 'Nei' });
+
+    rerender(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={fullArbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.SELVBESTEMT}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={false}
+        />
+      </TestWrapper>
+    );
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeKort).toBe(false);
+    expect(useBoundStore.getState().fullLonnIArbeidsgiverPerioden?.status).toBeUndefined();
+  });
+
+  it('should update short-period state for self-determined employer periods, fullLonn should not be set when sykmeldingsperioder is missing', () => {
+    const shortArbeidsgiverperiode: Array<Periode> = [
+      { fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 16), id: '123' }
+    ];
+    const fullArbeidsgiverperiode: Array<Periode> = [
+      { fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 21), id: '123' }
+    ];
+
+    const { rerender } = render(
+      <TestWrapper>
+        <Arbeidsgiverperiode
+          arbeidsgiverperioder={shortArbeidsgiverperiode}
+          setIsDirtyForm={mockSetIsDirtyForm}
+          skjemastatus={SkjemaStatus.SELVBESTEMT}
+          onTilbakestillArbeidsgiverperiode={mockOnTilbakestillArbeidsgiverperiode}
+          skalViseArbeidsgiverperiode={false}
+          skalViseEgenmelding={false}
+        />
+      </TestWrapper>
+    );
+
+    expect(useBoundStore.getState().arbeidsgiverperiodeKort).toBe(true);
+    expect(useBoundStore.getState().fullLonnIArbeidsgiverPerioden?.status).toBe('Nei');
+    expect(getFormValues()).toMatchObject({ fullLonn: '' });
 
     rerender(
       <TestWrapper>

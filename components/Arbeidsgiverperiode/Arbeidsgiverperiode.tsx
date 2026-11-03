@@ -244,7 +244,9 @@ export default function Arbeidsgiverperiode({
       : '';
 
   const onArbeidsgiverBetalerFullLonnIArbeidsgiverperioden = useEffectEvent((value: YesNo) => {
-    setValue('fullLonn', value);
+    if (sykmeldingsperioder && sykmeldingsperioder.length > 0) {
+      setValue('fullLonn', value);
+    }
     arbeidsgiverBetalerFullLonnIArbeidsgiverperioden(value);
   });
 
