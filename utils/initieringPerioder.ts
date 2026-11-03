@@ -22,7 +22,7 @@ export function formaterEgenmeldingsdager(egenmeldingsdager: Periode[] | null | 
   return 'Egenmeldingsperiode: ' + egenmeldingsdager.map((periode) => formaterPeriode(periode)).join(', ');
 }
 
-export function getFravaersperioder(perioder: readonly Periode[]): ApiPeriode[] {
+function getFravaersperioder(perioder: readonly Periode[]): ApiPeriode[] {
   const fravaersperioder = perioder.map((periode) => ({
     fom: formatIsoDate(parseIsoDate(periode.fom)),
     tom: formatIsoDate(parseIsoDate(periode.tom))
