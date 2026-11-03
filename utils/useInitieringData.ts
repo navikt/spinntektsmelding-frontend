@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { UseFormSetError } from 'react-hook-form';
-import { EndepunktArbeidsforholdSchema } from '../schema/EndepunktArbeidsforholdSchema';
+import { mapArbeidsforhold } from './initieringArbeidsgivere';
 import {
   EndepunktSykepengesoeknaderSchema,
   type EndepunktSykepengesoeknader,
@@ -24,27 +24,6 @@ export type SykepengePeriode = {
 function getForespoerselId(forespoersler: Forespoersel[], fom: string): string | undefined {
   return forespoersler.find((forespoersel) => forespoersel.sykmeldingsperioder.some((periode) => periode.fom === fom))
     ?.forespoerselId;
-}
-
-function mapArbeidsforhold(data: unknown, hasError: boolean) {
-  const parsed = EndepunktArbeidsforholdSchema.safeParse(data);
-  if (!parsed.success || hasError) {
-    return { arbeidsforhold: [], fulltNavn: '', orgnrUnderenhet: undefined, orgNavnMangler: false };
-  }
-
-  const arbeidsforhold = parsed.data.underenheter.flatMap((arbeidsgiver) => {
-    if (!arbeidsgiver) {
-      return [];
-    }
-    return [{ orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet, virksomhetsnavn: arbeidsgiver.virksomhetsnavn }];
-  });
-
-  return {
-    arbeidsforhold,
-    fulltNavn: parsed.data.fulltNavn ?? 'Ukjent navn',
-    orgnrUnderenhet: parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : undefined,
-    orgNavnMangler: parsed.data.underenheter.some((arbeidsgiver) => arbeidsgiver?.orgnrUnderenhet === null)
-  };
 }
 
 function mapSykepengePerioder(data: EndepunktSykepengesoeknader | undefined): SykepengePeriode[] {

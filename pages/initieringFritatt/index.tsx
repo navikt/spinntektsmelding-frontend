@@ -37,7 +37,7 @@ import type { SoeknadArbeidstaker } from '../../schema/EndepunktSykepengesoeknad
 import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 import useMineTilganger from '../../utils/useMineTilganger';
-import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
+import { mapArbeidsgiverTilganger } from '../../utils/initieringArbeidsgivere';
 
 type SkjemaData = {
   organisasjonsnummer: string;
@@ -81,14 +81,7 @@ const InitieringFritatt: NextPage = () => {
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
 
-  const arbeidsgiverTilganger = useMemo<{ orgnrUnderenhet: string; virksomhetsnavn: string }[]>(() => {
-    if (!tilganger) return [];
-
-    return collectNestedOrgs(tilganger).map((org) => ({
-      orgnrUnderenhet: org.orgnr,
-      virksomhetsnavn: org.navn
-    }));
-  }, [tilganger]);
+  const arbeidsgiverTilganger = useMemo(() => mapArbeidsgiverTilganger(tilganger), [tilganger]);
 
   const {
     data: arbeidsforholdData,
