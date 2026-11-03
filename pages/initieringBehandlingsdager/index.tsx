@@ -1,17 +1,13 @@
-import { Button, Alert, Link, RadioGroup, Radio } from '@navikt/ds-react';
+import { Button, LocalAlert, Link, RadioGroup, Radio } from '@navikt/ds-react';
 import { NextPage } from 'next';
 import { z } from 'zod';
 import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
-import lokalStyling from '../initieringAnnet/initiering.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { useMemo, useState } from 'react';
 import SelectArbeidsgiver, { ArbeidsgiverSelect } from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -36,7 +32,7 @@ import environment from '../../config/environment';
 import { finnSammenhengendePeriodeManuellJustering } from '../../utils/finnArbeidsgiverperiode';
 import { finnSorterteUnikePerioder, overlappendePeriode } from '../../utils/finnBestemmendeFravaersdag';
 import sorterFomStigende from '../../utils/sorterFomStigende';
-import FeilVedHentingAvPersondata from '../initieringAnnet/FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
@@ -279,113 +275,116 @@ const InitieringBehandlingsdager: NextPage = () => {
   const gyldigOrgNummer = isMod11Number(organisasjonsnummer ?? '');
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
-      <PageContent title='Inntektsmelding sykepenger'>
-        <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
-          <FormProvider {...methods}>
-            <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
-              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyling.persondata}>
-                <div className={lokalStyling.navn}>
-                  <TextLabel>Navn</TextLabel>
-                  <p>{fulltNavn}</p>
-                </div>
+    <InitieringLayout>
+      <FormProvider {...methods}>
+        <form className={lokalStyling.form} onSubmit={handleSubmit(submitForm)}>
+          <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
+          <div className={lokalStyling.persondata}>
+            <div className={lokalStyling.navn}>
+              <TextLabel>Navn</TextLabel>
+              <p>{fulltNavn}</p>
+            </div>
+            <div>
+              <TextLabel>Fødselsnummer</TextLabel>
+              <p>{sykmeldt.fnr}</p>
+            </div>
+          </div>
+          {!data && !error && <Loading />}
+          {data && (
+            <>
+              <div>
                 <div>
-                  <TextLabel>Fødselsnummer</TextLabel>
-                  <p>{sykmeldt.fnr}</p>
+                  <SelectArbeidsgiver
+                    arbeidsforhold={arbeidsforhold}
+                    id='organisasjonsnummer'
+                    register={register}
+                    error={errors.organisasjonsnummer?.message as string}
+                    description='Dette vil være  enheten du representerer når du sender inn inntektsmeldingen.'
+                    descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
+                  />
                 </div>
               </div>
-              {!data && !error && <Loading />}
-              {data && (
+              {spIsLoading && <Loading />}
+              {spData && organisasjonsnummer && (
                 <>
-                  <div>
-                    <div>
-                      <SelectArbeidsgiver
-                        arbeidsforhold={arbeidsforhold}
-                        id='organisasjonsnummer'
-                        register={register}
-                        error={errors.organisasjonsnummer?.message as string}
-                        description='Dette vil være  enheten du representerer når du sender inn inntektsmeldingen.'
-                        descriptionLabel='Hvilken underenhet er personen sykmeldt fra'
-                      />
-                    </div>
-                  </div>
-                  {spIsLoading && <Loading />}
-                  {spData && organisasjonsnummer && (
-                    <>
-                      <RadioGroup
-                        legend='Velg periode for behandlingsdager'
-                        id='sykmeldingId'
-                        error={errors.sykmeldingId?.message as string}
-                        onChange={handleSykmeldingIdRadio}
-                      >
-                        {sykepengePerioder.map((periode) => (
-                          <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager < 12}>
-                            {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
-                            {formaterBehandlingsdager(periode.antallBehandlingsdager)}
-                          </Radio>
-                        ))}
-                      </RadioGroup>
-                      {sykepengePerioder.length > 0 &&
-                        sykepengePerioder.every((periode) => periode.antallBehandlingsdager < 12) && (
-                          <Alert variant='warning'>
-                            Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
-                            kreves 12 eller flere behandlingsdager i sykmeldingsperioden for å kunne sende inn
-                            inntektsmelding for behandlingsdager.
-                          </Alert>
-                        )}
-                    </>
-                  )}
-
-                  {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
-                    <Alert variant='error'>
-                      Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen.
-                      Sjekk at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
-                      behandlingsdager er sendt inn.
-                    </Alert>
-                  )}
+                  <RadioGroup
+                    legend='Velg periode for behandlingsdager'
+                    id='sykmeldingId'
+                    error={errors.sykmeldingId?.message as string}
+                    onChange={handleSykmeldingIdRadio}
+                  >
+                    {sykepengePerioder.map((periode) => (
+                      <Radio key={periode.id} value={periode.id} disabled={periode.antallBehandlingsdager < 12}>
+                        {formatDate(periode.fom)} - {formatDate(periode.tom)}{' '}
+                        {formaterBehandlingsdager(periode.antallBehandlingsdager)}
+                      </Radio>
+                    ))}
+                  </RadioGroup>
+                  {sykepengePerioder.length > 0 &&
+                    sykepengePerioder.every((periode) => periode.antallBehandlingsdager < 12) && (
+                      <LocalAlert status='warning'>
+                        <LocalAlert.Header>
+                          <LocalAlert.Title>For få behandlingsdager</LocalAlert.Title>
+                        </LocalAlert.Header>
+                        <LocalAlert.Content>
+                          Ingen av periodene kan velges fordi sykmeldingen inneholder for få behandlingsdager. Det
+                          kreves 12 eller flere behandlingsdager i sykmeldingsperioden for å kunne sende inn
+                          inntektsmelding for behandlingsdager.
+                        </LocalAlert.Content>
+                      </LocalAlert>
+                    )}
                 </>
               )}
-              <div className={lokalStyling.knapperad}>
-                <Button
-                  type='button'
-                  variant='tertiary'
-                  className={lokalStyling.primaryKnapp}
-                  onClick={() => history.back()}
-                >
-                  Tilbake
-                </Button>
-                <Button
-                  variant='primary'
-                  className={lokalStyling.primaryKnapp}
-                  loading={isLoading}
-                  disabled={blokkerInnsending}
-                >
-                  Neste
-                </Button>
-              </div>
-            </form>
-          </FormProvider>
-          {antallDagerMellomSykmeldingsperioder > 16 && (
-            <Alert variant='error' className={lokalStyling.alertPadding}>
-              <Heading1>Det er mer enn 16 dager mellom sykmeldingsperiodene</Heading1>
-              Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
-              hver av periodene.
-            </Alert>
+
+              {(spError || (gyldigOrgNummer && spData && sykepengePerioder.length === 0)) && !spIsLoading && (
+                <LocalAlert status='error'>
+                  <LocalAlert.Header>
+                    <LocalAlert.Title>Finner ingen søknader om behandlingsdager</LocalAlert.Title>
+                  </LocalAlert.Header>
+                  <LocalAlert.Content>
+                    Finner ingen søknader om behandlingsdager for den valgte personen i den valgte organisasjonen. Sjekk
+                    at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren og at søknad om
+                    behandlingsdager er sendt inn.
+                  </LocalAlert.Content>
+                </LocalAlert>
+              )}
+            </>
           )}
-          Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
-          <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-        </div>
-      </PageContent>
-    </div>
+          <div className={lokalStyling.knapperad}>
+            <Button
+              type='button'
+              variant='tertiary'
+              className={lokalStyling.primaryKnapp}
+              onClick={() => history.back()}
+            >
+              Tilbake
+            </Button>
+            <Button
+              variant='primary'
+              className={lokalStyling.primaryKnapp}
+              loading={isLoading}
+              disabled={blokkerInnsending}
+            >
+              Neste
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+      {antallDagerMellomSykmeldingsperioder > 16 && (
+        <LocalAlert status='error' className={lokalStyling.alertPadding}>
+          <LocalAlert.Header>
+            <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
+            hver av periodene.
+          </LocalAlert.Content>
+        </LocalAlert>
+      )}
+      Inntektsmeldinger som allerede er forespurt, kan finnes i{' '}
+      <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+      <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+    </InitieringLayout>
   );
 };
 

@@ -1,18 +1,13 @@
 import { LocalAlert, Button, Link } from '@navikt/ds-react';
-import AlertKorrigereRefusjon from '../../components/Initiering/AlertKorrigereRefusjon';
 import { NextPage } from 'next';
 import { z } from 'zod';
-import { useForm, SubmitHandler, FormProvider, useWatch, ControllerRenderProps } from 'react-hook-form';
+import { useForm, SubmitHandler, FormProvider, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import Heading1 from '../../components/Heading1/Heading1';
-import PageContent from '../../components/PageContent/PageContent';
-import Head from 'next/head';
-import styles from '../../styles/Home.module.css';
-import lokalStyling from './initiering.module.css';
+import InitieringLayout from '../../components/Initiering/InitieringLayout';
+import lokalStyling from '../../styles/initiering.module.css';
 import TextLabel from '../../components/TextLabel';
 
-import BannerUtenVelger from '../../components/BannerUtenVelger/BannerUtenVelger';
 import { useState } from 'react';
 import SelectArbeidsgiver from '../../components/SelectArbeidsgiver/SelectArbeidsgiver';
 import FeilListe from '../../components/Feilsammendrag/FeilListe';
@@ -25,26 +20,20 @@ import { useRouter } from 'next/navigation';
 import {
   EndepunktSykepengesoeknader,
   EndepunktSykepengesoeknaderSchema,
-  Forespoersel,
   SoeknadArbeidstaker
 } from '../../schema/EndepunktSykepengesoeknaderSchema';
 import { logger } from '@navikt/next-logger';
 import environment from '../../config/environment';
-import OrdinaryJaNei from '../../components/OrdinaryJaNei/OrdinaryJaNei';
-import FeilVedHentingAvPersondata from './FeilVedHentingAvPersondata';
+import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHentingAvPersondata';
 import { EndepunktArbeidsforholdSchema } from '../../schema/EndepunktArbeidsforholdSchema';
-import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
+import {
+  InitieringAnnetSkjemaSchema,
+  type InitieringAnnetSkjema as Skjema
+} from '../../schema/InitieringPeriodevalgSchema';
 import useInitieringData from '../../utils/useInitieringData';
-import ForlengetPeriodeInfo from '../../components/Initiering/ForlengetPeriodeInfo';
-import { visFomDato, visTomDato } from '../../utils/initieringPerioder';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
-import { AlertEndreRefusjon } from '../../components/Initiering/AlertEndreRefusjon';
-
-export const finnForespoerselId = (soeknader: Forespoersel[], vedtaksperiodeId: string) => {
-  const soeknad = soeknader.find((s) => s.vedtaksperiodeId === vedtaksperiodeId);
-  return soeknad ? soeknad.forespoerselId : null;
-};
+import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 
 const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -59,58 +48,19 @@ const InitieringAnnet: NextPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const skjemaSchema = SkjemaInitieringSchema.safeExtend({
-    sykepengePeriodeId: z.array(z.uuid()).optional(),
-    forespurtSykepengePeriodeId: z.uuid().or(z.literal('andrePerioder')).optional(),
-    endreRefusjon: z.literal('Ja').or(z.literal('Nei')).or(z.literal('')).optional()
-  }).superRefine((data, ctx) => {
-    if (!data.forespurtSykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge hva du vil gjøre videre',
-        path: ['forespurtSykepengePeriodeId']
-      });
-    }
-    if (data.forespurtSykepengePeriodeId === 'andrePerioder' && !data.sykepengePeriodeId) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må velge minst én periode du vil sende inntektsmelding for',
-        path: ['sykepengePeriodeId']
-      });
-    }
-    if (data.endreRefusjon === '') {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Du må svare på dette spørsmålet',
-        path: ['endreRefusjon']
-      });
-    }
-  });
-
-  type Skjema = z.infer<typeof skjemaSchema>;
-
   const methods = useForm<Skjema>({
-    resolver: zodResolver(skjemaSchema)
+    resolver: zodResolver(InitieringAnnetSkjemaSchema)
   });
 
   const {
     register,
-    resetField,
     setError,
-    setValue,
     handleSubmit,
     formState: { errors }
   } = methods;
 
   const antallDagerMellomSykmeldingsperioder = 0;
-  const [harValgtPeriodeMedForlengelse, setHarValgtPeriodeMedForlengelse] = useState(false);
-  const [valgtePerioderMedForlengelse, setValgtePerioderMedForlengelse] = useState<string[]>([]);
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
-  const endreRefusjon: string | undefined = useWatch({ name: 'endreRefusjon', control: methods.control });
-  const forespurtSykepengePeriodeId: string | undefined = useWatch({
-    name: 'forespurtSykepengePeriodeId',
-    control: methods.control
-  });
 
   const {
     data,
@@ -153,75 +103,42 @@ const InitieringAnnet: NextPage = () => {
     mottatteData: z.infer<typeof EndepunktArbeidsforholdSchema>,
     mottatteSykepengesoeknader: EndepunktSykepengesoeknader | undefined
   ) => {
-    const skjemaData = {
-      organisasjonsnummer: formData.organisasjonsnummer,
-      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
-      personnummer: sykmeldt.fnr!
-    };
-    const sykepengePeriodeId = formData.sykepengePeriodeId || [];
-
-    const validertePersondata = InitieringSchema.safeParse(skjemaData);
-    if (!validertePersondata.success) {
-      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
-    }
-
-    if (formData.forespurtSykepengePeriodeId === 'andrePerioder') {
-      // Basert på søknader fra arbeidstakeren
-      const sykmeldingsperiode: SoeknadArbeidstaker[] = getSykmeldingsperiodeFraSoeknad(
-        formData,
-        mottatteSykepengesoeknader
-      );
-
-      if (sykepengePeriodeId.length === 0) {
-        logger.info(
-          '[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet' +
-            JSON.stringify({
-              formData,
-              sykepengesoknader: mottatteSykepengesoeknader
-            })
-        );
-        setError('sykepengePeriodeId', {
-          message: 'Ingen sykmeldingsperioder valgt',
-          type: 'manual'
-        });
-        return;
+    if (formData.forespurtSykepengePeriodeId !== 'andrePerioder') {
+      if (formData.forespurtSykepengePeriodeId) {
+        router.push(`/${formData.forespurtSykepengePeriodeId}`);
       }
-
-      if (validertePersondata.success) {
-        setIsLoading(true);
-        const sykmeldtePerioder = sykmeldingsperiode.map((periode) => ({
-          ...periode,
-          vedtaksperiodeId: periode.vedtaksperiodeId,
-          egenmeldingsperioder: periode.egenmeldingsperioder
-        }));
-
-        handleValidFormData(validertePersondata.data, sykmeldtePerioder);
-        return;
-      } else {
-        logger.error(
-          '[initieringAnnet] Submit stoppet: validering av skjema feilet' +
-            JSON.stringify(validertePersondata.error.issues)
-        );
-      }
+      return;
     }
-    if (formData.forespurtSykepengePeriodeId) {
-      router.push(`/${formData.forespurtSykepengePeriodeId}`);
-    }
-  };
 
-  const getSykmeldingsperiodeFraSoeknad = (
-    formData: Skjema,
-    mottatteSykepengesoeknader: EndepunktSykepengesoeknader | undefined
-  ) => {
-    const sykmeldingsperiode =
+    const sykmeldingsperioder =
       mottatteSykepengesoeknader?.soeknaderArbeidstaker.filter((soeknad) =>
         formData.sykepengePeriodeId?.includes(soeknad.vedtaksperiodeId)
       ) ?? [];
 
-    return sykmeldingsperiode;
+    if (sykmeldingsperioder.length === 0) {
+      logger.info('[initieringAnnet] Submit stoppet: ingen sykmeldingsperioder funnet');
+      setError('sykepengePeriodeId', {
+        message: 'Ingen sykmeldingsperioder valgt',
+        type: 'manual'
+      });
+      return;
+    }
+
+    const validertePersondata = InitieringSchema.safeParse({
+      organisasjonsnummer: formData.organisasjonsnummer,
+      fulltNavn: mottatteData.fulltNavn ?? 'Ukjent navn',
+      personnummer: sykmeldt.fnr
+    });
+    if (!validertePersondata.success) {
+      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
+      return;
+    }
+
+    setIsLoading(true);
+    initierValgtePerioder(validertePersondata.data, sykmeldingsperioder);
   };
 
-  const handleValidFormData = (
+  const initierValgtePerioder = (
     validerteData: z.infer<typeof InitieringSchema>,
     sykmeldingsperiode: SoeknadArbeidstaker[]
   ): void => {
@@ -240,197 +157,122 @@ const InitieringAnnet: NextPage = () => {
         setSelvbestemtType,
         setHarGradertSykmelding
       },
-      {
-        fulltNavn: validerteData.fulltNavn,
-        personnummer: validerteData.personnummer,
-        organisasjonsnummer: validerteData.organisasjonsnummer,
-        orgNavn
-      },
+      { ...validerteData, orgNavn },
       sykmeldingsperiode
     );
     router.push('/arbeidsgiverInitiertInnsending');
   };
 
-  const onRadioChange = (value: string, field: ControllerRenderProps<Skjema, 'forespurtSykepengePeriodeId'>) => {
-    resetField('sykepengePeriodeId', { defaultValue: undefined });
-    resetField('endreRefusjon', { defaultValue: undefined });
-    setHarValgtPeriodeMedForlengelse(false);
-
-    field.onChange(value);
-  };
-
-  const onCheckboxChange = (value: string[], field: ControllerRenderProps<Skjema, 'sykepengePeriodeId'>) => {
-    const perioder = soeknaderArbeidstaker.filter((p) => value.includes(p.vedtaksperiodeId));
-    const forlengelse = perioder.find((p) => p.forlengerVedtaksperiodeId);
-    if (forlengelse?.forlengerVedtaksperiodeId) {
-      if (forespoersler.some((f) => f.vedtaksperiodeId === forlengelse?.forlengerVedtaksperiodeId)) {
-        setHarValgtPeriodeMedForlengelse(true);
-      }
-    } else {
-      setHarValgtPeriodeMedForlengelse(false);
-      setValue('endreRefusjon', undefined, { shouldValidate: true, shouldDirty: true });
-    }
-    field.onChange(value);
-    setValgtePerioderMedForlengelse(value);
-  };
-
-  const disablePeriodeCheck = forespurtSykepengePeriodeId !== 'andrePerioder';
-
-  const valgtePerioder = soeknaderArbeidstaker.filter((periode) =>
-    valgtePerioderMedForlengelse.includes(periode.vedtaksperiodeId)
-  );
-
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Innsending av oppdatert informasjon om inntektsmelding</title>
-        <meta name='description' content='Innsending av inntektsmelding' />
-        <link rel='icon' href='/favicon.ico' />
-      </Head>
-      <BannerUtenVelger tittelMedUnderTittel={'Inntektsmelding'} />
-      <PageContent title='Inntektsmelding sykepenger'>
-        <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
-          <FormProvider {...methods}>
-            <form
-              className={lokalStyling.form}
-              onSubmit={handleSubmit(submitForm, (formErrors) => {
-                logger.error(
-                  '[initieringAnnet] Submit stoppet: skjemaet er ugyldig' +
-                    JSON.stringify({
-                      values: methods.getValues(),
-                      errors: formErrors
-                    })
-                );
-              })}
-            >
-              <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
-              <div className={lokalStyling.persondata}>
-                <div className={lokalStyling.navn}>
-                  <TextLabel>Navn</TextLabel>
-                  <p>{fulltNavn}</p>
-                </div>
+    <InitieringLayout>
+      <FormProvider {...methods}>
+        <form
+          className={lokalStyling.form}
+          onSubmit={handleSubmit(submitForm, (formErrors) => {
+            logger.error(
+              '[initieringAnnet] Submit stoppet: skjemaet er ugyldig' +
+                JSON.stringify({
+                  values: methods.getValues(),
+                  errors: formErrors
+                })
+            );
+          })}
+        >
+          <FeilVedHentingAvPersondata fulltNavnMangler={fulltNavn === null} orgNavnMangler={orgNavnMangler} />
+          <div className={lokalStyling.persondata}>
+            <div className={lokalStyling.navn}>
+              <TextLabel>Navn</TextLabel>
+              <p>{fulltNavn}</p>
+            </div>
+            <div>
+              <TextLabel>Fødselsnummer</TextLabel>
+              <p>{sykmeldt.fnr}</p>
+            </div>
+          </div>
+          {!data && !error && <Loading />}
+          {data && (
+            <>
+              <div>
                 <div>
-                  <TextLabel>Fødselsnummer</TextLabel>
-                  <p>{sykmeldt.fnr}</p>
+                  <SelectArbeidsgiver
+                    arbeidsforhold={arbeidsforhold}
+                    id='organisasjonsnummer'
+                    register={register}
+                    error={errors.organisasjonsnummer?.message as string}
+                    description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
+                    descriptionLabel='Hvilken underenhet er den ansatte sykmeldt fra?'
+                  />
                 </div>
               </div>
-              {!data && !error && <Loading />}
-              {data && (
+              {spIsLoading && <Loading />}
+              {spData && organisasjonsnummer && (
                 <>
-                  <div>
-                    <div>
-                      <SelectArbeidsgiver
-                        arbeidsforhold={arbeidsforhold}
-                        id='organisasjonsnummer'
-                        register={register}
-                        error={errors.organisasjonsnummer?.message as string}
-                        description='Dette vil være enheten du representerer når du sender inn inntektsmeldingen.'
-                        descriptionLabel='Hvilken underenhet er den ansatte sykmeldt fra?'
-                      />
-                    </div>
-                  </div>
-                  {spIsLoading && <Loading />}
-                  {spData && organisasjonsnummer && (
-                    <>
-                      <InitieringPeriodevelger
-                        control={methods.control}
-                        errors={errors}
-                        forespoersler={forespoersler}
-                        perioder={sykepengePerioder}
-                        disablePeriodeCheck={disablePeriodeCheck}
-                        checkboxGroupClassName={lokalStyling.checkboxGroup}
-                        onRadioChange={onRadioChange}
-                        onCheckboxChange={onCheckboxChange}
-                      />
+                  <InitieringPeriodevelger forespoersler={forespoersler} perioder={sykepengePerioder} />
 
-                      {(error ||
-                        (organisasjonsnummer &&
-                          data &&
-                          soeknaderArbeidstaker.length === 0 &&
-                          forespoersler.length === 0)) &&
-                        !arbeidsforholdIsLoading &&
-                        !spIsLoading && (
-                          <LocalAlert status='error'>
-                            <LocalAlert.Header>
-                              <LocalAlert.Title>
-                                Finner ingen sykepengesøknader for den valgte personen
-                              </LocalAlert.Title>
-                            </LocalAlert.Header>
-                            <LocalAlert.Content>
-                              Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
-                              Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og
-                              at søknad om sykepenger er sendt inn.
-                            </LocalAlert.Content>
-                          </LocalAlert>
-                        )}
-                    </>
-                  )}
-                  {harValgtPeriodeMedForlengelse && (
-                    <OrdinaryJaNei legend='Skal du endre refusjonen for den ansatte?' name='endreRefusjon' />
-                  )}
-                  {endreRefusjon === 'Ja' && (
-                    <>
-                      <AlertKorrigereRefusjon />
-                      {valgtePerioder.map((periode) => {
-                        const vedtaksperiodeId = periode?.forlengerVedtaksperiodeId;
-                        if (!vedtaksperiodeId) return null;
-
-                        const forespoerselId = finnForespoerselId(forespoersler, vedtaksperiodeId);
-                        return (
-                          <ForlengetPeriodeInfo
-                            key={periode.vedtaksperiodeId}
-                            orgNr={organisasjonsnummer}
-                            arbeidsforhold={arbeidsforhold}
-                            navn={fulltNavn}
-                            fnr={sykmeldt.fnr}
-                            href={forespoerselId ? `${environment.baseUrl}/${forespoerselId}` : undefined}
-                            fomDato={visFomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                            tomDato={visTomDato(vedtaksperiodeId, soeknaderArbeidstaker)}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                  {endreRefusjon === 'Nei' && <AlertEndreRefusjon />}
+                  {(error ||
+                    (organisasjonsnummer &&
+                      data &&
+                      soeknaderArbeidstaker.length === 0 &&
+                      forespoersler.length === 0)) &&
+                    !arbeidsforholdIsLoading &&
+                    !spIsLoading && (
+                      <LocalAlert status='error'>
+                        <LocalAlert.Header>
+                          <LocalAlert.Title>Finner ingen sykepengesøknader for den valgte personen</LocalAlert.Title>
+                        </LocalAlert.Header>
+                        <LocalAlert.Content>
+                          Vi finner ingen sykepengesøknader for den valgte personen i den valgte virksomheten.
+                          Kontroller at du har tilgang til å opprette inntektsmelding for denne arbeidstakeren, og at
+                          søknad om sykepenger er sendt inn.
+                        </LocalAlert.Content>
+                      </LocalAlert>
+                    )}
                 </>
               )}
-              <div className={lokalStyling.knapperad}>
-                <Button
-                  type='button'
-                  variant='tertiary'
-                  className={lokalStyling.primaryKnapp}
-                  onClick={() => history.back()}
-                >
-                  Tilbake
-                </Button>
-                <Button
-                  variant='primary'
-                  className={lokalStyling.primaryKnapp}
-                  loading={isLoading}
-                  // disabled={blokkerInnsending}
-                >
-                  Neste
-                </Button>
-              </div>
-            </form>
-          </FormProvider>
-          {antallDagerMellomSykmeldingsperioder > 16 && (
-            <LocalAlert status='error' className={lokalStyling.alertPadding}>
-              <LocalAlert.Header>
-                <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
-              </LocalAlert.Header>
-              <LocalAlert.Content>
-                Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding
-                for hver av periodene.
-              </LocalAlert.Content>
-            </LocalAlert>
+              <InitieringRefusjon
+                perioder={sykepengePerioder}
+                forespoersler={forespoersler}
+                organisasjonsnummer={organisasjonsnummer}
+                arbeidsforhold={arbeidsforhold}
+                fulltNavn={fulltNavn}
+                fnr={sykmeldt.fnr}
+              />
+            </>
           )}
-          Du finner også forespurte inntektsmeldinger i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
-          <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
-        </div>
-      </PageContent>
-    </div>
+          <div className={lokalStyling.knapperad}>
+            <Button
+              type='button'
+              variant='tertiary'
+              className={lokalStyling.primaryKnapp}
+              onClick={() => history.back()}
+            >
+              Tilbake
+            </Button>
+            <Button
+              variant='primary'
+              className={lokalStyling.primaryKnapp}
+              loading={isLoading}
+              // disabled={blokkerInnsending}
+            >
+              Neste
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+      {antallDagerMellomSykmeldingsperioder > 16 && (
+        <LocalAlert status='error' className={lokalStyling.alertPadding}>
+          <LocalAlert.Header>
+            <LocalAlert.Title>Det er mer enn 16 dager mellom sykmeldingsperiodene</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Hvis oppholdet mellom to sykmeldingsperioder er mer enn 16 dager, må det sendes inn en inntektsmelding for
+            hver av periodene.
+          </LocalAlert.Content>
+        </LocalAlert>
+      )}
+      Du finner også forespurte inntektsmeldinger i <Link href={environment.saksoversiktUrl}>saksoversikten</Link>.
+      <FeilListe skalViseFeilmeldinger={visFeilmeldingliste} feilmeldinger={feilmeldinger} />
+    </InitieringLayout>
   );
 };
 

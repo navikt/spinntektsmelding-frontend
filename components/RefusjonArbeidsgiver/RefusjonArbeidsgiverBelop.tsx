@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Alert, BodyLong } from '@navikt/ds-react';
+import { InfoCard, BodyLong } from '@navikt/ds-react';
 import { useFormContext, useController } from 'react-hook-form';
 import stringishToNumber from '../../utils/stringishToNumber';
 import formatCurrency from '../../utils/formatCurrency';
@@ -84,10 +84,12 @@ export default function RefusjonArbeidsgiverBelop({
           refundere opp til 6G av årslønn.
         </span>
       </div>
-      <Alert variant='info' className={lokalStyling.alert_box}>
-        Hvis den ansatt er delvis sykmeldt, skal du ikke redusere refusjonsbeløpet. Nav baserer seg på full utbetalt
-        lønn og tar hensyn til sykmeldingsgraden i utbetalingen.
-      </Alert>
+      <InfoCard data-color='info' className={lokalStyling.alert_box}>
+        <InfoCard.Content>
+          Hvis den ansatt er delvis sykmeldt, skal du ikke redusere refusjonsbeløpet. Nav baserer seg på full utbetalt
+          lønn og tar hensyn til sykmeldingsgraden i utbetalingen.
+        </InfoCard.Content>
+      </InfoCard>
     </>
   );
 }

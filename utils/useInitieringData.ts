@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { UseFormSetError } from 'react-hook-form';
-import { EndepunktArbeidsforholdSchema } from '../schema/EndepunktArbeidsforholdSchema';
+import { mapArbeidsforhold } from './initieringArbeidsgivere';
 import {
   EndepunktSykepengesoeknaderSchema,
   type EndepunktSykepengesoeknader,
@@ -8,6 +8,7 @@ import {
 } from '../schema/EndepunktSykepengesoeknaderSchema';
 import useArbeidsforhold from './useArbeidsforhold';
 import useSykepengesoeknader from './useSykepengesoeknader';
+import parseIsoDate from './parseIsoDate';
 
 export type SykepengePeriode = {
   id: string;
@@ -26,41 +27,20 @@ function getForespoerselId(forespoersler: Forespoersel[], fom: string): string |
     ?.forespoerselId;
 }
 
-function mapArbeidsforhold(data: unknown, hasError: boolean) {
-  const parsed = EndepunktArbeidsforholdSchema.safeParse(data);
-  if (!parsed.success || hasError) {
-    return { arbeidsforhold: [], fulltNavn: '', orgnrUnderenhet: undefined, orgNavnMangler: false };
-  }
-
-  const arbeidsforhold = parsed.data.underenheter.flatMap((arbeidsgiver) => {
-    if (!arbeidsgiver) {
-      return [];
-    }
-    return [{ orgnrUnderenhet: arbeidsgiver.orgnrUnderenhet, virksomhetsnavn: arbeidsgiver.virksomhetsnavn }];
-  });
-
-  return {
-    arbeidsforhold,
-    fulltNavn: parsed.data.fulltNavn ?? 'Ukjent navn',
-    orgnrUnderenhet: parsed.data.underenheter.length === 1 ? parsed.data.underenheter[0]?.orgnrUnderenhet : undefined,
-    orgNavnMangler: parsed.data.underenheter.some((arbeidsgiver) => arbeidsgiver?.orgnrUnderenhet === null)
-  };
-}
-
 function mapSykepengePerioder(data: EndepunktSykepengesoeknader | undefined): SykepengePeriode[] {
   if (!data) {
     return [];
   }
 
   return data.soeknaderArbeidstaker.map((periode) => ({
-    fom: new Date(periode.sykmeldingsperiode.fom),
-    tom: new Date(periode.sykmeldingsperiode.tom),
+    fom: parseIsoDate(periode.sykmeldingsperiode.fom)!,
+    tom: parseIsoDate(periode.sykmeldingsperiode.tom)!,
     id: periode.vedtaksperiodeId,
     forespoerselId: getForespoerselId(data.forespoersler, periode.sykmeldingsperiode.fom),
     forlengerVedtaksperiodeId: periode.forlengerVedtaksperiodeId ?? undefined,
     egenmeldingsperioder: periode.egenmeldingsperioder.map((egenmeldingsperiode) => ({
-      fom: new Date(egenmeldingsperiode.fom),
-      tom: new Date(egenmeldingsperiode.tom)
+      fom: parseIsoDate(egenmeldingsperiode.fom)!,
+      tom: parseIsoDate(egenmeldingsperiode.tom)!
     }))
   }));
 }

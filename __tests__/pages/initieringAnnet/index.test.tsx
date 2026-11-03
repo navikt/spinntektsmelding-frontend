@@ -19,6 +19,7 @@ import useInitieringData from '../../../utils/useInitieringData';
 import testOrganisasjoner from '../../../mockdata/testOrganisasjoner';
 import testFnr from '../../../mockdata/testFnr';
 import type { EndepunktSykepengesoeknader } from '../../../schema/EndepunktSykepengesoeknaderSchema';
+import { logger } from '@navikt/next-logger';
 
 // Mock state and hooks
 vi.mock('../../../state/useBoundStore', () => ({ default: vi.fn() }));
@@ -105,82 +106,121 @@ describe('InitieringAnnet page', () => {
     // expect(screen.getByRole('status')).toBeInTheDocument(); // Loading uses role="status"
   });
 
-  it('submits valid form and calls store setters and navigation', async () => {
-    // mock arbeidsgiver data
-    const arbData = {
-      fulltNavn: 'OLA NORDMANN',
-      fnr: testFnr.GyldigeFraDolly.TestPerson1,
-      underenheter: [
-        { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test Barnehage' },
-        { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Test Barnehage2' }
-      ],
-      perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
-    };
-    (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
+  it.each(['valgte perioder', 'forespoersel', 'utgaatte perioder', 'ugyldig persondata'])(
+    'handles submission for %s',
+    async (tilfelle) => {
+      // mock arbeidsgiver data
+      const arbData = {
+        fulltNavn: tilfelle === 'ugyldig persondata' ? '' : 'OLA NORDMANN',
+        fnr: testFnr.GyldigeFraDolly.TestPerson1,
+        underenheter: [
+          { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Test Barnehage' },
+          { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Test Barnehage2' }
+        ],
+        perioder: [{ id: 'a', fom: '2023-01-01', tom: '2023-01-10' }]
+      };
+      (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: arbData, error: undefined });
 
-    // mock sykepengesøknader data
-    mockedSykepengesoeknader.data = {
-      forespoersler: [
-        {
-          forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
-          sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
-          egenmeldingsperioder: [],
-          erBesvart: false,
-          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
-        }
-      ],
-      soeknaderArbeidstaker: [
-        {
-          sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
-          egenmeldingsperioder: [],
-          erGradert: false,
-          vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
-        }
-      ],
-      soeknaderBehandlingsdager: []
-    };
+      // mock sykepengesøknader data
+      mockedSykepengesoeknader.data = {
+        forespoersler: [
+          {
+            forespoerselId: '123e4567-e89b-12d3-a456-426614174000',
+            sykmeldingsperioder: [{ fom: '2023-01-01', tom: '2023-01-10' }],
+            egenmeldingsperioder: [],
+            erBesvart: false,
+            vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+          }
+        ],
+        soeknaderArbeidstaker: [
+          {
+            sykmeldingsperiode: { fom: '2023-01-01', tom: '2023-01-10' },
+            egenmeldingsperioder: [],
+            erGradert: false,
+            vedtaksperiodeId: '123e4567-e89b-12d3-a456-426614174000'
+          }
+        ],
+        soeknaderBehandlingsdager: []
+      };
 
-    render(<InitieringAnnet />);
+      render(<InitieringAnnet />);
 
-    // wait for arbeidsgiver select to appear
-    await waitFor(() => expect(screen.getByLabelText(/Hvilken underenhet/)).toBeInTheDocument());
+      // wait for arbeidsgiver select to appear
+      await waitFor(() => expect(screen.getByLabelText(/Hvilken underenhet/)).toBeInTheDocument());
 
-    // select the underenhet
-    const user = userEvent.setup();
-    await user.click(screen.getByLabelText(/Hvilken underenhet/));
-    await user.click(
-      await screen.findByRole('option', { name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage` })
-    );
-
-    // wait for sykmeldingsperiode checkbox
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ })).toBeInTheDocument());
-
-    fireEvent.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
-
-    // choose the periode
-    fireEvent.click(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
-
-    // click "Neste" to submit
-    fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
-
-    // expect store setters to have been called with correct args
-    await waitFor(() => {
-      expect(fakeStore.initPerson).toHaveBeenCalledWith(
-        'OLA NORDMANN',
-        testFnr.GyldigeFraDolly.TestPerson1,
-        testOrganisasjoner[0].organizationNumber,
-        'Test Barnehage'
+      // select the underenhet
+      const user = userEvent.setup();
+      await user.click(screen.getByLabelText(/Hvilken underenhet/));
+      await user.click(
+        await screen.findByRole('option', {
+          name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Test Barnehage`
+        })
       );
-      expect(fakeStore.setSkjemaStatus).toHaveBeenCalled();
-      expect(fakeStore.initFravaersperiode).toHaveBeenCalledWith([{ fom: '2023-01-01', tom: '2023-01-10' }]);
-      expect(fakeStore.initEgenmeldingsperiode).toHaveBeenCalledWith([]); // no egenmeldingsdager
-      expect(fakeStore.tilbakestillArbeidsgiverperiode).toHaveBeenCalled();
-      expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
-      expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
-      // final navigation
-      expect(mockedRouter.push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending');
-    });
-  });
+
+      // wait for sykmeldingsperiode checkbox
+      await waitFor(() =>
+        expect(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ })).toBeInTheDocument()
+      );
+
+      if (tilfelle === 'forespoersel') {
+        await user.click(screen.getByRole('radio', { name: /01.01.2023 - 10.01.2023/ }));
+      } else {
+        await user.click(screen.getByRole('radio', { name: /Eller velg en annen periode/ }));
+        await user.click(screen.getByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
+      }
+
+      if (tilfelle === 'utgaatte perioder') {
+        mockedSykepengesoeknader.data.soeknaderArbeidstaker = [];
+      }
+
+      const logError = vi.spyOn(logger, 'error');
+      fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+
+      if (tilfelle === 'utgaatte perioder') {
+        expect(await screen.findByText('Ingen sykmeldingsperioder valgt')).toBeInTheDocument();
+        expect(fakeStore.initPerson).not.toHaveBeenCalled();
+        expect(mockedRouter.push).not.toHaveBeenCalled();
+        logError.mockRestore();
+        return;
+      }
+
+      if (tilfelle === 'ugyldig persondata') {
+        await waitFor(() =>
+          expect(logError).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
+        );
+        expect(fakeStore.initPerson).not.toHaveBeenCalled();
+        expect(mockedRouter.push).not.toHaveBeenCalled();
+        logError.mockRestore();
+        return;
+      }
+
+      if (tilfelle === 'forespoersel') {
+        await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/123e4567-e89b-12d3-a456-426614174000'));
+        expect(fakeStore.initPerson).not.toHaveBeenCalled();
+        logError.mockRestore();
+        return;
+      }
+
+      // expect store setters to have been called with correct args
+      await waitFor(() => {
+        expect(fakeStore.initPerson).toHaveBeenCalledWith(
+          'OLA NORDMANN',
+          testFnr.GyldigeFraDolly.TestPerson1,
+          testOrganisasjoner[0].organizationNumber,
+          'Test Barnehage'
+        );
+        expect(fakeStore.setSkjemaStatus).toHaveBeenCalled();
+        expect(fakeStore.initFravaersperiode).toHaveBeenCalledWith([{ fom: '2023-01-01', tom: '2023-01-10' }]);
+        expect(fakeStore.initEgenmeldingsperiode).toHaveBeenCalledWith([]); // no egenmeldingsdager
+        expect(fakeStore.tilbakestillArbeidsgiverperiode).toHaveBeenCalled();
+        expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
+        expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
+        // final navigation
+        expect(mockedRouter.push).toHaveBeenCalledWith('/arbeidsgiverInitiertInnsending');
+      });
+      logError.mockRestore();
+    }
+  );
 
   it('submits valid form and error on endre refusjon', async () => {
     // mock arbeidsgiver data

@@ -1,5 +1,5 @@
 import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons';
-import { Alert, BodyLong, Button, Dialog } from '@navikt/ds-react';
+import { LocalAlert, BodyLong, Button, Dialog } from '@navikt/ds-react';
 
 interface HentingAvDataFeiletProps {
   handleCloseModal: () => void;
@@ -31,10 +31,14 @@ export default function HentingAvDataFeilet({
           <Dialog.Title>{visningTitle}</Dialog.Title>
         </Dialog.Header>
         <Dialog.Body>
-          <Alert variant='error'>
-            <BodyLong>Noe gikk galt under henting av data.</BodyLong>
-            <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
-          </Alert>
+          <LocalAlert status='error'>
+            <LocalAlert.Header>
+              <LocalAlert.Title as='h3'>Noe gikk galt under henting av data.</LocalAlert.Title>
+            </LocalAlert.Header>
+            <LocalAlert.Content>
+              <BodyLong>Vennligst prøv igjen ved en senere anledning.</BodyLong>
+            </LocalAlert.Content>
+          </LocalAlert>
         </Dialog.Body>
         <Dialog.Footer>
           <Button variant='primary' onClick={handleCloseModal}>

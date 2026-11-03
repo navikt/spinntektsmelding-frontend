@@ -1,4 +1,4 @@
-import { Alert, BodyLong } from '@navikt/ds-react';
+import { LocalAlert, BodyLong } from '@navikt/ds-react';
 import sjekkOmFerieMaaneder from '../../utils/sjekkOmFerieMaaneder';
 import lokalStyling from './AvvikAdvarselInntekt.module.css';
 
@@ -29,17 +29,27 @@ const AvvikAdvarselInntekt: React.FunctionComponent<AvvikAdvarselInntektProps> =
         </BodyLong>
       )}
       {harTidligereInntekt && manglendeEller0FraAmeldingen && (
-        <Alert variant='warning' className={lokalStyling.feriealert}>
-          Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
-          av innrapportert inntekt for de tre siste månedene. Hvis du ser at det skal være en annen beregnet månedslønn
-          må du endre dette manuelt.
-        </Alert>
+        <LocalAlert status='warning' as='div' className={lokalStyling.feriealert}>
+          <LocalAlert.Header>
+            <LocalAlert.Title as='h3'>Måneder uten rapportert inntekt</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Lønnsopplysningene inneholder måneder uten rapportert inntekt. Vi estimerer beregnet månedslønn til et snitt
+            av innrapportert inntekt for de tre siste månedene. Hvis du ser at det skal være en annen beregnet
+            månedslønn må du endre dette manuelt.
+          </LocalAlert.Content>
+        </LocalAlert>
       )}
       {erFeriemaaneder && (
-        <Alert variant='warning' className={lokalStyling.feriealert}>
-          Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten lønn,
-          skal beregnet månedslønn settes til den ordinære lønnen.
-        </Alert>
+        <LocalAlert status='warning' as='div' className={lokalStyling.feriealert}>
+          <LocalAlert.Header>
+            <LocalAlert.Title as='h3'>Kontroller om lønnsopplysningene inneholder feriepenger</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Lønnsopplysningene kan inneholde feriepenger. Hvis det er utbetalt feriepenger eller avviklet ferie uten
+            lønn, skal beregnet månedslønn settes til den ordinære lønnen.
+          </LocalAlert.Content>
+        </LocalAlert>
       )}
     </>
   );

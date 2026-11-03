@@ -1,4 +1,4 @@
-import { Alert } from '@navikt/ds-react';
+import { LocalAlert } from '@navikt/ds-react';
 
 interface FeilVedHentingAvPersondataProps {
   sykmeldt: {
@@ -30,7 +30,12 @@ export default function FeilVedHentingAvPersondata({ sykmeldt, avsender }: Reado
   return (
     <>
       {(hentingAvPersondataFeilet || hentingAvArbeidsgiverdataFeilet) && (
-        <Alert variant='info'>{feilmeldingTekst}</Alert>
+        <LocalAlert status='warning' as='div'>
+          <LocalAlert.Header>
+            <LocalAlert.Title as='h3'>Kunne ikke hente navn</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>{feilmeldingTekst}</LocalAlert.Content>
+        </LocalAlert>
       )}
     </>
   );

@@ -44,6 +44,16 @@ describe('Initiering Page', () => {
     vi.clearAllMocks();
   });
 
+  it('renders the page heading and form in a single main landmark', () => {
+    render(<Initiering />);
+
+    const main = screen.getByRole('main');
+    expect(main).toContainElement(
+      screen.getByRole('heading', { level: 1, name: 'Opprett inntektsmelding for et sykefravær' })
+    );
+    expect(main).toContainElement(screen.getByLabelText(/Ansattes fødselsnummer/i));
+  });
+
   it('navigates to /initieringFiskere when årsakInnsending is Fiskere', async () => {
     render(<Initiering />);
 
