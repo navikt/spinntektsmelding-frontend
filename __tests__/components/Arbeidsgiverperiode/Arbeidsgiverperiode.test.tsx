@@ -334,6 +334,10 @@ describe('TidligereInntekt', () => {
       { fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 21), id: '123' }
     ];
 
+    useBoundStore.setState({
+      sykmeldingsperioder: [{ fom: new Date(2025, 6, 6), tom: new Date(2025, 6, 21), id: '123' }]
+    });
+
     const { rerender } = render(
       <TestWrapper>
         <Arbeidsgiverperiode

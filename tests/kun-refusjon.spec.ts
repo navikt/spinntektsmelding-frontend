@@ -71,6 +71,9 @@ test.describe('Utfylling og innsending av skjema – refusjon', () => {
 
     // navigate to form
     await page.goto(baseUrl);
+    await expect(
+      page.getByText('Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen.', { exact: false })
+    ).toBeVisible();
   });
 
   test('submit inntektsmelding that only requires refusjon', async ({ page }) => {

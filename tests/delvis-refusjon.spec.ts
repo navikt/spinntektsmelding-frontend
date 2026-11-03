@@ -82,6 +82,9 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
 
     // visit form
     await page.goto(baseUrl);
+    await expect(
+      page.getByText('Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen.', { exact: false })
+    ).toBeVisible();
   });
 
   test('No changes and submit', async ({ page }) => {
@@ -131,7 +134,7 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon)', 
     await page.getByLabel('Telefon innsender').fill('12345678');
     await page.getByLabel('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.').check();
 
-    formPage.clickButton('Send');
+    await formPage.clickButton('Send');
     // select change reason
     await page.getByLabel('Velg endringsårsak').selectOption('Varig lønnsendring');
 
