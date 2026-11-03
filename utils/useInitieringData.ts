@@ -8,6 +8,7 @@ import {
 } from '../schema/EndepunktSykepengesoeknaderSchema';
 import useArbeidsforhold from './useArbeidsforhold';
 import useSykepengesoeknader from './useSykepengesoeknader';
+import parseIsoDate from './parseIsoDate';
 
 export type SykepengePeriode = {
   id: string;
@@ -32,14 +33,14 @@ function mapSykepengePerioder(data: EndepunktSykepengesoeknader | undefined): Sy
   }
 
   return data.soeknaderArbeidstaker.map((periode) => ({
-    fom: new Date(periode.sykmeldingsperiode.fom),
-    tom: new Date(periode.sykmeldingsperiode.tom),
+    fom: parseIsoDate(periode.sykmeldingsperiode.fom)!,
+    tom: parseIsoDate(periode.sykmeldingsperiode.tom)!,
     id: periode.vedtaksperiodeId,
     forespoerselId: getForespoerselId(data.forespoersler, periode.sykmeldingsperiode.fom),
     forlengerVedtaksperiodeId: periode.forlengerVedtaksperiodeId ?? undefined,
     egenmeldingsperioder: periode.egenmeldingsperioder.map((egenmeldingsperiode) => ({
-      fom: new Date(egenmeldingsperiode.fom),
-      tom: new Date(egenmeldingsperiode.tom)
+      fom: parseIsoDate(egenmeldingsperiode.fom)!,
+      tom: parseIsoDate(egenmeldingsperiode.tom)!
     }))
   }));
 }
