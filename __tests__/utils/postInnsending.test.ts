@@ -344,6 +344,35 @@ describe('postInnsending', () => {
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
+  it.each([
+    { status: 400, responseBody: '{"error":123,"detaljer":"diagnostikk-markoer"}' },
+    { status: 400, responseBody: '{"feilmelding":"diagnostikk-markoer"}' },
+    { status: 400, responseBody: '<html>diagnostikk-markoer</html>' },
+    { status: 422, responseBody: '<html>diagnostikk-markoer</html>' }
+  ])('bevarer responsinnholdet i logging ved $status med $responseBody', async ({ status, responseBody }) => {
+    const response = new Response(responseBody, { status });
+    const textSpy = vi.spyOn(response, 'text');
+    const jsonSpy = vi.spyOn(response, 'json');
+    global.fetch = vi.fn().mockResolvedValue(response);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(textSpy).toHaveBeenCalledTimes(1);
+    expect(jsonSpy).not.toHaveBeenCalled();
+    expect(response.bodyUsed).toBe(true);
+    expect(teamLoggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`${responseBody} ${JSON.stringify(body)}`));
+    expect(success).not.toHaveBeenCalled();
+  });
+
   it('returnerer valideringsfeil ved 400-lignende default case med backend error-format', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(418, {

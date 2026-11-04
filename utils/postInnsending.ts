@@ -125,12 +125,13 @@ async function handle500Response<S>(data: Response, options: PostInnsendingRunti
     tittel: 'Innsending feilet - serverfeil',
     component: options.analyticsComponent
   });
-  logger.warn('Feil ved innsending av skjema - 500 ' + JSON.stringify(await safeText(data)));
+  logger.warn('Feil ved innsending av skjema - 500 ' + (await safeText(data)));
 }
 
 async function handle400Response<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
+  const responseText = await safeText(data);
   try {
-    const resultat = (await data.json()) as unknown;
+    const resultat: unknown = JSON.parse(responseText);
     logEvent('skjema innsending feilet', {
       tittel: 'Innsending feilet - valideringsfeil',
       component: options.analyticsComponent
@@ -159,16 +160,15 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn(
-          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
-            data.statusText +
-            ' ' +
-            JSON.stringify(await safeText(data))
+          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText + ' ' + responseText
         );
         safeTeamLoggerWarn(
           'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
             data.statusText +
             ' ' +
-            JSON.stringify((await safeText(data)) + ' ' + JSON.stringify(body))
+            responseText +
+            ' ' +
+            JSON.stringify(body)
         );
       }
     } else {
@@ -179,16 +179,13 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       options.setErrorResponse(mappedErrors);
       options.setShowErrorList(true);
       logger.warn(
-        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
-          data.statusText +
-          ' ' +
-          JSON.stringify(await safeText(data))
+        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText + ' ' + responseText
       );
       safeTeamLoggerWarn(
         'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
           data.statusText +
           ' ' +
-          JSON.stringify(await safeText(data)) +
+          responseText +
           ' ' +
           JSON.stringify(body)
       );
@@ -205,7 +202,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
         err +
         ' ' +
-        JSON.stringify(await safeText(data)) +
+        responseText +
         ' ' +
         JSON.stringify(body)
     );
@@ -260,8 +257,9 @@ function handle401Response(analyticsComponent: string, onUnauthorized: () => voi
 }
 
 async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
+  const responseText = await safeText(data);
   try {
-    const resultat = (await data.json()) as unknown;
+    const resultat: unknown = JSON.parse(responseText);
     logEvent('skjema innsending feilet', {
       tittel: 'Innsending feilet',
       component: options.analyticsComponent
@@ -296,14 +294,9 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
       }
     }
   } catch (err) {
-    logger.warn('Feil ved innsending av skjema - uventet respons ' + err + ' ' + JSON.stringify(await safeText(data)));
+    logger.warn('Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText);
     safeTeamLoggerWarn(
-      'Feil ved innsending av skjema - uventet respons ' +
-        err +
-        ' ' +
-        JSON.stringify(await safeText(data)) +
-        ' ' +
-        JSON.stringify(body)
+      'Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText + ' ' + JSON.stringify(body)
     );
   }
 }
