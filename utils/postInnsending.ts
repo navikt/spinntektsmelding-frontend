@@ -258,12 +258,12 @@ function handle401Response(analyticsComponent: string, onUnauthorized: () => voi
 
 async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
   const responseText = await safeText(data);
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet',
+    component: options.analyticsComponent
+  });
   try {
     const resultat: unknown = JSON.parse(responseText);
-    logEvent('skjema innsending feilet', {
-      tittel: 'Innsending feilet',
-      component: options.analyticsComponent
-    });
     if (typeof resultat === 'object' && resultat !== null && 'error' in (resultat as any)) {
       const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
       if (feilResultat.success === true) {
@@ -291,6 +291,7 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
             ' ' +
             JSON.stringify(body)
         );
+        return;
       }
     }
   } catch (err) {
@@ -299,6 +300,14 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
       'Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText + ' ' + JSON.stringify(body)
     );
   }
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+      property: 'server'
+    }
+  ]);
+  options.setShowErrorList(true);
 }
 
 function handleNetworkError(
