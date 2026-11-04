@@ -82,6 +82,45 @@ describe('postInnsending', () => {
     expect(success).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { format: 'JSON', responseBody: '{"error":"Forbidden"}', contentType: 'application/json' },
+    { format: 'HTML', responseBody: '<html>Forbidden</html>', contentType: 'text/html' },
+    { format: 'tom respons', responseBody: '', contentType: 'text/plain' }
+  ])('viser tilgangsfeil ved 403 med $format uten å lese responsinnholdet', async ({ responseBody, contentType }) => {
+    const response = new Response(responseBody, {
+      status: 403,
+      headers: { 'Content-Type': contentType }
+    });
+    global.fetch = vi.fn().mockResolvedValue(response);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
+      {
+        value: 'Innsending av skjema feilet',
+        error:
+          'Du har ikke tilgang til å sende inn denne inntektsmeldingen. Kontroller at du har valgt riktig virksomhet og har nødvendige rettigheter.',
+        property: 'server'
+      }
+    ]);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+    expect(unauthorized).not.toHaveBeenCalled();
+    expect(success).not.toHaveBeenCalled();
+    expect(mapValidationErrors).not.toHaveBeenCalled();
+    expect(response.bodyUsed).toBe(false);
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith('Feil ved innsending av skjema - 403 - mangler rettigheter');
+    expect(teamLoggerWarnSpy).not.toHaveBeenCalled();
+  });
+
   it('returnerer serverfeil (500) med setErrorResponse', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(500));
 

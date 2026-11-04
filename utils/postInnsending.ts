@@ -82,6 +82,7 @@ async function handleResponse<S>(
       await handleSuccessResponse<S>(data, options.onSuccess);
       return;
     case 500:
+    case 503:
       await handle500Response(data, options);
       return;
     case 400:
@@ -92,6 +93,9 @@ async function handleResponse<S>(
       return;
     case 401:
       handle401Response(options.analyticsComponent, options.onUnauthorized);
+      return;
+    case 403:
+      handle403Response(options);
       return;
     default:
       await handleDefaultResponse(data, options, body);
@@ -228,6 +232,23 @@ function handle404Response(data: Response, setErrorResponse: (errors: ErrorRespo
     }
   ]);
   logger.warn('Feil ved innsending av skjema - 404 ' + JSON.stringify(data));
+}
+
+function handle403Response<S>(options: PostInnsendingRuntimeOptions<S>) {
+  options.setErrorResponse([
+    {
+      value: 'Innsending av skjema feilet',
+      error:
+        'Du har ikke tilgang til å sende inn denne inntektsmeldingen. Kontroller at du har valgt riktig virksomhet og har nødvendige rettigheter.',
+      property: 'server'
+    }
+  ]);
+  options.setShowErrorList(true);
+  logEvent('skjema innsending feilet', {
+    tittel: 'Innsending feilet - mangler rettigheter',
+    component: options.analyticsComponent
+  });
+  logger.warn('Feil ved innsending av skjema - 403 - mangler rettigheter');
 }
 
 function handle401Response(analyticsComponent: string, onUnauthorized: () => void) {
