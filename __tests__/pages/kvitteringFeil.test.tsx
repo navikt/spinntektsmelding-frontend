@@ -38,23 +38,29 @@ describe.each([
     expect(useBoundStore.getState().skjemaFeilet).toBe(false);
   });
 
-  it('viser feildialog og lagrer feilstatus ved 500 uten data i store', () => {
-    render(<Component {...kvitteringProps} kvitteringStatus={500} />);
+  it.each([401, 403, 429, 500, 502, 503, 504])(
+    'viser feildialog og lagrer feilstatus ved %s uten data i store',
+    (status) => {
+      render(<Component {...kvitteringProps} kvitteringStatus={status} />);
 
-    expect(screen.getByRole('dialog', { name: 'Henting av kvitteringen feilet' })).toBeVisible();
-    expect(screen.getByText('Noe gikk galt under henting av data.')).toBeVisible();
-    expect(screen.getByText('Vennligst prøv igjen ved en senere anledning.')).toBeVisible();
-    expect(useBoundStore.getState().skjemaFeilet).toBe(true);
-  });
+      expect(screen.getByRole('dialog', { name: 'Henting av kvitteringen feilet' })).toBeVisible();
+      expect(screen.getByText('Noe gikk galt under henting av data.')).toBeVisible();
+      expect(screen.getByText('Vennligst prøv igjen ved en senere anledning.')).toBeVisible();
+      expect(useBoundStore.getState().skjemaFeilet).toBe(true);
+    }
+  );
 
-  it('viser feildialog ved 500 med data i store uten å lagre feilstatus', () => {
-    useBoundStore.setState({ sykmeldingsperioder: [periode] });
+  it.each([401, 403, 429, 500, 502, 503, 504])(
+    'viser feildialog ved %s med data i store uten å lagre feilstatus',
+    (status) => {
+      useBoundStore.setState({ sykmeldingsperioder: [periode] });
 
-    render(<Component {...kvitteringProps} kvitteringStatus={500} />);
+      render(<Component {...kvitteringProps} kvitteringStatus={status} />);
 
-    expect(screen.getByRole('dialog', { name: 'Henting av kvitteringen feilet' })).toBeVisible();
-    expect(useBoundStore.getState().skjemaFeilet).toBe(false);
-  });
+      expect(screen.getByRole('dialog', { name: 'Henting av kvitteringen feilet' })).toBeVisible();
+      expect(useBoundStore.getState().skjemaFeilet).toBe(false);
+    }
+  );
 
   it('viser feildialog ved lagret skjemaFeilet selv om status er 200', () => {
     useBoundStore.setState({ skjemaFeilet: true });

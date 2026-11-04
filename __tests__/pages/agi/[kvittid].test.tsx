@@ -717,29 +717,40 @@ describe('getServerSideProps', () => {
     expect(result).not.toHaveProperty('props');
   });
 
-  it('returns error status when fetching fails with other error', async () => {
-    process.env.NODE_ENV = 'production';
+  it.each([
+    { status: 500, expectedStatus: 500 },
+    { status: 403, expectedStatus: 403 },
+    { status: 502, expectedStatus: 502 },
+    { status: 503, expectedStatus: 503 },
+    { status: undefined, expectedStatus: 500 },
+    { status: '503', expectedStatus: 500 },
+    { status: 200, expectedStatus: 500 },
+    { status: NaN, expectedStatus: 500 }
+  ])(
+    'returns error status $expectedStatus when fetching fails with status $status',
+    async ({ status, expectedStatus }) => {
+      process.env.NODE_ENV = 'production';
 
-    const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
-    const error = new Error('Server error');
-    (error as Error & { status: number }).status = 500;
-    vi.mocked(hentKvitteringsdataAgiSSR.default).mockRejectedValueOnce(error);
+      const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
+      const error = Object.assign(new Error('Server error'), { status });
+      vi.mocked(hentKvitteringsdataAgiSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+      const context = {
+        query: { kvittid: 'test-uuid' },
+        req: {}
+      };
 
-    const result = await getServerSideProps(context);
+      const result = await getServerSideProps(context);
 
-    expect(result).toHaveProperty('props');
-    if (!('props' in result) || !result.props) {
-      throw new Error('Expected receipt props');
+      expect(result).toHaveProperty('props');
+      if (!('props' in result) || !result.props) {
+        throw new Error('Expected receipt props');
+      }
+      expect(result.props.kvitteringStatus).toBe(expectedStatus);
+      expect(result.props.kvittering).toBeNull();
+      expect(result.props.dataFraBackend).toBe(false);
     }
-    expect(result.props.kvitteringStatus).toBe(500);
-    expect(result.props.kvittering).toBeNull();
-    expect(result.props.dataFraBackend).toBe(false);
-  });
+  );
 
   it('returns store-based props without fetching when fromSubmit is set', async () => {
     process.env.NODE_ENV = 'development';

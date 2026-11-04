@@ -11,16 +11,17 @@ export default function KvitteringFeil({ kvitteringStatus }: Readonly<Kvittering
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
   const setSkjemaFeilet = useBoundStore((state) => state.setSkjemaFeilet);
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
+  const hentingFeilet = kvitteringStatus !== undefined && kvitteringStatus >= 400;
 
   const onSetSkjemaFeilet = useEffectEvent(() => {
     setSkjemaFeilet();
   });
 
   useEffect(() => {
-    if (kvitteringStatus === 500 && !sykmeldingsperioder?.length) {
+    if (hentingFeilet && !sykmeldingsperioder?.length) {
       onSetSkjemaFeilet();
     }
-  }, [kvitteringStatus, sykmeldingsperioder]);
+  }, [hentingFeilet, sykmeldingsperioder]);
 
   const lukkHentingFeiletModal = () => {
     if (globalThis.window === undefined || !environment.saksoversiktUrl) return;
@@ -29,7 +30,7 @@ export default function KvitteringFeil({ kvitteringStatus }: Readonly<Kvittering
 
   return (
     <HentingAvDataFeilet
-      open={skjemaFeilet || kvitteringStatus === 500}
+      open={skjemaFeilet || hentingFeilet}
       handleCloseModal={lukkHentingFeiletModal}
       title='Henting av kvitteringen feilet'
       ariaLabel='Henting av kvittering feilet'
