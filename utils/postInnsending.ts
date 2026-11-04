@@ -159,9 +159,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         );
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
-        logger.warn(
-          'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText + ' ' + responseText
-        );
+        logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText);
         safeTeamLoggerWarn(
           'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
             data.statusText +
@@ -178,9 +176,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       );
       options.setErrorResponse(mappedErrors);
       options.setShowErrorList(true);
-      logger.warn(
-        'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText + ' ' + responseText
-      );
+      logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText);
       safeTeamLoggerWarn(
         'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
           data.statusText +
@@ -295,7 +291,7 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
       }
     }
   } catch (err) {
-    logger.warn('Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText);
+    logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
     safeTeamLoggerWarn(
       'Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText + ' ' + JSON.stringify(body)
     );
