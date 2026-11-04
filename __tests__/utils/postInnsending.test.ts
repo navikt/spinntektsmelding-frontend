@@ -330,6 +330,33 @@ describe('postInnsending', () => {
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
+  it.each(['12345678', '123456789', '12345678901'])(
+    'maskerer %s i fallbackloggen når teamloggeren feiler',
+    async (nummer) => {
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(buildResponse(400, { error: 'Ugyldig skjema', valideringsfeil: ['Ugyldig skjema'] }));
+      teamLoggerWarnSpy.mockImplementation(() => {
+        throw new Error('Teamlogger utilgjengelig');
+      });
+
+      await postInnsending({
+        url,
+        body: { nummer },
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(teamLoggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(nummer));
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"nummer":"[redacted]"'));
+      expect(warnSpy).not.toHaveBeenCalledWith(expect.stringContaining(nummer));
+    }
+  );
+
   it('logger 404 feil', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(404));
 

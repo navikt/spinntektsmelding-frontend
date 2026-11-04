@@ -135,17 +135,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       const feilResultat = ResponseBackendErrorSchema.safeParse(resultat);
       if (feilResultat.success === true) {
         const feil = feilResultat.data;
-        const mappedErrors =
-          feil.error && feil.error.length > 0
-            ? options.mapValidationErrors(
-                {
-                  error: feil.error,
-                  valideringsfeil:
-                    feil.valideringsfeil && feil.valideringsfeil.length > 0 ? feil.valideringsfeil : [feil.error]
-                },
-                []
-              )
-            : options.mapValidationErrors(feil, []);
+        const mappedErrors = options.mapValidationErrors(normalizeValidationError(feil), []);
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
@@ -216,6 +206,17 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         JSON.stringify(body)
     );
   }
+}
+
+function normalizeValidationError(feil: BackendValidationError): BackendValidationError {
+  if (!feil.error) {
+    return feil;
+  }
+
+  return {
+    error: feil.error,
+    valideringsfeil: feil.valideringsfeil?.length ? feil.valideringsfeil : [feil.error]
+  };
 }
 
 function handle404Response(data: Response, setErrorResponse: (errors: ErrorResponse[]) => void) {
@@ -313,7 +314,7 @@ function safeTeamLoggerWarn(message: string) {
   try {
     teamLogger.warn(message);
   } catch (e) {
-    const sanitizedMessage = message.replace(/\b(?:\d{11}|\d{9})\b/g, '[redacted]');
+    const sanitizedMessage = message.replace(/\b(?:\d{11}|\d{9}|\d{8})\b/g, '[redacted]');
     logger.warn(sanitizedMessage);
   }
 }
