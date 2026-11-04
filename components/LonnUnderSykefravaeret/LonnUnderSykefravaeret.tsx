@@ -8,6 +8,7 @@ import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndri
 import parseIsoDate from '../../utils/parseIsoDate';
 import z from 'zod';
 import { RefusjonEndringSchema } from '../../schema/RefusjonEndringSchema';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
@@ -75,12 +76,12 @@ export default function LonnUnderSykefravaeret({
         )}
       </div>
       <InfoCard data-color='info'>
-        <InfoCard.Content>
+        <InfoCard.Message icon={<InformationSquareIcon aria-hidden />}>
           Husk å kontroller at du har rapportert inn korrekt kontonummer for å motta refusjon fra Nav. Dere finner{' '}
           <Link href='https://www.nav.no/arbeidsgiver/endre-kontonummer' target='_blank'>
             skjema for rapportering av kontonummer her.
           </Link>
-        </InfoCard.Content>
+        </InfoCard.Message>
       </InfoCard>
     </>
   );
