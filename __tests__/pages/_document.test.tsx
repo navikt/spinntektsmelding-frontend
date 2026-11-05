@@ -118,6 +118,67 @@ describe('_document.tsx', () => {
     });
   });
 
+  describe('Decorator environment validation', () => {
+    beforeEach(() => {
+      vi.resetModules();
+      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
+      delete process.env.PLAYWRIGHT;
+      delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
+      process.env.NODE_ENV = 'production';
+      vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
+        fetchDecoratorReact: fetchDecoratorMock
+      }));
+    });
+
+    it.each(['prod', 'dev', 'beta', 'betaTms'])('fetches the decorator for %s', async (env) => {
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = env;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      const result = await FreshDocument.getInitialProps(ctx as any);
+
+      expect(fetchDecoratorMock).toHaveBeenCalledWith({
+        env,
+        params: { language: 'nb', context: 'arbeidsgiver' }
+      });
+      expect(result.decorator).toBe(mockDecoratorComponents);
+    });
+
+    it.each([
+      { cluster: 'prod-gcp', env: 'prod' },
+      { cluster: 'dev-gcp', env: 'dev' }
+    ])('uses $env for $cluster when the environment is unset', async ({ cluster, env }) => {
+      process.env.NAIS_CLUSTER_NAME = cluster;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      await FreshDocument.getInitialProps(ctx as any);
+
+      expect(fetchDecoratorMock).toHaveBeenCalledWith(expect.objectContaining({ env }));
+    });
+
+    it.each(['localhost', 'invalid'])('rejects unsupported environment %s before fetching', async (env) => {
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = env;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      await expect(FreshDocument.getInitialProps(ctx as any)).rejects.toThrow(`Ugyldig dekoratormiljo: ${env}`);
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+    });
+
+    it('does not validate the environment when the decorator is disabled', async () => {
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = 'invalid';
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      const result = await FreshDocument.getInitialProps(ctx as any);
+
+      expect(result.decorator.Header({})).toBeNull();
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Document.getInitialProps', () => {
     it('should call parent getInitialProps', async () => {
       const ctx = {

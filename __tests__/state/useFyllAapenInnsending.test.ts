@@ -25,15 +25,22 @@ const mockSkjema: SkjemaData = {
   bekreft_opplysninger: true,
   inntekt: {
     beloep: 500000,
-    endringAarsaker: [{ aarsak: 'Bonus' }]
+    endringAarsaker: [{ aarsak: 'Bonus' }],
+    harBortfallAvNaturalytelser: false
   },
   avsenderTlf: '12345678',
-  aarsakInnsending: 'Ny',
+  // aarsakInnsending: 'Ny',
   agp: {
     redusertLoennIAgp: {
       beloep: 99999,
       begrunnelse: 'StreikEllerLockout'
     }
+  },
+  refusjon: {
+    beloepPerMaaned: 1234,
+    harEndringer: 'Nei',
+    endringer: [],
+    isEditing: false
   }
 };
 
@@ -178,8 +185,8 @@ describe('useFyllAapenInnsending', () => {
       result.current.setInnsenderTelefon('12345678');
       result.current.setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
       result.current.initRefusjonEndringer([
-        { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
+        { beloep: 1234, startdato: parseIsoDate('2023-04-13')! },
+        { beloep: 12345, startdato: parseIsoDate('2023-04-20')! }
       ]);
 
       result.current.initLonnISykefravaeret({
@@ -190,8 +197,8 @@ describe('useFyllAapenInnsending', () => {
       result.current.setBareNyMaanedsinntekt(500000);
 
       result.current.initRefusjonEndringer([
-        { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
-        { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
+        { beloep: 1234, startdato: parseIsoDate('2023-04-13')! },
+        { beloep: 12345, startdato: parseIsoDate('2023-04-20')! }
       ]);
 
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
@@ -210,11 +217,11 @@ describe('useFyllAapenInnsending', () => {
         endringer: [
           {
             beloep: 1234,
-            startdato: parseIsoDate('2023-04-13')
+            startdato: parseIsoDate('2023-04-13')!
           },
           {
             beloep: 12345,
-            startdato: parseIsoDate('2023-04-20')
+            startdato: parseIsoDate('2023-04-20')!
           }
         ]
       }

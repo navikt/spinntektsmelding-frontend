@@ -344,37 +344,35 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
           erBehandlingsdager: z.boolean().optional()
         })
         .optional(),
-      flereArbeidsforhold: skalValidereFaisu
-        ? z
-            .object({
-              harLikLoenn: z.enum(['Ja', 'Nei']).optional(),
-              erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).optional(),
-              arbeidsforhold: z
-                .array(
-                  z.object({
-                    inntekt: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
-                      })
-                      .min(0, 'Månedslønn må være større enn eller lik 0.')
-                      .optional(),
-                    stillingsprosent: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
-                      })
-                      .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-                      .optional(),
-                    yrkesKode: z.string().optional(),
-                    yrkesbeskrivelse: z.string().optional(),
-                    inkludertISykefravaer: z.boolean().optional()
+      flereArbeidsforhold: z
+        .object({
+          harLikLoenn: z.enum(['Ja', 'Nei']).optional(),
+          erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).optional(),
+          arbeidsforhold: z
+            .array(
+              z.object({
+                inntekt: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
                   })
-                )
-                .optional()
-            })
+                  .min(0, 'Månedslønn må være større enn eller lik 0.')
+                  .optional(),
+                stillingsprosent: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+                  })
+                  .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+                  .optional(),
+                yrkesKode: z.string().optional(),
+                yrkesbeskrivelse: z.string().optional(),
+                inkludertISykefravaer: z.boolean().optional()
+              })
+            )
             .optional()
-        : z.any().optional(),
+        })
+        .optional(),
       avsenderTlf: TelefonNummerSchema,
       opplysningstyper: z.array(OpplysningstypeSchema).optional()
     })

@@ -27,7 +27,7 @@ const useEgenmeldingStore: StateCreator<CompleteState, [], [], EgenmeldingState>
         state.egenmeldingsperioder = [];
         const validerte = ApiPeriodeSchema.array().safeParse(egenmeldingsperioder);
         if (!validerte.success && egenmeldingsperioder.length > 0) {
-          logger.error({ error: validerte.error }, 'Feil i initEgenmeldingsperiode');
+          logger.error({ err: validerte.error }, 'Feil i initEgenmeldingsperiode');
         }
 
         const sorterte = egenmeldingsperioder.toSorted((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());

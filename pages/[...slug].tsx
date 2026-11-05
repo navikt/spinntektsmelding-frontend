@@ -581,7 +581,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       onSetValue('refusjon.beloepPerMaaned', 0);
       onSetValue('kreverRefusjon', 'Nei');
     }
-    if (!dataFraBackend && kvitteringData?.flereArbeidsforhold) {
+    if (
+      !dataFraBackend &&
+      kvitteringData &&
+      'flereArbeidsforhold' in kvitteringData &&
+      kvitteringData.flereArbeidsforhold
+    ) {
       onSetValue('flereArbeidsforhold', kvitteringData.flereArbeidsforhold);
     }
   }, [kvitteringData, dataFraBackend]);

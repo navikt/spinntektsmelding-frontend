@@ -45,15 +45,15 @@ export default function useKvitteringInit() {
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
 
-  return (kvitteringsData: MottattKvittering) => {
-    if (!kvitteringsData) return;
+  return (kvitteringData: MottattKvittering) => {
+    if (!kvitteringData) return;
 
-    if (kvitteringsData.kvitteringEkstern) {
-      setSkjemaKvitteringEksterntSystem(kvitteringsData.kvitteringEkstern);
+    if (kvitteringData.kvitteringEkstern) {
+      setSkjemaKvitteringEksterntSystem(kvitteringData.kvitteringEkstern);
       return;
     }
 
-    const jsonData: KvitteringNavNoSchema = kvitteringsData.kvitteringNavNo!;
+    const jsonData: KvitteringNavNoSchema = kvitteringData.kvitteringNavNo!;
 
     if (jsonData.skjema) {
       setKvitteringData(jsonData.skjema);
