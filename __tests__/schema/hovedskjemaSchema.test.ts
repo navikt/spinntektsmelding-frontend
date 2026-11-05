@@ -667,8 +667,8 @@ describe('HovedskjemaSchema', () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues).toContainEqual(
       expect.objectContaining({
-        code: 'invalid_type',
-        message: 'Beløp utbetalt under arbeidsgiverperioden mangler.',
+        code: 'custom',
+        message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.',
         path: ['agp', 'redusertLoennIAgp', 'beloep']
       })
     );
@@ -700,8 +700,8 @@ describe('HovedskjemaSchema', () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues).toContainEqual(
       expect.objectContaining({
-        code: 'invalid_value',
-        message: 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.',
+        code: 'custom',
+        message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut',
         path: ['agp', 'redusertLoennIAgp', 'begrunnelse']
       })
     );

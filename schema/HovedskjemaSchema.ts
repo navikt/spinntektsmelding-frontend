@@ -13,7 +13,7 @@ type HovedskjemaInput = {
   refusjon?: { beloepPerMaaned?: number; harEndringer?: 'Ja' | 'Nei'; endringer?: unknown[] };
   kreverRefusjon?: 'Ja' | 'Nei';
   fullLonn?: 'Ja' | 'Nei';
-  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } | null };
+  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string | null } | null };
   flereArbeidsforhold?: {
     harLikLoenn?: 'Ja' | 'Nei';
     erSykmeldtFraAlle?: 'Ja' | 'Nei';
@@ -280,18 +280,6 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 });
                 return z.NEVER;
               }
-              val?.forEach((v, index) => {
-                if (v.aarsak === '' || v.aarsak === undefined) {
-                  ctx.issues.push({
-                    code: 'custom',
-                    message: 'Vennligst angi årsak til endringen.',
-                    path: [index, 'aarsak'],
-                    fatal: true,
-                    input: ''
-                  });
-                  return z.NEVER;
-                }
-              });
             }),
           harBortfallAvNaturalytelser: z.boolean(),
           naturalytelser: z.array(NaturalytelserSchema).optional()
@@ -322,13 +310,34 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                     error: (issue) =>
                       issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
                   })
-                  .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
-                begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-                  error: (issue) =>
-                    issue.input === undefined
-                      ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
-                      : undefined
-                })
+                  .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.')
+                  .optional()
+                  .transform((beloep, ctx) => {
+                    if (beloep === undefined) {
+                      ctx.addIssue({ code: 'custom', message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.' });
+                      return z.NEVER;
+                    }
+                    return beloep;
+                  }),
+                begrunnelse: z
+                  .enum(BegrunnelseRedusertLoennIAgp, {
+                    error: (issue) =>
+                      issue.input === undefined
+                        ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+                        : undefined
+                  })
+                  .or(z.literal(''))
+                  .nullish()
+                  .transform((begrunnelse, ctx) => {
+                    if (!begrunnelse) {
+                      ctx.addIssue({
+                        code: 'custom',
+                        message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut'
+                      });
+                      return z.NEVER;
+                    }
+                    return begrunnelse;
+                  })
               })
             )
             .optional(),

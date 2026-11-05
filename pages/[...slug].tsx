@@ -224,6 +224,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.inngangFraKvittering
   ]);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
@@ -298,7 +299,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const skalValidereFaisu = harFlereArbeidsforhold;
 
-  const methods = useForm<Skjema>({
+  const methods = useForm<z.input<typeof HovedskjemaSchema>, unknown, Skjema>({
     resolver: zodResolver(createHovedskjemaSchema(skalValidereFaisu)),
     defaultValues: {
       inntekt: {
@@ -327,6 +328,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
+    getValues,
+    clearErrors,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
@@ -514,6 +517,37 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
     }
   }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndring]);
+
+  const fullLonn = useWatch({ control, name: 'fullLonn' });
+  const redusertLoennIAgp = useWatch({ control, name: 'agp.redusertLoennIAgp' });
+
+  const nullstillInaktiveAgpOpplysninger = useEffectEvent(() => {
+    if (!agpValuesInitialized.current) return;
+
+    const brukerRedusertLoennIAgp =
+      skalViseArbeidsgiverperiode &&
+      (arbeidsgiverperiodeDisabled ||
+        (arbeidsgiverperiodeKort && !behandlingsdagerInnsending) ||
+        getValues('fullLonn') === 'Nei');
+
+    if (!brukerRedusertLoennIAgp) {
+      if (getValues('agp.redusertLoennIAgp') !== null) {
+        setValue('agp.redusertLoennIAgp', null);
+      }
+      clearErrors('agp.redusertLoennIAgp');
+    }
+  });
+
+  useEffect(() => {
+    nullstillInaktiveAgpOpplysninger();
+  }, [
+    skalViseArbeidsgiverperiode,
+    arbeidsgiverperiodeDisabled,
+    arbeidsgiverperiodeKort,
+    behandlingsdagerInnsending,
+    fullLonn,
+    redusertLoennIAgp
+  ]);
 
   useEffect(() => {
     if (

@@ -13,6 +13,8 @@ import router from 'next-router-mock';
 import { logger } from '@navikt/next-logger';
 import fetchArbeidsforhold from '../../utils/fetchArbeidsforhold';
 
+let observedForm: ReturnType<typeof useFormContext>;
+
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
   getToken: vi.fn(() => 'mock-token'),
@@ -145,7 +147,10 @@ vi.mock('../../components/Bruttoinntekt/Bruttoinntekt', () => ({
 }));
 
 vi.mock('../../components/RefusjonArbeidsgiver', () => ({
-  default: () => <div data-testid='refusjon'>RefusjonArbeidsgiver Component</div>
+  default: function MockRefusjonArbeidsgiver() {
+    observedForm = useFormContext();
+    return <div data-testid='refusjon'>RefusjonArbeidsgiver Component</div>;
+  }
 }));
 
 vi.mock('../../components/Naturalytelser', () => ({
@@ -222,6 +227,66 @@ describe('Home Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(createMockState()));
+  });
+
+  describe('inactive AGP fields', () => {
+    it('clears inactive values and their errors without changing periods or marking the form dirty', async () => {
+      render(<Home slug='123' erEndring={false} dataFraBackend={true} />);
+      const perioder = [{ fom: '2026-11-05', tom: '2026-11-05' }];
+
+      act(() => {
+        observedForm.setValue('agp.perioder', perioder);
+        observedForm.setValue('agp.redusertLoennIAgp', { begrunnelse: null });
+        observedForm.setError('agp.redusertLoennIAgp.begrunnelse', { type: 'manual', message: 'Required' });
+        observedForm.setError('agp.perioder', { type: 'manual', message: 'Choose periods' });
+      });
+
+      await waitFor(() => {
+        expect(observedForm.getValues('agp.redusertLoennIAgp')).toBeNull();
+        expect(observedForm.getFieldState('agp.redusertLoennIAgp.begrunnelse').error).toBeUndefined();
+      });
+      expect(observedForm.getValues('agp.perioder')).toEqual(perioder);
+      expect(observedForm.getFieldState('agp.perioder').error?.message).toBe('Choose periods');
+      expect(observedForm.formState.isDirty).toBe(false);
+    });
+
+    it('preserves initialized values, clears them for full pay and allows reactivation', async () => {
+      const redusertLoennIAgp = { beloep: 5000, begrunnelse: 'ArbeidOpphoert' };
+      const state = createMockState({
+        hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['arbeidsgiverperiode']),
+        kvitteringData: { agp: { redusertLoennIAgp } }
+      });
+      (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
+      render(<Home slug='123' erEndring={true} dataFraBackend={false} />);
+
+      await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
+      act(() => observedForm.setValue('fullLonn', 'Ja', { shouldDirty: true }));
+      await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toBeNull());
+
+      act(() => {
+        observedForm.setValue('fullLonn', 'Nei');
+        observedForm.setValue('agp.redusertLoennIAgp', redusertLoennIAgp);
+      });
+      await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
+    });
+
+    it.each([
+      { arbeidsgiverperiodeKort: true, arbeidsgiverperiodeDisabled: false },
+      { arbeidsgiverperiodeKort: false, arbeidsgiverperiodeDisabled: true }
+    ])('preserves active short or manually disabled AGP values: %o', async (agpState) => {
+      const redusertLoennIAgp = { beloep: 0, begrunnelse: 'IkkeFravaer' };
+      const state = createMockState({
+        ...agpState,
+        hentPaakrevdOpplysningstyper: vi.fn().mockReturnValue(['arbeidsgiverperiode']),
+        kvitteringData: { agp: { redusertLoennIAgp } }
+      });
+      (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
+      render(<Home slug='123' erEndring={true} dataFraBackend={false} />);
+
+      await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
+      act(() => observedForm.setValue('fullLonn', 'Ja'));
+      await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
+    });
   });
 
   it('renders the main page components', () => {
