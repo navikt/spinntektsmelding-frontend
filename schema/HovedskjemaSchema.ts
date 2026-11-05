@@ -4,6 +4,7 @@ import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 import { RefusjonEndringSchema } from './RefusjonEndringSchema';
+import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
@@ -312,6 +313,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
       fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
       agp: z
         .object({
+          perioder: z.array(ApiPeriodeSchema).optional(),
           redusertLoennIAgp: z
             .nullable(
               z.object({
@@ -332,7 +334,6 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
             .optional(),
           erBehandlingsdager: z.boolean().optional()
         })
-        .or(z.object({}))
         .optional(),
       flereArbeidsforhold: skalValidereFaisu
         ? z
