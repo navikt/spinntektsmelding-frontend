@@ -9,6 +9,7 @@ import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 import NumberField from '../NumberField/NumberField';
 import stringishToNumber from '../../utils/stringishToNumber';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 
 interface RefusjonUtbetalingEndringProps {
   minDate?: Date;
@@ -75,10 +76,10 @@ export default function RefusjonUtbetalingEndring({ minDate, maxDate }: Readonly
       {harRefusjonEndringer === 'Ja' && (
         <>
           <InfoCard data-color='info' className={lokalStyling.alertBox}>
-            <InfoCard.Content>
+            <InfoCard.Message icon={<InformationSquareIcon aria-hidden />}>
               Skal arbeidsgiver slutte å forskuttere lønn så kan du sette refusjonen til 0 kr fra den datoen Nav skal ta
               over utbetalingen til den ansatte.
-            </InfoCard.Content>
+            </InfoCard.Message>
           </InfoCard>
           {fields.map((field, index) => (
             <div key={field.id} className={lokalStyling.beloepperiode}>
