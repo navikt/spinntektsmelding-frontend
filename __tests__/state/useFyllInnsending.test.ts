@@ -80,6 +80,98 @@ describe('useFyllInnsending', () => {
     vi.resetAllMocks();
     cleanup();
   });
+  it('rejects missing income dates before updating receipt data', () => {
+    const setKvitteringData = vi.fn();
+    useBoundStore.setState({
+      sykmeldingsperioder: [],
+      egenmeldingsperioder: [],
+      arbeidsgiverperioder: [],
+      skjaeringstidspunkt: undefined,
+      foreslaattBestemmendeFravaersdag: undefined,
+      mottattBestemmendeFravaersdag: undefined,
+      setKvitteringData
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      expect(() =>
+        result.current('8d50ef20-37b5-4829-ad83-56219e70b375', { ...skjemaData, opplysningstyper: ['inntekt'] }, false)
+      ).toThrow(z.ZodError);
+    });
+    expect(setKvitteringData).not.toHaveBeenCalled();
+  });
+
+  it('does not require an income date when income was not requested', () => {
+    useBoundStore.setState({
+      sykmeldingsperioder: [],
+      egenmeldingsperioder: [],
+      arbeidsgiverperioder: [],
+      skjaeringstidspunkt: undefined,
+      foreslaattBestemmendeFravaersdag: undefined,
+      mottattBestemmendeFravaersdag: undefined
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        { ...skjemaData, opplysningstyper: ['refusjon'] },
+        false
+      );
+
+      expect(innsending.inntekt).toBeNull();
+    });
+  });
+
+  it.each([
+    { mottattBestemmendeFravaersdag: '2025-02-01', forventet: '2025-02-01' },
+    { mottattBestemmendeFravaersdag: undefined, forventet: '2025-01-01' }
+  ])('uses the received date or calculated fallback: $forventet', ({ mottattBestemmendeFravaersdag, forventet }) => {
+    useBoundStore.setState({
+      arbeidsgiverperiodeDisabled: true,
+      mottattBestemmendeFravaersdag,
+      skjaeringstidspunkt: parseIsoDate('2025-01-01')
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
+
+      expect(innsending.inntekt?.inntektsdato).toBe(forventet);
+    });
+  });
+
+  it.each([
+    { arbeidsforhold: undefined },
+    {
+      arbeidsforhold: [
+        { inntekt: 25000, stillingsprosent: 50, yrkesbeskrivelse: 'Utvikler', inkludertISykefravaer: true }
+      ]
+    }
+  ])('always provides an arbeidsforhold array when enabled: $arbeidsforhold', ({ arbeidsforhold }) => {
+    useBoundStore.setState({ foreslaattBestemmendeFravaersdag: parseIsoDate('2025-01-01') });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        {
+          ...skjemaData,
+          opplysningstyper: ['inntekt'],
+          flereArbeidsforhold: { harLikLoenn: 'Nei', erSykmeldtFraAlle: 'Nei', arbeidsforhold }
+        },
+        false,
+        true
+      );
+
+      expect(innsending.flereArbeidsforhold).toEqual({
+        harLikLoenn: false,
+        erSykmeldtFraAlle: false,
+        arbeidsforhold: arbeidsforhold ?? []
+      });
+    });
+  });
+
   it('should fill the state stuff', async () => {
     renderHook(() => useBoundStore((state) => state));
 
@@ -161,7 +253,7 @@ describe('useFyllInnsending', () => {
 
     if (innsending) {
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.refusjon?.sluttdato).toBeNull();
+      expect(innsending.refusjon).toHaveProperty('sluttdato', null);
       expect(innsending.refusjon?.endringer).toEqual([
         { beloep: 1234, startdato: '2023-04-13' },
         { beloep: 12345, startdato: '2023-04-20' },

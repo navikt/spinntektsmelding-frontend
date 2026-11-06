@@ -126,6 +126,34 @@ describe('useSendInnSkjema', () => {
     expect(mockFyllFeilmeldinger).toHaveBeenCalled();
   });
 
+  it('shows missing income date errors without submitting', async () => {
+    mockFyllInnsending.mockImplementationOnce(() => {
+      throw new z.ZodError([
+        { code: 'custom', path: ['inntekt', 'inntektsdato'], message: 'Bestemmende fraværsdag mangler' }
+      ]);
+    });
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, true));
+    const formData: FullInnsendingType = {
+      bekreft_opplysninger: true,
+      kreverRefusjon: 'Nei',
+      avsenderTlf: '12345678',
+      opplysningstyper: ['inntekt'],
+      refusjon: { beloepPerMaaned: 0, isEditing: false, harEndringer: 'Nei', endringer: [] }
+    };
+
+    let response: Awaited<ReturnType<typeof result.current>> = undefined;
+    await act(async () => {
+      response = await result.current(true, '8d50ef20-37b5-4829-ad83-56219e70b375', true, formData, false);
+    });
+
+    expect(response).toBe(false);
+    expect(mockFyllFeilmeldinger).toHaveBeenCalledWith([
+      { felt: 'inntekt.inntektsdato', text: 'Bestemmende fraværsdag mangler' }
+    ]);
+    expect(mockSetSkalViseFeilmeldinger).toHaveBeenCalledWith(true);
+    expect(postInnsending).not.toHaveBeenCalled();
+  });
+
   it('should handle invalid UUID', async () => {
     // Mock safeParse to return success so we can test UUID validation
     vi.spyOn(FullInnsendingSchema, 'safeParse').mockReturnValueOnce({

@@ -69,7 +69,17 @@ export default function useSendInnSkjema(
 
     type FullInnsending = z.infer<typeof FullInnsendingSchema>;
 
-    const skjemaData: FullInnsending = fyllInnsending(pathSlug, formData, erBegrensetForespoersel, faisuEnabled);
+    let skjemaData: FullInnsending;
+    try {
+      skjemaData = fyllInnsending(pathSlug, formData, erBegrensetForespoersel, faisuEnabled);
+    } catch (error) {
+      if (!(error instanceof z.ZodError)) {
+        throw error;
+      }
+      fyllFeilmeldinger(error.issues.map((issue) => ({ felt: issue.path.join('.'), text: issue.message })));
+      setSkalViseFeilmeldinger(true);
+      return false;
+    }
     const harForespurtArbeidsgiverperiode = (formData.opplysningstyper ?? []).includes(
       forespoerselType.arbeidsgiverperiode
     );

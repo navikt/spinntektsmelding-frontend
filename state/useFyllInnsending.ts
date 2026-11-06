@@ -107,6 +107,21 @@ export default function useFyllInnsending() {
         })
       : [];
 
+    let inntekt: FullInnsending['inntekt'] = null;
+    if (harForespurtInntekt) {
+      const inntektsdato = bestemmendeFraværsdag ?? formatIsoDate(beregnetSkjaeringstidspunkt);
+      if (!inntektsdato) {
+        throw new z.ZodError([
+          { code: 'custom', path: ['inntekt', 'inntektsdato'], message: 'Bestemmende fraværsdag mangler' }
+        ]);
+      }
+      inntekt = {
+        beloep: skjemaData.inntekt?.beloep ?? 0,
+        inntektsdato,
+        endringAarsaker: endringAarsakerParsed
+      };
+    }
+
     setEndringAarsaker(skjemaData.inntekt?.endringAarsaker);
 
     setBareNyMaanedsinntekt(skjemaData.inntekt?.beloep ?? 0);
@@ -117,6 +132,14 @@ export default function useFyllInnsending() {
     const sykmeldtfraFlereArbeidsforhold =
       skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Nei' &&
       skjemaData.flereArbeidsforhold?.harLikLoenn === 'Nei';
+    const refusjon =
+      skjemaData.kreverRefusjon === 'Ja'
+        ? {
+            beloepPerMaaned: skjemaData.refusjon.beloepPerMaaned,
+            sluttdato: null,
+            endringer: konverterRefusjonEndringer(skjemaData.refusjon.harEndringer, skjemaData.refusjon.endringer)
+          }
+        : null;
     const innsendingSkjema: FullInnsending = {
       forespoerselId,
       agp: {
@@ -126,29 +149,15 @@ export default function useFyllInnsending() {
         ),
         redusertLoennIAgp: skjemaData.fullLonn === 'Ja' ? null : (skjemaData.agp?.redusertLoennIAgp ?? null)
       },
-      inntekt: harForespurtInntekt
-        ? {
-            beloep: skjemaData.inntekt?.beloep ?? 0,
-            inntektsdato: bestemmendeFraværsdag ?? formatIsoDate(beregnetSkjaeringstidspunkt), // Skjæringstidspunkt? e.l.
-            endringAarsaker: endringAarsakerParsed
-          }
-        : null,
-      refusjon:
-        skjemaData?.kreverRefusjon === 'Ja'
-          ? {
-              beloepPerMaaned: skjemaData.refusjon?.beloepPerMaaned,
-              sluttdato: null,
-
-              endringer: konverterRefusjonEndringer(skjemaData.refusjon?.harEndringer, skjemaData.refusjon?.endringer)
-            }
-          : null,
+      inntekt,
+      refusjon,
       avsenderTlf: skjemaData.avsenderTlf ?? '',
       naturalytelser: mapNaturalytelserToData(skjemaData.inntekt?.naturalytelser),
       flereArbeidsforhold: sykmeldtfraFlereArbeidsforhold
         ? {
             harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
             erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
-            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+            arbeidsforhold: (skjemaData.flereArbeidsforhold?.arbeidsforhold ?? []).map((forhold) => ({
               inntekt: forhold.inntekt,
               yrkesbeskrivelse: forhold.yrkesbeskrivelse,
               inkludertISykefravaer: forhold.inkludertISykefravaer,
