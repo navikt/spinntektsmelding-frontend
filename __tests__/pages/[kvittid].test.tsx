@@ -8,6 +8,9 @@ import { Periode } from '../../state/state';
 import useBoundStore from '../../state/useBoundStore';
 import forespoerselType from '../../config/forespoerselType';
 import { Opplysningstype } from '../../schema/ForespurtDataSchema';
+import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
+import { KvitteringNavNoSchema } from '../../schema/MottattKvitteringSchema';
+import kvitteringsdataBackend from '../../mockdata/kvittering-selvbestemt-format.json';
 
 // Mock external dependencies
 vi.mock('@navikt/oasis', () => ({
@@ -112,6 +115,68 @@ describe('kvittering', () => {
     const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
     expect(textBlock).toBeInTheDocument();
+  });
+
+  it('renders stored FAISU arbeidsforhold', () => {
+    const source = kvitteringsdataBackend.selvbestemtInntektsmelding;
+    const kvitteringData = FullInnsendingSchema.parse({
+      ...source,
+      forespoerselId: source.id,
+      avsenderTlf: source.avsender.tlf,
+      flereArbeidsforhold: {
+        harLikLoenn: false,
+        erSykmeldtFraAlle: false,
+        arbeidsforhold: [
+          { yrkesbeskrivelse: 'Utvikler', inntekt: 10000, stillingsprosent: 50, inkludertISykefravaer: true }
+        ]
+      }
+    });
+    useBoundStore.setState({ kvitteringData });
+
+    render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    expect(screen.getByRole('columnheader', { name: 'Yrkestittel' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Utvikler' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: /10\s*000/ })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: '50 %' })).toBeInTheDocument();
+    expect(screen.getByRole('cell', { name: 'Ja' })).toBeInTheDocument();
+  });
+
+  it.each([{ flereArbeidsforhold: null }, { flereArbeidsforhold: undefined }])(
+    'does not render FAISU when arbeidsforhold is $flereArbeidsforhold',
+    ({ flereArbeidsforhold }) => {
+      const source = kvitteringsdataBackend.selvbestemtInntektsmelding;
+      const kvitteringData = FullInnsendingSchema.parse({
+        ...source,
+        forespoerselId: source.id,
+        avsenderTlf: source.avsender.tlf,
+        flereArbeidsforhold
+      });
+      useBoundStore.setState({ kvitteringData });
+
+      render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+      expect(screen.queryByRole('columnheader', { name: 'Yrkestittel' })).not.toBeInTheDocument();
+    }
+  );
+
+  it('does not render FAISU for a normalized receipt without the field', () => {
+    const source = kvitteringsdataBackend.selvbestemtInntektsmelding;
+    const kvitteringData = KvitteringNavNoSchema.shape.skjema.parse(source);
+    expect(kvitteringData).not.toHaveProperty('flereArbeidsforhold');
+    useBoundStore.setState({ kvitteringData });
+
+    render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    expect(screen.queryByRole('columnheader', { name: 'Yrkestittel' })).not.toBeInTheDocument();
+  });
+
+  it('does not render FAISU without receipt data', () => {
+    useBoundStore.setState({ kvitteringData: undefined });
+
+    render(<Kvittering kvittid='' kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    expect(screen.queryByRole('columnheader', { name: 'Yrkestittel' })).not.toBeInTheDocument();
   });
 
   it('renders without arbeidsgiverperiode text', () => {
