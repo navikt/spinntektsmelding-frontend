@@ -32,7 +32,7 @@ export const KvitteringNavNoSchema = z.object({
       .nullable(),
     inntekt: z.object({
       beloep: z.number(),
-      endringAarsak: ApiEndringAarsakSchema,
+      endringAarsak: ApiEndringAarsakSchema.optional(),
       inntektsdato: z.iso.date(),
       naturalytelser: ApiNaturalytelserSchema,
       endringAarsaker: z.array(ApiEndringAarsakSchema)

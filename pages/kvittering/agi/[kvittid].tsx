@@ -20,7 +20,7 @@ import PersonVisning from '../../../components/PersonVisning/PersonVisning';
 import { MottattPeriode } from '../../../schema/ForespurtDataSchema';
 import useKvitteringInit from '../../../state/useKvitteringInit';
 
-import { SkjemaStatus } from '../../../state/useSkjemadataStore';
+import { SkjemaStatus, SkjemadataState } from '../../../state/useSkjemadataStore';
 import environment from '../../../config/environment';
 import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
@@ -35,22 +35,20 @@ import KvitteringRefusjon from '../../../components/kvittering/KvitteringRefusjo
 import KvitteringNaturalytelser from '../../../components/kvittering/KvitteringNaturalytelser';
 import KvitteringFooter from '../../../components/kvittering/KvitteringFooter';
 import FaisuKvittering from '../../../components/FaisuKvittering/FaisuKvittering';
-import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
-import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
 import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
+import { Periode } from '../../../state/state';
+import formatIsoDate from '../../../utils/formatIsoDate';
 
 type KvitteringInitData =
-  | z.infer<typeof FullInnsendingSchema>
-  | z.infer<typeof AapenInnsendingSchema>
-  | z.infer<typeof SelvbestemtInntektsmeldingSchema>;
+  NonNullable<SkjemadataState['kvitteringData']> | z.infer<typeof SelvbestemtInntektsmeldingSchema>;
 
 type PersonData = {
-  navn: string;
-  identitetsnummer: string;
-  orgnrUnderenhet: string;
-  virksomhetNavn: string;
-  innsenderNavn: string;
-  innsenderTelefonNr: string;
+  navn: string | undefined;
+  identitetsnummer: string | undefined;
+  orgnrUnderenhet: string | undefined;
+  virksomhetNavn: string | undefined;
+  innsenderNavn: string | undefined;
+  innsenderTelefonNr: string | undefined;
 };
 
 const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -88,6 +86,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   );
   const kvitteringInit = useKvitteringInit();
   const lagretMottatt = useBoundStore((state) => state.mottatt);
+  const lagredeSykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
+  const lagredeEgenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
 
   const kvitteringDokument = kvittering;
 
@@ -115,7 +115,9 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     innsendingTidspunkt
   } = lagKvitteringVisning({
     sykmeldingsperioder:
-      visningskilde && 'sykmeldingsperioder' in visningskilde ? visningskilde.sykmeldingsperioder : undefined,
+      visningskilde && 'sykmeldingsperioder' in visningskilde
+        ? visningskilde.sykmeldingsperioder
+        : lagredeSykmeldingsperioder,
     arbeidsgiverperioder: visningskilde?.agp?.perioder,
     inntektBeloep: visningskilde?.inntekt?.beloep,
     endringAarsaker: visBackendData
@@ -146,14 +148,24 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   }, [dataFraBackend, vedtaksperiodeId]);
 
   const ingenArbeidsgiverperioder = arbeidsgiverperioder?.length === 0;
+  const flereArbeidsforhold =
+    kvitteringData && 'flereArbeidsforhold' in kvitteringData
+      ? (kvitteringData.flereArbeidsforhold ?? undefined)
+      : undefined;
 
   const clickEndre = async () => {
-    const input = dataFraBackend ? kvitteringDokument : kvitteringData;
+    const input = visningskilde;
     if (!input) {
       throw new Error('Kan ikke endre inntektsmeldingen uten kvitteringsdata');
     }
     // Må lagre data som kan endres i hovedskjema - Start
-    const kvittering = prepareForInitiering(input, personData, mottatt);
+    const kvittering = prepareForInitiering(
+      input,
+      personData,
+      mottatt,
+      lagredeSykmeldingsperioder,
+      lagredeEgenmeldingsperioder
+    );
     kvitteringInit({ kvitteringNavNo: kvittering, kvitteringEkstern: null });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
@@ -219,7 +231,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
             ingenArbeidsgiverperioder={ingenArbeidsgiverperioder}
           />
           <KvitteringInntekt inntekt={inntekt} />
-          <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
+          <FaisuKvittering arbeidsforhold={flereArbeidsforhold} />
           <KvitteringRefusjon
             refusjon={refusjon}
             fullLonnIArbeidsgiverperioden={
@@ -250,36 +262,72 @@ type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
 function prepareForInitiering(
   kvitteringData: KvitteringInitData,
   personData: PersonData,
-  mottatt: Date | undefined
+  mottatt: Date | undefined,
+  lagredeSykmeldingsperioder: Periode[] | undefined,
+  lagredeEgenmeldingsperioder: Periode[] | undefined
 ): KvitteringNavNoSchema {
   if (!mottatt || !isValid(mottatt)) {
     throw new Error('Kan ikke initialisere kvitteringen uten gyldig mottaksdato');
   }
+  if (!kvitteringData.inntekt) {
+    throw new Error('Kan ikke initialisere AGI-kvitteringen uten inntektsdata');
+  }
 
   const kvittering: KvitteringNavNoSchema = {
-    sykmeldt: { navn: personData.navn, fnr: personData.identitetsnummer },
-    avsender: {
+    sykmeldt: KvitteringNavNoSchema.shape.sykmeldt.parse({ navn: personData.navn, fnr: personData.identitetsnummer }),
+    avsender: KvitteringNavNoSchema.shape.avsender.parse({
       orgnr: personData.orgnrUnderenhet,
       orgNavn: personData.virksomhetNavn,
       navn: personData.innsenderNavn,
       tlf: personData.innsenderTelefonNr
-    },
-    sykmeldingsperioder: kvitteringData.sykmeldingsperioder ?? [],
+    }),
+    sykmeldingsperioder:
+      'sykmeldingsperioder' in kvitteringData
+        ? kvitteringData.sykmeldingsperioder
+        : tilApiPerioder(lagredeSykmeldingsperioder),
     skjema: {
-      agp: kvitteringData.agp ?? null,
-      inntekt: { ...kvitteringData.inntekt },
+      agp: kvitteringData.agp
+        ? {
+            ...kvitteringData.agp,
+            egenmeldinger:
+              'egenmeldinger' in kvitteringData.agp
+                ? kvitteringData.agp.egenmeldinger
+                : tilApiPerioder(lagredeEgenmeldingsperioder),
+            redusertLoennIAgp: kvitteringData.agp.redusertLoennIAgp ?? null
+          }
+        : null,
+      inntekt: {
+        ...kvitteringData.inntekt,
+        endringAarsaker:
+          kvitteringData.inntekt.endringAarsaker ??
+          ('endringAarsak' in kvitteringData.inntekt && kvitteringData.inntekt.endringAarsak
+            ? [kvitteringData.inntekt.endringAarsak]
+            : []),
+        naturalytelser:
+          'naturalytelser' in kvitteringData.inntekt
+            ? kvitteringData.inntekt.naturalytelser
+            : (kvitteringData.naturalytelser ?? [])
+      },
       refusjon: kvitteringData.refusjon
         ? {
             beloepPerMaaned: kvitteringData.refusjon.beloepPerMaaned,
-            endringer: kvitteringData.refusjon.endringer ? [...kvitteringData.refusjon.endringer] : undefined
+            endringer: [...(kvitteringData.refusjon.endringer ?? [])]
           }
         : null,
-      naturalytelser: kvitteringData.naturalytelser ?? null
+      naturalytelser: kvitteringData.naturalytelser ?? []
     },
     mottatt: mottatt.toISOString()
   };
 
   return kvittering;
+}
+
+function tilApiPerioder(perioder: Periode[] | undefined): MottattPeriode[] {
+  return (perioder ?? []).flatMap((periode) => {
+    const fom = formatIsoDate(periode.fom);
+    const tom = formatIsoDate(periode.tom);
+    return fom && tom ? [{ fom, tom }] : [];
+  });
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ kvittid: string }>) {

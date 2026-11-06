@@ -14,6 +14,9 @@ import kvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behand
 import kvitteringsdataBackend from '../../../mockdata/kvittering-selvbestemt-format.json';
 import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
+import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
+import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
+import parseIsoDate from '../../../utils/parseIsoDate';
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -197,6 +200,121 @@ describe('Kvittering', () => {
     printButton.click();
 
     expect(printSpy).toHaveBeenCalled();
+  });
+
+  it.each(['full', 'aapen', 'navNo'] as const)('preserves stored data when editing a %s receipt', async (format) => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+    const innsendt = {
+      ...source,
+      forespoerselId: uuid,
+      avsenderTlf: source.avsender.tlf,
+      sykmeldtFnr: source.sykmeldt.fnr,
+      arbeidsforholdType: source.type,
+      refusjon: { beloepPerMaaned: 5000, endringer: null }
+    };
+    const kvitteringData =
+      format === 'full'
+        ? FullInnsendingSchema.parse(innsendt)
+        : format === 'aapen'
+          ? AapenInnsendingSchema.parse(innsendt)
+          : KvitteringNavNoSchema.shape.skjema.parse({
+              ...source,
+              refusjon: { beloepPerMaaned: 5000, endringer: [] }
+            });
+    const sykmeldingsperioder = source.sykmeldingsperioder.map((periode, index) => ({
+      id: `syk-${index}`,
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom)
+    }));
+    const egenmeldinger = [{ fom: '2023-02-01', tom: '2023-02-02' }];
+    const egenmeldingsperioder = egenmeldinger.map((periode) => ({
+      id: 'egen-1',
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom)
+    }));
+    useBoundStore.setState({
+      kvitteringData,
+      sykmeldt: source.sykmeldt,
+      avsender: source.avsender,
+      sykmeldingsperioder,
+      egenmeldingsperioder,
+      mottatt: new Date(source.mottatt)
+    });
+
+    render(<Kvittering kvittid={uuid} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${uuid}?endre=true&agi=true`, `/${uuid}`));
+    const state = useBoundStore.getState();
+    expect(state.sykmeldingsperioder?.map(({ fom, tom }) => ({ fom, tom }))).toEqual(
+      sykmeldingsperioder.map(({ fom, tom }) => ({ fom, tom }))
+    );
+    expect(state.kvitteringData?.agp).toMatchObject({
+      egenmeldinger: format === 'navNo' ? source.agp?.egenmeldinger : egenmeldinger,
+      redusertLoennIAgp: source.agp?.redusertLoennIAgp ?? null
+    });
+    expect(state.kvitteringData?.inntekt?.beloep).toBe(source.inntekt.beloep);
+    expect(state.kvitteringData?.inntekt?.endringAarsaker).toEqual(source.inntekt.endringAarsaker);
+    expect(state.kvitteringData?.refusjon?.endringer).toEqual([]);
+    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
+  it('initializes backend data only when editing and preserves its periods and income', async () => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const egenmeldinger = [{ fom: '2025-10-30', tom: '2025-10-31' }];
+    const kvittering = {
+      ...source,
+      agp: source.agp ? { ...source.agp, egenmeldinger } : null
+    };
+    const gamlePerioder = [{ id: 'gammel', fom: parseIsoDate('2020-01-01'), tom: parseIsoDate('2020-01-02') }];
+    useBoundStore.setState({ sykmeldingsperioder: gamlePerioder, egenmeldingsperioder: gamlePerioder });
+
+    render(<Kvittering kvittid={source.id} kvittering={kvittering} dataFraBackend={true} kvitteringStatus={200} />);
+
+    expect(useBoundStore.getState().sykmeldingsperioder).toEqual(gamlePerioder);
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${source.id}?endre=true&agi=true`, `/${source.id}`));
+    const state = useBoundStore.getState();
+    expect(state.sykmeldingsperioder?.map(({ fom, tom }) => ({ fom, tom }))).toEqual(
+      source.sykmeldingsperioder.map((periode) => ({ fom: parseIsoDate(periode.fom), tom: parseIsoDate(periode.tom) }))
+    );
+    expect(state.kvitteringData?.agp).toMatchObject({ egenmeldinger, perioder: source.agp?.perioder });
+    expect(state.kvitteringData?.inntekt).toMatchObject(source.inntekt);
+    expect(state.kvitteringData?.naturalytelser).toEqual(source.naturalytelser);
+    expect(state.kvitteringData?.refusjon).toBeNull();
+    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
+  it.each([true, false])('renders FAISU only when stored arbeidsforhold is present: %s', (harArbeidsforhold) => {
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const kvitteringData = FullInnsendingSchema.parse({
+      ...source,
+      forespoerselId: source.id,
+      avsenderTlf: source.avsender.tlf,
+      flereArbeidsforhold: harArbeidsforhold
+        ? {
+            harLikLoenn: false,
+            erSykmeldtFraAlle: false,
+            arbeidsforhold: [{ yrkesbeskrivelse: 'Utvikler', inntekt: 10000, stillingsprosent: 50 }]
+          }
+        : null
+    });
+    useBoundStore.setState({ kvitteringData });
+
+    render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    if (harArbeidsforhold) {
+      expect(screen.getByRole('cell', { name: 'Utvikler' })).toBeInTheDocument();
+    } else {
+      expect(screen.queryByRole('cell', { name: 'Utvikler' })).not.toBeInTheDocument();
+    }
   });
 
   it('renders Endre button and navigates on click', async () => {
