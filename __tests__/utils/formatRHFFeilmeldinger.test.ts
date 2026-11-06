@@ -40,7 +40,7 @@ describe('formatRHFFeilmeldinger', () => {
   });
 
   it.skip('should handle circular references in the validationResult', () => {
-    const circularValidationInput = {
+    const circularValidationInput: { errorTexts: Array<{ field1: { message: string } }>; circularRef?: unknown } = {
       errorTexts: [
         {
           field1: {

@@ -22,7 +22,11 @@ describe('useBehandlingsdager', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    environment.hentBehandlingsdagerUrl = TEST_URL;
+    Object.defineProperty(environment, 'hentBehandlingsdagerUrl', {
+      value: TEST_URL,
+      writable: true,
+      configurable: true
+    });
     setError = vi.fn();
     // call the hook to record the useSWRImmutable call
     useBehandlingsdager(ident, org, setError);

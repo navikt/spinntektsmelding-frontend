@@ -76,7 +76,7 @@ describe('SelectEndringBruttoinntekt', () => {
     expect(select).toBeInTheDocument();
     expect(select).toHaveValue('');
     expect(screen.getByText('Velg begrunnelse')).toBeInTheDocument();
-    Object.keys(begrunnelseEndringBruttoinntekt)
+    (Object.keys(begrunnelseEndringBruttoinntekt) as Array<keyof typeof begrunnelseEndringBruttoinntekt>)
       .filter((key) => key !== ('Tariffendring' as keyof typeof begrunnelseEndringBruttoinntekt))
       .forEach((key: keyof typeof begrunnelseEndringBruttoinntekt) => {
         expect(screen.getByText(begrunnelseEndringBruttoinntektTekster[key])).toBeInTheDocument();

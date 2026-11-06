@@ -4,6 +4,7 @@ import NaturalytelserSchema from './NaturalytelserSchema';
 import { TelefonNummerSchema } from './TelefonNummerSchema';
 import { BegrunnelseRedusertLoennIAgp } from './BegrunnelseRedusertLoennIAgpSchema';
 import { RefusjonEndringSchema } from './RefusjonEndringSchema';
+import { ApiPeriodeSchema } from './ApiPeriodeSchema';
 
 const OpplysningstypeSchema = z.enum(['inntekt', 'refusjon', 'arbeidsgiverperiode']);
 
@@ -12,7 +13,7 @@ type HovedskjemaInput = {
   refusjon?: { beloepPerMaaned?: number; harEndringer?: 'Ja' | 'Nei'; endringer?: unknown[] };
   kreverRefusjon?: 'Ja' | 'Nei';
   fullLonn?: 'Ja' | 'Nei';
-  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string } | null };
+  agp?: { redusertLoennIAgp?: { beloep?: number | null; begrunnelse?: string | null } | null };
   flereArbeidsforhold?: {
     harLikLoenn?: 'Ja' | 'Nei';
     erSykmeldtFraAlle?: 'Ja' | 'Nei';
@@ -20,7 +21,7 @@ type HovedskjemaInput = {
       inntekt?: number;
       stillingsprosent?: number;
       inkludertISykefravaer?: boolean;
-      yrkesbeskrivelse: string;
+      yrkesbeskrivelse?: string;
     }>;
   };
   opplysningstyper?: string[];
@@ -279,18 +280,6 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                 });
                 return z.NEVER;
               }
-              val?.forEach((v, index) => {
-                if (v.aarsak === '' || v.aarsak === undefined) {
-                  ctx.issues.push({
-                    code: 'custom',
-                    message: 'Vennligst angi årsak til endringen.',
-                    path: [index, 'aarsak'],
-                    fatal: true,
-                    input: ''
-                  });
-                  return z.NEVER;
-                }
-              });
             }),
           harBortfallAvNaturalytelser: z.boolean(),
           naturalytelser: z.array(NaturalytelserSchema).optional()
@@ -312,6 +301,7 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
       fullLonn: z.enum(['Ja', 'Nei'], { error: 'Velg om full lønn betales i arbeidsgiverperioden....' }).optional(),
       agp: z
         .object({
+          perioder: z.array(ApiPeriodeSchema).optional(),
           redusertLoennIAgp: z
             .nullable(
               z.object({
@@ -320,51 +310,69 @@ export function createHovedskjemaSchema(skalValidereFaisu: boolean) {
                     error: (issue) =>
                       issue.input === undefined ? 'Beløp utbetalt under arbeidsgiverperioden mangler.' : undefined
                   })
-                  .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.'),
-                begrunnelse: z.enum(BegrunnelseRedusertLoennIAgp, {
-                  error: (issue) =>
-                    issue.input === undefined
-                      ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
-                      : undefined
-                })
+                  .min(0, 'Beløp utbetalt under arbeidsgiverperioden kan ikke være negativt.')
+                  .optional()
+                  .transform((beloep, ctx) => {
+                    if (beloep === undefined) {
+                      ctx.addIssue({ code: 'custom', message: 'Beløp utbetalt i arbeidsgiverperioden må fylles ut.' });
+                      return z.NEVER;
+                    }
+                    return beloep;
+                  }),
+                begrunnelse: z
+                  .enum(BegrunnelseRedusertLoennIAgp, {
+                    error: (issue) =>
+                      issue.input === undefined
+                        ? 'Vennligst velg en årsak til redusert lønn i arbeidsgiverperioden.'
+                        : undefined
+                  })
+                  .or(z.literal(''))
+                  .nullish()
+                  .transform((begrunnelse, ctx) => {
+                    if (!begrunnelse) {
+                      ctx.addIssue({
+                        code: 'custom',
+                        message: 'Begrunnelse for redusert utbetaling i arbeidsgiverperioden må fylles ut'
+                      });
+                      return z.NEVER;
+                    }
+                    return begrunnelse;
+                  })
               })
             )
             .optional(),
           erBehandlingsdager: z.boolean().optional()
         })
-        .or(z.object({}))
         .optional(),
-      flereArbeidsforhold: skalValidereFaisu
-        ? z
-            .object({
-              harLikLoenn: z.enum(['Ja', 'Nei']).optional(),
-              erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).optional(),
-              arbeidsforhold: z
-                .array(
-                  z.object({
-                    inntekt: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
-                      })
-                      .min(0, 'Månedslønn må være større enn eller lik 0.')
-                      .optional(),
-                    stillingsprosent: z
-                      .number({
-                        error: (issue) =>
-                          issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
-                      })
-                      .min(0, 'Stillingsprosent må være større enn eller lik 0.')
-                      .optional(),
-                    yrkesKode: z.string().optional(),
-                    yrkesbeskrivelse: z.string().optional(),
-                    inkludertISykefravaer: z.boolean().optional()
+      flereArbeidsforhold: z
+        .object({
+          harLikLoenn: z.enum(['Ja', 'Nei']).optional(),
+          erSykmeldtFraAlle: z.enum(['Ja', 'Nei']).optional(),
+          arbeidsforhold: z
+            .array(
+              z.object({
+                inntekt: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert månedslønn.' : undefined
                   })
-                )
-                .optional()
-            })
+                  .min(0, 'Månedslønn må være større enn eller lik 0.')
+                  .optional(),
+                stillingsprosent: z
+                  .number({
+                    error: (issue) =>
+                      issue.input === undefined ? 'Vennligst oppgi spesifisert stillingsprosent.' : undefined
+                  })
+                  .min(0, 'Stillingsprosent må være større enn eller lik 0.')
+                  .optional(),
+                yrkesKode: z.string().optional(),
+                yrkesbeskrivelse: z.string().optional(),
+                inkludertISykefravaer: z.boolean().optional()
+              })
+            )
             .optional()
-        : z.any().optional(),
+        })
+        .optional(),
       avsenderTlf: TelefonNummerSchema,
       opplysningstyper: z.array(OpplysningstypeSchema).optional()
     })

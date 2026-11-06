@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { dedupeFeilmeldinger, type FeltFeil } from '../../utils/dedupeFeilmeldinger';
+import { dedupeFeilmeldinger } from '../../utils/dedupeFeilmeldinger';
+import type { FeltFeil } from '../../utils/sendInnCommon';
 
 describe('dedupeFeilmeldinger', () => {
   it('fjerner dupliserte strenger og beholder første forekomst', () => {
@@ -23,7 +24,11 @@ describe('dedupeFeilmeldinger', () => {
   });
 
   it('behandler undefined felt likt når text er lik', () => {
-    const res = dedupeFeilmeldinger([{ text: 'X' }, { text: 'X' }, { felt: undefined, text: 'X' }]);
+    const res = dedupeFeilmeldinger([
+      { text: 'X' },
+      { text: 'X' },
+      { felt: undefined, text: 'X' }
+    ] as unknown as FeltFeil[]);
     expect(res).toEqual([{ text: 'X' }]);
   });
 

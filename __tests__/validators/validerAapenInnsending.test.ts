@@ -1,4 +1,15 @@
-import validerAapenInnsending, { AapenInnsending } from '../../validators/validerAapenInnsending';
+import validerAapenInnsending, {
+  AapenInnsending as ValidertAapenInnsending
+} from '../../validators/validerAapenInnsending';
+
+type AapenInnsending = Omit<ValidertAapenInnsending, 'agp'> & {
+  aarsakInnsending: 'Ny';
+  agp:
+    | (NonNullable<ValidertAapenInnsending['agp']> & {
+        egenmeldinger?: Array<{ fom: string; tom: string }>;
+      })
+    | null;
+};
 
 describe('validerAapenInnsending', () => {
   it('should validate aapenInnsending', () => {

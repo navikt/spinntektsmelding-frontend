@@ -61,7 +61,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('Development environment', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       handler = apiModule.default;
@@ -133,7 +133,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('Production environment', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
@@ -159,6 +159,7 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
 
       expect(proxyConfig.target).toBe('http://api.example.com/aktive-orgnr');
       expect(proxyConfig.onProxyInit).toBe(mockHandleProxyInit);
@@ -174,6 +175,8 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
+      if (!Array.isArray(proxyConfig.pathRewrite)) throw new Error('Expected path rewrite list');
       const pathRewrite = proxyConfig.pathRewrite[0];
 
       expect(pathRewrite.patternStr).toBe('^/api/aktiveorgnr');
@@ -213,6 +216,7 @@ describe('API Route: /api/aktiveorgnr', () => {
       updatedHandler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
       expect(proxyConfig.target).toBe('http://backend.service.local/v1/orgnr');
     });
 
@@ -235,7 +239,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('API Configuration', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       handler = apiModule.default;
@@ -258,7 +262,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('Environment edge cases', () => {
     it('should handle undefined NODE_ENV', async () => {
-      delete process.env.NODE_ENV;
+      vi.stubEnv('NODE_ENV', undefined);
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       const testHandler = apiModule.default;
@@ -270,7 +274,7 @@ describe('API Route: /api/aktiveorgnr', () => {
     });
 
     it('should handle test environment', async () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       const testHandler = apiModule.default;
@@ -282,7 +286,7 @@ describe('API Route: /api/aktiveorgnr', () => {
     });
 
     it('should be case-sensitive for environment check', async () => {
-      process.env.NODE_ENV = 'Development';
+      vi.stubEnv('NODE_ENV', 'Development');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       const testHandler = apiModule.default;
@@ -296,7 +300,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('Request handling', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
@@ -340,7 +344,7 @@ describe('API Route: /api/aktiveorgnr', () => {
 
   describe('Proxy configuration details', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.IM_API_URI = 'api.example.com';
       process.env.AKTIVE_ORGNR_API = '/aktive-orgnr';
       vi.resetModules();
@@ -352,6 +356,7 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
       expect(Array.isArray(proxyConfig.pathRewrite)).toBe(true);
       expect(proxyConfig.pathRewrite).toHaveLength(1);
     });
@@ -360,6 +365,8 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
+      if (!Array.isArray(proxyConfig.pathRewrite)) throw new Error('Expected path rewrite list');
       const rewrite = proxyConfig.pathRewrite[0];
 
       const testPath = '/api/aktiveorgnr/test';
@@ -373,6 +380,7 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
       expect(proxyConfig.target).toMatch(/^http:\/\//);
     });
 
@@ -380,13 +388,14 @@ describe('API Route: /api/aktiveorgnr', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
       expect(proxyConfig.onProxyInit).toBe(mockHandleProxyInit);
     });
   });
 
   describe('Return value handling', () => {
     it('should return undefined when no environment matches', async () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/aktiveorgnr');
       const testHandler = apiModule.default;

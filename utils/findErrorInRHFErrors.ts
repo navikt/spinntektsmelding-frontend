@@ -1,21 +1,21 @@
-import { FieldErrors, FieldValues } from 'react-hook-form';
-
-export default function findErrorInRHFErrors(name: string, errors: FieldErrors<FieldValues>) {
+export default function findErrorInRHFErrors(name: string, errors: Record<string, unknown>): string | undefined {
   const errorName = name.replaceAll('[', '.').replaceAll(']', '');
 
   const errorKey = errorName.split('.');
-  const error = errorKey.reduce((acc: FieldErrors<FieldValues> | string | undefined, key: string) => {
-    if (typeof acc !== 'string') {
-      if (acc?.[key]?.error) {
-        return acc[key]?.error as string;
-      } else {
-        return acc?.[key];
-      }
+  const error = errorKey.reduce<unknown>((acc, key) => {
+    if (typeof acc !== 'object' || acc === null) {
+      return undefined;
     }
+
+    const value = (acc as Record<string, unknown>)[key];
+    if (typeof value === 'object' && value !== null && 'error' in value && typeof value.error === 'string') {
+      return value.error;
+    }
+    return value;
   }, errors);
 
   if (typeof error === 'object' && error !== null && 'message' in error) {
-    return error.message;
+    return typeof error.message === 'string' ? error.message : undefined;
   }
-  return error;
+  return typeof error === 'string' ? error : undefined;
 }

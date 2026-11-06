@@ -8,7 +8,7 @@ describe('redirectToLogin', () => {
 
   beforeEach(() => {
     // Mock environment baseUrl
-    environment.baseUrl = '/base';
+    Object.defineProperty(environment, 'baseUrl', { value: '/base', writable: true, configurable: true });
     // Mock window.location
     delete (global as any).window;
     (global as any).window = {

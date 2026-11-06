@@ -4,9 +4,9 @@ import env from '../config/environment';
 const NotFound = () => {
   return (
     <Page.Block as='main' width='xl' gutters>
-      <Box paddingBlock='20 16'>
-        <VStack gap='16'>
-          <VStack gap='12' align='start'>
+      <Box paddingBlock='space-80 space-64'>
+        <VStack gap='space-64'>
+          <VStack gap='space-48' align='start'>
             <div>
               <Heading level='1' size='large' spacing>
                 Beklager, vi fant ikke siden

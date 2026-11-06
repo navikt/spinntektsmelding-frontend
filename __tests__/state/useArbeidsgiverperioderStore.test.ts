@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 import { vi } from 'vitest';
 import { act, renderHook, cleanup } from '@testing-library/react';
 import useBoundStore from '../../state/useBoundStore';
@@ -1040,7 +1041,7 @@ describe('useBoundStore', () => {
       }
     ]);
 
-    expect(result.current.bestemmendeFravaersdag).toEqual(parseIsoDate('2021-10-01'));
+    expect(Reflect.get(result.current, 'bestemmendeFravaersdag')).toEqual(parseIsoDate('2021-10-01'));
   });
 
   it('should reset status on foreslaattBestemmendeFravaersdag', () => {

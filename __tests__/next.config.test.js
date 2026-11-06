@@ -30,6 +30,7 @@ describe('next.config core config and headers', () => {
     expect(config.reactStrictMode).toBe(true);
     expect(config.output).toBe('standalone');
     expect(config.basePath).toBe('/im-dialog');
+    expect(config.typescript?.ignoreBuildErrors ?? false).toBe(false);
 
     // Experimental optimizePackageImports configured
     expect(config.experimental?.optimizePackageImports).toContain('@navikt/aksel-icons');

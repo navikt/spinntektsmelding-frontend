@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { RefusjonEndringSchema } from '../../schema/RefusjonEndringSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
-type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
+type EndringsBeloep = Omit<z.infer<typeof RefusjonEndringSchema>, 'startdato'> & { dato: Date | undefined };
 
 describe('LonnUnderSykefravaeret', () => {
   it('renders a title text', async () => {
@@ -17,7 +17,11 @@ describe('LonnUnderSykefravaeret', () => {
     ];
 
     const { container } = render(
-      <LonnUnderSykefravaeret loenn={loenn} harRefusjonEndringer={'Ja'} refusjonEndringer={refusjonEndringer} />
+      <LonnUnderSykefravaeret
+        loenn={loenn}
+        harRefusjonEndringer={'Ja'}
+        refusjonEndringer={refusjonEndringer as unknown as Array<z.infer<typeof RefusjonEndringSchema>>}
+      />
     );
 
     const HeadingTitle = screen.getByText(/Nav vil refundere opp/);
@@ -41,7 +45,7 @@ describe('LonnUnderSykefravaeret', () => {
       <LonnUnderSykefravaeret
         loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
-        refusjonEndringer={refusjonEndringer}
+        refusjonEndringer={refusjonEndringer as unknown as Array<z.infer<typeof RefusjonEndringSchema>>}
       />
     );
 
@@ -74,7 +78,7 @@ describe('LonnUnderSykefravaeret', () => {
       <LonnUnderSykefravaeret
         loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
-        refusjonEndringer={refusjonEndringer}
+        refusjonEndringer={refusjonEndringer as unknown as Array<z.infer<typeof RefusjonEndringSchema>>}
       />
     );
 
@@ -99,7 +103,7 @@ describe('LonnUnderSykefravaeret', () => {
       <LonnUnderSykefravaeret
         loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
-        refusjonEndringer={refusjonEndringer}
+        refusjonEndringer={refusjonEndringer as unknown as Array<z.infer<typeof RefusjonEndringSchema>>}
       />
     );
 
@@ -124,7 +128,7 @@ describe('LonnUnderSykefravaeret', () => {
       <LonnUnderSykefravaeret
         loenn={loenn}
         harRefusjonEndringer={harRefusjonEndringer}
-        refusjonEndringer={refusjonEndringer}
+        refusjonEndringer={refusjonEndringer as unknown as Array<z.infer<typeof RefusjonEndringSchema>>}
       />
     );
 

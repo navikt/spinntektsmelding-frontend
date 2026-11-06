@@ -5,6 +5,7 @@ import useBoundStore from '../../state/useBoundStore';
 import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import { vi, Mock } from 'vitest';
 import Feilsammendrag from '../../components/Feilsammendrag';
+import type { ComponentProps } from 'react';
 
 vi.mock('../../state/useBoundStore');
 vi.mock('../../utils/formatRHFFeilmeldinger');
@@ -26,7 +27,9 @@ describe('Feilsammendrag', () => {
     (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
     (useBoundStore as unknown as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
 
-    const { getByText } = render(<Feilsammendrag skjemafeil={mockErrors} />);
+    const { getByText } = render(
+      <Feilsammendrag skjemafeil={mockErrors as unknown as ComponentProps<typeof Feilsammendrag>['skjemafeil']} />
+    );
     expect(getByText('Error 1')).toBeInTheDocument();
     expect(getByText('Error 2')).toBeInTheDocument();
   });
@@ -37,7 +40,9 @@ describe('Feilsammendrag', () => {
     (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
     (useBoundStore as unknown as Mock).mockReturnValueOnce(stateErrors).mockReturnValueOnce(true);
 
-    const { getByText } = render(<Feilsammendrag skjemafeil={mockErrors} />);
+    const { getByText } = render(
+      <Feilsammendrag skjemafeil={mockErrors as unknown as ComponentProps<typeof Feilsammendrag>['skjemafeil']} />
+    );
     expect(getByText('Error 1')).toBeInTheDocument();
     expect(getByText('State Error')).toBeInTheDocument();
   });
@@ -50,7 +55,9 @@ describe('Feilsammendrag', () => {
     (formatRHFFeilmeldinger as unknown as Mock).mockReturnValue(mockErrors);
     (useBoundStore as unknown as Mock).mockReturnValueOnce([]).mockReturnValueOnce(true);
 
-    const { container } = render(<Feilsammendrag skjemafeil={mockErrors} />);
+    const { container } = render(
+      <Feilsammendrag skjemafeil={mockErrors as unknown as ComponentProps<typeof Feilsammendrag>['skjemafeil']} />
+    );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });

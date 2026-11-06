@@ -13,7 +13,9 @@ describe('KvitteringAnnetSystem', () => {
       mottattDato: '2025-01-01'
     };
 
-    const { getByText } = render(<KvitteringAnnetSystem {...props} />);
+    const { getByText } = render(
+      <KvitteringAnnetSystem {...(props as React.ComponentProps<typeof KvitteringAnnetSystem>)} />
+    );
 
     expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
     expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
@@ -25,7 +27,9 @@ describe('KvitteringAnnetSystem', () => {
       eksterntSystem: 'Eksternt system'
     };
 
-    const { getByText, queryByText } = render(<KvitteringAnnetSystem {...props} />);
+    const { getByText, queryByText } = render(
+      <KvitteringAnnetSystem {...(props as React.ComponentProps<typeof KvitteringAnnetSystem>)} />
+    );
 
     expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
     expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
@@ -41,7 +45,9 @@ describe('KvitteringAnnetSystem', () => {
       eksterntSystem: 'Eksternt system',
       mottattDato: '2025-01-01'
     };
-    const { container } = render(<KvitteringAnnetSystem {...props} />);
+    const { container } = render(
+      <KvitteringAnnetSystem {...(props as React.ComponentProps<typeof KvitteringAnnetSystem>)} />
+    );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });

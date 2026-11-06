@@ -21,7 +21,8 @@ import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
-type Skjema = z.infer<typeof HovedskjemaSchema>;
+type Hovedskjema = z.infer<typeof HovedskjemaSchema>;
+type Skjema = Hovedskjema;
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 
@@ -29,20 +30,20 @@ vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
-function fetchMock(url, suffix = '') {
-  return new Promise((resolve) =>
+function fetchMock() {
+  return new Promise<Response>((resolve) =>
     setTimeout(() => {
       resolve({
         json: () =>
           Promise.resolve({
             data: inntektData
           })
-      });
+      } as Response);
     }, 20)
   );
 }
 
-const skjemaData: Skjema = {
+const skjemaData = {
   bekreft_opplysninger: true,
   kreverRefusjon: 'Ja',
   inntekt: {
@@ -66,7 +67,7 @@ const skjemaData: Skjema = {
     harEndringer: 'Ja'
   },
   opplysningstyper: ['refusjon', 'inntekt', 'arbeidsgiverperiode']
-};
+} as unknown as Skjema;
 
 describe('useFyllInnsending', () => {
   beforeEach(() => {
@@ -80,6 +81,98 @@ describe('useFyllInnsending', () => {
     vi.resetAllMocks();
     cleanup();
   });
+  it('rejects missing income dates before updating receipt data', () => {
+    const setKvitteringData = vi.fn();
+    useBoundStore.setState({
+      sykmeldingsperioder: [],
+      egenmeldingsperioder: [],
+      arbeidsgiverperioder: [],
+      skjaeringstidspunkt: undefined,
+      foreslaattBestemmendeFravaersdag: undefined,
+      mottattBestemmendeFravaersdag: undefined,
+      setKvitteringData
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      expect(() =>
+        result.current('8d50ef20-37b5-4829-ad83-56219e70b375', { ...skjemaData, opplysningstyper: ['inntekt'] }, false)
+      ).toThrow(z.ZodError);
+    });
+    expect(setKvitteringData).not.toHaveBeenCalled();
+  });
+
+  it('does not require an income date when income was not requested', () => {
+    useBoundStore.setState({
+      sykmeldingsperioder: [],
+      egenmeldingsperioder: [],
+      arbeidsgiverperioder: [],
+      skjaeringstidspunkt: undefined,
+      foreslaattBestemmendeFravaersdag: undefined,
+      mottattBestemmendeFravaersdag: undefined
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        { ...skjemaData, opplysningstyper: ['refusjon'] },
+        false
+      );
+
+      expect(innsending.inntekt).toBeNull();
+    });
+  });
+
+  it.each([
+    { mottattBestemmendeFravaersdag: '2025-02-01', forventet: '2025-02-01' },
+    { mottattBestemmendeFravaersdag: undefined, forventet: '2025-01-01' }
+  ])('uses the received date or calculated fallback: $forventet', ({ mottattBestemmendeFravaersdag, forventet }) => {
+    useBoundStore.setState({
+      arbeidsgiverperiodeDisabled: true,
+      mottattBestemmendeFravaersdag,
+      skjaeringstidspunkt: parseIsoDate('2025-01-01')
+    });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
+
+      expect(innsending.inntekt?.inntektsdato).toBe(forventet);
+    });
+  });
+
+  it.each([
+    { arbeidsforhold: undefined },
+    {
+      arbeidsforhold: [
+        { inntekt: 25000, stillingsprosent: 50, yrkesbeskrivelse: 'Utvikler', inkludertISykefravaer: true }
+      ]
+    }
+  ])('always provides an arbeidsforhold array when enabled: $arbeidsforhold', ({ arbeidsforhold }) => {
+    useBoundStore.setState({ foreslaattBestemmendeFravaersdag: parseIsoDate('2025-01-01') });
+    const { result } = renderHook(() => useFyllInnsending());
+
+    act(() => {
+      const innsending = result.current(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        {
+          ...skjemaData,
+          opplysningstyper: ['inntekt'],
+          flereArbeidsforhold: { harLikLoenn: 'Nei', erSykmeldtFraAlle: 'Nei', arbeidsforhold }
+        },
+        false,
+        true
+      );
+
+      expect(innsending.flereArbeidsforhold).toEqual({
+        harLikLoenn: false,
+        erSykmeldtFraAlle: false,
+        arbeidsforhold: arbeidsforhold ?? []
+      });
+    });
+  });
+
   it('should fill the state stuff', async () => {
     renderHook(() => useBoundStore((state) => state));
 
@@ -95,7 +188,7 @@ describe('useFyllInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending!: InnsendingSkjema;
 
     act(() => {
       innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
@@ -125,7 +218,7 @@ describe('useFyllInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending!: InnsendingSkjema;
 
     act(() => {
       innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaDataUtenArbeidsgiverperiode, false);
@@ -161,7 +254,7 @@ describe('useFyllInnsending', () => {
 
     if (innsending) {
       expect(innsending.refusjon?.beloepPerMaaned).toBe(80666.66666666667);
-      expect(innsending.refusjon?.sluttdato).toBeNull();
+      expect(innsending.refusjon).toHaveProperty('sluttdato', null);
       expect(innsending.refusjon?.endringer).toEqual([
         { beloep: 1234, startdato: '2023-04-13' },
         { beloep: 12345, startdato: '2023-04-20' },
@@ -264,7 +357,9 @@ describe('finnInnsendbareArbeidsgiverperioder', () => {
 describe('konverterRefusjonEndringer', () => {
   it('should return empty array when harRefusjonEndringer is not Ja', () => {
     const endringer = [{ beloep: 1000, dato: new Date('2023-06-01') }];
-    expect(konverterRefusjonEndringer('Nei', endringer)).toEqual([]);
+    expect(
+      konverterRefusjonEndringer('Nei', endringer as unknown as Parameters<typeof konverterRefusjonEndringer>[1])
+    ).toEqual([]);
   });
 
   it('should return empty array when refusjonEndringer is undefined', () => {
@@ -276,7 +371,10 @@ describe('konverterRefusjonEndringer', () => {
       { beloep: 1000, startdato: new Date('2023-06-01') },
       { beloep: 2000, startdato: new Date('2023-07-01') }
     ];
-    const result = konverterRefusjonEndringer('Ja', endringer);
+    const result = konverterRefusjonEndringer(
+      'Ja',
+      endringer as unknown as Parameters<typeof konverterRefusjonEndringer>[1]
+    );
     expect(result).toEqual([
       { beloep: 1000, startdato: '2023-06-01' },
       { beloep: 2000, startdato: '2023-07-01' }

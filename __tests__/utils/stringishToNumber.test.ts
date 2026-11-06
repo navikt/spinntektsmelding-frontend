@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import stringishToNumber from '../../utils/stringishToNumber';
 
 describe.concurrent('stringishToNumber', () => {

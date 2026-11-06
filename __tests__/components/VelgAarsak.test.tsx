@@ -7,7 +7,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 // import VelgAarsak from './VelgAarsak';
 
 vi.mock('react-hook-form', () => ({
-  Controller: ({ render }) =>
+  Controller: ({ render }: { render: (props: { field: Record<string, unknown> }) => React.ReactNode }) =>
     render({
       field: {
         name: 'aarsak',
@@ -44,6 +44,22 @@ describe('VelgAarsak', () => {
     expect(screen.getByLabelText(/Fisker med hyre/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Annen årsak/)).toBeInTheDocument();
     expect(screen.getByLabelText(/Enkeltstående behandlingsdager/)).toBeInTheDocument();
+  });
+
+  it('preserves the formatted accessible description for behandlingsdager', () => {
+    render(<VelgAarsak legend={legend} name={name} />);
+
+    const radio = screen.getByRole('radio', { name: 'Enkeltstående behandlingsdager' });
+    const description = document.getElementById(radio.getAttribute('aria-describedby')!);
+
+    expect(radio).toHaveAccessibleDescription(
+      'Ansatt som har godkjent sykmelding og sendt søknad for enkeltstående behandlingsdager. ' +
+        'Inneholder arbeidsgiverperioden en kombinasjon av behandlingsdager og annet sykefravær slik at den ' +
+        'varer i 16 dager, må du velge Annen årsak og knytte inntektsmeldingen til søknaden for det ' +
+        'ordinære sykefraværet og legge til behandlingsdagene og eventuelle egenmeldingsdager i arbeidsgiverperioden.'
+    );
+    expect(description?.querySelector('span')?.className).toContain('toppsetning');
+    expect(description?.querySelector('em')).toHaveTextContent('Annen årsak');
   });
 
   it.skip('allows selecting a radio option', async () => {

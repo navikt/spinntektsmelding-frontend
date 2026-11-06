@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { lagKvitteringVisning } from '../../utils/lagKvitteringVisning';
+import { lagKvitteringVisning as lagVisning } from '../../utils/lagKvitteringVisning';
 import parseIsoDate from '../../utils/parseIsoDate';
 import formatDate from '../../utils/formatDate';
 import formatTime from '../../utils/formatTime';
+
+type VisningInput = Parameters<typeof lagVisning>[0];
+
+function lagKvitteringVisning(input: Omit<VisningInput, 'refusjon'> & Partial<Pick<VisningInput, 'refusjon'>>) {
+  return lagVisning(input as VisningInput);
+}
 
 describe('lagKvitteringVisning', () => {
   it('normalizes API dates and gives periods stable IDs', () => {

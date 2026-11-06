@@ -1,39 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { harEndringAarsak } from '../../utils/harEndringAarsak';
 
-type EndringAarsak = { aarsak?: string };
-
 describe('harEndringAarsak', () => {
-  it('should return false if input is undefined', () => {
-    expect(harEndringAarsak(undefined)).toBe(false);
-  });
-
-  it('should return false for an empty array', () => {
-    expect(harEndringAarsak([])).toBe(false);
-  });
-
-  it('should return false for a single element with empty string', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }];
-    expect(harEndringAarsak(arr)).toBe(false);
-  });
-
-  it('should return false for a single element with undefined aarsak', () => {
-    const arr: EndringAarsak[] = [{}];
-    expect(harEndringAarsak(arr)).toBe(false);
-  });
-
-  it('should return true for a single element with non-empty string', () => {
-    const arr: EndringAarsak[] = [{ aarsak: 'change' }];
-    expect(harEndringAarsak(arr)).toBe(true);
-  });
-
-  it('should return true if any element in multiple has non-empty aarsak', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }, { aarsak: 'something' }, { aarsak: '' }];
-    expect(harEndringAarsak(arr)).toBe(true);
-  });
-
-  it('should return true for multiple elements all with empty string (edge-case)', () => {
-    const arr: EndringAarsak[] = [{ aarsak: '' }, { aarsak: '' }];
-    expect(harEndringAarsak(arr)).toBe(true);
+  it.each<{ name: string; input: unknown; expected: boolean }>([
+    { name: 'undefined input', input: undefined, expected: false },
+    { name: 'an empty array', input: [], expected: false },
+    { name: 'a single empty string', input: [{ aarsak: '' }], expected: false },
+    { name: 'a single missing aarsak', input: [{}], expected: false },
+    { name: 'a single non-empty string', input: [{ aarsak: 'Bonus' }], expected: true },
+    {
+      name: 'a non-empty string among empty strings',
+      input: [{ aarsak: '' }, { aarsak: 'Ferie' }, { aarsak: '' }],
+      expected: true
+    },
+    { name: 'multiple empty strings', input: [{ aarsak: '' }, { aarsak: '' }], expected: false },
+    { name: 'multiple missing aarsaker', input: [{}, {}], expected: false },
+    { name: 'empty and missing aarsaker', input: [{ aarsak: '' }, {}], expected: false },
+    { name: 'non-string aarsaker', input: [{ aarsak: null }, { aarsak: 123 }], expected: false },
+    { name: 'a non-empty string among missing aarsaker', input: [{}, { aarsak: 'Bonus' }], expected: true }
+  ])('should return $expected for $name', ({ input, expected }) => {
+    expect(harEndringAarsak(input as Parameters<typeof harEndringAarsak>[0])).toBe(expected);
   });
 });

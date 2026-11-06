@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  MottattForespurtData,
-  ForrigeInntekt,
-  Opplysningstype,
-  MottattForespurtDataSchema
-} from '../../schema/ForespurtDataSchema';
+import { ForrigeInntekt, Opplysningstype, MottattForespurtDataSchema } from '../../schema/ForespurtDataSchema';
 import forespoerselType from '../../config/forespoerselType';
 
 describe('MottattData types', () => {
@@ -22,7 +17,7 @@ describe('MottattData types', () => {
   });
 
   it('should define MottattForespurtData type with correct structure', () => {
-    const mockMottattForespurtData: MottattForespurtData = {
+    const mockMottattForespurtData = {
       inntekt: {
         paakrevd: true,
         forslag: {
@@ -78,7 +73,7 @@ describe('MottattData types', () => {
   });
 
   it('should parse MottattForespurtData type with correct structure', () => {
-    const mockMottattForespurtData: MottattForespurtData = {
+    const mockMottattForespurtData = {
       inntekt: {
         paakrevd: true,
         forslag: {

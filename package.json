@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "prepare": "husky",
     "knip": "knip --no-exit-code --reporter json",
-    "bundleanalyze": "ANALYZE=true pnpm build --webpack"
+    "bundleanalyze": "ANALYZE=true pnpm build --webpack",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@grafana/faro-web-sdk": "2.13.0",

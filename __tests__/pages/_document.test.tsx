@@ -85,7 +85,7 @@ describe('_document.tsx', () => {
     });
 
     it('NODE_ENV=test deaktiverer dekoratør', () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       const shouldDisable =
         process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
         process.env.NODE_ENV === 'test' ||
@@ -107,7 +107,7 @@ describe('_document.tsx', () => {
     it('should enable decorator when all flags are false', () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       delete process.env.PLAYWRIGHT;
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
 
       const shouldDisable =
         process.env.NEXT_PUBLIC_DISABLE_DECORATOR === 'true' ||
@@ -115,6 +115,67 @@ describe('_document.tsx', () => {
         process.env.PLAYWRIGHT === 'true';
 
       expect(shouldDisable).toBe(false);
+    });
+  });
+
+  describe('Decorator environment validation', () => {
+    beforeEach(() => {
+      vi.resetModules();
+      delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
+      delete process.env.PLAYWRIGHT;
+      delete process.env.NEXT_PUBLIC_DECORATOR_ENV;
+      vi.stubEnv('NODE_ENV', 'production');
+      vi.doMock('@navikt/nav-dekoratoren-moduler/ssr', () => ({
+        fetchDecoratorReact: fetchDecoratorMock
+      }));
+    });
+
+    it.each(['prod', 'dev', 'beta', 'betaTms'])('fetches the decorator for %s', async (env) => {
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = env;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      const result = await FreshDocument.getInitialProps(ctx as any);
+
+      expect(fetchDecoratorMock).toHaveBeenCalledWith({
+        env,
+        params: { language: 'nb', context: 'arbeidsgiver' }
+      });
+      expect(result.decorator).toBe(mockDecoratorComponents);
+    });
+
+    it.each([
+      { cluster: 'prod-gcp', env: 'prod' },
+      { cluster: 'dev-gcp', env: 'dev' }
+    ])('uses $env for $cluster when the environment is unset', async ({ cluster, env }) => {
+      process.env.NAIS_CLUSTER_NAME = cluster;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      await FreshDocument.getInitialProps(ctx as any);
+
+      expect(fetchDecoratorMock).toHaveBeenCalledWith(expect.objectContaining({ env }));
+    });
+
+    it.each(['localhost', 'invalid'])('rejects unsupported environment %s before fetching', async (env) => {
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = env;
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      await expect(FreshDocument.getInitialProps(ctx as any)).rejects.toThrow(`Ugyldig dekoratormiljo: ${env}`);
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
+    });
+
+    it('does not validate the environment when the decorator is disabled', async () => {
+      process.env.NEXT_PUBLIC_DISABLE_DECORATOR = 'true';
+      process.env.NEXT_PUBLIC_DECORATOR_ENV = 'invalid';
+      const { default: FreshDocument } = await import('../../pages/_document');
+      const ctx = { renderPage: vi.fn(() => ({ html: '', head: [] })) };
+
+      const result = await FreshDocument.getInitialProps(ctx as any);
+
+      expect(result.decorator.Header({})).toBeNull();
+      expect(fetchDecoratorMock).not.toHaveBeenCalled();
     });
   });
 
@@ -149,7 +210,7 @@ describe('_document.tsx', () => {
   describe('Error handling', () => {
     it('should handle network error from fetchDecoratorReact in getInitialProps', async () => {
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
 
       (fetchDecoratorMock as any).mockRejectedValueOnce(new Error('Network error'));
 
@@ -399,7 +460,7 @@ describe('_document.tsx', () => {
     });
 
     it('getInitialProps returns DisabledDecorator when NODE_ENV=test', async () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
       vi.resetModules();
 
@@ -447,7 +508,7 @@ describe('_document.tsx', () => {
     });
 
     it('getInitialProps returns disabled when NODE_ENV=test', async () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       delete process.env.NEXT_PUBLIC_DISABLE_DECORATOR;
 
       const ctx = {

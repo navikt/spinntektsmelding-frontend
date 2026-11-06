@@ -151,6 +151,6 @@ describe('useBoundStore', () => {
       result.current.initFravaersperiode(ugyldige);
     });
 
-    expect(errorSpy).toHaveBeenCalledWith('Feil i initFravaersperiode', expect.anything());
+    expect(errorSpy).toHaveBeenCalledWith({ err: expect.any(Error) }, 'Feil i initFravaersperiode');
   });
 });

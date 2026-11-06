@@ -2,6 +2,38 @@ import { describe, it, expect } from 'vitest';
 import { HovedskjemaSchema, createHovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 
 describe('HovedskjemaSchema', () => {
+  describe('agp', () => {
+    it.each([{ value: undefined }, { value: {} }, { value: { perioder: [] } }])(
+      'should accept optional or empty periods: $value',
+      ({ value }) => {
+        expect(HovedskjemaSchema.shape.agp.safeParse(value).success).toBe(true);
+      }
+    );
+
+    it('should preserve valid ISO periods', () => {
+      const agp = { perioder: [{ fom: '2026-11-05', tom: '2026-11-05' }] };
+
+      expect(HovedskjemaSchema.shape.agp.parse(agp)).toEqual(agp);
+    });
+
+    it.each([
+      { fom: 'invalid', tom: '2026-11-05' },
+      { fom: '2026-11-06', tom: '2026-11-05' }
+    ])('should reject invalid periods: $fom to $tom', (periode) => {
+      const result = HovedskjemaSchema.shape.agp.safeParse({ perioder: [periode] });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues).toContainEqual(expect.objectContaining({ path: ['perioder', 0, 'fom'] }));
+    });
+
+    it('should reject invalid AGP values instead of accepting an empty object fallback', () => {
+      const result = HovedskjemaSchema.shape.agp.safeParse({ erBehandlingsdager: 'Ja' });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues).toContainEqual(expect.objectContaining({ path: ['erBehandlingsdager'] }));
+    });
+  });
+
   it('should pass validation when all fields are correct', () => {
     const schemaData = {
       bekreft_opplysninger: true,

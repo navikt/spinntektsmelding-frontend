@@ -1,6 +1,21 @@
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
 
 describe('findErrorInRHFErrors', () => {
+  it('should return the message from a React Hook Form field error', () => {
+    const errors = {
+      nested: {
+        field: { type: 'required', message: 'Required field' }
+      }
+    };
+
+    expect(findErrorInRHFErrors('nested.field', errors)).toBe('Required field');
+  });
+
+  it('should return undefined for a non-string error message', () => {
+    expect(findErrorInRHFErrors('field', { field: { message: {} } })).toBeUndefined();
+    expect(findErrorInRHFErrors('field', { field: { error: {} } })).toBeUndefined();
+  });
+
   it('should return the error message for a nested field', () => {
     const errors = {
       nested: {

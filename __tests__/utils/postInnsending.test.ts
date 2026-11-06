@@ -82,6 +82,45 @@ describe('postInnsending', () => {
     expect(success).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { format: 'JSON', responseBody: '{"error":"Forbidden"}', contentType: 'application/json' },
+    { format: 'HTML', responseBody: '<html>Forbidden</html>', contentType: 'text/html' },
+    { format: 'tom respons', responseBody: '', contentType: 'text/plain' }
+  ])('viser tilgangsfeil ved 403 med $format uten å lese responsinnholdet', async ({ responseBody, contentType }) => {
+    const response = new Response(responseBody, {
+      status: 403,
+      headers: { 'Content-Type': contentType }
+    });
+    global.fetch = vi.fn().mockResolvedValue(response);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
+      {
+        value: 'Innsending av skjema feilet',
+        error:
+          'Du har ikke tilgang til å sende inn denne inntektsmeldingen. Kontroller at du har valgt riktig virksomhet og har nødvendige rettigheter.',
+        property: 'server'
+      }
+    ]);
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
+    expect(unauthorized).not.toHaveBeenCalled();
+    expect(success).not.toHaveBeenCalled();
+    expect(mapValidationErrors).not.toHaveBeenCalled();
+    expect(response.bodyUsed).toBe(false);
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith('Feil ved innsending av skjema - 403 - mangler rettigheter');
+    expect(teamLoggerWarnSpy).not.toHaveBeenCalled();
+  });
+
   it('returnerer serverfeil (500) med setErrorResponse', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(500));
 
@@ -305,6 +344,35 @@ describe('postInnsending', () => {
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
+  it.each([
+    { status: 400, responseBody: '{"error":123,"detaljer":"diagnostikk-markoer"}' },
+    { status: 400, responseBody: '{"feilmelding":"diagnostikk-markoer"}' },
+    { status: 400, responseBody: '<html>diagnostikk-markoer</html>' },
+    { status: 422, responseBody: '<html>diagnostikk-markoer</html>' }
+  ])('bevarer responsinnholdet i logging ved $status med $responseBody', async ({ status, responseBody }) => {
+    const response = new Response(responseBody, { status });
+    const textSpy = vi.spyOn(response, 'text');
+    const jsonSpy = vi.spyOn(response, 'json');
+    global.fetch = vi.fn().mockResolvedValue(response);
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(textSpy).toHaveBeenCalledTimes(1);
+    expect(jsonSpy).not.toHaveBeenCalled();
+    expect(response.bodyUsed).toBe(true);
+    expect(teamLoggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(`${responseBody} ${JSON.stringify(body)}`));
+    expect(success).not.toHaveBeenCalled();
+  });
+
   it('returnerer valideringsfeil ved 400-lignende default case med backend error-format', async () => {
     global.fetch = vi.fn().mockResolvedValue(
       buildResponse(418, {
@@ -329,6 +397,33 @@ describe('postInnsending', () => {
     expect(setErrorResponse).toHaveBeenCalled();
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
+
+  it.each(['12345678', '123456789', '12345678901'])(
+    'maskerer %s i fallbackloggen når teamloggeren feiler',
+    async (nummer) => {
+      global.fetch = vi
+        .fn()
+        .mockResolvedValue(buildResponse(400, { error: 'Ugyldig skjema', valideringsfeil: ['Ugyldig skjema'] }));
+      teamLoggerWarnSpy.mockImplementation(() => {
+        throw new Error('Teamlogger utilgjengelig');
+      });
+
+      await postInnsending({
+        url,
+        body: { nummer },
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(teamLoggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(nummer));
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"nummer":"[redacted]"'));
+      expect(warnSpy).not.toHaveBeenCalledWith(expect.stringContaining(nummer));
+    }
+  );
 
   it('logger 404 feil', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(404));
@@ -388,7 +483,7 @@ describe('postInnsending', () => {
     expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
-  it('ignorerer ugyldig JSON i default-case uten crash', async () => {
+  it('viser generell feil ved tom respons i default-case', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       status: 418,
       json: async () => {
@@ -408,8 +503,9 @@ describe('postInnsending', () => {
       setShowErrorList
     });
 
-    // Ingen validation errors trigget fordi parsing feilet
-    expect(setErrorResponse).not.toHaveBeenCalled();
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(setErrorResponse.mock.calls[0][0][0].property).toBe('server');
+    expect(setShowErrorList).toHaveBeenCalledWith(true);
   });
 
   describe('handleDefaultResponse', () => {
@@ -523,7 +619,7 @@ describe('postInnsending', () => {
       expect(setShowErrorList).toHaveBeenCalledWith(true);
     });
 
-    it('setter ingen feil når respons mangler error-felt', async () => {
+    it('viser generell feil når respons mangler error-felt', async () => {
       global.fetch = vi.fn().mockResolvedValue(
         buildResponse(422, {
           feilmelding: 'noe gikk galt'
@@ -542,18 +638,24 @@ describe('postInnsending', () => {
       });
 
       expect(mapValidationErrors).not.toHaveBeenCalled();
-      expect(setErrorResponse).not.toHaveBeenCalled();
-      expect(setShowErrorList).not.toHaveBeenCalled();
+      expect(setErrorResponse).toHaveBeenCalledTimes(1);
+      expect(setErrorResponse.mock.calls[0][0][0].property).toBe('server');
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
     });
 
-    it('logger og krasjer ikke når JSON-parsing feiler i default-case', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
-        status: 422,
-        json: async () => {
-          throw new Error('ugyldig json');
-        },
-        text: async () => 'ikke json'
-      } as any);
+    it.each([
+      { status: 429, responseBody: '' },
+      { status: 502, responseBody: '<html>Bad Gateway</html>' },
+      { status: 504, responseBody: 'ikke json' },
+      { status: 429, responseBody: '{}' },
+      { status: 502, responseBody: '{"error":123}' },
+      { status: 504, responseBody: 'null' },
+      { status: 502, responseBody: '[]' },
+      { status: 429, responseBody: '"uventet respons"' }
+    ])('viser generell feil ved $status med $responseBody', async ({ status, responseBody }) => {
+      const response = new Response(responseBody, { status });
+      const textSpy = vi.spyOn(response, 'text');
+      global.fetch = vi.fn().mockResolvedValue(response);
 
       await postInnsending({
         url,
@@ -566,8 +668,18 @@ describe('postInnsending', () => {
         setShowErrorList
       });
 
-      expect(setErrorResponse).not.toHaveBeenCalled();
-      expect(warnSpy).toHaveBeenCalled();
+      expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
+        {
+          value: 'Innsending av skjema feilet',
+          error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+          property: 'server'
+        }
+      ]);
+      expect(setShowErrorList).toHaveBeenCalledWith(true);
+      expect(mapValidationErrors).not.toHaveBeenCalled();
+      expect(success).not.toHaveBeenCalled();
+      expect(unauthorized).not.toHaveBeenCalled();
+      expect(textSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

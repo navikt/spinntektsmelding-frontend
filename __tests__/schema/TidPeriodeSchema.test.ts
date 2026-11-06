@@ -52,6 +52,7 @@ describe('TidPeriodeSchema', () => {
     const safe = TidPeriodeSchema.safeParse(input);
     // Unknown keys are allowed but we want to ensure invalid types for our schema don't slip through
     expect(safe.success).toBe(true);
+    if (!safe.success) throw new Error('Expected valid period');
     expect((safe.data as any).extra).toBeUndefined();
     // But parsing the known fields still yields an empty object
     expect(Object.keys(safe.data)).toEqual([]);

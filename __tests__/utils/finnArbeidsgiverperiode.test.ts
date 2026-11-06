@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
 import finnArbeidsgiverperiode from '../../utils/finnArbeidsgiverperiode';
