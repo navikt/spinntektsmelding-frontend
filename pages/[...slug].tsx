@@ -587,7 +587,11 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       'flereArbeidsforhold' in kvitteringData &&
       kvitteringData.flereArbeidsforhold
     ) {
-      onSetValue('flereArbeidsforhold', kvitteringData.flereArbeidsforhold);
+      onSetValue('flereArbeidsforhold', {
+        ...kvitteringData.flereArbeidsforhold,
+        harLikLoenn: kvitteringData.flereArbeidsforhold.harLikLoenn ? 'Ja' : 'Nei',
+        erSykmeldtFraAlle: kvitteringData.flereArbeidsforhold.erSykmeldtFraAlle ? 'Ja' : 'Nei'
+      });
     }
   }, [kvitteringData, dataFraBackend]);
 

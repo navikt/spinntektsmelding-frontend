@@ -683,6 +683,56 @@ describe('Home Page', () => {
   });
 
   describe('kvitteringData useEffects', () => {
+    it.each([
+      { harLikLoenn: true, erSykmeldtFraAlle: false, forventetLikLoenn: 'Ja', forventetSykmeldtFraAlle: 'Nei' },
+      { harLikLoenn: false, erSykmeldtFraAlle: true, forventetLikLoenn: 'Nei', forventetSykmeldtFraAlle: 'Ja' }
+    ])('converts receipt answers to form values: $harLikLoenn / $erSykmeldtFraAlle', (svar) => {
+      const arbeidsforhold = [
+        { inntekt: 25000, stillingsprosent: 50, yrkesbeskrivelse: 'Utvikler', inkludertISykefravaer: false }
+      ];
+      const mockState = createMockState({
+        avsender: { tlf: '12345678', orgnr: '' },
+        kvitteringData: {
+          flereArbeidsforhold: {
+            harLikLoenn: svar.harLikLoenn,
+            erSykmeldtFraAlle: svar.erSykmeldtFraAlle,
+            arbeidsforhold
+          }
+        }
+      });
+      (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(mockState));
+
+      render(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} dataFraBackend={false} />);
+
+      expect(observedForm.getValues('flereArbeidsforhold')).toEqual({
+        harLikLoenn: svar.forventetLikLoenn,
+        erSykmeldtFraAlle: svar.forventetSykmeldtFraAlle,
+        arbeidsforhold
+      });
+    });
+
+    it.each([{ flereArbeidsforhold: undefined }, { flereArbeidsforhold: null }])(
+      'preserves form values when receipt arbeidsforhold is $flereArbeidsforhold',
+      ({ flereArbeidsforhold }) => {
+        let mockState = createMockState({
+          avsender: { tlf: '12345678', orgnr: '' },
+          kvitteringData: { flereArbeidsforhold }
+        });
+        (useBoundStore as unknown as Mock).mockImplementation((stateFn) => stateFn(mockState));
+
+        const { rerender } = render(
+          <Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} dataFraBackend={false} />
+        );
+        const eksisterendeVerdier = { harLikLoenn: 'Nei', erSykmeldtFraAlle: 'Ja', arbeidsforhold: [] };
+        act(() => observedForm.setValue('flereArbeidsforhold', eksisterendeVerdier));
+
+        mockState = { ...mockState, kvitteringData: { flereArbeidsforhold } };
+        rerender(<Home slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} dataFraBackend={false} />);
+
+        expect(observedForm.getValues('flereArbeidsforhold')).toEqual(eksisterendeVerdier);
+      }
+    );
+
     it('sets fullLonn to Ja when dataFraBackend is false and no redusertLoennIAgp', () => {
       (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
         stateFn(
