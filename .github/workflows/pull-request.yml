@@ -2,8 +2,6 @@ name: Bygg pull request
 
 on:
   pull_request:
-    branches:
-      - main
 
 concurrency:
   group: pr-${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
@@ -16,6 +14,33 @@ env:
   NODE_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
 
 jobs:
+  Typesjekk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          registry-url: "https://npm.pkg.github.com"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+      - name: Cache pnpm files
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: |
+            ~/.pnpm-store
+
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Generate Next.js types
+        run: pnpm exec next typegen
+      - name: Typecheck
+        run: pnpm typecheck
+
   Bygg:
     runs-on: ubuntu-latest
     permissions:

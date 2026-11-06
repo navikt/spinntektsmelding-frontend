@@ -45,13 +45,6 @@ const nextConfig = {
   // dynamic string target, which only works when the package exists on disk.
   serverExternalPackages: ['@navikt/next-logger', 'pino', 'pino-socket', 'pino-pretty'],
   basePath: '/im-dialog',
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true
-  },
   // i18n: {
   //   locales: ['no'],
   //   defaultLocale: 'no'
