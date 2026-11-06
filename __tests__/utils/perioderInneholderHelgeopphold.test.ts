@@ -107,7 +107,7 @@ describe('perioderInneholderHelgeopphold', () => {
   });
 
   it('should return false if perioder is undefined', () => {
-    const perioder = undefined;
+    const perioder = undefined as unknown as Parameters<typeof perioderInneholderHelgeopphold>[0];
 
     expect(perioderInneholderHelgeopphold(perioder)).toBe(false);
   });

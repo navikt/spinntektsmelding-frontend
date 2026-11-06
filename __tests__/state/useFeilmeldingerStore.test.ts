@@ -158,7 +158,9 @@ describe('useFeilmeldingerStore', () => {
   describe('oppdaterFeilmeldinger', () => {
     it('slår opp tekst fra feiltekster for kjent feilkode', () => {
       const { result } = renderHook(() => useBoundStore((state) => state));
-      const feilkoder: Array<ValiderResultat> = [{ felt: 'arbeidsgiverperioder-0', code: 'MANGLER_PERIODE' }];
+      const feilkoder: Array<ValiderResultat> = [
+        { felt: 'arbeidsgiverperioder-0', code: 'MANGLER_PERIODE' as unknown as ValiderResultat['code'] }
+      ];
 
       let oppdatert: Array<ValiderTekster> = [];
       act(() => {
@@ -192,7 +194,9 @@ describe('useFeilmeldingerStore', () => {
         result.current.fyllFeilmeldinger(eksisterende);
       });
 
-      const nyeFeilkoder: Array<ValiderResultat> = [{ felt: 'arbeidsgiverperioder-1', code: 'MANGLER_FRA' }];
+      const nyeFeilkoder: Array<ValiderResultat> = [
+        { felt: 'arbeidsgiverperioder-1', code: 'MANGLER_FRA' as unknown as ValiderResultat['code'] }
+      ];
 
       let oppdatert: Array<ValiderTekster> = [];
       act(() => {

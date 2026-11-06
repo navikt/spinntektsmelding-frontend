@@ -3,8 +3,10 @@ import useBoundStore from '../../state/useBoundStore';
 import { vi } from 'vitest';
 import { act, cleanup, renderHook } from '@testing-library/react';
 
-import mottattData from '../../mockdata/mottatData.json';
+import legacyMottattData from '../../mockdata/mottatData.json';
 import parseIsoDate from '../../utils/parseIsoDate';
+
+const mottattData = legacyMottattData as unknown as Parameters<ReturnType<typeof useStateInit>>[0];
 
 const initialState = useBoundStore.getState();
 
@@ -43,7 +45,7 @@ describe('useStateInit', () => {
       arbeidsgiverperiode: { paakrevd: false },
       inntekt: { paakrevd: true, forslag: null },
       refusjon: { paakrevd: true, forslag: { perioder: [], opphoersdato: null } }
-    };
+    } as unknown as typeof mottattData.forespurtData;
 
     act(() => {
       initState.current(mottattData);

@@ -90,7 +90,7 @@ describe('useForespurtDataStore', () => {
       inntekt: {
         paakrevd: true,
         forslag: {
-          type: 'ForslagInntektGrunnlag',
+          type: 'ForslagInntektGrunnlag' as const,
           beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
           forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 48000.0 }
         }
@@ -110,7 +110,12 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData, '2025-01-02', 48000, undefined);
+      result.current.initForespurtData(
+        forespurtData,
+        '2025-01-02',
+        48000,
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
+      );
     });
     let typer;
     act(() => {
@@ -131,7 +136,7 @@ describe('useForespurtDataStore', () => {
       inntekt: {
         paakrevd: true,
         forslag: {
-          type: 'ForslagInntektGrunnlag',
+          type: 'ForslagInntektGrunnlag' as const,
           beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
           forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 0 }
         }
@@ -151,7 +156,12 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(forespurtData, '2025-01-02', 0, undefined);
+      result.current.initForespurtData(
+        forespurtData,
+        '2025-01-02',
+        0,
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
+      );
     });
     let typer;
     act(() => {
@@ -173,7 +183,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag',
+              type: 'ForslagInntektGrunnlag' as const,
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
               forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
             }
@@ -185,14 +195,14 @@ describe('useForespurtDataStore', () => {
               opphoersdato: null
             }
           }
-        },
+        } as unknown as Parameters<typeof result.current.initForespurtData>[0],
         '2023-08-28',
         33750.0,
-        undefined
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
       );
     });
 
-    expect(result.current.forespurtData?.inntekt?.forslag?.forrigeInntekt?.beløp).toBe(33750);
+    expect(Reflect.get(result.current.forespurtData?.inntekt ?? {}, 'forslag')?.forrigeInntekt?.beløp).toBe(33750);
     expect(result.current.forespurtData?.refusjon?.forslag?.perioder).toEqual([]);
     expect(result.current.refusjonTilArbeidsgiver).toBeUndefined();
     // expect(result.current.lonnISykefravaeret?.beloep).toBe(0);
@@ -206,7 +216,12 @@ describe('useForespurtDataStore', () => {
     const input: Opplysningstype[] = ['arbeidsgiverperiode', 'inntekt', 'refusjon'];
 
     act(() => {
-      result.current.initForespurtData(trengerDelvis.forespurtData, '2023-08-28', 33750.0, undefined);
+      result.current.initForespurtData(
+        trengerDelvis.forespurtData,
+        '2023-08-28',
+        33750.0,
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
+      );
     });
 
     let typer;
@@ -249,7 +264,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag',
+              type: 'ForslagInntektGrunnlag' as const,
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
             }
           },
@@ -260,10 +275,10 @@ describe('useForespurtDataStore', () => {
               opphoersdato: '2023-09-30'
             }
           }
-        },
+        } as unknown as Parameters<typeof result.current.initForespurtData>[0],
         '2023-01-02',
         46000.0,
-        undefined
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
       );
     });
 
@@ -284,7 +299,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag',
+              type: 'ForslagInntektGrunnlag' as const,
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
             }
           },
@@ -295,10 +310,10 @@ describe('useForespurtDataStore', () => {
               opphoersdato: '2023-09-30'
             }
           }
-        },
+        } as unknown as Parameters<typeof result.current.initForespurtData>[0],
         '2023-01-02',
         46000.0,
-        undefined
+        undefined as unknown as Parameters<typeof result.current.initForespurtData>[3]
       );
     });
 

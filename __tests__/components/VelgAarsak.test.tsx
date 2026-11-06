@@ -7,7 +7,7 @@ import VelgAarsak from '../../components/VelgAarsak/VelgAarsak';
 // import VelgAarsak from './VelgAarsak';
 
 vi.mock('react-hook-form', () => ({
-  Controller: ({ render }) =>
+  Controller: ({ render }: { render: (props: { field: Record<string, unknown> }) => React.ReactNode }) =>
     render({
       field: {
         name: 'aarsak',

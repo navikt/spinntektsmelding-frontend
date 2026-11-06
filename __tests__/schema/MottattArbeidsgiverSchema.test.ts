@@ -32,7 +32,6 @@ describe('MottattArbeidsgiverSchema', () => {
 
   test('rejects when a required field is missing', () => {
     // omit "name"
-    // @ts-expect-error testing invalid input
     const { name, ...missingName } = validBase;
     expect(() => MottattArbeidsgiverSchema.parse(missingName)).toThrow();
   });
@@ -40,7 +39,6 @@ describe('MottattArbeidsgiverSchema', () => {
   test('rejects wrong types', () => {
     const badData = {
       ...validBase,
-      // @ts-expect-error testing invalid input
       organizationNumber: 12345
     };
     expect(() => MottattArbeidsgiverSchema.parse(badData)).toThrow();
@@ -49,7 +47,6 @@ describe('MottattArbeidsgiverSchema', () => {
   test('rejects extra nested wrong type', () => {
     const badData = {
       ...validBase,
-      // @ts-expect-error testing invalid input
       parentOrganizationNumber: 456
     };
     expect(() => MottattArbeidsgiverSchema.parse(badData)).toThrow();

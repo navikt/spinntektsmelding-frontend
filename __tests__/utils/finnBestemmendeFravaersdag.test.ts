@@ -1,6 +1,6 @@
 import { parseISO } from 'date-fns';
 import { Periode } from '../../state/state';
-import finnBestemmendeFravaersdag, {
+import beregnBestemmendeFravaersdag, {
   finnSammenhengendePeriode,
   joinPerioderMedOverlapp,
   tilstoetendePeriode,
@@ -8,6 +8,21 @@ import finnBestemmendeFravaersdag, {
 } from '../../utils/finnBestemmendeFravaersdag';
 import { describe } from 'vitest';
 import { TidPeriode } from '../../schema/TidPeriodeSchema';
+
+type FravaersdagArgumenter = Parameters<typeof beregnBestemmendeFravaersdag>;
+
+function finnBestemmendeFravaersdag(
+  ...args: [
+    perioder?: FravaersdagArgumenter[0],
+    arbeidsgiverperioder?: FravaersdagArgumenter[1],
+    forrigeFravaersdag?: FravaersdagArgumenter[2],
+    erEndring?: FravaersdagArgumenter[3],
+    tidligereArgument?: FravaersdagArgumenter[4] | string,
+    ...legacyArgumenter: unknown[]
+  ]
+) {
+  return beregnBestemmendeFravaersdag(...(args as Parameters<typeof beregnBestemmendeFravaersdag>));
+}
 
 describe.concurrent('finnBestemmendeFravaersdag', () => {
   it('should return empty arrays when merging empty input', () => {
@@ -99,7 +114,7 @@ describe.concurrent('finnBestemmendeFravaersdag', () => {
   });
 
   it('should return the undefined bestemmende fraværsdag for two periode with one in the other', () => {
-    const periode: Array<Periode> = undefined;
+    const periode: Array<Periode> | undefined = undefined;
 
     expect(finnBestemmendeFravaersdag(periode)).toBeUndefined();
   });

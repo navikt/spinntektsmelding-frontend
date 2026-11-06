@@ -9,13 +9,12 @@ import inntektData from '../../mockdata/inntektData.json';
 import useKvitteringInit from '../../state/useKvitteringInit';
 import parseIsoDate from '../../utils/parseIsoDate';
 import { z } from 'zod/v4';
-import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import forespoerselType from '../../config/forespoerselType';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 
-type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
+type InnsendingSkjema = ReturnType<ReturnType<typeof useFyllAapenInnsending>>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 type SkjemaData = z.infer<typeof HovedskjemaSchema>;
 
@@ -46,15 +45,15 @@ const mockSkjema: SkjemaData = {
 
 const initialState = useBoundStore.getState();
 
-function fetchMock(url, suffix = '') {
-  return new Promise((resolve) =>
+function fetchMock() {
+  return new Promise<Response>((resolve) =>
     setTimeout(() => {
       resolve({
         json: () =>
           Promise.resolve({
             data: inntektData
           })
-      });
+      } as Response);
     }, 20)
   );
 }
@@ -99,7 +98,7 @@ describe('useFyllAapenInnsending', () => {
       result.current.initRefusjonEndringer([
         { beloep: 1234, dato: parseIsoDate('2023-04-13') },
         { beloep: 12345, dato: parseIsoDate('2023-04-20') }
-      ]);
+      ] as unknown as Parameters<typeof result.current.initRefusjonEndringer>[0]);
 
       result.current.initLonnISykefravaeret({
         beloep: 5000,
@@ -126,12 +125,13 @@ describe('useFyllAapenInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending!: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(mockSkjema);
+      innsending = fyllInnsending(mockSkjema, undefined as unknown as Parameters<typeof fyllInnsending>[1], false);
     });
 
+    if (!innsending.success) throw new Error('Expected valid submission');
     if (innsending) {
       expect(innsending.data).toEqual({
         agp: {
@@ -187,7 +187,7 @@ describe('useFyllAapenInnsending', () => {
       result.current.initRefusjonEndringer([
         { beloep: 1234, startdato: parseIsoDate('2023-04-13')! },
         { beloep: 12345, startdato: parseIsoDate('2023-04-20')! }
-      ]);
+      ] as unknown as Parameters<typeof result.current.initRefusjonEndringer>[0]);
 
       result.current.initLonnISykefravaeret({
         beloep: 5000,
@@ -199,7 +199,7 @@ describe('useFyllAapenInnsending', () => {
       result.current.initRefusjonEndringer([
         { beloep: 1234, startdato: parseIsoDate('2023-04-13')! },
         { beloep: 12345, startdato: parseIsoDate('2023-04-20')! }
-      ]);
+      ] as unknown as Parameters<typeof result.current.initRefusjonEndringer>[0]);
 
       result.current.setPaakrevdeOpplysninger(Object.keys(forespoerselType) as Array<Opplysningstype>);
     });
@@ -227,12 +227,13 @@ describe('useFyllAapenInnsending', () => {
       }
     };
 
-    let innsending: { data: InnsendingSkjema };
+    let innsending!: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(mockSkjemaUtenAgp, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjemaUtenAgp as SkjemaData, 'MedArbeidsforhold', false);
     });
 
+    if (!innsending.success) throw new Error('Expected valid submission');
     if (innsending) {
       expect(innsending.data).toEqual({
         agp: {
@@ -319,7 +320,7 @@ describe('useFyllAapenInnsending', () => {
       result.current.initRefusjonEndringer([
         { beloep: 1234, startdato: parseIsoDate('2023-04-13') },
         { beloep: 12345, startdato: parseIsoDate('2023-04-20') }
-      ]);
+      ] as unknown as Parameters<typeof result.current.initRefusjonEndringer>[0]);
 
       result.current.initLonnISykefravaeret({
         beloep: 5000,
@@ -337,12 +338,13 @@ describe('useFyllAapenInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: { data: InnsendingSkjema };
+    let innsending!: InnsendingSkjema;
 
     act(() => {
-      innsending = fyllInnsending(mockSkjemaUtenAgp, 'MedArbeidsforhold', false);
+      innsending = fyllInnsending(mockSkjemaUtenAgp as SkjemaData, 'MedArbeidsforhold', false);
     });
 
+    if (!innsending.success) throw new Error('Expected valid submission');
     if (innsending) {
       expect(innsending.data).toEqual({
         agp: {

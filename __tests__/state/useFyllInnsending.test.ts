@@ -21,7 +21,8 @@ import { MottattKvitteringSchema } from '../../schema/MottattKvitteringSchema';
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import parseIsoDate from '../../utils/parseIsoDate';
 
-type Skjema = z.infer<typeof HovedskjemaSchema>;
+type Hovedskjema = z.infer<typeof HovedskjemaSchema>;
+type Skjema = Hovedskjema;
 type InnsendingSkjema = z.infer<typeof FullInnsendingSchema>;
 type KvitteringData = z.infer<typeof MottattKvitteringSchema>;
 
@@ -29,20 +30,20 @@ vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
-function fetchMock(url, suffix = '') {
-  return new Promise((resolve) =>
+function fetchMock() {
+  return new Promise<Response>((resolve) =>
     setTimeout(() => {
       resolve({
         json: () =>
           Promise.resolve({
             data: inntektData
           })
-      });
+      } as Response);
     }, 20)
   );
 }
 
-const skjemaData: Skjema = {
+const skjemaData = {
   bekreft_opplysninger: true,
   kreverRefusjon: 'Ja',
   inntekt: {
@@ -66,7 +67,7 @@ const skjemaData: Skjema = {
     harEndringer: 'Ja'
   },
   opplysningstyper: ['refusjon', 'inntekt', 'arbeidsgiverperiode']
-};
+} as unknown as Skjema;
 
 describe('useFyllInnsending', () => {
   beforeEach(() => {
@@ -187,7 +188,7 @@ describe('useFyllInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending!: InnsendingSkjema;
 
     act(() => {
       innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaData, false);
@@ -217,7 +218,7 @@ describe('useFyllInnsending', () => {
 
     const fyllInnsending = fyller.current;
 
-    let innsending: InnsendingSkjema;
+    let innsending!: InnsendingSkjema;
 
     act(() => {
       innsending = fyllInnsending('8d50ef20-37b5-4829-ad83-56219e70b375', skjemaDataUtenArbeidsgiverperiode, false);
@@ -356,7 +357,9 @@ describe('finnInnsendbareArbeidsgiverperioder', () => {
 describe('konverterRefusjonEndringer', () => {
   it('should return empty array when harRefusjonEndringer is not Ja', () => {
     const endringer = [{ beloep: 1000, dato: new Date('2023-06-01') }];
-    expect(konverterRefusjonEndringer('Nei', endringer)).toEqual([]);
+    expect(
+      konverterRefusjonEndringer('Nei', endringer as unknown as Parameters<typeof konverterRefusjonEndringer>[1])
+    ).toEqual([]);
   });
 
   it('should return empty array when refusjonEndringer is undefined', () => {
@@ -368,7 +371,10 @@ describe('konverterRefusjonEndringer', () => {
       { beloep: 1000, startdato: new Date('2023-06-01') },
       { beloep: 2000, startdato: new Date('2023-07-01') }
     ];
-    const result = konverterRefusjonEndringer('Ja', endringer);
+    const result = konverterRefusjonEndringer(
+      'Ja',
+      endringer as unknown as Parameters<typeof konverterRefusjonEndringer>[1]
+    );
     expect(result).toEqual([
       { beloep: 1000, startdato: '2023-06-01' },
       { beloep: 2000, startdato: '2023-07-01' }

@@ -35,7 +35,6 @@ describe('InitieringAnnetSchema', () => {
   });
 
   it('fails when fulltNavn is not a string', () => {
-    // @ts-expect-error invalid type
     const data = {
       fulltNavn: 123,
       organisasjonsnummer: validOrgNumber
@@ -45,7 +44,6 @@ describe('InitieringAnnetSchema', () => {
   });
 
   it('fails when organisasjonsnummer is missing', () => {
-    // @ts-expect-error missing required field
     const data = {
       fulltNavn: 'Test Bruker'
     };

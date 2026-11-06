@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import formatBegrunnelseEndringBruttoinntekt from '../../utils/formatBegrunnelseEndringBruttoinntekt';
 
 describe.concurrent('formatBegrunnelseEndringBruttoinntekt', () => {

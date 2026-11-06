@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import formatCurrency from '../../utils/formatCurrency';
 
 describe.concurrent('formatCurrency', () => {

@@ -88,7 +88,10 @@ describe('Behandlingsdager', () => {
     ];
     render(
       <TestWrapper>
-        <Behandlingsdager behandlingsdager={dates} arbeidsgiverperioder={agp} />
+        <Behandlingsdager
+          behandlingsdager={dates}
+          arbeidsgiverperioder={agp as React.ComponentProps<typeof Behandlingsdager>['arbeidsgiverperioder']}
+        />
       </TestWrapper>
     );
 

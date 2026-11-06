@@ -15,8 +15,8 @@ describe('FravaerEnkeltAnsattforhold', () => {
     render(
       <FravaerEnkeltAnsattforhold
         fravaerPerioder={sykmeldingsperioder}
-        sisteAktivePeriode={{ fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' }}
-        setIsDirtyForm={mockFn}
+        {...{ sisteAktivePeriode: { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' } }}
+        {...{ setIsDirtyForm: mockFn }}
       />
     );
     const fom1 = screen.getByText('01.01.2002');
@@ -41,8 +41,8 @@ describe('FravaerEnkeltAnsattforhold', () => {
     render(
       <FravaerEnkeltAnsattforhold
         fravaerPerioder={sykmeldingsperioder}
-        sisteAktivePeriode={{ fom: new Date(2002, 2, 1), tom: new Date(2002, 2, 15), id: '3' }}
-        setIsDirtyForm={mockFn}
+        {...{ sisteAktivePeriode: { fom: new Date(2002, 2, 1), tom: new Date(2002, 2, 15), id: '3' } }}
+        {...{ setIsDirtyForm: mockFn }}
       />
     );
     const fom1 = screen.getByText('01.01.2002');
@@ -65,8 +65,8 @@ describe('FravaerEnkeltAnsattforhold', () => {
     const { container } = render(
       <FravaerEnkeltAnsattforhold
         fravaerPerioder={sykmeldingsperioder}
-        sisteAktivePeriode={{ fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' }}
-        setIsDirtyForm={mockFn}
+        {...{ sisteAktivePeriode: { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' } }}
+        {...{ setIsDirtyForm: mockFn }}
       />
     );
     const results = await axe(container);

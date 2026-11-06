@@ -3,20 +3,35 @@ import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begr
 import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
 import { CompleteState } from '../../state/useBoundStore';
 import parseIsoDate from '../../utils/parseIsoDate';
-import validerBruttoinntekt from '../../validators/validerBruttoinntekt';
+import validerBruttoinntektFraStore from '../../validators/validerBruttoinntekt';
 import timezone_mock from 'timezone-mock';
 import { describe } from 'vitest';
 import { nanoid } from 'nanoid';
 
 timezone_mock.register('UTC');
-type Skjema = z.infer<typeof HovedskjemaSchema>;
+type Skjema = {
+  bekreft_opplysninger: boolean;
+  inntekt?: Record<string, unknown>;
+};
+type UfullstendigState = {
+  bestemmendeFravaersdag?: Date;
+  bruttoinntekt?: Omit<Partial<NonNullable<CompleteState['bruttoinntekt']>>, 'endringAarsaker'> & {
+    endringAarsak?: unknown;
+    endringAarsaker?: unknown;
+  };
+};
+
+function validerBruttoinntekt(state: UfullstendigState, skjema: Skjema, dato: Date) {
+  return validerBruttoinntektFraStore(state as CompleteState, skjema as z.infer<typeof HovedskjemaSchema>, dato);
+}
+
 vi.mock('nanoid');
 
 vi.mocked(nanoid).mockReturnValue('uuid');
 
 describe.concurrent('validerBruttoinntekt', () => {
   it('should return an empty array when everything is OK', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -42,7 +57,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when bruttoinntekt < 0 ', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: -1,
         manueltKorrigert: false
@@ -71,7 +86,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when not confirmed', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true
@@ -98,7 +113,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when no reason given', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -128,7 +143,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return false when stuff is no reason for change given', () => {
-    const input: CompleteState = {};
+    const input: UfullstendigState = {};
     const expected = [
       {
         code: 'INNTEKT_MANGLER',
@@ -151,7 +166,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when tariffendring', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -191,7 +206,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when ferie property is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -227,7 +242,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when ferie fom & tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -268,7 +283,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when ferie fom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -306,7 +321,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when ferie tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -344,7 +359,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
   /********************************************/
   it('should return an error when varig lønnsendring date is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true
@@ -373,7 +388,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when varig lønnsendring date is after bestemmende fraværsdag', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -408,7 +423,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should no return an error when lønnsendring date is ok', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -433,13 +448,13 @@ describe.concurrent('validerBruttoinntekt', () => {
         naturalytelser: []
       }
     };
-    const expected = [];
+    const expected: ReturnType<typeof validerBruttoinntekt> = [];
 
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   it('should no return an error when lønnsendring date is ok and gjelderFra is a string', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -464,14 +479,14 @@ describe.concurrent('validerBruttoinntekt', () => {
         // naturalytelser: []
       }
     };
-    const expected = [];
+    const expected: ReturnType<typeof validerBruttoinntekt> = [];
 
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
 
   /********** */
   it('should return an error when permisjon property is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -503,7 +518,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when permisjon fom & tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -539,7 +554,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when permisjon fom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -575,7 +590,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when permisjon tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -611,7 +626,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
   /********** */
   it('should return an error when permittering property is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -643,7 +658,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when permittering fom & tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -679,7 +694,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when permittering tom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -715,7 +730,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when permittering fom is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -752,7 +767,7 @@ describe.concurrent('validerBruttoinntekt', () => {
 
   /********** */
   it('should return an error when nystilling property is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -784,7 +799,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when nystilling is undefined', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -816,7 +831,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when nystilling fom is after bfd', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -851,7 +866,7 @@ describe.concurrent('validerBruttoinntekt', () => {
 
   /********** */
   it('should return an error when nystillingsprosent property is missing', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -883,7 +898,7 @@ describe.concurrent('validerBruttoinntekt', () => {
   });
 
   it('should return an error when nystillingsprosent is undefined', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -915,7 +930,7 @@ describe.concurrent('validerBruttoinntekt', () => {
     expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
   });
   it('should return an error when nystillingsprosent fom is after bfd', () => {
-    const input: CompleteState = {
+    const input: UfullstendigState = {
       bruttoinntekt: {
         bruttoInntekt: 123,
         manueltKorrigert: true,
@@ -953,7 +968,7 @@ describe.concurrent('validerBruttoinntekt', () => {
 
 /********** */
 it('should return an error when sykefravær property is missing', () => {
-  const input: CompleteState = {
+  const input: UfullstendigState = {
     bruttoinntekt: {
       bruttoInntekt: 123,
       manueltKorrigert: true,
@@ -987,7 +1002,7 @@ it('should return an error when sykefravær property is missing', () => {
 });
 
 it('should return an error when sykefravær fom & tom is missing', () => {
-  const input: CompleteState = {
+  const input: UfullstendigState = {
     bruttoinntekt: {
       bruttoInntekt: 123,
       manueltKorrigert: true,
@@ -1026,7 +1041,7 @@ it('should return an error when sykefravær fom & tom is missing', () => {
   expect(validerBruttoinntekt(input, skjemaData, new Date('2021-01-01'))).toEqual(expected);
 });
 it('should return an error when Sykefravaer fom is missing', () => {
-  const input: CompleteState = {
+  const input: UfullstendigState = {
     bruttoinntekt: {
       bruttoInntekt: 123,
       manueltKorrigert: true,
@@ -1062,7 +1077,7 @@ it('should return an error when Sykefravaer fom is missing', () => {
 });
 
 // it('should return an error when permittering tom is missing, sykefravær', () => {
-//   const input: CompleteState = {
+//   const input: UfullstendigState = {
 //     bruttoinntekt: {
 //       bruttoInntekt: 123,
 //       manueltKorrigert: true,

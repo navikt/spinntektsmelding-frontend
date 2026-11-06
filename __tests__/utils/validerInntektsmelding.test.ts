@@ -46,7 +46,7 @@ describe('validerInntektsmelding type contracts', () => {
   it('accepts a valid ValiderResultat example with ErrorCodes value', () => {
     const result: ValiderResultat = {
       felt: 'someField',
-      code: 'INGEN_ARBEIDSFORHOLD'
+      code: ErrorCodes.INGEN_ARBEIDSFORHOLD
     };
     expect(result.felt).toBe('someField');
     expect(result.code).toBe('INGEN_ARBEIDSFORHOLD');

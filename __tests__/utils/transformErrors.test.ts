@@ -1,7 +1,10 @@
 // __tests__/utils/transformErrors.test.ts
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import transformErrors from '../../utils/transformErrors';
-import { FieldErrors } from 'react-hook-form';
+import transformSkjemaErrors from '../../utils/transformErrors';
+
+function transformErrors<Input>(errors: Input): Input | undefined {
+  return transformSkjemaErrors(errors as Parameters<typeof transformSkjemaErrors>[0]) as Input | undefined;
+}
 
 describe('transformErrors', () => {
   let consoleWarnSpy: any;
@@ -20,7 +23,7 @@ describe('transformErrors', () => {
   describe('Basic functionality', () => {
     it('should return undefined for empty errors object', () => {
       const errors = {};
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result).toEqual({});
     });
 
@@ -30,7 +33,7 @@ describe('transformErrors', () => {
         '1': { message: 'Error 1' },
         field: { message: 'Field error' }
       };
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result).toEqual({ field: { message: 'Field error' } });
     });
 
@@ -39,7 +42,7 @@ describe('transformErrors', () => {
         '': { message: 'Empty key error' },
         field: { message: 'Field error' }
       };
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result).toEqual({ field: { message: 'Field error' } });
     });
 
@@ -51,7 +54,7 @@ describe('transformErrors', () => {
           root: { message: 'Root error' }
         }
       };
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.nested).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
     });
 
@@ -63,7 +66,7 @@ describe('transformErrors', () => {
           }
         }
       };
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result).toEqual(errors);
     });
   });
@@ -140,7 +143,7 @@ describe('transformErrors', () => {
         }
       });
 
-      const result = transformErrors(obj as FieldErrors<any>);
+      const result = transformErrors(obj);
       expect(result).toBeDefined();
     });
 
@@ -149,7 +152,7 @@ describe('transformErrors', () => {
         field: Object.freeze({ message: 'Error' })
       };
 
-      transformErrors(obj as FieldErrors<any>);
+      transformErrors(obj);
       // Should warn if trying to modify frozen nested object
     });
 
@@ -158,7 +161,7 @@ describe('transformErrors', () => {
         field: { message: 'Error' }
       });
 
-      const result = transformErrors(obj as FieldErrors<any>);
+      const result = transformErrors(obj);
       expect(result).toBeDefined();
     });
 
@@ -218,7 +221,7 @@ describe('transformErrors', () => {
         items: [{ message: 'Error 1' }, { message: 'Error 2' }]
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.items).toEqual(errors.items);
     });
 
@@ -230,7 +233,7 @@ describe('transformErrors', () => {
         ]
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.matrix).toEqual(errors.matrix);
     });
 
@@ -254,7 +257,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.items).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
     });
   });
@@ -273,7 +276,7 @@ describe('transformErrors', () => {
         ]
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.users).toEqual(errors.users);
     });
 
@@ -289,7 +292,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.level1?.level2?.level3).toEqual([{ message: 'Error 0' }]);
     });
 
@@ -307,7 +310,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.first).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
       expect(result?.second?.nested).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
     });
@@ -416,7 +419,7 @@ describe('transformErrors', () => {
 
       // transformErrors bruker structuredClone, ikke JSON.stringify
       // Denne testen verifiserer at funksjonen returnerer et resultat selv med enkle errors
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result).toBeDefined();
       expect(result?.field).toEqual({ message: 'Error' });
     });
@@ -486,7 +489,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.items).toEqual([{ name: { message: 'Name required' } }, { email: { message: 'Email invalid' } }]);
     });
 
@@ -504,7 +507,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.sections).toBeDefined();
     });
 
@@ -517,7 +520,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
       expect(result?.field).toEqual(errors.field);
     });
   });
@@ -534,7 +537,7 @@ describe('transformErrors', () => {
       };
 
       // No circular reference - cloning will succeed
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       const warnCalls = consoleWarnSpy.mock.calls.map((call: any[]) => call[0]);
 
@@ -597,7 +600,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // Entire object should be replaced with array
       expect(Array.isArray(result?.target)).toBe(true);
@@ -612,7 +615,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.nested).toEqual({ root: { message: 'Root error' } });
     });
@@ -625,7 +628,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.nested).toEqual({ '0': { aarsak: { message: 'Root error' } } });
     });
@@ -641,7 +644,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.level1?.level2?.level3?.field).toEqual({ message: 'Deep error' });
     });
@@ -658,7 +661,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.first).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
       expect(result?.second).toEqual([{ message: 'Error 0' }, { message: 'Error 1' }]);
@@ -675,7 +678,7 @@ describe('transformErrors', () => {
         ]
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.items[0]).toEqual({ field: { message: 'Field error' } });
       expect(result?.items[1]).toEqual([{ message: 'Error 0' }]);
@@ -696,7 +699,7 @@ describe('transformErrors', () => {
         ]
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // The inner root should be replaced with composite errors from TOP LEVEL
       // because that's where the function looks for numeric keys when it finds a root
@@ -713,7 +716,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // Top level numeric keys filtered out
       expect(result).not.toHaveProperty('0');
@@ -731,7 +734,7 @@ describe('transformErrors', () => {
         '2': { message: 'Error 2' }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // All numeric keys filtered, result should be empty
       expect(result).toEqual({});
@@ -745,7 +748,7 @@ describe('transformErrors', () => {
         field2: { message: 'Field 2' }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result).toEqual({
         field1: { message: 'Field 1' },
@@ -760,7 +763,7 @@ describe('transformErrors', () => {
         root: { message: 'Top level root' }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // Root at top level should be filtered out (no parent to set composite on)
       expect(result).not.toHaveProperty('root');
@@ -780,7 +783,7 @@ describe('transformErrors', () => {
         }
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       expect(result?.a?.b?.c?.d).toEqual([{ message: 'Error 0' }]);
     });
@@ -793,7 +796,7 @@ describe('transformErrors', () => {
         })
       };
 
-      const result = transformErrors(errors as FieldErrors<any>);
+      const result = transformErrors(errors);
 
       // Frozen objects can still be traversed (read), just not modified
       // The function doesn't try to modify frozen objects, so no warning

@@ -11,6 +11,8 @@ import { Opplysningstype } from '../../schema/ForespurtDataSchema';
 import FullInnsendingSchema from '../../schema/FullInnsendingSchema';
 import { KvitteringNavNoSchema } from '../../schema/MottattKvitteringSchema';
 import kvitteringsdataBackend from '../../mockdata/kvittering-selvbestemt-format.json';
+import { serverSideContext } from '../utils/serverSideContext';
+import type { MottattKvittering } from '../../state/useKvitteringInit';
 
 // Mock external dependencies
 vi.mock('@navikt/oasis', () => ({
@@ -80,7 +82,7 @@ describe('kvittering', () => {
   it('renders a title text', () => {
     const spy = vi.spyOn(window, 'print');
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     const buttonTitle = screen.getByRole('button', {
       name: /Skriv ut/i
@@ -110,7 +112,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     const textBlock = screen.getByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -196,7 +198,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     const textBlock = screen.queryByText(/Arbeidsgiver er ansvarlig for/i);
 
@@ -204,9 +206,9 @@ describe('kvittering', () => {
   });
 
   it('should have no violations', async () => {
-    let container: string | Element;
-
-    await act(async () => ({ container } = render(<Kvittering kvittid='' />)));
+    const { container } = await act(async () =>
+      render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />)
+    );
 
     const results = await axe(container);
 
@@ -218,10 +220,10 @@ describe('kvittering', () => {
 
     act(() => {
       result.current.setPaakrevdeOpplysninger([forespoerselType.inntekt]);
-      result.current.initBruttoinntekt(50000, new Map(), new Date());
+      result.current.initBruttoinntekt(50000, {}, new Date());
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     expect(screen.getByText(/Beregnet månedslønn/i)).toBeInTheDocument();
     expect(screen.getByText(/Registrert inntekt/i)).toBeInTheDocument();
@@ -234,7 +236,7 @@ describe('kvittering', () => {
       result.current.setPaakrevdeOpplysninger([forespoerselType.refusjon]);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     const refusjonHeadings = screen.getAllByText(/Refusjon/i);
     expect(refusjonHeadings.length).toBeGreaterThan(0);
@@ -247,7 +249,7 @@ describe('kvittering', () => {
       result.current.setPaakrevdeOpplysninger([forespoerselType.inntekt]);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     const naturalytelserHeadings = screen.getAllByText(/Naturalytelser/i);
     expect(naturalytelserHeadings.length).toBeGreaterThan(0);
@@ -278,7 +280,14 @@ describe('kvittering', () => {
       ]);
     });
 
-    render(<Kvittering kvittid='test-uuid' kvittering={kvitteringData} dataFraBackend={true} />);
+    render(
+      <Kvittering
+        kvittid='test-uuid'
+        kvittering={kvitteringData as unknown as MottattKvittering}
+        dataFraBackend={true}
+        kvitteringStatus={200}
+      />
+    );
 
     const kvitteringHeadings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
     expect(kvitteringHeadings.length).toBeGreaterThan(0);
@@ -292,7 +301,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder([]);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     expect(screen.getByText(/Det er ikke arbeidsgiverperiode/i)).toBeInTheDocument();
   });
@@ -313,7 +322,7 @@ describe('kvittering', () => {
       result.current.setArbeidsgiverperioder(datoSpenn);
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     expect(
       screen.getByText(/Betaler arbeidsgiver ut full lønn til arbeidstaker i arbeidsgiverperioden/i)
@@ -327,7 +336,14 @@ describe('kvittering', () => {
       result.current.setPaakrevdeOpplysninger([forespoerselType.inntekt]);
     });
 
-    render(<Kvittering kvittid='550e8400-e29b-41d4-a716-446655440000' />);
+    render(
+      <Kvittering
+        kvittid='550e8400-e29b-41d4-a716-446655440000'
+        kvittering={null}
+        kvitteringStatus={200}
+        dataFraBackend={false}
+      />
+    );
 
     const endreButton = screen.getAllByText(/Endre/i)[0];
     endreButton.click();
@@ -347,7 +363,7 @@ describe('kvittering', () => {
       result.current.setSkjemaFeilet();
     });
 
-    render(<Kvittering kvittid='' />);
+    render(<Kvittering kvittid='' kvittering={null} kvitteringStatus={200} dataFraBackend={false} />);
 
     expect(screen.getByText(/Henting av kvitteringen feilet/i)).toBeInTheDocument();
   });
@@ -368,7 +384,14 @@ describe('kvittering', () => {
     };
 
     await act(async () => {
-      render(<Kvittering kvittid='test-uuid' kvittering={kvitteringData} dataFraBackend={true} />);
+      render(
+        <Kvittering
+          kvittid='test-uuid'
+          kvittering={kvitteringData as unknown as MottattKvittering}
+          dataFraBackend={true}
+          kvitteringStatus={200}
+        />
+      );
     });
 
     expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(true);
@@ -390,7 +413,14 @@ describe('kvittering', () => {
     };
 
     await act(async () => {
-      render(<Kvittering kvittid='test-uuid' kvittering={kvitteringData} dataFraBackend={true} />);
+      render(
+        <Kvittering
+          kvittid='test-uuid'
+          kvittering={kvitteringData as unknown as MottattKvittering}
+          dataFraBackend={true}
+          kvitteringStatus={200}
+        />
+      );
     });
 
     expect(useBoundStore.getState().arbeidsgiverperiodeDisabled).toBe(false);
@@ -402,49 +432,42 @@ describe('getServerSideProps', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    process.env.NODE_ENV = originalEnv;
+    vi.stubEnv('NODE_ENV', originalEnv);
   });
 
   it('returns props in development mode', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
+    if (!('props' in result) || !result.props) throw new Error('Expected receipt props');
 
     expect(result).toHaveProperty('props');
     expect(result.props.kvittid).toBe('test-uuid');
   });
 
   it('returns props when fromSubmit is set in development', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
 
-    const context = {
-      query: { kvittid: 'test-uuid', fromSubmit: 'true' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid', fromSubmit: 'true' });
 
     const result = await getServerSideProps(context);
+    if (!('props' in result) || !result.props) throw new Error('Expected receipt props');
 
     expect(result.props.kvittering).toBeNull();
     expect(result.props.dataFraBackend).toBe(false);
   });
 
   it('returns notFound when 404 error in development', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
 
     const hentKvitteringsdataSSR = await import('../../utils/hentKvitteringsdataSSR');
     const error = new Error('Not found');
     (error as Error & { status: number }).status = 404;
     vi.mocked(hentKvitteringsdataSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -452,15 +475,12 @@ describe('getServerSideProps', () => {
   });
 
   it('redirects to login when token is missing in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const { getToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce(null as unknown as string);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -468,16 +488,13 @@ describe('getServerSideProps', () => {
   });
 
   it('redirects to login when token validation fails in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const { getToken, validateToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce('mock-token');
-    vi.mocked(validateToken).mockResolvedValueOnce({ ok: false });
+    vi.mocked(validateToken, { partial: true }).mockResolvedValueOnce({ ok: false });
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -485,12 +502,9 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props in production mode with valid token', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -498,17 +512,14 @@ describe('getServerSideProps', () => {
   });
 
   it('returns notFound when 404 error in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const hentKvitteringsdataSSR = await import('../../utils/hentKvitteringsdataSSR');
     const error = new Error('Not found');
     (error as Error & { status: number }).status = 404;
     vi.mocked(hentKvitteringsdataSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -516,14 +527,12 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props when fromSubmit is set in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
-    const context = {
-      query: { kvittid: 'test-uuid', fromSubmit: 'true' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid', fromSubmit: 'true' });
 
     const result = await getServerSideProps(context);
+    if (!('props' in result) || !result.props) throw new Error('Expected receipt props');
 
     expect(result.props.kvittering).toBeNull();
     expect(result.props.dataFraBackend).toBe(false);
