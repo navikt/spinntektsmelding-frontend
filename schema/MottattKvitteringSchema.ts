@@ -48,6 +48,13 @@ export const KvitteringNavNoSchema = z.object({
   mottatt: z.iso.datetime({ offset: true })
 });
 
+export const KvitteringNavNoInitSchema = KvitteringNavNoSchema.extend({
+  avsender: AvsenderSchema.extend({
+    navn: AvsenderSchema.shape.navn.optional(),
+    tlf: TelefonNummerSchema
+  })
+});
+
 export const KvitteringEksternSchema = z.object({
   avsenderSystem: z.string(),
   referanse: z.string(),

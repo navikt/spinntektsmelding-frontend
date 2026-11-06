@@ -24,7 +24,7 @@ import { SkjemaStatus, SkjemadataState } from '../../../state/useSkjemadataStore
 import environment from '../../../config/environment';
 import { getKvitteringServerSideProps } from '../../../utils/getKvitteringServerSideProps';
 import { z } from 'zod';
-import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
+import { KvitteringNavNoInitSchema } from '../../../schema/MottattKvitteringSchema';
 import { lagKvitteringVisning } from '../../../utils/lagKvitteringVisning';
 import { useShallow } from 'zustand/react/shallow';
 import KvitteringFeil from '../../../components/kvittering/KvitteringFeil';
@@ -257,7 +257,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
 export default Kvittering;
 
-type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
+type KvitteringNavNoInit = z.infer<typeof KvitteringNavNoInitSchema>;
 
 function prepareForInitiering(
   kvitteringData: KvitteringInitData,
@@ -265,7 +265,7 @@ function prepareForInitiering(
   mottatt: Date | undefined,
   lagredeSykmeldingsperioder: Periode[] | undefined,
   lagredeEgenmeldingsperioder: Periode[] | undefined
-): KvitteringNavNoSchema {
+): KvitteringNavNoInit {
   if (!mottatt || !isValid(mottatt)) {
     throw new Error('Kan ikke initialisere kvitteringen uten gyldig mottaksdato');
   }
@@ -273,9 +273,12 @@ function prepareForInitiering(
     throw new Error('Kan ikke initialisere AGI-kvitteringen uten inntektsdata');
   }
 
-  const kvittering: KvitteringNavNoSchema = {
-    sykmeldt: KvitteringNavNoSchema.shape.sykmeldt.parse({ navn: personData.navn, fnr: personData.identitetsnummer }),
-    avsender: KvitteringNavNoSchema.shape.avsender.parse({
+  const kvittering: KvitteringNavNoInit = {
+    sykmeldt: KvitteringNavNoInitSchema.shape.sykmeldt.parse({
+      navn: personData.navn,
+      fnr: personData.identitetsnummer
+    }),
+    avsender: KvitteringNavNoInitSchema.shape.avsender.parse({
       orgnr: personData.orgnrUnderenhet,
       orgNavn: personData.virksomhetNavn,
       navn: personData.innsenderNavn,

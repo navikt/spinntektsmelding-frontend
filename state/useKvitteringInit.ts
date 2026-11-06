@@ -2,7 +2,7 @@ import parseIsoDate from '../utils/parseIsoDate';
 import { Opplysningstype } from '../schema/ForespurtDataSchema';
 import useBoundStore from './useBoundStore';
 
-import { MottattKvitteringSchema, KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
+import { MottattKvitteringSchema, KvitteringNavNoInitSchema } from '../schema/MottattKvitteringSchema';
 
 import forespoerselType from '../config/forespoerselType';
 import { konverterBegrunnelseFullLonnIArbeidsgiverperiode } from '../utils/konverterBegrunnelseFullLonnIArbeidsgiverperiode';
@@ -13,8 +13,11 @@ import { z } from 'zod';
 import { RefusjonEndringSchema } from '../schema/RefusjonEndringSchema';
 import { Naturalytelse } from './state';
 
-type KvitteringNavNoSchema = z.infer<typeof KvitteringNavNoSchema>;
+type KvitteringNavNoInit = z.infer<typeof KvitteringNavNoInitSchema>;
 export type MottattKvittering = z.infer<typeof MottattKvitteringSchema>;
+type KvitteringInit = Omit<MottattKvittering, 'kvitteringNavNo'> & {
+  kvitteringNavNo: KvitteringNavNoInit | null;
+};
 type RefusjonEndring = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useKvitteringInit() {
@@ -45,7 +48,7 @@ export default function useKvitteringInit() {
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
 
-  return (kvitteringData: MottattKvittering) => {
+  return (kvitteringData: KvitteringInit) => {
     if (!kvitteringData) return;
 
     if (kvitteringData.kvitteringEkstern) {
@@ -53,7 +56,7 @@ export default function useKvitteringInit() {
       return;
     }
 
-    const jsonData: KvitteringNavNoSchema = kvitteringData.kvitteringNavNo!;
+    const jsonData: KvitteringNavNoInit = kvitteringData.kvitteringNavNo!;
 
     if (jsonData.skjema) {
       setKvitteringData(jsonData.skjema);
@@ -72,11 +75,11 @@ export default function useKvitteringInit() {
     handleFravaersperioder(jsonData);
   };
 
-  function handleFravaersperiode(jsonData: KvitteringNavNoSchema) {
+  function handleFravaersperiode(jsonData: KvitteringNavNoInit) {
     initFravaersperiode(jsonData.sykmeldingsperioder);
   }
 
-  function handlePaakrevdeOpplysninger(jsonData: KvitteringNavNoSchema) {
+  function handlePaakrevdeOpplysninger(jsonData: KvitteringNavNoInit) {
     const paakrevdeOpplysninger: Array<Opplysningstype> = finnPakrevdeOpplysninger(jsonData);
     if (paakrevdeOpplysninger.length > 0) {
       setPaakrevdeOpplysninger(paakrevdeOpplysninger);
@@ -84,7 +87,7 @@ export default function useKvitteringInit() {
     setInngangFraKvittering();
   }
 
-  function handlePerson(jsonData: KvitteringNavNoSchema) {
+  function handlePerson(jsonData: KvitteringNavNoInit) {
     initPerson(
       jsonData.sykmeldt.navn,
       jsonData.sykmeldt.fnr,
@@ -95,7 +98,7 @@ export default function useKvitteringInit() {
     );
   }
 
-  function handleBestemmendeFravaersdag(jsonData: KvitteringNavNoSchema) {
+  function handleBestemmendeFravaersdag(jsonData: KvitteringNavNoInit) {
     const bestemmendeFravaersdag = jsonData.skjema.inntekt?.inntektsdato;
     if (bestemmendeFravaersdag) {
       setForeslaattBestemmendeFravaersdag(parseIsoDate(bestemmendeFravaersdag));
@@ -103,7 +106,7 @@ export default function useKvitteringInit() {
     }
   }
 
-  function handleInntekt(jsonData: KvitteringNavNoSchema) {
+  function handleInntekt(jsonData: KvitteringNavNoInit) {
     const beregnetInntekt = jsonData.skjema.inntekt?.beloep;
     if (!beregnetInntekt) return;
     setBareNyMaanedsinntekt(beregnetInntekt.toString());
@@ -118,7 +121,7 @@ export default function useKvitteringInit() {
     }
   }
 
-  function handleRefusjon(jsonData: KvitteringNavNoSchema) {
+  function handleRefusjon(jsonData: KvitteringNavNoInit) {
     initLonnISykefravaeret({
       status:
         jsonData.skjema.refusjon?.beloepPerMaaned !== undefined && jsonData.skjema.refusjon?.beloepPerMaaned !== null
@@ -149,7 +152,7 @@ export default function useKvitteringInit() {
     }
   }
 
-  function handleNaturalytelser(jsonData: KvitteringNavNoSchema) {
+  function handleNaturalytelser(jsonData: KvitteringNavNoInit) {
     if (!jsonData.skjema.naturalytelser) {
       initNaturalytelser([]);
       return;
@@ -163,7 +166,7 @@ export default function useKvitteringInit() {
     initNaturalytelser(ytelser);
   }
 
-  function handleArbeidsgiverperioder(jsonData: KvitteringNavNoSchema) {
+  function handleArbeidsgiverperioder(jsonData: KvitteringNavNoInit) {
     initFullLonnIArbeidsgiverPerioden({
       status: jsonData.skjema.agp?.redusertLoennIAgp ? 'Nei' : 'Ja',
       begrunnelse: jsonData.skjema.agp?.redusertLoennIAgp?.begrunnelse
@@ -176,19 +179,19 @@ export default function useKvitteringInit() {
     harArbeidsgiverperiodenBlittEndret();
   }
 
-  function handleMottatt(jsonData: KvitteringNavNoSchema) {
+  function handleMottatt(jsonData: KvitteringNavNoInit) {
     if (jsonData.mottatt) {
       setMottatt(jsonData.mottatt);
     }
   }
 
-  function handleTidligereInntektsdata(jsonData: KvitteringNavNoSchema) {
+  function handleTidligereInntektsdata(jsonData: KvitteringNavNoInit) {
     if (!jsonData.skjema.inntekt) return;
 
     setGammeltSkjaeringstidspunkt(jsonData.skjema.inntekt?.inntektsdato);
   }
 
-  function handleFravaersperioder(jsonData: KvitteringNavNoSchema) {
+  function handleFravaersperioder(jsonData: KvitteringNavNoInit) {
     const sykmeldingPerioder = jsonData.sykmeldingsperioder.map((periode) => ({
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom)
@@ -218,7 +221,7 @@ export default function useKvitteringInit() {
   }
 }
 
-function finnPakrevdeOpplysninger(jsonData: KvitteringNavNoSchema) {
+function finnPakrevdeOpplysninger(jsonData: KvitteringNavNoInit) {
   const paakrevdeOpplysninger: Array<Opplysningstype> = [];
 
   if (jsonData.skjema.agp) paakrevdeOpplysninger.push(forespoerselType.arbeidsgiverperiode as Opplysningstype);

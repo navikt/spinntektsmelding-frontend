@@ -276,6 +276,46 @@ describe('Kvittering', () => {
     expect(state.mottatt).toEqual(new Date(source.mottatt));
   });
 
+  it.each([
+    { dataFraBackend: false, navn: undefined, orgNavn: 'Test Org' },
+    { dataFraBackend: false, navn: '', orgNavn: '' },
+    { dataFraBackend: true, navn: '', orgNavn: 'Test Org' },
+    { dataFraBackend: true, navn: 'Avsender', orgNavn: '' }
+  ])('edits receipts with incomplete display names: %j', async ({ dataFraBackend, navn, orgNavn }) => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const avsender = { ...source.avsender, navn, orgNavn };
+    const kvitteringData = FullInnsendingSchema.parse({
+      ...source,
+      forespoerselId: source.id,
+      avsenderTlf: source.avsender.tlf
+    });
+    useBoundStore.setState({
+      kvitteringData,
+      sykmeldt: source.sykmeldt,
+      avsender,
+      sykmeldingsperioder: source.sykmeldingsperioder.map((periode, index) => ({
+        id: `syk-${index}`,
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom)
+      })),
+      mottatt: new Date(source.mottatt)
+    });
+    const kvittering = dataFraBackend ? SelvbestemtInntektsmeldingSchema.parse({ ...source, avsender }) : null;
+
+    render(
+      <Kvittering kvittid={source.id} kvittering={kvittering} dataFraBackend={dataFraBackend} kvitteringStatus={200} />
+    );
+
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${source.id}?endre=true&agi=true`, `/${source.id}`));
+    const state = useBoundStore.getState();
+    expect(state.avsender).toEqual(avsender);
+    expect(state.kvitteringData?.inntekt).toMatchObject(source.inntekt);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
   it('initializes backend data only when editing and preserves its periods and income', async () => {
     const user = userEvent.setup();
     const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);

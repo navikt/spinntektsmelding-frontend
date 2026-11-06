@@ -531,6 +531,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         getValues('fullLonn') === 'Nei');
 
     if (!brukerRedusertLoennIAgp) {
+      if (!skalViseArbeidsgiverperiode && getValues('fullLonn') !== undefined) {
+        setValue('fullLonn', undefined);
+        clearErrors('fullLonn');
+      }
       if (getValues('agp.redusertLoennIAgp') !== null) {
         setValue('agp.redusertLoennIAgp', null);
       }
