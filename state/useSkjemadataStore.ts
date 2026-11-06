@@ -30,7 +30,7 @@ export interface SkjemadataState {
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setSelvbestemtType: (type: SelvbestemtType) => void;
-  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
+  setKvitteringData: (data: KvitteringData) => void;
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
   setBehandlingsdager: (behandlingsdager: string[]) => void;

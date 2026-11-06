@@ -21,7 +21,7 @@ type HovedskjemaInput = {
       inntekt?: number;
       stillingsprosent?: number;
       inkludertISykefravaer?: boolean;
-      yrkesbeskrivelse: string;
+      yrkesbeskrivelse?: string;
     }>;
   };
   opplysningstyper?: string[];

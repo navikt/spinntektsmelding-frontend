@@ -67,6 +67,21 @@ describe('useForespurtDataStore', () => {
     expect(typer).toEqual(input);
   });
 
+  it.each([
+    { inntektPaakrevd: true, forventet: ['inntekt', 'refusjon'] },
+    { inntektPaakrevd: false, forventet: [] }
+  ])('should use backend data when store has no data: $inntektPaakrevd', ({ inntektPaakrevd, forventet }) => {
+    const forespurtFraBackend = {
+      inntekt: { paakrevd: inntektPaakrevd },
+      refusjon: { paakrevd: inntektPaakrevd },
+      arbeidsgiverperiode: { paakrevd: false }
+    };
+
+    const typer = useBoundStore.getState().hentPaakrevdOpplysningstyper(forespurtFraBackend);
+
+    expect(typer).toEqual(forventet);
+  });
+
   it('should set init stuff.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 

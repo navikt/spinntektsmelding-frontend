@@ -74,9 +74,8 @@ const useForespurtDataStore: StateCreator<CompleteState, [], [], ForespurtDataSt
         (key) => forespurtData[key as keyof typeof forespurtData].paakrevd === true
       ) as Array<Opplysningstype>;
     } else if (forespurtFraBackend) {
-      return Object.keys(forespurtFraBackend.forespurtData).filter(
-        (key) =>
-          forespurtFraBackend.forespurtData[key as keyof typeof forespurtFraBackend.forespurtData].paakrevd === true
+      return Object.keys(forespurtFraBackend).filter(
+        (key) => forespurtFraBackend[key as keyof typeof forespurtFraBackend].paakrevd === true
       ) as Array<Opplysningstype>;
     }
 

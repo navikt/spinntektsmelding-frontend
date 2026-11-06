@@ -4,12 +4,12 @@ import TextLabel from '../TextLabel';
 import lokalStyling from './Person.module.css';
 
 interface PersonProps {
-  navn: string;
-  identitetsnummer: string;
-  orgnrUnderenhet: string;
-  virksomhetNavn: string;
-  innsenderNavn: string;
-  innsenderTelefonNr: string;
+  navn?: string;
+  identitetsnummer?: string;
+  orgnrUnderenhet?: string;
+  virksomhetNavn?: string;
+  innsenderNavn?: string;
+  innsenderTelefonNr?: string;
 }
 
 export default function PersonVisning({
