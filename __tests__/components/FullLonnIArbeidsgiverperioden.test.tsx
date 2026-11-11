@@ -3,6 +3,8 @@ import { axe } from 'jest-axe';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
 import type { ComponentProps } from 'react';
 
+type LonnIPerioden = ComponentProps<typeof FullLonnIArbeidsgiverperioden>['lonnIPerioden'];
+
 describe('FullLonnIArbeidsgiverperioden', () => {
   it('should render nothing if lonnIPerioden is falsy', () => {
     render(
@@ -19,8 +21,8 @@ describe('FullLonnIArbeidsgiverperioden', () => {
   });
 
   it('should render "Nei" and other details if lonnIPerioden.status is "Nei"', () => {
-    const lonnIPerioden = {
-      status: 'Nei' as const,
+    const lonnIPerioden: LonnIPerioden = {
+      status: 'Nei',
       utbetalt: 1000,
       begrunnelse: 'TidligereVirksomhet'
     };
@@ -37,8 +39,8 @@ describe('FullLonnIArbeidsgiverperioden', () => {
   });
 
   it('should have no accessibility violations', async () => {
-    const lonnIPerioden = {
-      status: 'Nei' as const,
+    const lonnIPerioden: LonnIPerioden = {
+      status: 'Nei',
       utbetalt: 1000,
       begrunnelse: 'TidligereVirksomhet'
     };

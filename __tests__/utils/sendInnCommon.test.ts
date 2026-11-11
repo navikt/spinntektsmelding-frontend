@@ -19,7 +19,7 @@ type ZodSuccessLike = {
 
 // Helpers
 function zodSuccess(data: ZodSuccessLike['data']): any {
-  return { success: true, data } as const;
+  return { success: true, data };
 }
 
 const FULL_LONN_NEI: LonnIArbeidsgiverperioden = { status: 'Nei' } as any;

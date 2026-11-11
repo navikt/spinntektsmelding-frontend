@@ -20,7 +20,7 @@ function ensureWindow() {
 }
 
 describe('logEvent (umami)', () => {
-  const eventName = 'knapp klikket' as const;
+  const eventName = 'knapp klikket';
   const eventData = { button: 'Lagre', steg: '1' };
 
   beforeEach(() => {
