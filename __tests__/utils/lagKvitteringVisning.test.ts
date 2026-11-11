@@ -3,6 +3,8 @@ import { lagKvitteringVisning as lagVisning } from '../../utils/lagKvitteringVis
 import parseIsoDate from '../../utils/parseIsoDate';
 import formatDate from '../../utils/formatDate';
 import formatTime from '../../utils/formatTime';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+import { NaturalytelseEnumSchema } from '../../schema/NaturalytelseEnumSchema';
 
 type VisningInput = Parameters<typeof lagVisning>[0];
 
@@ -39,7 +41,7 @@ describe('lagKvitteringVisning', () => {
       arbeidsgiverperioder: Object.freeze([periode]),
       bestemmendeFravaersdag: dato,
       naturalytelser: Object.freeze([
-        Object.freeze({ naturalytelse: 'BIL' as const, verdiBeloep: 2000, sluttdato: dato })
+        Object.freeze({ naturalytelse: NaturalytelseEnumSchema.enum.BIL, verdiBeloep: 2000, sluttdato: dato })
       ])
     });
 
@@ -96,9 +98,13 @@ describe('lagKvitteringVisning', () => {
   });
 
   it('preserves both API and internal income change reasons', () => {
-    const endringAarsaker = [
-      { aarsak: 'Ferie' as const, ferier: [{ fom: '2024-06-01', tom: '2024-06-02' }] },
-      { aarsak: 'Tariffendring' as const, gjelderFra: new Date(2024, 5, 1), bleKjent: new Date(2024, 5, 2) }
+    const endringAarsaker: VisningInput['endringAarsaker'] = [
+      { aarsak: begrunnelseEndringBruttoinntekt.Ferie, ferier: [{ fom: '2024-06-01', tom: '2024-06-02' }] },
+      {
+        aarsak: begrunnelseEndringBruttoinntekt.Tariffendring,
+        gjelderFra: new Date(2024, 5, 1),
+        bleKjent: new Date(2024, 5, 2)
+      }
     ];
 
     expect(lagKvitteringVisning({ endringAarsaker }).inntekt.endringAarsaker).toEqual(endringAarsaker);

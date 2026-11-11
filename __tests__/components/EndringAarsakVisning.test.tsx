@@ -4,11 +4,14 @@ import { expect } from 'vitest';
 import EndringAarsakVisning from '../../components/EndringAarsakVisning/EndringAarsakVisning';
 import parseIsoDate from '../../utils/parseIsoDate';
 import type { ComponentProps } from 'react';
+import begrunnelseEndringBruttoinntekt from '../../components/Bruttoinntekt/begrunnelseEndringBruttoinntekt';
+
+type EndringAarsak = ComponentProps<typeof EndringAarsakVisning>['endringAarsak'];
 
 describe('EndringAarsakVisning', () => {
   it('should show tariffendringsdata.', async () => {
-    const endrinAarsak = {
-      aarsak: 'Tariffendring' as const,
+    const endrinAarsak: EndringAarsak = {
+      aarsak: begrunnelseEndringBruttoinntekt.Tariffendring,
       gjelderFra: parseIsoDate('2025-11-10')!,
       bleKjent: parseIsoDate('2025-11-15')!
     };
@@ -28,7 +31,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2025-11-10', tom: '2025-11-15' },
       { fom: '2025-12-10', tom: '2025-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Ferie' as const, ferier: perioder };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Ferie, ferier: perioder };
 
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
     const results = await axe(container);
@@ -44,7 +47,10 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show VarigLonnsendring data.', async () => {
-    const endrinAarsak = { aarsak: 'VarigLoennsendring' as const, gjelderFra: parseIsoDate('2025-12-15')! };
+    const endrinAarsak: EndringAarsak = {
+      aarsak: begrunnelseEndringBruttoinntekt.VarigLoennsendring,
+      gjelderFra: parseIsoDate('2025-12-15')!
+    };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
     const results = await axe(container);
 
@@ -59,7 +65,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2025-11-10', tom: '2025-11-15' },
       { fom: '2025-12-10', tom: '2025-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Permisjon' as const, permisjoner: perioder };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Permisjon, permisjoner: perioder };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
     const results = await axe(container);
 
@@ -78,7 +84,10 @@ describe('EndringAarsakVisning', () => {
       { fom: '2025-11-10', tom: '2025-11-15' },
       { fom: '2025-12-10', tom: '2025-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Permittering' as const, permitteringer: perioder };
+    const endrinAarsak: EndringAarsak = {
+      aarsak: begrunnelseEndringBruttoinntekt.Permittering,
+      permitteringer: perioder
+    };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -94,7 +103,10 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStilling.', async () => {
-    const endrinAarsak = { aarsak: 'NyStilling' as const, gjelderFra: parseIsoDate('2025-11-10')! };
+    const endrinAarsak: EndringAarsak = {
+      aarsak: begrunnelseEndringBruttoinntekt.NyStilling,
+      gjelderFra: parseIsoDate('2025-11-10')!
+    };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -106,7 +118,10 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show NyStillingsprosent.', async () => {
-    const endrinAarsak = { aarsak: 'NyStillingsprosent' as const, gjelderFra: parseIsoDate('2025-11-10')! };
+    const endrinAarsak: EndringAarsak = {
+      aarsak: begrunnelseEndringBruttoinntekt.NyStillingsprosent,
+      gjelderFra: parseIsoDate('2025-11-10')!
+    };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -122,7 +137,7 @@ describe('EndringAarsakVisning', () => {
       { fom: '2025-11-10', tom: '2025-11-15' },
       { fom: '2025-12-10', tom: '2025-12-15' }
     ];
-    const endrinAarsak = { aarsak: 'Sykefravaer' as const, sykefravaer: perioder };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Sykefravaer, sykefravaer: perioder };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -138,7 +153,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Feilregistrert data.', async () => {
-    const endrinAarsak = { aarsak: 'Feilregistrert' as const };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Feilregistrert };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -149,7 +164,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Bonus data.', async () => {
-    const endrinAarsak = { aarsak: 'Bonus' as const };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Bonus };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -160,7 +175,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Nyansatt data.', async () => {
-    const endrinAarsak = { aarsak: 'Nyansatt' as const };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Nyansatt };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
@@ -171,7 +186,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show default data.', async () => {
-    const endrinAarsak = { aarsak: 'Ukjent' as const };
+    const endrinAarsak = { aarsak: 'Ukjent' };
     const { container } = render(
       <EndringAarsakVisning
         endringAarsak={endrinAarsak as unknown as ComponentProps<typeof EndringAarsakVisning>['endringAarsak']}
@@ -186,7 +201,7 @@ describe('EndringAarsakVisning', () => {
   });
 
   it('should show Ferietrekk data.', async () => {
-    const endrinAarsak = { aarsak: 'Nyansatt' as const };
+    const endrinAarsak: EndringAarsak = { aarsak: begrunnelseEndringBruttoinntekt.Nyansatt };
     const { container } = render(<EndringAarsakVisning endringAarsak={endrinAarsak} />);
 
     const results = await axe(container);
