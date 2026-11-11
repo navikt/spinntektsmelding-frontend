@@ -90,7 +90,7 @@ describe('useForespurtDataStore', () => {
       inntekt: {
         paakrevd: true,
         forslag: {
-          type: 'ForslagInntektGrunnlag' as const,
+          type: 'ForslagInntektGrunnlag',
           beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
           forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 48000.0 }
         }
@@ -136,7 +136,7 @@ describe('useForespurtDataStore', () => {
       inntekt: {
         paakrevd: true,
         forslag: {
-          type: 'ForslagInntektGrunnlag' as const,
+          type: 'ForslagInntektGrunnlag',
           beregningsmaaneder: ['2025-10', '2025-11', '2025-09'],
           forrigeInntekt: { skjæringstidspunkt: '2025-01-02', kilde: 'INNTEKTSMELDING', beløp: 0 }
         }
@@ -183,7 +183,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag' as const,
+              type: 'ForslagInntektGrunnlag',
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07'],
               forrigeInntekt: { skjæringstidspunkt: '2023-08-28', kilde: 'INNTEKTSMELDING', beløp: 33750.0 }
             }
@@ -264,7 +264,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag' as const,
+              type: 'ForslagInntektGrunnlag',
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
             }
           },
@@ -299,7 +299,7 @@ describe('useForespurtDataStore', () => {
           inntekt: {
             paakrevd: true,
             forslag: {
-              type: 'ForslagInntektGrunnlag' as const,
+              type: 'ForslagInntektGrunnlag',
               beregningsmaaneder: ['2023-05', '2023-06', '2023-07']
             }
           },
