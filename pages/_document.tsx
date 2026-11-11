@@ -58,14 +58,20 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
 CustomDocument.getInitialProps = async (ctx: DocumentContext): Promise<CustomDocumentProps> => {
   const initial = await Document.getInitialProps(ctx);
 
+  if (DECORATOR_DISABLED) {
+    return { ...initial, decorator: DisabledDecorator };
+  }
+
   const env = process.env.NEXT_PUBLIC_DECORATOR_ENV ?? (process.env.NAIS_CLUSTER_NAME === 'prod-gcp' ? 'prod' : 'dev');
 
-  const decorator = DECORATOR_DISABLED
-    ? DisabledDecorator
-    : await fetchDecoratorReact({
-        env,
-        params: { language: 'nb', context: 'arbeidsgiver' }
-      });
+  if (env !== 'prod' && env !== 'dev' && env !== 'beta' && env !== 'betaTms') {
+    throw new Error(`Ugyldig dekoratormiljo: ${env}`);
+  }
+
+  const decorator = await fetchDecoratorReact({
+    env,
+    params: { language: 'nb', context: 'arbeidsgiver' }
+  });
 
   return {
     ...initial,

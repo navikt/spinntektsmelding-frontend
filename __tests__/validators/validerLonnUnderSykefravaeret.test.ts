@@ -38,7 +38,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       }
     ];
 
-    expect(validerLonnUnderSykefravaeret()).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(undefined as unknown as LonnISykefravaeret)).toEqual(expected);
   });
 
   it('should return an error when all params are missing', () => {
@@ -49,7 +49,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       }
     ];
 
-    expect(validerLonnUnderSykefravaeret()).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret(undefined as unknown as LonnISykefravaeret)).toEqual(expected);
   });
 
   it('should return an error when status param is undefined in refusjon param', () => {
@@ -60,7 +60,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       }
     ];
 
-    expect(validerLonnUnderSykefravaeret({})).toEqual(expected);
+    expect(validerLonnUnderSykefravaeret({} as LonnISykefravaeret)).toEqual(expected);
   });
 
   it('should return an error when opphørsdato is missing', () => {
@@ -122,7 +122,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
       beloep: 1000111
     };
 
-    const expected = [];
+    const expected: ReturnType<typeof validerLonnUnderSykefravaeret> = [];
 
     const bruttoInntekt = 1000000;
 
@@ -163,7 +163,7 @@ describe.concurrent('validerLonnUnderSykefravaeret', () => {
   it('should return an error when refusjonsbeløp is null', () => {
     const inputLUS: LonnISykefravaeret = {
       status: 'Ja',
-      beloep: null
+      beloep: null as unknown as number
     };
 
     const expected: any = [

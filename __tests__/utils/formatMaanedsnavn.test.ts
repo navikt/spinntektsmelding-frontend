@@ -1,3 +1,4 @@
+import { describe } from 'vitest';
 import formatMaanedsnavn from '../../utils/formatMaanedsnavn';
 
 describe.concurrent('formatMaanedsnavn', () => {

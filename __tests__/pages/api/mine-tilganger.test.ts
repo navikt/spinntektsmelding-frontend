@@ -40,8 +40,8 @@ import testdata from '../../../mockdata/endepunktAltinnTilganger.json';
 
 // Get typed mocks
 const mockGetToken = vi.mocked(getToken);
-const mockValidateToken = vi.mocked(validateToken);
-const mockRequestOboToken = vi.mocked(requestOboToken);
+const mockValidateToken = vi.mocked(validateToken, { partial: true });
+const mockRequestOboToken = vi.mocked(requestOboToken, { partial: true });
 const mockSafelyParseJSON = vi.mocked(safelyParseJSON);
 const mockTeamLoggerInfo = vi.mocked(teamLogger.info);
 const mockLoggerWarn = vi.mocked(logger.warn);
@@ -85,7 +85,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Development environment', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
     });
 
     it('should return simplified org structure after 100ms', async () => {
@@ -167,7 +167,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Production environment - Authentication', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'tilgang.api.com';
       process.env.FAGER_TILGANG_URL = '/tilgang';
       process.env.FAGER_TILGANG_CLIENT_ID = 'test-client-id';
@@ -181,32 +181,32 @@ describe('API Route: /api/mine-tilganger', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(statusMock).toHaveBeenCalledWith(401);
-      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' });
+      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' as unknown as Error });
     });
 
     it('should return 401 when token validation fails', async () => {
       mockGetToken.mockReturnValue('valid-token');
-      mockValidateToken.mockResolvedValue({ ok: false, error: 'Invalid token' });
+      mockValidateToken.mockResolvedValue({ ok: false, error: 'Invalid token' as unknown as Error });
       const { default: handler } = await import('../../../pages/api/mine-tilganger');
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockValidateToken).toHaveBeenCalledWith('valid-token');
       expect(statusMock).toHaveBeenCalledWith(401);
-      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' });
+      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' as unknown as Error });
     });
 
     it('should return 401 when OBO token request fails', async () => {
       mockGetToken.mockReturnValue('valid-token');
       mockValidateToken.mockResolvedValue({ ok: true });
-      mockRequestOboToken.mockResolvedValue({ ok: false, error: 'OBO failed' });
+      mockRequestOboToken.mockResolvedValue({ ok: false, error: 'OBO failed' as unknown as Error });
       const { default: handler } = await import('../../../pages/api/mine-tilganger');
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockRequestOboToken).toHaveBeenCalledWith('valid-token', 'test-client-id');
       expect(statusMock).toHaveBeenCalledWith(401);
-      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' });
+      expect(jsonMock).toHaveBeenCalledWith({ error: 'Unauthorized' as unknown as Error });
     });
 
     it('should call getToken with request', async () => {
@@ -221,7 +221,7 @@ describe('API Route: /api/mine-tilganger', () => {
     it('should validate token after getting it', async () => {
       const testToken = 'test-token-123';
       mockGetToken.mockReturnValue(testToken);
-      mockValidateToken.mockResolvedValue({ ok: false, error: 'Invalid' });
+      mockValidateToken.mockResolvedValue({ ok: false, error: 'Invalid' as unknown as Error });
       const { default: handler } = await import('../../../pages/api/mine-tilganger');
 
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
@@ -243,7 +243,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Production environment - API calls', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'tilgang.api.com';
       process.env.FAGER_TILGANG_URL = '/v1/tilgang';
       process.env.FAGER_TILGANG_CLIENT_ID = 'client-123';
@@ -334,7 +334,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(jsonMock).toHaveBeenCalledWith({
-        error: 'Feil ved kontroll av tilgang til sykepengesøknader'
+        error: 'Feil ved kontroll av tilgang til sykepengesøknader' as unknown as Error
       });
     });
 
@@ -433,7 +433,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('extractOrgStructure function', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
     });
 
     it('should extract basic org properties', async () => {
@@ -490,7 +490,7 @@ describe('API Route: /api/mine-tilganger', () => {
     });
 
     it('should construct basePath with FAGER_TILGANG_INGRESS and URL', async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'custom.api.com';
       process.env.FAGER_TILGANG_URL = '/custom/path';
       process.env.FAGER_TILGANG_CLIENT_ID = 'client';
@@ -508,7 +508,7 @@ describe('API Route: /api/mine-tilganger', () => {
     });
 
     it('should use FAGER_TILGANG_CLIENT_ID for OBO request', async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_CLIENT_ID = 'specific-client-id';
       process.env.FAGER_TILGANG_INGRESS = 'api.com';
       process.env.FAGER_TILGANG_URL = '/path';
@@ -526,7 +526,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Error handling', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'api.com';
       process.env.FAGER_TILGANG_URL = '/path';
       process.env.FAGER_TILGANG_CLIENT_ID = 'client';
@@ -586,7 +586,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Response status codes', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'api.com';
       process.env.FAGER_TILGANG_URL = '/path';
       process.env.FAGER_TILGANG_CLIENT_ID = 'client';
@@ -638,7 +638,7 @@ describe('API Route: /api/mine-tilganger', () => {
 
   describe('Team logging', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.FAGER_TILGANG_INGRESS = 'api.com';
       process.env.FAGER_TILGANG_URL = '/path';
       process.env.FAGER_TILGANG_CLIENT_ID = 'client';

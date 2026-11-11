@@ -32,7 +32,7 @@ export const KvitteringNavNoSchema = z.object({
       .nullable(),
     inntekt: z.object({
       beloep: z.number(),
-      endringAarsak: ApiEndringAarsakSchema,
+      endringAarsak: ApiEndringAarsakSchema.optional(),
       inntektsdato: z.iso.date(),
       naturalytelser: ApiNaturalytelserSchema,
       endringAarsaker: z.array(ApiEndringAarsakSchema)
@@ -46,6 +46,13 @@ export const KvitteringNavNoSchema = z.object({
     naturalytelser: ApiNaturalytelserSchema
   }),
   mottatt: z.iso.datetime({ offset: true })
+});
+
+export const KvitteringNavNoInitSchema = KvitteringNavNoSchema.extend({
+  avsender: AvsenderSchema.extend({
+    navn: AvsenderSchema.shape.navn.optional(),
+    tlf: TelefonNummerSchema
+  })
 });
 
 export const KvitteringEksternSchema = z.object({

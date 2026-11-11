@@ -7,11 +7,15 @@ import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { useEffect, useEffectEvent, useRef } from 'react';
 import useBoundStore from '../../state/useBoundStore';
 import Feilmelding from '../Feilmelding';
+import { HovedskjemaSchema } from '../../schema/HovedskjemaSchema';
+import z from 'zod';
 
 interface BehandlingsdagerProps {
   behandlingsdager?: string[];
   arbeidsgiverperioder?: Periode[];
 }
+
+type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Readonly<BehandlingsdagerProps>) {
   const {
@@ -19,7 +23,7 @@ export function Behandlingsdager({ behandlingsdager, arbeidsgiverperioder }: Rea
     formState: { errors },
     setError,
     clearErrors
-  } = useFormContext();
+  } = useFormContext<Skjema>();
 
   const agpDatoer = arbeidsgiverperioder?.flatMap((periode) => periode.fom);
   const sorterteDager = [...(behandlingsdager ?? [])].sort((a, b) => a.localeCompare(b));

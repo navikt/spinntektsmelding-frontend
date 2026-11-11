@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import FullLonnIArbeidsgiverperioden from '../../components/FullLonnIArbeidsgiverperioden/FullLonnIArbeidsgiverperioden';
+import type { ComponentProps } from 'react';
 
 describe('FullLonnIArbeidsgiverperioden', () => {
   it('should render nothing if lonnIPerioden is falsy', () => {
-    render(<FullLonnIArbeidsgiverperioden lonnIPerioden={null} />);
+    render(
+      <FullLonnIArbeidsgiverperioden
+        lonnIPerioden={null as unknown as ComponentProps<typeof FullLonnIArbeidsgiverperioden>['lonnIPerioden']}
+      />
+    );
     expect(screen.queryByText(/Ja|Nei/)).not.toBeInTheDocument();
   });
 
@@ -15,7 +20,7 @@ describe('FullLonnIArbeidsgiverperioden', () => {
 
   it('should render "Nei" and other details if lonnIPerioden.status is "Nei"', () => {
     const lonnIPerioden = {
-      status: 'Nei',
+      status: 'Nei' as const,
       utbetalt: 1000,
       begrunnelse: 'TidligereVirksomhet'
     };
@@ -33,7 +38,7 @@ describe('FullLonnIArbeidsgiverperioden', () => {
 
   it('should have no accessibility violations', async () => {
     const lonnIPerioden = {
-      status: 'Nei',
+      status: 'Nei' as const,
       utbetalt: 1000,
       begrunnelse: 'TidligereVirksomhet'
     };

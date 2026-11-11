@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { KvitteringEksternSchema } from '../schema/MottattKvitteringSchema';
+import { KvitteringEksternSchema, KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
 import z from 'zod';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
@@ -17,6 +17,10 @@ type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
 
+type KvitteringNavNoSkjema = z.infer<typeof KvitteringNavNoSchema>['skjema'];
+
+type KvitteringData = KvitteringFullInnsending | KvitteringSelvbestemtInnsending | KvitteringNavNoSkjema;
+
 export interface SkjemadataState {
   nyInnsending: boolean;
   setNyInnsending: (endring: boolean) => void;
@@ -26,7 +30,7 @@ export interface SkjemadataState {
   setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setSelvbestemtType: (type: SelvbestemtType) => void;
-  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => void;
+  setKvitteringData: (data: KvitteringData) => void;
   setVedtaksperiodeId: (id: string) => void;
   setAarsakSelvbestemtInnsending: (aarsak: string) => void;
   setBehandlingsdager: (behandlingsdager: string[]) => void;
@@ -42,7 +46,7 @@ export interface SkjemadataState {
   direkteInngangKvittering: boolean;
   kvitteringEksterntSystem?: KvitteringEkstern;
   skjemastatus: SkjemaStatus;
-  kvitteringData?: KvitteringFullInnsending | KvitteringSelvbestemtInnsending;
+  kvitteringData?: KvitteringData;
   vedtaksperiodeId?: string;
   aarsakSelvbestemtInnsending?: string;
   behandlingsdager?: string[];
@@ -108,7 +112,7 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
       })
     );
   },
-  setKvitteringData: (data: KvitteringFullInnsending | KvitteringSelvbestemtInnsending) => {
+  setKvitteringData: (data: KvitteringData) => {
     set(
       produce((state: SkjemadataState) => {
         state.kvitteringData = data;

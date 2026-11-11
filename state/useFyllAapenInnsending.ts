@@ -129,12 +129,13 @@ export default function useFyllAapenInnsending() {
         ? {
             harLikLoenn: skjemaData.flereArbeidsforhold?.harLikLoenn === 'Ja',
             erSykmeldtFraAlle: skjemaData.flereArbeidsforhold?.erSykmeldtFraAlle === 'Ja',
-            arbeidsforhold: skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
-              inntekt: forhold.inntekt,
-              yrkesbeskrivelse: forhold.yrkesbeskrivelse,
-              inkludertISykefravaer: forhold.inkludertISykefravaer,
-              stillingsprosent: forhold.stillingsprosent
-            }))
+            arbeidsforhold:
+              skjemaData?.flereArbeidsforhold?.arbeidsforhold?.map((forhold) => ({
+                inntekt: forhold.inntekt,
+                yrkesbeskrivelse: forhold.yrkesbeskrivelse,
+                inkludertISykefravaer: forhold.inkludertISykefravaer,
+                stillingsprosent: forhold.stillingsprosent
+              })) ?? []
           }
         : null,
       soeknadIder: selvbestemtType === 'Behandlingsdager' ? soeknadIder : undefined

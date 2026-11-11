@@ -9,6 +9,7 @@ import ButtonEndre from '../ButtonEndre';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import NumberField from '../NumberField/NumberField';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import { InformationSquareIcon } from '@navikt/aksel-icons';
 
 interface RefusjonArbeidsgiverBelopProps {
   arbeidsgiverperiodeDisabled?: boolean;
@@ -85,10 +86,10 @@ export default function RefusjonArbeidsgiverBelop({
         </span>
       </div>
       <InfoCard data-color='info' className={lokalStyling.alert_box}>
-        <InfoCard.Content>
+        <InfoCard.Message icon={<InformationSquareIcon aria-hidden />}>
           Hvis den ansatt er delvis sykmeldt, skal du ikke redusere refusjonsbeløpet. Nav baserer seg på full utbetalt
           lønn og tar hensyn til sykmeldingsgraden i utbetalingen.
-        </InfoCard.Content>
+        </InfoCard.Message>
       </InfoCard>
     </>
   );

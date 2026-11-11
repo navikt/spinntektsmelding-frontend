@@ -64,6 +64,11 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
   const setArbeidsgiverperiodeDisabled = useBoundStore((state) => state.setArbeidsgiverperiodeDisabled);
 
+  const flereArbeidsforhold =
+    kvitteringData && 'flereArbeidsforhold' in kvitteringData
+      ? (kvitteringData.flereArbeidsforhold ?? undefined)
+      : undefined;
+
   const onSetNyInnsending = useEffectEvent((endring: boolean) => {
     setNyInnsending(endring);
   });
@@ -187,7 +192,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
                 manglendeFravaersdag={<Skeleton variant='text' />}
               />
               {harForespurtInntekt && <KvitteringInntekt inntekt={aktivInntekt} />}
-              <FaisuKvittering arbeidsforhold={kvitteringData?.flereArbeidsforhold} />
+              <FaisuKvittering arbeidsforhold={flereArbeidsforhold} />
               {(visRefusjon || visFullLonnIArbeidsgiverperioden) && (
                 <KvitteringRefusjon
                   refusjon={aktivRefusjon}

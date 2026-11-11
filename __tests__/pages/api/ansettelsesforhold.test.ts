@@ -56,7 +56,7 @@ describe('API Route: /api/ansettelsesforhold', () => {
 
   describe('Development environment', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/ansettelsesforhold');
       handler = apiModule.default;
@@ -85,7 +85,7 @@ describe('API Route: /api/ansettelsesforhold', () => {
 
   describe('Production environment', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.IM_API_URI = 'api.example.com';
       process.env.ARBEIDSFORHOLD_SELVBESTEMT_API = '/ansettelsesforhold';
       vi.resetModules();
@@ -111,6 +111,7 @@ describe('API Route: /api/ansettelsesforhold', () => {
       handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       const proxyConfig = mockHttpProxyMiddleware.mock.calls[0][2];
+      if (!proxyConfig) throw new Error('Expected proxy configuration');
       expect(proxyConfig.target).toBe('http://api.example.com/ansettelsesforhold');
       expect(proxyConfig.onProxyInit).toBe(mockHandleProxyInit);
       expect(proxyConfig.pathRewrite).toEqual([
@@ -132,7 +133,7 @@ describe('API Route: /api/ansettelsesforhold', () => {
 
   describe('API Configuration', () => {
     beforeEach(async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       vi.resetModules();
       const apiModule = await import('../../../pages/api/ansettelsesforhold');
       handler = apiModule.default;

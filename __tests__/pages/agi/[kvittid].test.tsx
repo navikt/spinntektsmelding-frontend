@@ -7,13 +7,27 @@ import env from '../../../config/environment';
 import formatDate from '../../../utils/formatDate';
 import formatTime from '../../../utils/formatTime';
 
-import kvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
-import kvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
+import legacyKvitteringsdata from '../../../mockdata/selvbestemt-kvittering.json';
+import legacyKvitteringsdataUtenAgp from '../../../mockdata/selvbestemt-kvittering-uten-agp.json';
 import kvitteringsdataEksterntSystem from '../../../mockdata/kvittering-eksternt-system.json';
-import kvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behandlingsdager.json';
+import legacyKvitteringsdataBehandlingsdager from '../../../mockdata/kvittering-behandlingsdager.json';
 import kvitteringsdataBackend from '../../../mockdata/kvittering-selvbestemt-format.json';
 import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
+import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
+import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
+import parseIsoDate from '../../../utils/parseIsoDate';
+import { serverSideContext } from '../../utils/serverSideContext';
+import type { ComponentProps } from 'react';
+
+type BackendKvittering = NonNullable<ComponentProps<typeof Kvittering>['kvittering']>;
+const kvitteringsdata = legacyKvitteringsdata as unknown as { selvbestemtInntektsmelding: BackendKvittering };
+const kvitteringsdataUtenAgp = legacyKvitteringsdataUtenAgp as unknown as {
+  selvbestemtInntektsmelding: BackendKvittering;
+};
+const kvitteringsdataBehandlingsdager = legacyKvitteringsdataBehandlingsdager as unknown as {
+  selvbestemtInntektsmelding: BackendKvittering;
+};
 
 // Mock external dependencies for getServerSideProps
 vi.mock('@navikt/oasis', () => ({
@@ -93,14 +107,16 @@ describe('Kvittering', () => {
     expect(setVedtaksperiodeId).toHaveBeenCalledTimes(1);
 
     const nyId = '123e4567-e89b-12d3-a456-426614174001';
-    rerender(<Kvittering {...props} kvittering={{ ...kvittering, vedtaksperiodeId: nyId }} />);
+    const kvitteringMedNyId = { ...kvittering, vedtaksperiodeId: nyId };
+    rerender(<Kvittering {...props} kvittering={kvitteringMedNyId} />);
     expect(setVedtaksperiodeId).toHaveBeenLastCalledWith(nyId);
     expect(setVedtaksperiodeId).toHaveBeenCalledTimes(2);
 
     rerender(<Kvittering {...props} dataFraBackend={false} />);
     expect(setVedtaksperiodeId).toHaveBeenCalledTimes(2);
 
-    rerender(<Kvittering {...props} kvittering={{ ...kvittering, vedtaksperiodeId: undefined }} />);
+    const kvitteringUtenId = { ...kvittering, vedtaksperiodeId: undefined };
+    rerender(<Kvittering {...props} kvittering={kvitteringUtenId} />);
     expect(setVedtaksperiodeId).toHaveBeenCalledTimes(2);
   });
 
@@ -156,7 +172,7 @@ describe('Kvittering', () => {
     render(
       <Kvittering
         kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
-        kvittering={{ ...kvitteringsdataEksterntSystem }}
+        kvittering={{ ...kvitteringsdataEksterntSystem } as unknown as BackendKvittering}
         dataFraBackend={true}
         kvitteringStatus={200}
       />
@@ -197,6 +213,161 @@ describe('Kvittering', () => {
     printButton.click();
 
     expect(printSpy).toHaveBeenCalled();
+  });
+
+  it.each(['full', 'aapen', 'navNo'] as const)('preserves stored data when editing a %s receipt', async (format) => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const uuid = '8d50ef20-37b5-4829-ad83-56219e70b375';
+    const innsendt = {
+      ...source,
+      forespoerselId: uuid,
+      avsenderTlf: source.avsender.tlf,
+      sykmeldtFnr: source.sykmeldt.fnr,
+      arbeidsforholdType: source.type,
+      refusjon: { beloepPerMaaned: 5000, endringer: null }
+    };
+    const kvitteringData =
+      format === 'full'
+        ? FullInnsendingSchema.parse(innsendt)
+        : format === 'aapen'
+          ? AapenInnsendingSchema.parse(innsendt)
+          : KvitteringNavNoSchema.shape.skjema.parse({
+              ...source,
+              refusjon: { beloepPerMaaned: 5000, endringer: [] }
+            });
+    const sykmeldingsperioder = source.sykmeldingsperioder.map((periode, index) => ({
+      id: `syk-${index}`,
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom)
+    }));
+    const egenmeldinger = [{ fom: '2023-02-01', tom: '2023-02-02' }];
+    const egenmeldingsperioder = egenmeldinger.map((periode) => ({
+      id: 'egen-1',
+      fom: parseIsoDate(periode.fom),
+      tom: parseIsoDate(periode.tom)
+    }));
+    useBoundStore.setState({
+      kvitteringData,
+      sykmeldt: source.sykmeldt,
+      avsender: source.avsender,
+      sykmeldingsperioder,
+      egenmeldingsperioder,
+      mottatt: new Date(source.mottatt)
+    });
+
+    render(<Kvittering kvittid={uuid} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${uuid}?endre=true&agi=true`, `/${uuid}`));
+    const state = useBoundStore.getState();
+    expect(state.sykmeldingsperioder?.map(({ fom, tom }) => ({ fom, tom }))).toEqual(
+      sykmeldingsperioder.map(({ fom, tom }) => ({ fom, tom }))
+    );
+    expect(state.kvitteringData?.agp).toMatchObject({
+      egenmeldinger: format === 'navNo' ? source.agp?.egenmeldinger : egenmeldinger,
+      redusertLoennIAgp: source.agp?.redusertLoennIAgp ?? null
+    });
+    expect(state.kvitteringData?.inntekt?.beloep).toBe(source.inntekt.beloep);
+    expect(state.kvitteringData?.inntekt?.endringAarsaker).toEqual(source.inntekt.endringAarsaker);
+    expect(state.kvitteringData?.refusjon?.endringer).toEqual([]);
+    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
+  it.each([
+    { dataFraBackend: false, navn: undefined, orgNavn: 'Test Org' },
+    { dataFraBackend: false, navn: '', orgNavn: '' },
+    { dataFraBackend: true, navn: '', orgNavn: 'Test Org' },
+    { dataFraBackend: true, navn: 'Avsender', orgNavn: '' }
+  ])('edits receipts with incomplete display names: %j', async ({ dataFraBackend, navn, orgNavn }) => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const avsender = { ...source.avsender, navn, orgNavn };
+    const kvitteringData = FullInnsendingSchema.parse({
+      ...source,
+      forespoerselId: source.id,
+      avsenderTlf: source.avsender.tlf
+    });
+    useBoundStore.setState({
+      kvitteringData,
+      sykmeldt: source.sykmeldt,
+      avsender,
+      sykmeldingsperioder: source.sykmeldingsperioder.map((periode, index) => ({
+        id: `syk-${index}`,
+        fom: parseIsoDate(periode.fom),
+        tom: parseIsoDate(periode.tom)
+      })),
+      mottatt: new Date(source.mottatt)
+    });
+    const kvittering = dataFraBackend ? SelvbestemtInntektsmeldingSchema.parse({ ...source, avsender }) : null;
+
+    render(
+      <Kvittering kvittid={source.id} kvittering={kvittering} dataFraBackend={dataFraBackend} kvitteringStatus={200} />
+    );
+
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${source.id}?endre=true&agi=true`, `/${source.id}`));
+    const state = useBoundStore.getState();
+    expect(state.avsender).toEqual(avsender);
+    expect(state.kvitteringData?.inntekt).toMatchObject(source.inntekt);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
+  it('initializes backend data only when editing and preserves its periods and income', async () => {
+    const user = userEvent.setup();
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const egenmeldinger = [{ fom: '2025-10-30', tom: '2025-10-31' }];
+    const kvittering = {
+      ...source,
+      agp: source.agp ? { ...source.agp, egenmeldinger } : null
+    };
+    const gamlePerioder = [{ id: 'gammel', fom: parseIsoDate('2020-01-01'), tom: parseIsoDate('2020-01-02') }];
+    useBoundStore.setState({ sykmeldingsperioder: gamlePerioder, egenmeldingsperioder: gamlePerioder });
+
+    render(<Kvittering kvittid={source.id} kvittering={kvittering} dataFraBackend={true} kvitteringStatus={200} />);
+
+    expect(useBoundStore.getState().sykmeldingsperioder).toEqual(gamlePerioder);
+    await user.click(screen.getAllByRole('button', { name: /Endre/i })[0]);
+
+    await waitFor(() => expect(mockPush).toHaveBeenCalledWith(`/${source.id}?endre=true&agi=true`, `/${source.id}`));
+    const state = useBoundStore.getState();
+    expect(state.sykmeldingsperioder?.map(({ fom, tom }) => ({ fom, tom }))).toEqual(
+      source.sykmeldingsperioder.map((periode) => ({ fom: parseIsoDate(periode.fom), tom: parseIsoDate(periode.tom) }))
+    );
+    expect(state.kvitteringData?.agp).toMatchObject({ egenmeldinger, perioder: source.agp?.perioder });
+    expect(state.kvitteringData?.inntekt).toMatchObject(source.inntekt);
+    expect(state.kvitteringData?.naturalytelser).toEqual(source.naturalytelser);
+    expect(state.kvitteringData?.refusjon).toBeNull();
+    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(state.mottatt).toEqual(new Date(source.mottatt));
+  });
+
+  it.each([true, false])('renders FAISU only when stored arbeidsforhold is present: %s', (harArbeidsforhold) => {
+    const source = SelvbestemtInntektsmeldingSchema.parse(kvitteringsdataBackend.selvbestemtInntektsmelding);
+    const kvitteringData = FullInnsendingSchema.parse({
+      ...source,
+      forespoerselId: source.id,
+      avsenderTlf: source.avsender.tlf,
+      flereArbeidsforhold: harArbeidsforhold
+        ? {
+            harLikLoenn: false,
+            erSykmeldtFraAlle: false,
+            arbeidsforhold: [{ yrkesbeskrivelse: 'Utvikler', inntekt: 10000, stillingsprosent: 50 }]
+          }
+        : null
+    });
+    useBoundStore.setState({ kvitteringData });
+
+    render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);
+
+    if (harArbeidsforhold) {
+      expect(screen.getByRole('cell', { name: 'Utvikler' })).toBeInTheDocument();
+    } else {
+      expect(screen.queryByRole('cell', { name: 'Utvikler' })).not.toBeInTheDocument();
+    }
   });
 
   it('renders Endre button and navigates on click', async () => {
@@ -404,7 +575,14 @@ describe('Kvittering', () => {
   });
 
   it('renders without dataFraBackend - uses store data', () => {
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvitteringStatus={200}
+        dataFraBackend={false}
+        kvittering={null}
+      />
+    );
 
     // Should still render the page structure
     const kvitteringHeadings = screen.getAllByText(/Kvittering - innsendt inntektsmelding/i);
@@ -430,7 +608,14 @@ describe('Kvittering', () => {
   it('renders the received date from the store after submission', () => {
     const mottatt = new Date('2026-10-23T10:30:00Z');
     useBoundStore.setState({ mottatt });
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvitteringStatus={200}
+        dataFraBackend={false}
+        kvittering={null}
+      />
+    );
 
     expect(
       screen.getByText(`Inntektsmelding innsendt - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}`)
@@ -439,7 +624,14 @@ describe('Kvittering', () => {
 
   it('does not invent a received date when the store has none', () => {
     useBoundStore.setState({ mottatt: undefined });
-    render(<Kvittering kvittid='8d50ef20-37b5-4829-ad83-56219e70b375' kvitteringStatus={200} dataFraBackend={false} />);
+    render(
+      <Kvittering
+        kvittid='8d50ef20-37b5-4829-ad83-56219e70b375'
+        kvitteringStatus={200}
+        dataFraBackend={false}
+        kvittering={null}
+      />
+    );
 
     expect(screen.getByText('Inntektsmelding innsendt', { exact: true })).toBeInTheDocument();
   });
@@ -625,16 +817,13 @@ describe('getServerSideProps', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    process.env.NODE_ENV = originalEnv;
+    vi.stubEnv('NODE_ENV', originalEnv);
   });
 
   it('returns props in development mode', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
 
-    const context = {
-      query: { kvittid: '8d50ef20-37b5-4829-ad83-56219e70b375' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: '8d50ef20-37b5-4829-ad83-56219e70b375' });
 
     const result = await getServerSideProps(context);
 
@@ -651,15 +840,12 @@ describe('getServerSideProps', () => {
   });
 
   it('redirects to login when token is missing in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const { getToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce(null as unknown as string);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -668,16 +854,13 @@ describe('getServerSideProps', () => {
   });
 
   it('redirects to login when token validation fails in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const { getToken, validateToken } = await import('@navikt/oasis');
     vi.mocked(getToken).mockReturnValueOnce('mock-token');
-    vi.mocked(validateToken).mockResolvedValueOnce({ ok: false });
+    vi.mocked(validateToken, { partial: true }).mockResolvedValueOnce({ ok: false });
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -686,12 +869,9 @@ describe('getServerSideProps', () => {
   });
 
   it('returns props in production mode with valid token', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -699,17 +879,14 @@ describe('getServerSideProps', () => {
   });
 
   it('returns notFound when 404 error in production', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv('NODE_ENV', 'production');
 
     const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
     const error = new Error('Not found');
     (error as Error & { status: number }).status = 404;
     vi.mocked(hentKvitteringsdataAgiSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+    const context = serverSideContext({ kvittid: 'test-uuid' });
 
     const result = await getServerSideProps(context);
 
@@ -717,39 +894,44 @@ describe('getServerSideProps', () => {
     expect(result).not.toHaveProperty('props');
   });
 
-  it('returns error status when fetching fails with other error', async () => {
-    process.env.NODE_ENV = 'production';
+  it.each([
+    { status: 500, expectedStatus: 500 },
+    { status: 403, expectedStatus: 403 },
+    { status: 502, expectedStatus: 502 },
+    { status: 503, expectedStatus: 503 },
+    { status: undefined, expectedStatus: 500 },
+    { status: '503', expectedStatus: 500 },
+    { status: 200, expectedStatus: 500 },
+    { status: NaN, expectedStatus: 500 }
+  ])(
+    'returns error status $expectedStatus when fetching fails with status $status',
+    async ({ status, expectedStatus }) => {
+      vi.stubEnv('NODE_ENV', 'production');
 
-    const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
-    const error = new Error('Server error');
-    (error as Error & { status: number }).status = 500;
-    vi.mocked(hentKvitteringsdataAgiSSR.default).mockRejectedValueOnce(error);
+      const hentKvitteringsdataAgiSSR = await import('../../../utils/hentKvitteringsdataAgiSSR');
+      const error = Object.assign(new Error('Server error'), { status });
+      vi.mocked(hentKvitteringsdataAgiSSR.default).mockRejectedValueOnce(error);
 
-    const context = {
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    };
+      const context = serverSideContext({ kvittid: 'test-uuid' });
 
-    const result = await getServerSideProps(context);
+      const result = await getServerSideProps(context);
 
-    expect(result).toHaveProperty('props');
-    if (!('props' in result) || !result.props) {
-      throw new Error('Expected receipt props');
+      expect(result).toHaveProperty('props');
+      if (!('props' in result) || !result.props) {
+        throw new Error('Expected receipt props');
+      }
+      expect(result.props.kvitteringStatus).toBe(expectedStatus);
+      expect(result.props.kvittering).toBeNull();
+      expect(result.props.dataFraBackend).toBe(false);
     }
-    expect(result.props.kvitteringStatus).toBe(500);
-    expect(result.props.kvittering).toBeNull();
-    expect(result.props.dataFraBackend).toBe(false);
-  });
+  );
 
   it('returns store-based props without fetching when fromSubmit is set', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
     const { default: fetchKvittering } = await import('../../../utils/hentKvitteringsdataAgiSSR');
     vi.mocked(fetchKvittering).mockClear();
 
-    const result = await getServerSideProps({
-      query: { kvittid: 'test-uuid', fromSubmit: 'true' },
-      req: {}
-    });
+    const result = await getServerSideProps(serverSideContext({ kvittid: 'test-uuid', fromSubmit: 'true' }));
 
     expect(fetchKvittering).not.toHaveBeenCalled();
     expect(result).toEqual({
@@ -763,14 +945,11 @@ describe('getServerSideProps', () => {
   });
 
   it('returns null receipt props when the backend has no receipt', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv('NODE_ENV', 'development');
     const { default: fetchKvittering } = await import('../../../utils/hentKvitteringsdataAgiSSR');
     vi.mocked(fetchKvittering).mockResolvedValueOnce({ data: null });
 
-    const result = await getServerSideProps({
-      query: { kvittid: 'test-uuid' },
-      req: {}
-    });
+    const result = await getServerSideProps(serverSideContext({ kvittid: 'test-uuid' }));
 
     expect(result).toEqual({
       props: {

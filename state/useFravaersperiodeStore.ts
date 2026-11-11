@@ -113,7 +113,7 @@ const useFravaersperiodeStore: StateCreator<CompleteState, [], [], Fravaersperio
   initFravaersperiode: (mottatt) => {
     const validerte = ApiPeriodeSchema.array().safeParse(mottatt);
     if (!validerte.success) {
-      logger.error('Feil i initFravaersperiode', validerte.error);
+      logger.error({ err: validerte.error }, 'Feil i initFravaersperiode');
     }
 
     const sorterte = mottatt.toSorted((a, b) => new Date(a.fom).getTime() - new Date(b.fom).getTime());

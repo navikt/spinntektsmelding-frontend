@@ -224,6 +224,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     state.inngangFraKvittering
   ]);
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
+  const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
@@ -298,7 +299,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const skalValidereFaisu = harFlereArbeidsforhold;
 
-  const methods = useForm<Skjema>({
+  const methods = useForm<z.input<typeof HovedskjemaSchema>, unknown, Skjema>({
     resolver: zodResolver(createHovedskjemaSchema(skalValidereFaisu)),
     defaultValues: {
       inntekt: {
@@ -327,6 +328,8 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const {
     register,
     setValue,
+    getValues,
+    clearErrors,
     control,
     handleSubmit,
     formState: { errors, isDirty, dirtyFields }
@@ -515,6 +518,41 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     }
   }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndring]);
 
+  const fullLonn = useWatch({ control, name: 'fullLonn' });
+  const redusertLoennIAgp = useWatch({ control, name: 'agp.redusertLoennIAgp' });
+
+  const nullstillInaktiveAgpOpplysninger = useEffectEvent(() => {
+    if (!agpValuesInitialized.current) return;
+
+    const brukerRedusertLoennIAgp =
+      skalViseArbeidsgiverperiode &&
+      (arbeidsgiverperiodeDisabled ||
+        (arbeidsgiverperiodeKort && !behandlingsdagerInnsending) ||
+        getValues('fullLonn') === 'Nei');
+
+    if (!brukerRedusertLoennIAgp) {
+      if (!skalViseArbeidsgiverperiode && getValues('fullLonn') !== undefined) {
+        setValue('fullLonn', undefined);
+        clearErrors('fullLonn');
+      }
+      if (getValues('agp.redusertLoennIAgp') !== null) {
+        setValue('agp.redusertLoennIAgp', null);
+      }
+      clearErrors('agp.redusertLoennIAgp');
+    }
+  });
+
+  useEffect(() => {
+    nullstillInaktiveAgpOpplysninger();
+  }, [
+    skalViseArbeidsgiverperiode,
+    arbeidsgiverperiodeDisabled,
+    arbeidsgiverperiodeKort,
+    behandlingsdagerInnsending,
+    fullLonn,
+    redusertLoennIAgp
+  ]);
+
   useEffect(() => {
     if (
       !dataFraBackend &&
@@ -547,8 +585,17 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       onSetValue('refusjon.beloepPerMaaned', 0);
       onSetValue('kreverRefusjon', 'Nei');
     }
-    if (!dataFraBackend && kvitteringData?.flereArbeidsforhold) {
-      onSetValue('flereArbeidsforhold', kvitteringData.flereArbeidsforhold);
+    if (
+      !dataFraBackend &&
+      kvitteringData &&
+      'flereArbeidsforhold' in kvitteringData &&
+      kvitteringData.flereArbeidsforhold
+    ) {
+      onSetValue('flereArbeidsforhold', {
+        ...kvitteringData.flereArbeidsforhold,
+        harLikLoenn: kvitteringData.flereArbeidsforhold.harLikLoenn ? 'Ja' : 'Nei',
+        erSykmeldtFraAlle: kvitteringData.flereArbeidsforhold.erSykmeldtFraAlle ? 'Ja' : 'Nei'
+      });
     }
   }, [kvitteringData, dataFraBackend]);
 

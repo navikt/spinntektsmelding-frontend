@@ -20,7 +20,7 @@ export async function getKvitteringServerSideProps<T>({
 }: GetKvitteringServerSidePropsOptions<T>) {
   const { kvittid, fromSubmit } = context.query;
   let kvittering: { data: T | null };
-  let kvitteringStatus: number | undefined;
+  let kvitteringStatus: number;
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   const token = getToken(context.req);
@@ -43,12 +43,12 @@ export async function getKvitteringServerSideProps<T>({
       kvittering = await fetchKvittering(kvittid, token ?? undefined);
       kvitteringStatus = 200;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(errorLogMessage, error);
     kvittering = { data: null };
-    kvitteringStatus = error.status;
+    kvitteringStatus = getErrorStatus(error);
 
-    if (error.status === 404) {
+    if (kvitteringStatus === 404) {
       return {
         notFound: true
       };
@@ -58,9 +58,14 @@ export async function getKvitteringServerSideProps<T>({
   return {
     props: {
       kvittid,
-      kvittering: fromSubmit ? null : kvittering?.data,
+      kvittering: kvittering.data,
       kvitteringStatus: kvitteringStatus,
-      dataFraBackend: checkDataFraBackend(kvittering?.data, !!fromSubmit)
+      dataFraBackend: checkDataFraBackend(kvittering.data, !!fromSubmit)
     }
   };
+}
+
+function getErrorStatus(error: unknown): number {
+  const status = typeof error === 'object' && error !== null && 'status' in error ? error.status : undefined;
+  return typeof status === 'number' && Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
 }

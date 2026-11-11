@@ -26,8 +26,8 @@ vi.mock('nanoid');
 
 const initialState = useBoundStore.getState();
 
-function fetchMock(url, suffix = '') {
-  return new Promise((resolve) =>
+function fetchMock() {
+  return new Promise<Response>((resolve) =>
     setTimeout(
       () => {
         resolve({
@@ -35,7 +35,7 @@ function fetchMock(url, suffix = '') {
             Promise.resolve({
               data: inntektData
             })
-        });
+        } as Response);
       },
       200 + Math.random() * 300
     )
@@ -63,7 +63,7 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(mottattKvittering);
+      kvitteringInit(mottattKvittering as unknown as KvitteringData);
     });
 
     const skjema = mottattKvittering.kvitteringNavNo.skjema;
@@ -84,10 +84,10 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(annenMottattKvittering);
+      kvitteringInit(annenMottattKvittering as unknown as KvitteringData);
     });
 
-    const navNo = annenMottattKvittering.kvitteringNavNo as KvitteringNavNo;
+    const navNo = annenMottattKvittering.kvitteringNavNo as unknown as KvitteringNavNo;
 
     expect(result.current.sykmeldt.navn).toEqual(navNo.sykmeldt.navn);
     expect(result.current.sykmeldt.fnr).toEqual(navNo.sykmeldt.fnr);
@@ -99,9 +99,11 @@ describe('useKvitteringInit', () => {
     expect(result.current.fullLonnIArbeidsgiverPerioden?.utbetalt).toBe(30000);
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Tariffendring');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'Tariffendring') throw new Error('Expected Tariffendring');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].bleKjent).toEqual(parseIsoDate('2023-03-31'));
+    expect(endringAarsak.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(endringAarsak.bleKjent).toEqual(parseIsoDate('2023-03-31'));
   });
 
   it('should fill the state with ferie stuff', async () => {
@@ -112,13 +114,15 @@ describe('useKvitteringInit', () => {
     const kvitteringInit = resp.current;
 
     act(() => {
-      kvitteringInit(ferieKvittering as KvitteringData);
+      kvitteringInit(ferieKvittering as unknown as KvitteringData);
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Ferie');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'Ferie') throw new Error('Expected Ferie');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].ferier).toEqual([
+    expect(endringAarsak.ferier).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -138,9 +142,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('VarigLoennsendring');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'VarigLoennsendring') throw new Error('Expected VarigLoennsendring');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(endringAarsak.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with permisjon stuff', async () => {
@@ -155,9 +161,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permisjon');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'Permisjon') throw new Error('Expected Permisjon');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].permisjoner).toEqual([
+    expect(endringAarsak.permisjoner).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -177,9 +185,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Permittering');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'Permittering') throw new Error('Expected Permittering');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].permitteringer).toEqual([
+    expect(endringAarsak.permitteringer).toEqual([
       {
         fom: parseIsoDate('2023-02-24'),
         tom: parseIsoDate('2023-03-31')
@@ -199,9 +209,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStilling');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'NyStilling') throw new Error('Expected NyStilling');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(endringAarsak.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with NyStillingsprosent stuff', async () => {
@@ -216,9 +228,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('NyStillingsprosent');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'NyStillingsprosent') throw new Error('Expected NyStillingsprosent');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0].gjelderFra).toEqual(parseIsoDate('2023-02-24'));
+    expect(endringAarsak.gjelderFra).toEqual(parseIsoDate('2023-02-24'));
   });
 
   it('should fill the state with syk stuff', async () => {
@@ -233,9 +247,11 @@ describe('useKvitteringInit', () => {
     });
 
     expect(result.current.bruttoinntekt.endringAarsaker?.[0].aarsak).toBe('Sykefravaer');
+    const endringAarsak = result.current.bruttoinntekt.endringAarsaker?.[0];
+    if (endringAarsak?.aarsak !== 'Sykefravaer') throw new Error('Expected Sykefravaer');
     expect(result.current.harRefusjonEndringer).toBe('Ja');
 
-    expect(result.current.bruttoinntekt.endringAarsaker?.[0]?.sykefravaer).toEqual([
+    expect(endringAarsak.sykefravaer).toEqual([
       {
         fom: parseIsoDate('2023-02-06'),
         tom: parseIsoDate('2023-02-10')
@@ -289,7 +305,10 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    const kvitteringUtenEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    const kvitteringUtenEndringer: {
+      kvitteringNavNo: { skjema: { refusjon: KvitteringNavNo['skjema']['refusjon'] } };
+    } = structuredClone(kvitteringMedRefusjonSluttdato);
+    if (!kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon) throw new Error('Expected refund data');
     kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon.endringer = [];
 
     act(() => {
@@ -321,7 +340,8 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    const kvitteringMedEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    const kvitteringMedEndringer: { kvitteringNavNo: { skjema: { refusjon: KvitteringNavNo['skjema']['refusjon'] } } } =
+      structuredClone(kvitteringMedRefusjonSluttdato);
     kvitteringMedEndringer.kvitteringNavNo.skjema.refusjon = {
       beloepPerMaaned: 0.0,
       endringer: [
@@ -353,7 +373,9 @@ describe('useKvitteringInit', () => {
 
     const kvitteringInit = resp.current;
 
-    const kvitteringUtenEndringer = structuredClone(kvitteringMedRefusjonSluttdato);
+    const kvitteringUtenEndringer: {
+      kvitteringNavNo: { skjema: { refusjon: KvitteringNavNo['skjema']['refusjon'] } };
+    } = structuredClone(kvitteringMedRefusjonSluttdato);
     kvitteringUtenEndringer.kvitteringNavNo.skjema.refusjon = {
       beloepPerMaaned: 0.0,
       endringer: []

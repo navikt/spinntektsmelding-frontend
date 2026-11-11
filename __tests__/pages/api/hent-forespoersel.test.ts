@@ -41,13 +41,13 @@ describe('/api/hent-forespoersel API', () => {
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toEqual(org);
+    expect(res.json(undefined)).toEqual(org);
   });
 
   it('should proxy request in production environment', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     const mockHttpProxyMiddleware = vi.mocked(httpProxyMiddleware);
-    mockHttpProxyMiddleware.mockImplementation((_, res) => {
+    mockHttpProxyMiddleware.mockImplementation(async (_, res) => {
       res.status(200).json({ proxied: true });
     });
 
@@ -71,7 +71,7 @@ describe('/api/hent-forespoersel API', () => {
       status: vi.fn(() => res),
       json: vi.fn(() => org),
       _getJSONData: vi.fn(() => ({ proxied: true }))
-    } as unknown as NextApiResponse<unknown>;
+    } as unknown as NextApiResponse<unknown> & { _getJSONData: () => { proxied: boolean } };
 
     await handler(req, res);
 

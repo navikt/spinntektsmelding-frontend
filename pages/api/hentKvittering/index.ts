@@ -1,3 +1,3 @@
-import * as hentKvittering from './[postId]';
+import hentKvittering from './[postId]';
 
 export default hentKvittering;

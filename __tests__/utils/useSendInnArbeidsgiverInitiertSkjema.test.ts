@@ -70,7 +70,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
-    const response = await result.current(true, pathSlug, false, defaultFormData);
+    const response = await result.current(true, pathSlug, false, defaultFormData, false, false);
 
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
@@ -127,7 +127,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false, false);
     });
 
     expect(mockRouter).toMatchObject({
@@ -162,7 +162,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false, false);
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
@@ -196,7 +196,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData);
+      await result.current(true, pathSlug, true, defaultFormData, false, false);
     });
 
     expect(innsendingFeiletIngenTilgang).toHaveBeenCalledWith(true);

@@ -22,7 +22,7 @@ describe('useSendInnFeedback', () => {
     global.fetch = fetchMock;
 
     const sendInnFeedback = useSendInnFeedback();
-    const response = await sendInnFeedback(feedback);
+    const response = await sendInnFeedback(feedback as unknown as Parameters<typeof sendInnFeedback>[0]);
 
     expect(fetchMock).toHaveBeenCalledWith(`${environment.flexjarUrl}`, {
       body: JSON.stringify(feedback),
@@ -39,7 +39,7 @@ describe('useSendInnFeedback', () => {
     global.fetch = fetchMock;
 
     const sendInnFeedback = useSendInnFeedback();
-    const response = await sendInnFeedback(feedback);
+    const response = await sendInnFeedback(feedback as unknown as Parameters<typeof sendInnFeedback>[0]);
 
     expect(fetchMock).toHaveBeenCalledWith(`${environment.flexjarUrl}`, {
       body: JSON.stringify(feedback),

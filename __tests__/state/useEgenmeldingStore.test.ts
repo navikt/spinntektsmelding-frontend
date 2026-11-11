@@ -88,7 +88,7 @@ describe('useEgenmeldingStore', () => {
       result.current.initEgenmeldingsperiode(ugyldige);
     });
 
-    expect(errorSpy).toHaveBeenCalledWith('Feil i initEgenmeldingsperiode', expect.anything());
+    expect(errorSpy).toHaveBeenCalledWith({ err: expect.any(Error) }, 'Feil i initEgenmeldingsperiode');
   });
 
   it('should not log an error for an empty list of egenmeldingsperioder.', () => {

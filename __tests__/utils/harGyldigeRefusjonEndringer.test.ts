@@ -1,4 +1,10 @@
-import { harGyldigeRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
+import { harGyldigeRefusjonEndringer as validerRefusjonEndringer } from '../../utils/harGyldigeRefusjonEndringer';
+
+type RefusjonEndringer = Parameters<typeof validerRefusjonEndringer>[0];
+
+function harGyldigeRefusjonEndringer(input: Array<Partial<NonNullable<RefusjonEndringer>[number]>> | undefined) {
+  return validerRefusjonEndringer(input as RefusjonEndringer);
+}
 
 describe('harGyldigeRefusjonEndringer', () => {
   it('should return true if refusjonEndringer is defined and has at least one valid endring', () => {

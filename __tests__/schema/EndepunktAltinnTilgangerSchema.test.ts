@@ -48,7 +48,6 @@ describe('EndepunktAltinnTilgangerSchema', () => {
   });
 
   it('fails on missing required top-level field', () => {
-    // @ts-expect-error omit error
     const invalid = { ...validData, error: undefined };
     expect(() => EndepunktAltinnTilgangerSchema.parse(invalid)).toThrow();
     const safe = EndepunktAltinnTilgangerSchema.safeParse(invalid);
@@ -56,7 +55,6 @@ describe('EndepunktAltinnTilgangerSchema', () => {
   });
 
   it('fails on wrong type for error field', () => {
-    // @ts-expect-error wrong type
     const invalid = { ...validData, error: 'false' };
     expect(() => EndepunktAltinnTilgangerSchema.parse(invalid)).toThrow();
   });
@@ -116,7 +114,6 @@ describe('EndepunktAltinnTilgangerSchema', () => {
   });
 
   it('fails on invalid record values', () => {
-    // @ts-expect-error number instead of array
     const badRecord = { ...validData, orgNrTilTilganger: { '1': 'not-an-array' } };
     expect(() => EndepunktAltinnTilgangerSchema.parse(badRecord)).toThrow();
   });

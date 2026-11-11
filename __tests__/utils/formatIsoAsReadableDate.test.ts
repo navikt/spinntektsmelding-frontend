@@ -7,6 +7,6 @@ describe.concurrent('formatIsoAsReadableDate', () => {
   });
 
   it('shold return an empty string when input is rubish', () => {
-    expect(formatIsoAsReadableDate()).toBe('');
+    expect(formatIsoAsReadableDate(undefined as unknown as Parameters<typeof formatIsoAsReadableDate>[0])).toBe('');
   });
 });

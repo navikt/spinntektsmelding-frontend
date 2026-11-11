@@ -19,12 +19,22 @@ describe('fetcherInntektsdataSelvbestemt', () => {
   });
 
   it('should return an empty array if url is null', async () => {
-    const result = await fetcherInntektsdataSelvbestemt(null, identitetsnummer, orgnrUnderenhet, inntektsdato);
+    const result = await fetcherInntektsdataSelvbestemt(
+      null as unknown as Parameters<typeof fetcherInntektsdataSelvbestemt>[0],
+      identitetsnummer,
+      orgnrUnderenhet,
+      inntektsdato
+    );
     expect(result).toEqual([]);
   });
 
   it('should return an empty array if identitetsnummer is not provided', async () => {
-    const result = await fetcherInntektsdataSelvbestemt(url, null, orgnrUnderenhet, inntektsdato);
+    const result = await fetcherInntektsdataSelvbestemt(
+      url,
+      null as unknown as Parameters<typeof fetcherInntektsdataSelvbestemt>[1],
+      orgnrUnderenhet,
+      inntektsdato
+    );
     expect(result).toEqual([]);
   });
 

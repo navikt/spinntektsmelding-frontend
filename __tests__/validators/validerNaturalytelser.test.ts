@@ -1,10 +1,14 @@
 import { Naturalytelse } from '../../state/state';
-import validerNaturalytelser from '../../validators/validerNaturalytelser';
+import validerKompletteNaturalytelser from '../../validators/validerNaturalytelser';
 import { expect, it, describe } from 'vitest';
+
+function validerNaturalytelser(input: Array<Partial<Naturalytelse>>, forventet: boolean | undefined) {
+  return validerKompletteNaturalytelser(input as Naturalytelse[], forventet);
+}
 
 describe('validerNaturalytelser', () => {
   it('should validate that all is OK', () => {
-    const input: Array<Naturalytelse> = [
+    const input: Array<Partial<Naturalytelse>> = [
       {
         naturalytelse: 'BOLIG',
         sluttdato: new Date(),
@@ -15,7 +19,7 @@ describe('validerNaturalytelser', () => {
   });
 
   it('should fail if sluttdato is missing', () => {
-    const input: Array<Naturalytelse> = [
+    const input: Array<Partial<Naturalytelse>> = [
       {
         naturalytelse: 'BOLIG',
         verdiBeloep: 1234
@@ -33,7 +37,7 @@ describe('validerNaturalytelser', () => {
   });
 
   it('should fail if naturalytelse is missing', () => {
-    const input: Array<Naturalytelse> = [
+    const input: Array<Partial<Naturalytelse>> = [
       {
         sluttdato: new Date(),
         verdiBeloep: 1234
@@ -51,7 +55,7 @@ describe('validerNaturalytelser', () => {
   });
 
   it('should fail if verdiBeloep is missing', () => {
-    const input: Array<Naturalytelse> = [
+    const input: Array<Partial<Naturalytelse>> = [
       {
         sluttdato: new Date(),
         naturalytelse: 'BOLIG'
@@ -69,7 +73,7 @@ describe('validerNaturalytelser', () => {
   });
 
   it('should not fail if verdiBeloep is missing and we dont expect any naturalytelser', () => {
-    const input: Array<Naturalytelse> = [
+    const input: Array<Partial<Naturalytelse>> = [
       {
         sluttdato: new Date(),
         naturalytelse: 'BOLIG'

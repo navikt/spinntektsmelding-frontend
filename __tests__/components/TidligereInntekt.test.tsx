@@ -61,7 +61,7 @@ describe('TidligereInntekt', () => {
   });
 
   it('should render the loading skeleton when henterData is true', () => {
-    render(<TidligereInntekt tidligereinntekt={[]} henterData={true} />);
+    render(<TidligereInntekt tidligereinntekt={[] as unknown as Map<string, number | null>} henterData={true} />);
 
     const table = screen.getByRole('table');
     const rows = screen.getAllByRole('row');
@@ -95,7 +95,9 @@ describe('TidligereInntekt', () => {
       ['2021-03', 0]
     ]);
 
-    render(<TidligereInntekt tidligereinntekt={invalidInntekt} henterData={false} />);
+    render(
+      <TidligereInntekt tidligereinntekt={invalidInntekt as unknown as Map<string, number | null>} henterData={false} />
+    );
 
     const table = screen.getByRole('table');
     const rows = screen.getAllByRole('row');

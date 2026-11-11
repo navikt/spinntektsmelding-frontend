@@ -1,4 +1,5 @@
 import { Radio, RadioGroup } from '@navikt/ds-react';
+import type { ComponentProps, ComponentType, ReactNode } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
@@ -6,6 +7,11 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 import lokalStyling from './VelgAarsak.module.css';
+
+// Wrapper for Radio component to allow ReactNode as description, instead of just string. Greit å huske på om formateringen skulle slutte å fungere som forventet.
+const RadioMedFormatertBeskrivelse = Radio as ComponentType<
+  Omit<ComponentProps<typeof Radio>, 'description'> & { description?: ReactNode }
+>;
 
 interface VelgAarsakProps {
   legend: string;
@@ -26,7 +32,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
       rules={{ required: 'Du må velge årsaken til at du vil sende inn her.' }}
       render={({ field }) => (
         <RadioGroup {...field} legend={legend} error={error} id={ensureValidHtmlId(name)}>
-          <Radio
+          <RadioMedFormatertBeskrivelse
             value={SelvbestemtTypeConst.Behandlingsdager}
             id={ensureValidHtmlId(field.name + '_Behandlingsdager')}
             description={
@@ -44,7 +50,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
             }
           >
             Enkeltstående behandlingsdager
-          </Radio>
+          </RadioMedFormatertBeskrivelse>
           <Radio
             value={SelvbestemtTypeConst.UtenArbeidsforhold}
             id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
