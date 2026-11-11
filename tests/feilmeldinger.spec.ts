@@ -35,6 +35,13 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
 
   test('should display information on the person and the submitter', async ({ page }) => {
     test.slow();
+    const pageErrors: string[] = [];
+    page.on('pageerror', (error) => pageErrors.push(error.message));
+    page.on('console', (message) => {
+      if (/cyclic object value|circular structure|Unable to log to backend/i.test(message.text())) {
+        pageErrors.push(message.text());
+      }
+    });
     const formPage = new FormPage(page);
     // intercept forespoersel
     await page.goto(baseUrl);
@@ -128,6 +135,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
     });
 
     await test.step('Accessibility scan før innsending', async () => {
+      expect(pageErrors).toEqual([]);
       const accessibilityScanResults = await analyzeA11y(page);
       expect(accessibilityScanResults.violations).toEqual([]);
     });
@@ -199,6 +207,7 @@ test.describe('Trigge så mange feilmeldinger som mulig', () => {
       // Accessibility scan
       const accessibilityScanResults = await analyzeA11y(page);
       expect(accessibilityScanResults.violations).toEqual([]);
+      expect(pageErrors).toEqual([]);
     });
   });
 });
