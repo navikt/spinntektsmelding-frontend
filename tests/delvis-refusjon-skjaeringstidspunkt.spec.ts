@@ -90,6 +90,9 @@ test.describe('Delvis skjema – Utfylling og innsending av skjema (refusjon skj
     );
 
     await page.goto('http://localhost:3000/im-dialog/60c85231-d13c-49a2-bef3-1cb493d33f3b');
+    await expect(
+      page.getByText('Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen.', { exact: false })
+    ).toBeVisible();
   });
 
   test('No changes and submit', async ({ page }) => {
