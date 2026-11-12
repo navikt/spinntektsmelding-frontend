@@ -247,7 +247,7 @@ describe('Home Page', () => {
 
   describe('inactive AGP fields', () => {
     it('clears inactive values and their errors without changing periods or marking the form dirty', async () => {
-      render(<Home {...defaultHomeProps} slug='123' erEndring={false} dataFraBackend={true} />);
+      render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} dataFraBackend={true} />);
       const perioder = [{ fom: '2026-11-05', tom: '2026-11-05' }];
 
       act(() => {
@@ -273,7 +273,7 @@ describe('Home Page', () => {
         kvitteringData: { agp: { redusertLoennIAgp } }
       });
       (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
-      render(<Home {...defaultHomeProps} slug='123' erEndring={true} dataFraBackend={false} />);
+      render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={true} dataFraBackend={false} />);
 
       await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
       act(() => observedForm.setValue('fullLonn', 'Ja', { shouldDirty: true }));
@@ -297,7 +297,7 @@ describe('Home Page', () => {
         kvitteringData: { agp: { redusertLoennIAgp } }
       });
       (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
-      render(<Home {...defaultHomeProps} slug='123' erEndring={true} dataFraBackend={false} />);
+      render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={true} dataFraBackend={false} />);
 
       await waitFor(() => expect(observedForm.getValues('agp.redusertLoennIAgp')).toEqual(redusertLoennIAgp));
       act(() => observedForm.setValue('fullLonn', 'Ja'));
@@ -306,7 +306,7 @@ describe('Home Page', () => {
   });
 
   it('renders the main page components', () => {
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     expect(screen.getByTestId('banner')).toBeInTheDocument();
     expect(screen.getByTestId('page-content')).toBeInTheDocument();
@@ -324,7 +324,7 @@ describe('Home Page', () => {
     const warnSpy = vi.spyOn(logger, 'warn');
 
     try {
-      render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+      render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
       await waitFor(() => {
         expect(warnSpy).toHaveBeenCalledWith({ err: error }, 'Feil ved henting av arbeidsforhold i hovedskjema');
@@ -355,13 +355,13 @@ describe('Home Page', () => {
 
     let state = createMockState();
     (useBoundStore as unknown as Mock).mockImplementation((selector) => selector(state));
-    const { rerender } = render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    const { rerender } = render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     state = {
       ...state,
       sykmeldingsperioder: [{ id: 'periode-2', fom: parseIsoDate('2023-04-01'), tom: parseIsoDate('2023-04-10') }]
     };
-    rerender(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    rerender(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
     expect(fetchArbeidsforhold).toHaveBeenCalledTimes(2);
 
     const newerResponse: Response = {
@@ -393,7 +393,9 @@ describe('Home Page', () => {
       const replaceSpy = vi.spyOn(router, 'replace').mockResolvedValue(true);
 
       try {
-        render(<Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndring={true} />);
+        render(
+          <Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndringFraKvittering={true} />
+        );
 
         await waitFor(() => {
           expect(replaceSpy).toHaveBeenCalledTimes(1);
@@ -414,7 +416,7 @@ describe('Home Page', () => {
   );
 
   it('renders confirmation checkbox', () => {
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     expect(
       screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.')
@@ -425,7 +427,7 @@ describe('Home Page', () => {
     const mockSendInnSkjema = vi.fn().mockResolvedValue({});
     (useSendInnSkjema as unknown as Mock).mockReturnValue(mockSendInnSkjema);
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     // Confirm checkbox
     const confirmationCheckbox = screen.getByLabelText(
@@ -446,7 +448,7 @@ describe('Home Page', () => {
     const mockSendInnArbeidsgiverInitiertSkjema = vi.fn().mockResolvedValue({});
     vi.mocked(useSendInnArbeidsgiverInitiertSkjema).mockReturnValue(mockSendInnArbeidsgiverInitiertSkjema);
 
-    render(<Home {...defaultHomeProps} slug='arbeidsgiverInitiertInnsending' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='arbeidsgiverInitiertInnsending' erEndringFraKvittering={false} />);
 
     // Confirm checkbox
     const confirmationCheckbox = screen.getByLabelText(
@@ -477,7 +479,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     fireEvent.click(screen.getByText('Endre'));
     fireEvent.click(screen.getByLabelText('Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'));
@@ -505,7 +507,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='behandlingsdager' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='behandlingsdager' erEndringFraKvittering={false} />);
 
     expect(screen.getByTestId('behandlingsdager')).toBeInTheDocument();
   });
@@ -519,7 +521,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     expect(
       screen.getByText(
@@ -538,7 +540,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     const endreButton = screen.getByText('Endre');
     fireEvent.click(endreButton);
@@ -560,7 +562,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     // Verify the "Endre" button is visible when arbeidsgiverperiode is not required
     expect(screen.getByText('Endre')).toBeInTheDocument();
@@ -587,7 +589,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     expect(screen.getByText('Beregnet månedslønn')).toBeInTheDocument();
     expect(screen.getByText('Vi trenger ikke informasjon om inntekt for dette sykefraværet.')).toBeInTheDocument();
@@ -602,7 +604,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} dataFraBackend={true} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} dataFraBackend={true} />);
 
     // Egenmelding component should be rendered
     expect(screen.getByText('Egenmelding Component')).toBeInTheDocument();
@@ -620,7 +622,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='some-uuid' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='some-uuid' erEndringFraKvittering={false} />);
 
     const confirmationCheckbox = screen.getByLabelText(
       'Jeg bekrefter at opplysningene jeg har gitt, er riktige og fullstendige.'
@@ -644,7 +646,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='123' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
     // Modal should be rendered (HentingAvDataFeilet is mocked but should show)
     expect(screen.getByTestId('page-content')).toBeInTheDocument();
@@ -655,7 +657,7 @@ describe('Home Page', () => {
       <Home
         {...defaultHomeProps}
         slug='550e8400-e29b-41d4-a716-446655440000'
-        erEndring={false}
+        erEndringFraKvittering={false}
         dataFraBackend={true}
         forespurt={{ data: { someKey: 'someValue' } } as unknown as React.ComponentProps<typeof Home>['forespurt']}
       />
@@ -676,7 +678,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndringFraKvittering={false} />);
 
     // Wait for the effect to run - fetchInntektsdata would be called if conditions are met
     await waitFor(() => {
@@ -694,7 +696,7 @@ describe('Home Page', () => {
       )
     );
 
-    render(<Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndring={false} />);
+    render(<Home {...defaultHomeProps} slug='550e8400-e29b-41d4-a716-446655440000' erEndringFraKvittering={false} />);
 
     expect(screen.getByTestId('banner')).toBeInTheDocument();
   });
@@ -723,7 +725,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={true}
+          erEndringFraKvittering={true}
           dataFraBackend={false}
         />
       );
@@ -748,7 +750,7 @@ describe('Home Page', () => {
           <Home
             {...defaultHomeProps}
             slug='550e8400-e29b-41d4-a716-446655440000'
-            erEndring={true}
+            erEndringFraKvittering={true}
             dataFraBackend={false}
           />
         );
@@ -760,7 +762,7 @@ describe('Home Page', () => {
           <Home
             {...defaultHomeProps}
             slug='550e8400-e29b-41d4-a716-446655440000'
-            erEndring={true}
+            erEndringFraKvittering={true}
             dataFraBackend={false}
           />
         );
@@ -782,7 +784,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -810,7 +812,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -836,7 +838,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -865,7 +867,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -886,7 +888,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -907,7 +909,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={false}
         />
       );
@@ -932,7 +934,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={true}
         />
       );
@@ -953,7 +955,7 @@ describe('Home Page', () => {
         <Home
           {...defaultHomeProps}
           slug='550e8400-e29b-41d4-a716-446655440000'
-          erEndring={false}
+          erEndringFraKvittering={false}
           dataFraBackend={true}
         />
       );
@@ -971,7 +973,12 @@ describe('Home Page', () => {
       );
 
       render(
-        <Home {...defaultHomeProps} slug='arbeidsgiverInitiertInnsending' erEndring={false} dataFraBackend={false} />
+        <Home
+          {...defaultHomeProps}
+          slug='arbeidsgiverInitiertInnsending'
+          erEndringFraKvittering={false}
+          dataFraBackend={false}
+        />
       );
 
       expect(screen.getByTestId('banner')).toBeInTheDocument();
@@ -992,11 +999,11 @@ describe('getServerSideProps', () => {
 
     expect(result).toHaveProperty('props');
     expect(result.props.slug).toBe('550e8400-e29b-41d4-a716-446655440000');
-    expect(result.props.erEndring).toBe(false);
+    expect(result.props.erEndringFraKvittering).toBe(false);
     expect(result.props.forespurtStatus).toBe(200);
   });
 
-  it('returns erEndring true when endre is true', async () => {
+  it('returns erEndringFraKvittering true when endre is true', async () => {
     const context = createServerSideContext({
       query: {
         slug: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -1007,7 +1014,7 @@ describe('getServerSideProps', () => {
     const result = await getServerSideProps(context);
     if (!('props' in result) || !result.props) throw new Error('Expected page props');
 
-    expect(result.props.erEndring).toBe(true);
+    expect(result.props.erEndringFraKvittering).toBe(true);
   });
 
   it('returns props without fetching when UUID is invalid', async () => {
@@ -1197,30 +1204,54 @@ describe('getServerSideProps', () => {
     vi.stubEnv('NODE_ENV', originalEnv);
   });
 
-  it('does not redirect to kvittering when erBesvart is true but overskriv slug exists', async () => {
-    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
-    vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce({
-      erBesvart: true
-    } as any);
-
-    const context = createServerSideContext({
-      query: {
-        slug: ['550e8400-e29b-41d4-a716-446655440000', 'overskriv'],
-        endre: 'true'
-      },
-      req: {
-        headers: {
-          host: 'localhost:3000'
+  describe.each([
+    { overskriv: false, endre: false },
+    { overskriv: true, endre: false },
+    { overskriv: false, endre: true },
+    { overskriv: true, endre: true }
+  ])('route flags: %o', ({ overskriv, endre }) => {
+    const createContext = (uuid: string) =>
+      createServerSideContext({
+        query: {
+          slug: overskriv ? [uuid, 'overskriv'] : [uuid],
+          ...(endre ? { endre: 'true' } : {})
         }
+      });
+
+    it.each([false, true])('keeps redirect and data source separate when erBesvart=%s', async (erBesvart) => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const forespurt = { erBesvart } as Awaited<ReturnType<typeof hentForespoerselSSR.default>>;
+      vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce(forespurt);
+      const uuid = '550e8400-e29b-41d4-a716-446655440000';
+
+      const result = await getServerSideProps(createContext(uuid));
+
+      if (erBesvart && !overskriv && !endre) {
+        expect(result).toHaveProperty('redirect');
+        expect(result).not.toHaveProperty('props');
+        return;
       }
+
+      expect(result).not.toHaveProperty('redirect');
+      expect(result).toHaveProperty('props.slug', uuid);
+      expect(result).toHaveProperty('props.erEndringFraKvittering', endre);
+      expect(result).toHaveProperty('props.forespurt', endre ? null : forespurt);
+      expect(result).toHaveProperty('props.dataFraBackend', !endre);
+      expect(hentForespoerselSSR.default).toHaveBeenCalledOnce();
     });
 
-    const result = await getServerSideProps(context);
+    it('uses only endre for the edit flag when UUID is invalid', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const hentArbeidsforholdSSR = await import('../../utils/hentArbeidsforholdSSR');
 
-    expect(result).toHaveProperty('props');
-    expect((result as any).props.erEndring).toBe(true);
-    expect((result as any).props.slug).toBe('550e8400-e29b-41d4-a716-446655440000');
-    // Verify no redirect happens
-    expect(result).not.toHaveProperty('redirect');
+      const result = await getServerSideProps(createContext('invalid-slug'));
+
+      expect(result).toHaveProperty('props.erEndringFraKvittering', endre);
+      expect(result).toHaveProperty('props.forespurtStatus', 404);
+      expect(result).toHaveProperty('props.forespurt', null);
+      expect(result).toHaveProperty('props.dataFraBackend', false);
+      expect(hentForespoerselSSR.default).not.toHaveBeenCalled();
+      expect(hentArbeidsforholdSSR.default).not.toHaveBeenCalled();
+    });
   });
 });

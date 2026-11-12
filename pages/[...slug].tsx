@@ -67,11 +67,11 @@ const RequestStatus = {
   pending: 'pending'
 } as const;
 
-function createInvalidUuidProps(uuid: string, erEndring: boolean, faisuEnabled: boolean) {
+function createInvalidUuidProps(uuid: string, erEndringFraKvittering: boolean, faisuEnabled: boolean) {
   return {
     props: {
       slug: uuid,
-      erEndring,
+      erEndringFraKvittering,
       forespurt: null,
       forespurtStatus: 404,
       dataFraBackend: false,
@@ -85,7 +85,7 @@ function createInvalidUuidProps(uuid: string, erEndring: boolean, faisuEnabled: 
 
 function resolveForespurtStatus(
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
-  hasEndreQuery: boolean
+  erEndringFraKvittering: boolean
 ) {
   if (forespurtResult.status === RequestStatus.fulfilled) {
     return 200;
@@ -93,7 +93,7 @@ function resolveForespurtStatus(
 
   if (forespurtResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.status);
-    return forespurtResult.reason?.status || (hasEndreQuery ? 200 : 500);
+    return forespurtResult.reason?.status || (erEndringFraKvittering ? 200 : 500);
   }
 
   return undefined;
@@ -172,10 +172,10 @@ function hasMultipleArbeidsforhold(arbeidsforhold: Ansettelsesforhold | null) {
 
 function shouldRedirectToKvittering(
   forespurt: { erBesvart?: boolean } | null,
-  overskriv: boolean,
-  hasEndreQuery: boolean
+  erOverskriving: boolean,
+  erEndringFraKvittering: boolean
 ) {
-  return Boolean(forespurt?.erBesvart && !overskriv && !hasEndreQuery);
+  return Boolean(forespurt?.erBesvart && !erOverskriving && !erEndringFraKvittering);
 }
 
 function logFetchResults(
@@ -200,7 +200,7 @@ type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
-  erEndring,
+  erEndringFraKvittering,
   forespurt,
   forespurtStatus,
   dataFraBackend,
@@ -509,14 +509,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     agpValuesInitialized.current = true;
 
-    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp && (!selvbestemtInnsending || erEndring)) {
+    if (
+      !dataFraBackend &&
+      !kvitteringData?.agp?.redusertLoennIAgp &&
+      (!selvbestemtInnsending || erEndringFraKvittering)
+    ) {
       onSetValue('fullLonn', 'Ja');
     } else if (kvitteringData?.agp?.redusertLoennIAgp) {
       onSetValue('fullLonn', 'Nei');
       onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
       onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
     }
-  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndring]);
+  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndringFraKvittering]);
 
   const fullLonn = useWatch({ control, name: 'fullLonn' });
   const redusertLoennIAgp = useWatch({ control, name: 'agp.redusertLoennIAgp' });
@@ -879,17 +883,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   const { slug, endre, agi } = context.query;
   const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
-  const erEndring = action === 'overskriv';
-  const hasEndreQuery = Boolean(endre);
+  const erOverskriving = action === 'overskriv';
+  const erEndringFraKvittering = Boolean(endre);
   const hasAgiQuery = Boolean(agi);
   let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
   let forespurtStatus: number | undefined;
-  const overskriv = erEndring;
   let harGradertSykmelding = false;
   let ansettelsesforhold: Ansettelsesforhold | null = null;
 
   if (!isValidUUID(uuid)) {
-    return createInvalidUuidProps(uuid, erEndring, faisuEnabled);
+    return createInvalidUuidProps(uuid, erEndringFraKvittering, faisuEnabled);
   }
 
   const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
@@ -911,7 +914,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
-  forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
+  forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);
   logFetchResults(uuid, forespurtResult, arbeidsforholdResult, faisuEnabled);
 
   const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
@@ -927,17 +930,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     );
   }
 
-  if (shouldRedirectToKvittering(forespurt, overskriv, hasEndreQuery)) {
+  if (shouldRedirectToKvittering(forespurt, erOverskriving, erEndringFraKvittering)) {
     return createKvitteringRedirect(context, uuid);
   }
 
   return {
     props: {
       slug: uuid,
-      erEndring: hasEndreQuery,
-      forespurt: hasEndreQuery ? null : forespurt,
+      erEndringFraKvittering,
+      forespurt: erEndringFraKvittering ? null : forespurt,
       forespurtStatus: forespurtStatus,
-      dataFraBackend: !!forespurt && !hasEndreQuery,
+      dataFraBackend: !!forespurt && !erEndringFraKvittering,
       harGradertSykmelding,
       harFlereArbeidsforhold,
       ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null,
