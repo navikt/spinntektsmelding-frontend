@@ -993,6 +993,7 @@ describe('getServerSideProps', () => {
     expect(result).toHaveProperty('props');
     expect(result.props.slug).toBe('550e8400-e29b-41d4-a716-446655440000');
     expect(result.props.erEndring).toBe(false);
+    expect(result.props.forespurtStatus).toBe(200);
   });
 
   it('returns erEndring true when endre is true', async () => {
@@ -1070,32 +1071,75 @@ describe('getServerSideProps', () => {
     vi.stubEnv('NODE_ENV', originalEnv);
   });
 
-  it('returns notFound when fetching returns 404', async () => {
-    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
-    const error = new Error('Not found');
-    (error as Error & { status: number }).status = 404;
-    vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
+  describe.each([false, true])('fetch status handling with endre=%s', (endre) => {
+    const createContext = (agi = false) =>
+      createServerSideContext({
+        query: {
+          slug: ['550e8400-e29b-41d4-a716-446655440000'],
+          ...(endre ? { endre: 'true' } : {}),
+          ...(agi ? { agi: 'true' } : {})
+        }
+      });
 
-    const context = createServerSideContext();
+    it.each([403, 500, 502])('preserves backend status %s', async (status) => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const warnSpy = vi.spyOn(logger, 'warn');
+      const error = Object.assign(new Error('Backend error'), { status });
+      vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
 
-    const result = await getServerSideProps(context);
+      const result = await getServerSideProps(createContext());
 
-    expect(result).toHaveProperty('notFound', true);
-  });
+      expect(result).toHaveProperty('props.forespurtStatus', status);
+      expect(warnSpy).toHaveBeenCalledWith('Feil ved innhenting av forespurt data: %s', status);
+    });
 
-  it('returns error status when fetching fails with other error', async () => {
-    const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
-    const error = new Error('Server error');
-    (error as Error & { status: number }).status = 500;
-    vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
+    it('uses the existing fallback when the error has no status', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(new Error('Network error'));
 
-    const context = createServerSideContext();
+      const result = await getServerSideProps(createContext());
 
-    const result = await getServerSideProps(context);
-    if (!('props' in result) || !result.props) throw new Error('Expected page props');
+      expect(result).toHaveProperty('props.forespurtStatus', endre ? 200 : 500);
+    });
 
-    expect(result).toHaveProperty('props');
-    expect(result.props.forespurtStatus).toBe(500);
+    it('redirects to login when fetching returns 401', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const error = Object.assign(new Error('Unauthorized'), { status: 401 });
+      vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
+
+      const result = await getServerSideProps(createContext());
+
+      expect(result).toEqual({ redirect: { destination: '/login', permanent: false } });
+    });
+
+    it('returns notFound when fetching returns 404', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const error = Object.assign(new Error('Not found'), { status: 404 });
+      vi.mocked(hentForespoerselSSR.default).mockRejectedValueOnce(error);
+
+      const result = await getServerSideProps(createContext());
+
+      expect(result).toEqual({ notFound: true });
+    });
+
+    it('returns status 200 when fetching succeeds', async () => {
+      const result = await getServerSideProps(createContext());
+
+      expect(result).toHaveProperty('props.forespurtStatus', 200);
+    });
+
+    it('preserves the AGI fallback without fetching backend data', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const hentArbeidsforholdSSR = await import('../../utils/hentArbeidsforholdSSR');
+
+      const result = await getServerSideProps(createContext(true));
+
+      expect(result).toHaveProperty('props.forespurtStatus', endre ? 200 : 500);
+      expect(result).toHaveProperty('props.forespurt', null);
+      expect(result).toHaveProperty('props.dataFraBackend', false);
+      expect(hentForespoerselSSR.default).not.toHaveBeenCalled();
+      expect(hentArbeidsforholdSSR.default).not.toHaveBeenCalled();
+    });
   });
 
   it('redirects to kvittering when forespurt.data.erBesvart is true', async () => {

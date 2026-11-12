@@ -92,8 +92,8 @@ function resolveForespurtStatus(
   }
 
   if (forespurtResult.status === RequestStatus.rejected) {
-    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
-    return forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
+    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.status);
+    return forespurtResult.reason?.status || (hasEndreQuery ? 200 : 500);
   }
 
   return undefined;
