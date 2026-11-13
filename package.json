@@ -30,7 +30,7 @@
     "@navikt/oasis": "^4.2.2",
     "date-fns": "4.4.0",
     "html-react-parser": "^6.1.9",
-    "immer": "11.2.9",
+    "immer": "11.2.10",
     "jsdom": "31.0.0",
     "nanoid": "6.0.2",
     "next": "^16.4.5",
