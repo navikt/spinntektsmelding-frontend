@@ -875,7 +875,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           </form>
         </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
-        <HentingAvDataFeilet open={skjemaFeilet || forespurtStatus === 500} handleCloseModal={lukkHentingFeiletModal} />
+        <HentingAvDataFeilet
+          open={skjemaFeilet || (forespurtStatus !== undefined && forespurtStatus >= 400)}
+          handleCloseModal={lukkHentingFeiletModal}
+        />
       </PageContent>
     </div>
   );

@@ -636,7 +636,7 @@ describe('Home Page', () => {
     });
   });
 
-  it('opens HentingAvDataFeilet modal when skjemaFeilet is true', () => {
+  it('opens HentingAvDataFeilet modal when skjemaFeilet is true', async () => {
     (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn(
         createMockState({
@@ -647,8 +647,21 @@ describe('Home Page', () => {
 
     render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} />);
 
-    // Modal should be rendered (HentingAvDataFeilet is mocked but should show)
-    expect(screen.getByTestId('page-content')).toBeInTheDocument();
+    expect(await screen.findByRole('dialog', { name: 'Henting av data til inntektsmeldingen feilet.' })).toBeVisible();
+  });
+
+  it.each([403, 500, 502, 503])('opens the fetch-failure dialog for initial status %s', async (forespurtStatus) => {
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} forespurtStatus={forespurtStatus} />);
+
+    expect(await screen.findByRole('dialog', { name: 'Henting av data til inntektsmeldingen feilet.' })).toBeVisible();
+  });
+
+  it.each([200, undefined])('keeps the fetch-failure dialog closed for status %s', (forespurtStatus) => {
+    render(<Home {...defaultHomeProps} slug='123' erEndringFraKvittering={false} forespurtStatus={forespurtStatus} />);
+
+    expect(
+      screen.queryByRole('dialog', { name: 'Henting av data til inntektsmeldingen feilet.' })
+    ).not.toBeInTheDocument();
   });
 
   it('renders with dataFraBackend and initializes state', () => {
