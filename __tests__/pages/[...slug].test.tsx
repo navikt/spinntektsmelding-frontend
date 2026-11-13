@@ -1043,6 +1043,43 @@ describe('getServerSideProps', () => {
     expect(result.props.forespurt).toBeNull();
   });
 
+  it.each(['arbeidsgiverInitiertInnsending', 'Fisker', 'behandlingsdager', 'unntattAaRegisteret'])(
+    'returns successful props without backend fetching for the new AGI route %s',
+    async (slug) => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const hentArbeidsforholdSSR = await import('../../utils/hentArbeidsforholdSSR');
+      const { validateToken } = await import('@navikt/oasis');
+
+      const result = await getServerSideProps(createServerSideContext({ query: { slug: [slug] } }));
+
+      expect(result).toHaveProperty('props.forespurtStatus', 200);
+      expect(result).toHaveProperty('props.forespurt', null);
+      expect(result).toHaveProperty('props.dataFraBackend', false);
+      expect(validateToken).toHaveBeenCalled();
+      expect(hentForespoerselSSR.default).not.toHaveBeenCalled();
+      expect(hentArbeidsforholdSSR.default).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(['arbeidsgiverInitiertInnsending', 'Fisker', 'behandlingsdager', 'unntattAaRegisteret'])(
+    'redirects the new AGI route %s to login when the token is missing',
+    async (slug) => {
+      const originalEnv = process.env.NODE_ENV;
+      vi.stubEnv('NODE_ENV', 'production');
+
+      try {
+        const { getToken } = await import('@navikt/oasis');
+        vi.mocked(getToken).mockReturnValueOnce(null);
+
+        const result = await getServerSideProps(createServerSideContext({ query: { slug: [slug] } }));
+
+        expect(result).toEqual({ redirect: { destination: '/login', permanent: false } });
+      } finally {
+        vi.stubEnv('NODE_ENV', originalEnv);
+      }
+    }
+  );
+
   it('returns props without fetching when endre is set', async () => {
     const context = createServerSideContext({
       query: {

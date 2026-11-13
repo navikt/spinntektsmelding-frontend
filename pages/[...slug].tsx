@@ -905,13 +905,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   const action = slug?.[1];
   const erOverskriving = action === 'overskriv';
   const erEndringFraKvittering = Boolean(endre);
-  const hasAgiQuery = Boolean(agi);
+  const erNyArbeidsgiverInitiertInnsending = [
+    'arbeidsgiverInitiertInnsending',
+    'Fisker',
+    'behandlingsdager',
+    'unntattAaRegisteret'
+  ].includes(uuid);
+  const hasAgiQuery = Boolean(agi) || erNyArbeidsgiverInitiertInnsending;
   let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
   let forespurtStatus: number | undefined;
   let harGradertSykmelding = false;
   let ansettelsesforhold: Ansettelsesforhold | null = null;
 
-  if (!isValidUUID(uuid)) {
+  if (!erNyArbeidsgiverInitiertInnsending && !isValidUUID(uuid)) {
     return createInvalidUuidProps(uuid, erEndringFraKvittering);
   }
 
@@ -931,7 +937,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       return rejectedForespurtResponse;
     }
   } else {
-    forespurtStatus = erEndringFraKvittering ? 200 : 500;
+    forespurtStatus = erEndringFraKvittering || erNyArbeidsgiverInitiertInnsending ? 200 : 500;
   }
 
   const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
