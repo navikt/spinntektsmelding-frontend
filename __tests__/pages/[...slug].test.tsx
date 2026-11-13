@@ -1137,14 +1137,50 @@ describe('getServerSideProps', () => {
     it('preserves the AGI fallback without fetching backend data', async () => {
       const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
       const hentArbeidsforholdSSR = await import('../../utils/hentArbeidsforholdSSR');
+      const errorSpy = vi.spyOn(logger, 'error');
+      const warnSpy = vi.spyOn(logger, 'warn');
 
-      const result = await getServerSideProps(createContext(true));
+      try {
+        const result = await getServerSideProps(createContext(true));
 
-      expect(result).toHaveProperty('props.forespurtStatus', endre ? 200 : 500);
-      expect(result).toHaveProperty('props.forespurt', null);
-      expect(result).toHaveProperty('props.dataFraBackend', false);
-      expect(hentForespoerselSSR.default).not.toHaveBeenCalled();
-      expect(hentArbeidsforholdSSR.default).not.toHaveBeenCalled();
+        expect(result).toHaveProperty('props.forespurtStatus', endre ? 200 : 500);
+        expect(result).toHaveProperty('props.forespurt', null);
+        expect(result).toHaveProperty('props.dataFraBackend', false);
+        expect(result).toHaveProperty('props.ansettelsesforhold', null);
+        expect(result).toHaveProperty('props.harFlereArbeidsforhold', false);
+        expect(hentForespoerselSSR.default).not.toHaveBeenCalled();
+        expect(hentArbeidsforholdSSR.default).not.toHaveBeenCalled();
+        expect(errorSpy).not.toHaveBeenCalled();
+        expect(warnSpy).not.toHaveBeenCalled();
+      } finally {
+        errorSpy.mockRestore();
+        warnSpy.mockRestore();
+      }
+    });
+
+    it('keeps successful forespurt data when fetching arbeidsforhold fails', async () => {
+      const hentForespoerselSSR = await import('../../utils/hentForespoerselSSR');
+      const hentArbeidsforholdSSR = await import('../../utils/hentArbeidsforholdSSR');
+      const forespurt = { erBesvart: false } as Awaited<ReturnType<typeof hentForespoerselSSR.default>>;
+      const error = new Error('Arbeidsforhold unavailable');
+      vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce(forespurt);
+      vi.mocked(hentArbeidsforholdSSR.default).mockRejectedValueOnce(error);
+      const errorSpy = vi.spyOn(logger, 'error');
+
+      try {
+        const result = await getServerSideProps(createContext());
+
+        expect(result).toHaveProperty('props.forespurtStatus', 200);
+        expect(result).toHaveProperty('props.forespurt', endre ? null : forespurt);
+        expect(result).toHaveProperty('props.dataFraBackend', !endre);
+        expect(result).toHaveProperty('props.ansettelsesforhold', null);
+        expect(result).toHaveProperty('props.harFlereArbeidsforhold', false);
+        expect(hentForespoerselSSR.default).toHaveBeenCalledOnce();
+        expect(hentArbeidsforholdSSR.default).toHaveBeenCalledOnce();
+        expect(errorSpy).toHaveBeenCalledWith('Henting av arbeidsforhold feilet: %j', error);
+      } finally {
+        errorSpy.mockRestore();
+      }
     });
   });
 

@@ -195,6 +195,29 @@ function logFetchResults(
   }
 }
 
+async function fetchBackendData(uuid: string, token: string, erEndringFraKvittering: boolean) {
+  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
+    hentForespoerselSSR(uuid, token),
+    hentArbeidsforholdSSR(uuid, token)
+  ]);
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
+  }
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
+  }
+
+  const forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult);
+
+  return {
+    forespurt: forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null,
+    ansettelsesforhold: arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null,
+    forespurtStatus,
+    forespurtResult
+  };
+}
+
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
@@ -894,26 +917,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     return auth.redirect;
   }
 
-  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
-    !hasAgiQuery ? hentForespoerselSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt')),
-    !hasAgiQuery ? hentArbeidsforholdSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt'))
-  ]);
-  if (forespurtResult.status === RequestStatus.rejected) {
-    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
-  }
-  if (arbeidsforholdResult.status === RequestStatus.rejected) {
-    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
-  }
+  if (!hasAgiQuery) {
+    const backendData = await fetchBackendData(uuid, auth.token, erEndringFraKvittering);
+    forespurt = backendData.forespurt;
+    ansettelsesforhold = backendData.ansettelsesforhold;
+    forespurtStatus = backendData.forespurtStatus;
 
-  forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
-  ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
-
-  forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);
-  logFetchResults(uuid, forespurtResult, arbeidsforholdResult);
-
-  const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
-  if (rejectedForespurtResponse) {
-    return rejectedForespurtResponse;
+    const rejectedForespurtResponse = handleRejectedForespurtResult(backendData.forespurtResult, context);
+    if (rejectedForespurtResponse) {
+      return rejectedForespurtResponse;
+    }
+  } else {
+    forespurtStatus = erEndringFraKvittering ? 200 : 500;
   }
 
   const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
