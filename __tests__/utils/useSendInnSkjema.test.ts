@@ -86,9 +86,7 @@ describe('useSendInnSkjema', () => {
   });
 
   it('should log event and return false if form is not dirty', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = false;
@@ -96,7 +94,7 @@ describe('useSendInnSkjema', () => {
 
     let response: Awaited<ReturnType<ReturnType<typeof useSendInnSkjema>>> | undefined;
     await act(async () => {
-      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      response = await result.current({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel: false });
     });
 
     expect(response).toBe(false);
@@ -108,13 +106,12 @@ describe('useSendInnSkjema', () => {
   });
 
   it('should handle validation errors from FullInnsendingSchema', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = true;
     const formData = {
+      bekreft_opplysninger: true,
       opplysningstyper: forespurteOpplysningstyper
     } as z.infer<typeof HovedskjemaSchema>;
 
@@ -122,7 +119,7 @@ describe('useSendInnSkjema', () => {
     mockFyllInnsending.mockReturnValue({});
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel: false });
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
@@ -138,7 +135,7 @@ describe('useSendInnSkjema', () => {
         { code: 'custom', path: ['inntekt', 'inntektsdato'], message: 'Bestemmende fraværsdag mangler' }
       ]);
     });
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, true));
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const formData: FullInnsendingType = {
       bekreft_opplysninger: true,
       kreverRefusjon: 'Nei',
@@ -149,13 +146,12 @@ describe('useSendInnSkjema', () => {
 
     let response: Awaited<ReturnType<typeof result.current>> = undefined;
     await act(async () => {
-      response = await result.current(
-        true,
-        '8d50ef20-37b5-4829-ad83-56219e70b375',
-        true,
-        formData as unknown as Hovedskjema,
-        false
-      );
+      response = await result.current({
+        pathSlug: '8d50ef20-37b5-4829-ad83-56219e70b375',
+        isDirtyForm: true,
+        formData: formData as unknown as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(response).toBe(false);
@@ -183,13 +179,12 @@ describe('useSendInnSkjema', () => {
     const isValidUUID = await import('../../utils/isValidUUID');
     (isValidUUID.default as unknown as Mock).mockReturnValueOnce(false);
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'invalid-uuid';
     const isDirtyForm = true;
     const formData: FullInnsendingType = {
+      bekreft_opplysninger: true,
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
@@ -213,7 +208,12 @@ describe('useSendInnSkjema', () => {
 
     let response: Awaited<ReturnType<ReturnType<typeof useSendInnSkjema>>> | undefined;
     await act(async () => {
-      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      response = await result.current({
+        pathSlug,
+        isDirtyForm,
+        formData: formData as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(response).toBe(false);
@@ -240,13 +240,12 @@ describe('useSendInnSkjema', () => {
 
     vi.mocked(postInnsending).mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsendingType = {
+      bekreft_opplysninger: true,
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
@@ -269,7 +268,12 @@ describe('useSendInnSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({
+        pathSlug,
+        isDirtyForm,
+        formData: formData as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(postInnsending).toHaveBeenCalledWith(
@@ -300,13 +304,12 @@ describe('useSendInnSkjema', () => {
       await options.onSuccess(null);
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsendingType = {
+      bekreft_opplysninger: true,
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
       inntekt: null,
@@ -334,7 +337,12 @@ describe('useSendInnSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({
+        pathSlug,
+        isDirtyForm,
+        formData: formData as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(mockSetMottatt).toHaveBeenCalled();
@@ -359,13 +367,12 @@ describe('useSendInnSkjema', () => {
       options.onUnauthorized();
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
     const formData: FullInnsendingType = {
+      bekreft_opplysninger: true,
       forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
       agp: null,
 
@@ -389,22 +396,25 @@ describe('useSendInnSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({
+        pathSlug,
+        isDirtyForm,
+        formData: formData as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(innsendingFeiletIngenTilgang).toHaveBeenCalledWith(true);
   });
 
   it('should log initial event when form is submitted', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const pathSlug = 'test-path';
     const isDirtyForm = false;
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel: false });
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema fullført', {
@@ -413,7 +423,7 @@ describe('useSendInnSkjema', () => {
     });
   });
 
-  it('should return false when checkCommonValidations returns errors', async () => {
+  it.each([false, undefined])('blocks submission when bekreft_opplysninger=%s', async (bekreft_opplysninger) => {
     // Mock safeParse to return success
     vi.spyOn(FullInnsendingSchema, 'safeParse').mockReturnValueOnce({
       success: true,
@@ -440,9 +450,7 @@ describe('useSendInnSkjema', () => {
       return vi.fn();
     });
 
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = false; // This will trigger validation error
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = '8d50ef20-37b5-4829-ad83-56219e70b375';
     const isDirtyForm = true;
@@ -466,24 +474,30 @@ describe('useSendInnSkjema', () => {
 
     let response: Awaited<ReturnType<ReturnType<typeof useSendInnSkjema>>> | undefined;
     await act(async () => {
-      response = await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      response = await result.current({
+        pathSlug,
+        isDirtyForm,
+        formData: { ...formData, bekreft_opplysninger } as unknown as Hovedskjema,
+        erBegrensetForespoersel: false
+      });
     });
 
     expect(response).toBe(false);
-    expect(mockFyllFeilmeldinger).toHaveBeenCalled();
+    expect(mockFyllFeilmeldinger).toHaveBeenCalledWith(
+      expect.arrayContaining([expect.objectContaining({ felt: 'bekreft-opplysninger' })])
+    );
+    expect(postInnsending).not.toHaveBeenCalled();
   });
 
   it('should clear and show errors when form is not dirty', async () => {
-    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent, false));
-
-    const opplysningerBekreftet = true;
+    const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));
     const forespurteOpplysningstyper: Opplysningstype[] = [];
     const pathSlug = 'test-path';
     const isDirtyForm = false;
     const formData = {} as z.infer<typeof HovedskjemaSchema>;
 
     await act(async () => {
-      await result.current(opplysningerBekreftet, pathSlug, isDirtyForm, formData as Hovedskjema, false);
+      await result.current({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel: false });
     });
 
     // Verify that fyllFeilmeldinger was called to clear errors first

@@ -21,8 +21,7 @@ const defaultHomeProps = {
   forespurtStatus: 200,
   harGradertSykmelding: false,
   harFlereArbeidsforhold: false,
-  ansettelsesforhold: null,
-  faisuEnabled: false
+  ansettelsesforhold: null
 } satisfies Partial<React.ComponentProps<typeof Home>>;
 
 // Mock external dependencies for getServerSideProps
@@ -489,7 +488,7 @@ describe('Home Page', () => {
       expect(mockSendInnSkjema).toHaveBeenCalled();
     });
 
-    const submittedFormData = mockSendInnSkjema.mock.calls[0][3];
+    const submittedFormData = mockSendInnSkjema.mock.calls[0][0].formData;
     expect(submittedFormData.opplysningstyper).toEqual(
       expect.arrayContaining([forespoerselType.inntekt, forespoerselType.arbeidsgiverperiode])
     );

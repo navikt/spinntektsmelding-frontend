@@ -48,12 +48,7 @@ export default function useFyllInnsending() {
   type FullInnsending = z.infer<typeof FullInnsendingSchema>;
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
-  return (
-    forespoerselId: string,
-    skjemaData: Skjema,
-    erBegrensetForespoersel: boolean,
-    faisuEnabled?: boolean
-  ): FullInnsending => {
+  return (forespoerselId: string, skjemaData: Skjema, erBegrensetForespoersel: boolean): FullInnsending => {
     setSkalViseFeilmeldinger(true);
 
     const harForespurtArbeidsgiverperiode = Boolean(
@@ -168,10 +163,6 @@ export default function useFyllInnsending() {
     };
 
     delete innsendingSkjema.agp?.erBehandlingsdager;
-
-    if (!faisuEnabled) {
-      delete innsendingSkjema.flereArbeidsforhold;
-    }
 
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;

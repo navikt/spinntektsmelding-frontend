@@ -121,6 +121,7 @@ describe('useFyllInnsending', () => {
       );
 
       expect(innsending.inntekt).toBeNull();
+      expect(innsending.flereArbeidsforhold).toBeNull();
     });
   });
 
@@ -149,7 +150,7 @@ describe('useFyllInnsending', () => {
         { inntekt: 25000, stillingsprosent: 50, yrkesbeskrivelse: 'Utvikler', inkludertISykefravaer: true }
       ]
     }
-  ])('always provides an arbeidsforhold array when enabled: $arbeidsforhold', ({ arbeidsforhold }) => {
+  ])('always provides an arbeidsforhold array: $arbeidsforhold', ({ arbeidsforhold }) => {
     useBoundStore.setState({ foreslaattBestemmendeFravaersdag: parseIsoDate('2025-01-01') });
     const { result } = renderHook(() => useFyllInnsending());
 
@@ -161,8 +162,7 @@ describe('useFyllInnsending', () => {
           opplysningstyper: ['inntekt'],
           flereArbeidsforhold: { harLikLoenn: 'Nei', erSykmeldtFraAlle: 'Nei', arbeidsforhold }
         },
-        false,
-        true
+        false
       );
 
       expect(innsending.flereArbeidsforhold).toEqual({

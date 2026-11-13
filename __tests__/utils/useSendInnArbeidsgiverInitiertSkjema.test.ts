@@ -8,6 +8,7 @@ import { SkjemaStatus } from '../../state/useSkjemadataStore';
 import useBoundStore from '../../state/useBoundStore';
 import mockRouter from 'next-router-mock';
 import useFyllAapenInnsending from '../../state/useFyllAapenInnsending';
+import { postInnsending } from '../../utils/postInnsending';
 
 vi.mock('next/router', () => require('next-router-mock'));
 vi.mock('../../state/useBoundStore');
@@ -22,11 +23,12 @@ vi.mock('../schema/ResponseBackendErrorSchema', () => ({
   default: { safeParse: vi.fn().mockReturnValue({ success: true }) }
 }));
 vi.mock('../../state/useFyllAapenInnsending');
+vi.mock('../../utils/postInnsending', { spy: true });
 
 describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   const innsendingFeiletIngenTilgang = vi.fn();
   const analyticsComponent = 'testComponent';
-  const defaultFormData = {} as z.infer<typeof HovedskjemaSchema>;
+  const defaultFormData = { bekreft_opplysninger: true } as z.infer<typeof HovedskjemaSchema>;
   const pathSlug = 'arbeidsgiverInitiertInnsending';
 
   // Setup default mock store state
@@ -70,7 +72,12 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
     );
 
-    const response = await result.current(true, pathSlug, false, defaultFormData, false, false);
+    const response = await result.current({
+      pathSlug,
+      isDirtyForm: false,
+      formData: defaultFormData,
+      erBegrensetForespoersel: false
+    });
 
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalled();
@@ -90,7 +97,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     );
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData, false, false);
+      await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
@@ -100,42 +107,64 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   });
 
   it.each([
-    { status: SkjemaStatus.FULL, receiptPath: '/kvittering' },
-    { status: SkjemaStatus.SELVBESTEMT, receiptPath: '/kvittering/agi' }
-  ])('should show submitted data at $receiptPath after successful submission', async ({ status, receiptPath }) => {
-    setupMockStore();
-    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
-      vi.fn().mockReturnValue({
-        success: true,
-        data: {
-          fullLonn: 'Ja',
-          agp: null,
-          inntekt: { beloep: 50000 },
-          refusjon: null,
-          avsenderTlf: '12345678'
-        }
-      })
-    );
+    { status: SkjemaStatus.FULL, receiptPath: '/kvittering', flereArbeidsforhold: null },
+    { status: SkjemaStatus.SELVBESTEMT, receiptPath: '/kvittering/agi', flereArbeidsforhold: null },
+    {
+      status: SkjemaStatus.FULL,
+      receiptPath: '/kvittering',
+      flereArbeidsforhold: { harLikLoenn: false, erSykmeldtFraAlle: false, arbeidsforhold: [] }
+    },
+    {
+      status: SkjemaStatus.SELVBESTEMT,
+      receiptPath: '/kvittering/agi',
+      flereArbeidsforhold: { harLikLoenn: false, erSykmeldtFraAlle: false, arbeidsforhold: [] }
+    }
+  ])(
+    'should show submitted data at $receiptPath with FAISU $flereArbeidsforhold',
+    async ({ status, receiptPath, flereArbeidsforhold }) => {
+      setupMockStore();
+      (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
+        vi.fn().mockReturnValue({
+          success: true,
+          data: {
+            fullLonn: 'Ja',
+            agp: null,
+            inntekt: { beloep: 50000 },
+            refusjon: null,
+            avsenderTlf: '12345678',
+            flereArbeidsforhold
+          }
+        })
+      );
 
-    const { result } = renderHook(() =>
-      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, status)
-    );
+      const { result } = renderHook(() =>
+        useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, status)
+      );
 
-    global.fetch = vi.fn().mockResolvedValue({
-      status: 201,
-      json: vi.fn().mockResolvedValue({ selvbestemtId: 'f32852af-888e-4d0c-ad67-081f22ee5c12' })
-    });
+      global.fetch = vi.fn().mockResolvedValue({
+        status: 201,
+        json: vi.fn().mockResolvedValue({ selvbestemtId: 'f32852af-888e-4d0c-ad67-081f22ee5c12' })
+      });
 
-    await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData, false, false);
-    });
+      await act(async () => {
+        await result.current({
+          pathSlug,
+          isDirtyForm: true,
+          formData: defaultFormData,
+          erBegrensetForespoersel: false
+        });
+      });
 
-    expect(mockRouter).toMatchObject({
-      route: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`,
-      query: { fromSubmit: 'true' },
-      asPath: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`
-    });
-  });
+      expect(postInnsending).toHaveBeenCalledWith(
+        expect.objectContaining({ body: expect.objectContaining({ flereArbeidsforhold }) })
+      );
+      expect(mockRouter).toMatchObject({
+        route: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`,
+        query: { fromSubmit: 'true' },
+        asPath: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`
+      });
+    }
+  );
 
   it('should handle server error 500', async () => {
     setupMockStore();
@@ -162,7 +191,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData, false, false);
+      await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
     expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
@@ -196,9 +225,36 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
     });
 
     await act(async () => {
-      await result.current(true, pathSlug, true, defaultFormData, false, false);
+      await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
     expect(innsendingFeiletIngenTilgang).toHaveBeenCalledWith(true);
+  });
+
+  it.each([false, undefined])('blocks submission when bekreft_opplysninger=%s', async (bekreft_opplysninger) => {
+    setupMockStore();
+    (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
+      vi.fn().mockReturnValue({ success: true, data: { agp: null, inntekt: { beloep: 50000 } } })
+    );
+    const { result } = renderHook(() =>
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.SELVBESTEMT)
+    );
+
+    let response: Awaited<ReturnType<typeof result.current>>;
+    await act(async () => {
+      response = await result.current({
+        pathSlug,
+        isDirtyForm: true,
+        formData: { ...defaultFormData, bekreft_opplysninger } as unknown as z.infer<typeof HovedskjemaSchema>,
+        erBegrensetForespoersel: false
+      });
+    });
+
+    expect(response!).toBe(false);
+    expect(postInnsending).not.toHaveBeenCalled();
+    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+      tittel: 'Validering feilet',
+      component: analyticsComponent
+    });
   });
 });

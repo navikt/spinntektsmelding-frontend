@@ -67,7 +67,7 @@ const RequestStatus = {
   pending: 'pending'
 } as const;
 
-function createInvalidUuidProps(uuid: string, erEndringFraKvittering: boolean, faisuEnabled: boolean) {
+function createInvalidUuidProps(uuid: string, erEndringFraKvittering: boolean) {
   return {
     props: {
       slug: uuid,
@@ -77,8 +77,7 @@ function createInvalidUuidProps(uuid: string, erEndringFraKvittering: boolean, f
       dataFraBackend: false,
       harGradertSykmelding: false,
       harFlereArbeidsforhold: false,
-      ansettelsesforhold: null,
-      faisuEnabled
+      ansettelsesforhold: null
     }
   };
 }
@@ -181,17 +180,16 @@ function shouldRedirectToKvittering(
 function logFetchResults(
   uuid: string,
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
-  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
-  faisuEnabled: boolean
+  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>
 ) {
   logger.info(
     'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
     uuid,
     forespurtResult.status,
-    faisuEnabled ? arbeidsforholdResult.status : 'disabled'
+    arbeidsforholdResult.status
   );
 
-  if (faisuEnabled && arbeidsforholdResult.status === RequestStatus.rejected) {
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
   }
 }
@@ -205,8 +203,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   forespurtStatus,
   dataFraBackend,
   harFlereArbeidsforhold: harFlereArbeidsforholdInitial,
-  ansettelsesforhold,
-  faisuEnabled
+  ansettelsesforhold
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
@@ -265,7 +262,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   const initState = useStateInit();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema', faisuEnabled);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
     'HovedskjemaArbeidsgiverInitiert',
@@ -647,14 +644,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       };
 
       try {
-        await sendInnArbeidsgiverInitiertSkjema(
-          true,
-          slug,
-          isDirtyForm || isDirty,
+        await sendInnArbeidsgiverInitiertSkjema({
+          pathSlug: slug,
+          isDirtyForm: isDirtyForm || isDirty,
           formData,
-          begrensetForespoersel,
-          faisuEnabled
-        );
+          erBegrensetForespoersel: begrensetForespoersel
+        });
       } catch (error) {
         logger.warn({ err: error }, 'Uventet feil ved innsending av arbeidsgiverinitiert skjema');
       } finally {
@@ -677,13 +672,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setValue('opplysningstyper', Array.from(new Set(nesteOpplysningstyper)));
 
     try {
-      await sendInnSkjema(
-        true,
-        slug,
-        isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
+      await sendInnSkjema({
+        pathSlug: slug,
+        isDirtyForm: isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
         formData,
-        begrensetForespoersel
-      );
+        erBegrensetForespoersel: begrensetForespoersel
+      });
     } catch (error) {
       logger.warn({ err: error }, 'Uventet feil ved innsending av skjema');
     } finally {
@@ -878,7 +872,6 @@ function mapArbeidsforhold(ansettelsesforhold: {
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const faisuEnabled = true;
 
   const { slug, endre, agi } = context.query;
   const uuid = slug?.[0] ?? '';
@@ -892,7 +885,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   let ansettelsesforhold: Ansettelsesforhold | null = null;
 
   if (!isValidUUID(uuid)) {
-    return createInvalidUuidProps(uuid, erEndringFraKvittering, faisuEnabled);
+    return createInvalidUuidProps(uuid, erEndringFraKvittering);
   }
 
   const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
@@ -915,7 +908,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
   ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
 
   forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);
-  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, faisuEnabled);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult);
 
   const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
   if (rejectedForespurtResponse) {
@@ -943,8 +936,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
       dataFraBackend: !!forespurt && !erEndringFraKvittering,
       harGradertSykmelding,
       harFlereArbeidsforhold,
-      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null,
-      faisuEnabled
+      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null
     }
   };
 }

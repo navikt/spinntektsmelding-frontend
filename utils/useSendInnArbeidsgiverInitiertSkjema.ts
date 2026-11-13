@@ -17,8 +17,18 @@ import {
   SafeParseMinimal
 } from './sendInnCommon';
 import { LonnIArbeidsgiverperioden } from '../state/state';
+import { z } from 'zod';
+import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
 
 type ValiderteAapenInnsending = ReturnType<ReturnType<typeof useFyllAapenInnsending>>;
+type Skjema = z.infer<typeof HovedskjemaSchema>;
+
+type SendInnArbeidsgiverInitiertSkjemaParams = {
+  pathSlug: string;
+  isDirtyForm: boolean;
+  formData: Skjema;
+  erBegrensetForespoersel: boolean;
+};
 
 export default function useSendInnArbeidsgiverInitiertSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
@@ -43,11 +53,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
     setSkalViseFeilmeldinger(true);
   };
 
-  const buildClientSideErrors = (
-    validerteData: ValiderteAapenInnsending,
-    opplysningerBekreftet: boolean,
-    fullLonn: 'Ja' | 'Nei' | undefined
-  ): ValiderTekster[] => {
+  const buildClientSideErrors = (validerteData: ValiderteAapenInnsending, formData: Skjema): ValiderTekster[] => {
     const errors: ValiderTekster[] = [];
 
     if (validerteData.success === false) {
@@ -59,12 +65,12 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       );
     }
 
-    const formData = validerteData.success ? validerteData.data : undefined;
+    const innsendingData = validerteData.success ? validerteData.data : undefined;
 
     const fullLonnIArbeidsgiverPerioden: LonnIArbeidsgiverperioden = {
-      status: fullLonn,
-      utbetalt: formData?.agp?.redusertLoennIAgp?.beloep,
-      begrunnelse: formData?.agp?.redusertLoennIAgp?.begrunnelse
+      status: formData.fullLonn,
+      utbetalt: innsendingData?.agp?.redusertLoennIAgp?.beloep,
+      begrunnelse: innsendingData?.agp?.redusertLoennIAgp?.begrunnelse
     };
 
     const harForespurtArbeidsgiverperiode = true; // Alltid true for selvbestemt
@@ -74,21 +80,19 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
         harForespurtArbeidsgiverperiode,
         lonnISykefravaeret,
         harRefusjonEndringer,
-        opplysningerBekreftet,
+        formData.bekreft_opplysninger,
         validerteData as SafeParseMinimal<MinimalData>
       )
     );
     return errors;
   };
 
-  return async (
-    opplysningerBekreftet: boolean,
-    pathSlug: string,
-    isDirtyForm: boolean,
-    skjemaData: any,
-    erBegrensetForespoersel: boolean,
-    faisuEnabled: boolean
-  ) => {
+  return async ({
+    pathSlug,
+    isDirtyForm,
+    formData,
+    erBegrensetForespoersel
+  }: SendInnArbeidsgiverInitiertSkjemaParams) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: analyticsComponent
@@ -106,8 +110,8 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
-    const validerteData = fyllAapenInnsending(skjemaData, selvbestemtType, erBegrensetForespoersel);
-    const errors = buildClientSideErrors(validerteData, opplysningerBekreftet, skjemaData.fullLonn);
+    const validerteData = fyllAapenInnsending(formData, selvbestemtType, erBegrensetForespoersel);
+    const errors = buildClientSideErrors(validerteData, formData);
 
     setSkalViseFeilmeldinger(true);
 
@@ -129,10 +133,6 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       : { ...validerteData.data, selvbestemtId: null };
 
     const URI = environment.innsendingAGInitiertUrl;
-
-    if (!faisuEnabled) {
-      delete innsending.flereArbeidsforhold;
-    }
 
     type SuccessBody = { selvbestemtId?: string } | null;
     return postInnsending<typeof innsending, SuccessBody>({
