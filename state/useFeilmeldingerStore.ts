@@ -5,6 +5,9 @@ import { CompleteState } from './useBoundStore';
 import feiltekster from '../utils/feiltekster';
 
 export function slettFeilmeldingFraState(state: CompleteState, felt: string) {
+  if (!state.feilmeldinger.some((melding) => melding.felt === felt)) {
+    return state;
+  }
   state.feilmeldinger = state.feilmeldinger.filter((element: ValiderTekster) => element.felt !== felt);
 
   return state;

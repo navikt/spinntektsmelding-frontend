@@ -39,16 +39,21 @@ vi.mock('next/router', () => ({
 
 vi.mock('../../state/useBoundStore', () => ({
   __esModule: true,
-  default: vi.fn().mockImplementation((selector) => {
-    const selectorName = selector.toString();
-    if (selectorName.includes('fyllFeilmeldinger')) return mockFyllFeilmeldinger;
-    if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
-    if (selectorName.includes('setMottatt')) return mockSetMottatt;
-    if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
-    if (selectorName.includes('lonnISykefravaeret')) return mockLonnISykefravaeret;
-    if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;
-    return vi.fn();
-  })
+  default: Object.assign(
+    vi.fn().mockImplementation((selector) => {
+      const selectorName = selector.toString();
+      if (selectorName.includes('fyllFeilmeldinger')) return mockFyllFeilmeldinger;
+      if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
+      if (selectorName.includes('setMottatt')) return mockSetMottatt;
+      if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
+      if (selectorName.includes('lonnISykefravaeret')) return mockLonnISykefravaeret;
+      if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;
+      return vi.fn();
+    }),
+    {
+      getState: vi.fn(() => ({ lonnISykefravaeret: mockLonnISykefravaeret }))
+    }
+  )
 }));
 
 vi.mock('../../state/useFyllInnsending', () => ({
@@ -439,15 +444,9 @@ describe('useSendInnSkjema', () => {
 
     // Mock useBoundStore to return undefined for lonnISykefravaeret to trigger validation error
     const useBoundStore = await import('../../state/useBoundStore');
-    vi.mocked(useBoundStore.default).mockImplementation((selector: any) => {
-      const selectorName = selector.toString();
-      if (selectorName.includes('fyllFeilmeldinger')) return mockFyllFeilmeldinger;
-      if (selectorName.includes('setSkalViseFeilmeldinger')) return mockSetSkalViseFeilmeldinger;
-      if (selectorName.includes('setMottatt')) return mockSetMottatt;
-      if (selectorName.includes('fullLonnIArbeidsgiverPerioden')) return mockFullLonnIArbeidsgiverPerioden;
-      if (selectorName.includes('lonnISykefravaeret')) return undefined;
-      if (selectorName.includes('harRefusjonEndringer')) return mockHarRefusjonEndringer;
-      return vi.fn();
+    vi.mocked(useBoundStore.default.getState).mockReturnValueOnce({
+      ...useBoundStore.default.getState(),
+      lonnISykefravaeret: undefined
     });
 
     const { result } = renderHook(() => useSendInnSkjema(innsendingFeiletIngenTilgang, analyticsComponent));

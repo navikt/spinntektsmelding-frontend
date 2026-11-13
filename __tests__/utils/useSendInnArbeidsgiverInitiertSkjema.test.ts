@@ -33,6 +33,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
   // Setup default mock store state
   const setupMockStore = () => {
+    vi.mocked(useBoundStore.getState).mockImplementation(() => useBoundStore((state) => state));
     (useBoundStore as unknown as Mock).mockImplementation((stateFn) =>
       stateFn({
         sykmeldt: { navn: 'John Doe', fnr: '12345678901' },
@@ -81,6 +82,23 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
     expect(response).toBe(false);
     expect(logEvent).toHaveBeenCalled();
+  });
+
+  it('bruker siste selvbestemte type nar en eksisterende callback kalles', async () => {
+    setupMockStore();
+    const fyllInnsending = vi.fn().mockReturnValue({ success: false, error: { issues: [] } });
+    vi.mocked(useFyllAapenInnsending).mockReturnValue(fyllInnsending);
+    const { result } = renderHook(() =>
+      useSendInnArbeidsgiverInitiertSkjema(innsendingFeiletIngenTilgang, analyticsComponent, SkjemaStatus.FULL)
+    );
+    const sendInn = result.current;
+    vi.mocked(useBoundStore.getState).mockReturnValue({ ...useBoundStore.getState(), selvbestemtType: 'Fisker' });
+
+    await act(async () => {
+      await sendInn({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
+    });
+
+    expect(fyllInnsending).toHaveBeenCalledWith(defaultFormData, 'Fisker', false);
   });
 
   it('should handle validation errors', async () => {

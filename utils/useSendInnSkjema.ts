@@ -38,7 +38,6 @@ export default function useSendInnSkjema(
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setMottatt = useBoundStore((state) => state.setMottatt);
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -111,6 +110,7 @@ export default function useSendInnSkjema(
       begrunnelse: formData.agp?.redusertLoennIAgp?.begrunnelse
     };
 
+    const { lonnISykefravaeret } = useBoundStore.getState();
     const errors = checkCommonValidations(
       fullLonnIArbeidsgiverPerioden,
       harForespurtArbeidsgiverperiode,

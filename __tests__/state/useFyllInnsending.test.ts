@@ -81,6 +81,38 @@ describe('useFyllInnsending', () => {
     vi.resetAllMocks();
     cleanup();
   });
+  it('leser siste state ved innsending uten abonnement pa payload-data', () => {
+    let renderingAntall = 0;
+    const { result } = renderHook(() => {
+      renderingAntall++;
+      return useFyllInnsending();
+    });
+    const fyllInnsending = result.current;
+    const opprinneligAntall = renderingAntall;
+
+    act(() => {
+      useBoundStore.setState({
+        foreslaattBestemmendeFravaersdag: parseIsoDate('2026-02-01'),
+        skjaeringstidspunkt: parseIsoDate('2026-02-01'),
+        sykmeldingsperioder: [],
+        egenmeldingsperioder: [],
+        arbeidsgiverperioder: []
+      });
+    });
+    expect(renderingAntall).toBe(opprinneligAntall);
+
+    act(() => {
+      const innsending = fyllInnsending(
+        '8d50ef20-37b5-4829-ad83-56219e70b375',
+        { ...skjemaData, opplysningstyper: ['inntekt'] },
+        false
+      );
+      expect(innsending.inntekt?.inntektsdato).toBe('2026-02-01');
+      expect(useBoundStore.getState().kvitteringData).toEqual(innsending);
+    });
+    expect(renderingAntall).toBe(opprinneligAntall);
+  });
+
   it('rejects missing income dates before updating receipt data', () => {
     const setKvitteringData = vi.fn();
     useBoundStore.setState({

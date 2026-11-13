@@ -34,7 +34,7 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
     formState: { errors }
   } = useFormContext<{ flereArbeidsforhold?: FaisuSkjema }>();
 
-  const avsender = useBoundStore((state) => state.avsender);
+  const orgNavn = useBoundStore((state) => state.avsender.orgNavn);
 
   const harLikLoenn = useWatch({ control, name: 'flereArbeidsforhold.harLikLoenn' });
   const erSykmeldtFraAlle = useWatch({
@@ -159,8 +159,8 @@ export default function Faisu({ harGradertSykmeldingOgFlereArbeidsforhold }: Rea
             render={({ field }) => (
               <RadioGroup
                 legend={
-                  avsender.orgNavn
-                    ? `Er personen sykmeldt fra alle arbeidsforhold i "${avsender.orgNavn}"?`
+                  orgNavn
+                    ? `Er personen sykmeldt fra alle arbeidsforhold i "${orgNavn}"?`
                     : 'Er personen sykmeldt fra alle arbeidsforhold i underenheten?'
                 }
                 className={localStyles.radiobuttonWrapper}

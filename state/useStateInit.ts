@@ -4,6 +4,7 @@ import finnBestemmendeFravaersdag from '../utils/finnBestemmendeFravaersdag';
 import parseIsoDate from '../utils/parseIsoDate';
 import useBoundStore from './useBoundStore';
 import { MottattData } from '../schema/MottattDataSchema';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function useStateInit() {
   const initFravaersperiode = useBoundStore((state) => state.initFravaersperiode);
@@ -12,12 +13,15 @@ export default function useStateInit() {
   const initPerson = useBoundStore((state) => state.initPerson);
   const initForespurtData = useBoundStore((state) => state.initForespurtData);
   const [setForeslaattBestemmendeFravaersdag, setSkjaeringstidspunkt, setBegrensetForespoersel] = useBoundStore(
-    (state) => [state.setForeslaattBestemmendeFravaersdag, state.setSkjaeringstidspunkt, state.setBegrensetForespoersel]
+    useShallow((state) => [
+      state.setForeslaattBestemmendeFravaersdag,
+      state.setSkjaeringstidspunkt,
+      state.setBegrensetForespoersel
+    ])
   );
-  const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore((state) => [
-    state.setMottattBestemmendeFravaersdag,
-    state.setMottattEksternInntektsdato
-  ]);
+  const [setMottattBestemmendeFravaersdag, setMottattEksternInntektsdato] = useBoundStore(
+    useShallow((state) => [state.setMottattBestemmendeFravaersdag, state.setMottattEksternInntektsdato])
+  );
 
   const setArbeidsgiverperioder = useBoundStore((state) => state.setArbeidsgiverperioder);
   const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(

@@ -19,33 +19,27 @@ import { TypeArbeidsforholdSchema } from '../schema/TypeArbeidsforholdSchema';
 import { SelvbestemtType } from '../schema/konstanter/selvbestemtType';
 
 export default function useFyllAapenInnsending() {
-  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
-
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender]);
-  const [setInnsenderTelefon, initNaturalytelser] = useBoundStore((state) => [
-    state.setInnsenderTelefon,
-    state.initNaturalytelser
-  ]);
-
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
-  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  const vedtaksperiodeId = useBoundStore((state) => state.vedtaksperiodeId);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt, soeknadIder] = useBoundStore((state) => [
-    state.setEndringAarsaker,
-    state.setBareNyMaanedsinntekt,
-    state.soeknadIder
-  ]);
-
-  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
-    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
-  );
-
   type SkjemaData = z.infer<typeof HovedskjemaSchema>;
   type ArbeidsforholdType = z.infer<typeof TypeArbeidsforholdSchema>;
 
   return (skjemaData: SkjemaData, selvbestemtType: SelvbestemtType, erBegrensetForespoersel: boolean) => {
+    const {
+      sykmeldingsperioder,
+      egenmeldingsperioder,
+      sykmeldt,
+      avsender,
+      setInnsenderTelefon,
+      initNaturalytelser,
+      arbeidsgiverperioder,
+      arbeidsgiverperiodeDisabled,
+      skjaeringstidspunkt,
+      vedtaksperiodeId,
+      setEndringAarsaker,
+      setBareNyMaanedsinntekt,
+      soeknadIder,
+      arbeidsgiverKanFlytteSkjæringstidspunkt
+    } = useBoundStore.getState();
+
     const perioder = concatPerioder(sykmeldingsperioder, egenmeldingsperioder);
 
     const innsendbarArbeidsgiverperioder: Array<SendtPeriode> | [] = finnInnsendbareArbeidsgiverperioder(

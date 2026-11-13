@@ -78,6 +78,19 @@ describe('useFeilmeldingerStore', () => {
     ]);
   });
 
+  it.each([{ feilmeldinger: [] }, { feilmeldinger: inputFeil }])(
+    'beholder state-referansen nar feilmeldingen ikke finnes: $feilmeldinger',
+    ({ feilmeldinger }) => {
+      useBoundStore.setState({ feilmeldinger });
+      const state = useBoundStore.getState();
+
+      act(() => state.slettFeilmelding('finnes-ikke'));
+
+      expect(useBoundStore.getState()).toBe(state);
+      expect(useBoundStore.getState().feilmeldinger).toBe(feilmeldinger);
+    }
+  );
+
   it('should show feilmeldinger.', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
     let resultat: boolean;

@@ -60,6 +60,7 @@ import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
 import { teamLogger } from '@navikt/next-logger/team-log';
+import { useShallow } from 'zustand/react/shallow';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
@@ -216,20 +217,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
-    state.skjemastatus,
-    state.inngangFraKvittering
-  ]);
+  const [skjemastatus, inngangFraKvittering] = useBoundStore(
+    useShallow((state) => [state.skjemastatus, state.inngangFraKvittering])
+  );
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const mottattBestemmendeFravaersdag = useBoundStore((state) => state.mottattBestemmendeFravaersdag);
+  const arbeidsgiverKanFlytteSkjaeringstidspunkt = useBoundStore((state) => !state.skjaeringstidspunkt);
 
   const [
     hentPaakrevdOpplysningstyper,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
     bruttoinntekt,
     beloepArbeidsgiverBetalerISykefravaeret,
     avsender,
@@ -241,21 +241,22 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setBehandlingsdager,
     setArbeidsgiverperiodeDisabled,
     arbeidsgiverperiodeDisabled
-  ] = useBoundStore((state) => [
-    state.hentPaakrevdOpplysningstyper,
-    state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-    state.bruttoinntekt,
-    state.beloepArbeidsgiverBetalerISykefravaeret,
-    state.avsender,
-    state.sykmeldt,
-    state.naturalytelser,
-    state.behandlingsdager,
-    state.selvbestemtType,
-    state.kvitteringData,
-    state.setBehandlingsdager,
-    state.setArbeidsgiverperiodeDisabled,
-    state.arbeidsgiverperiodeDisabled
-  ]);
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.hentPaakrevdOpplysningstyper,
+      state.bruttoinntekt,
+      state.beloepArbeidsgiverBetalerISykefravaeret,
+      state.avsender,
+      state.sykmeldt,
+      state.naturalytelser,
+      state.behandlingsdager,
+      state.selvbestemtType,
+      state.kvitteringData,
+      state.setBehandlingsdager,
+      state.setArbeidsgiverperiodeDisabled,
+      state.arbeidsgiverperiodeDisabled
+    ])
+  );
 
   const storeInitialized = useRef(false);
   const agpValuesInitialized = useRef(false);
@@ -269,7 +270,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     skjemastatus
   );
 
-  const opplysningstyper = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = useBoundStore(useShallow((state) => state.hentPaakrevdOpplysningstyper()));
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -697,7 +698,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       altFravaer,
       arbeidsgiverperioder,
       foreslaattBestemmendeFravaersdag,
-      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      arbeidsgiverKanFlytteSkjaeringstidspunkt,
       begrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
@@ -709,7 +710,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     egenmeldingsperioder,
     arbeidsgiverperioder,
     foreslaattBestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    arbeidsgiverKanFlytteSkjaeringstidspunkt,
     begrensetForespoersel,
     mottattBestemmendeFravaersdag
   ]);

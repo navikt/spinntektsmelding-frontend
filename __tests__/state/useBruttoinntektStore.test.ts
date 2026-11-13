@@ -179,6 +179,12 @@ describe('useBoundStore', () => {
   });
 
   it('should setTidligereInntekter', () => {
+    const opprinneligeInntekter = new Map([
+      ['2002-09', 45000],
+      ['2002-10', 55000],
+      ['2002-11', 50000]
+    ]);
+    useBoundStore.setState({ tidligereInntekt: opprinneligeInntekter });
     const tidligereInntektData: HistoriskInntekt = {
       '2002-02': 33000,
       '2002-03': 44000,
@@ -186,12 +192,7 @@ describe('useBoundStore', () => {
     };
     const { result } = renderHook(() => useBoundStore((state) => state));
 
-    const inntekter = new Map([
-      ...Object.entries(tidligereInntektData),
-      ['2002-09', 45000],
-      ['2002-10', 55000],
-      ['2002-11', 50000]
-    ]);
+    const inntekter = new Map([...Object.entries(tidligereInntektData), ...opprinneligeInntekter]);
 
     act(() => {
       result.current.setTidligereInntekter(tidligereInntektData);

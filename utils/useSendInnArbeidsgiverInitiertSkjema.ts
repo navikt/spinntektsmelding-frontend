@@ -37,12 +37,9 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const harRefusjonEndringer = useBoundStore((state) => state.harRefusjonEndringer);
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
 
   const setMottatt = useBoundStore((state) => state.setMottatt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
-  const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
   const errorResponse = useErrorRespons();
   const router = useRouter();
   const fyllAapenInnsending = useFyllAapenInnsending();
@@ -54,6 +51,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
   };
 
   const buildClientSideErrors = (validerteData: ValiderteAapenInnsending, formData: Skjema): ValiderTekster[] => {
+    const { lonnISykefravaeret, harRefusjonEndringer } = useBoundStore.getState();
     const errors: ValiderTekster[] = [];
 
     if (validerteData.success === false) {
@@ -110,6 +108,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       return false;
     }
 
+    const { selvbestemtType } = useBoundStore.getState();
     const validerteData = fyllAapenInnsending(formData, selvbestemtType, erBegrensetForespoersel);
     const errors = buildClientSideErrors(validerteData, formData);
 

@@ -1,6 +1,8 @@
-import { render, fireEvent } from '@testing-library/react';
+import { act, render, fireEvent } from '@testing-library/react';
+import { Profiler } from 'react';
 import { axe } from 'jest-axe';
 import Person from '../../components/Person/Person';
+import useBoundStore from '../../state/useBoundStore';
 
 const mockFormErrors = vi.hoisted(() => ({ avsenderTlf: undefined as string | undefined }));
 
@@ -52,6 +54,28 @@ vi.mock('react-hook-form', () => ({
 }));
 
 describe('Person component', () => {
+  it('ignorerer telefonendringer i storen, men viser oppdatert virksomhetsnavn', () => {
+    const onRender = vi.fn();
+    useBoundStore.setState({
+      avsender: { ...useBoundStore.getState().avsender, orgnr: '911206722', orgNavn: 'Virksomhet' }
+    });
+    const { getByText } = render(
+      <Profiler id='person' onRender={onRender}>
+        <Person />
+      </Profiler>
+    );
+    const opprinneligAntall = onRender.mock.calls.length;
+
+    act(() => useBoundStore.getState().setInnsenderTelefon('12345678'));
+    expect(onRender).toHaveBeenCalledTimes(opprinneligAntall);
+
+    act(() => {
+      useBoundStore.setState({ avsender: { ...useBoundStore.getState().avsender, orgNavn: 'Nytt navn' } });
+    });
+    expect(getByText('Nytt navn')).toBeInTheDocument();
+    expect(onRender.mock.calls.length).toBeGreaterThan(opprinneligAntall);
+  });
+
   it('renders correctly', () => {
     const { getByText } = render(<Person />);
     expect(getByText(/For at vi skal utbetale riktig beløp i forbindelse med sykmelding/)).toBeInTheDocument();

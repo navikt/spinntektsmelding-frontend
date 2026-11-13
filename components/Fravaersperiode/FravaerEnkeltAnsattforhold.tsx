@@ -14,6 +14,7 @@ import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 import ButtonTilbakestill from '../ButtonTilbakestill';
 import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import Feilmelding from '../Feilmelding';
+import useFeilmeldinger from '../../state/useFeilmeldinger';
 
 interface FravaerEnkeltAnsattforholdProps {
   setIsDirtyForm: (dirty: boolean) => void;
@@ -32,7 +33,7 @@ export default function FravaerEnkeltAnsattforhold({
   const tilbakestillFravaersperiode = useBoundStore((state) => state.tilbakestillFravaersperiode);
   const setFravaersperiodeDato = useBoundStore((state) => state.setFravaersperiodeDato);
   const selvbestemtType = useBoundStore((state) => state.selvbestemtType);
-  const visFeilmeldingTekst = useBoundStore((state) => state.visFeilmeldingTekst);
+  const feilmeldinger = useFeilmeldinger('sykmeldingsperioder');
 
   const clickTilbakestillFravaersperiodeHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -85,10 +86,10 @@ export default function FravaerEnkeltAnsattforhold({
             <Periodevelger
               fomTekst='Fra'
               fomID={ensureValidHtmlId(`sykmeldingsperioder.${periodeIndex}.fom`)}
-              fomError={visFeilmeldingTekst(`sykmeldingsperioder.${periodeIndex}.fom`)}
+              fomError={feilmeldinger[`sykmeldingsperioder.${periodeIndex}.fom`] ?? ''}
               tomTekst='Til'
               tomID={ensureValidHtmlId(`sykmeldingsperioder.${periodeIndex}.tom`)}
-              tomError={visFeilmeldingTekst(`sykmeldingsperioder.${periodeIndex}.tom`)}
+              tomError={feilmeldinger[`sykmeldingsperioder.${periodeIndex}.tom`] ?? ''}
               onRangeChange={(oppdatertPeriode) => setFravaersperiodeDato?.(periode.id, oppdatertPeriode)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
@@ -100,8 +101,8 @@ export default function FravaerEnkeltAnsattforhold({
           )}
         </div>
       ))}
-      {visFeilmeldingTekst(`sykmeldingsperioder`) && (
-        <Feilmelding id='sykmeldingsperioder'>{visFeilmeldingTekst(`sykmeldingsperioder`)}</Feilmelding>
+      {feilmeldinger.sykmeldingsperioder && (
+        <Feilmelding id='sykmeldingsperioder'>{feilmeldinger.sykmeldingsperioder}</Feilmelding>
       )}
 
       {skjemastatus !== SkjemaStatus.SELVBESTEMT && endreSykemelding && (
