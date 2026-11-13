@@ -21,39 +21,29 @@ export type SendtPeriode = z.infer<typeof ApiPeriodeSchema>;
 type EndringsBeloep = z.infer<typeof RefusjonEndringSchema>;
 
 export default function useFyllInnsending() {
-  const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
-
-  const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
-
-  const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
-  const skjaeringstidspunkt = useBoundStore((state) => state.skjaeringstidspunkt);
-  const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
-  const foreslaattBestemmendeFravaersdag = useBoundStore((state) => state.foreslaattBestemmendeFravaersdag);
-  const mottattBestemmendeFravaersdag = useBoundStore((state) => state.mottattBestemmendeFravaersdag);
-  const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
-  const inngangFraKvittering = useBoundStore((state) => state.inngangFraKvittering);
-  const arbeidsgiverKanFlytteSkjæringstidspunkt = useBoundStore(
-    (state) => state.arbeidsgiverKanFlytteSkjæringstidspunkt
-  );
-  const arbeidsgiverperiodeDisabled = useBoundStore((state) => state.arbeidsgiverperiodeDisabled);
-  const [setEndringAarsaker, setBareNyMaanedsinntekt, setInnsenderTelefon, initNaturalytelser, setKvitteringData] =
-    useBoundStore((state) => [
-      state.setEndringAarsaker,
-      state.setBareNyMaanedsinntekt,
-      state.setInnsenderTelefon,
-      state.initNaturalytelser,
-      state.setKvitteringData
-    ]);
-
   type FullInnsending = z.infer<typeof FullInnsendingSchema>;
   type Skjema = z.infer<typeof HovedskjemaSchema>;
 
-  return (
-    forespoerselId: string,
-    skjemaData: Skjema,
-    erBegrensetForespoersel: boolean,
-    faisuEnabled?: boolean
-  ): FullInnsending => {
+  return (forespoerselId: string, skjemaData: Skjema, erBegrensetForespoersel: boolean): FullInnsending => {
+    const {
+      sykmeldingsperioder,
+      egenmeldingsperioder,
+      arbeidsgiverperioder,
+      skjaeringstidspunkt,
+      setSkjaeringstidspunkt,
+      foreslaattBestemmendeFravaersdag,
+      mottattBestemmendeFravaersdag,
+      setSkalViseFeilmeldinger,
+      inngangFraKvittering,
+      arbeidsgiverKanFlytteSkjæringstidspunkt,
+      arbeidsgiverperiodeDisabled,
+      setEndringAarsaker,
+      setBareNyMaanedsinntekt,
+      setInnsenderTelefon,
+      initNaturalytelser,
+      setKvitteringData
+    } = useBoundStore.getState();
+
     setSkalViseFeilmeldinger(true);
 
     const harForespurtArbeidsgiverperiode = Boolean(
@@ -168,10 +158,6 @@ export default function useFyllInnsending() {
     };
 
     delete innsendingSkjema.agp?.erBehandlingsdager;
-
-    if (!faisuEnabled) {
-      delete innsendingSkjema.flereArbeidsforhold;
-    }
 
     if (!harForespurtArbeidsgiverperiode) {
       innsendingSkjema.agp = null;

@@ -71,6 +71,33 @@ describe('useFyllAapenInnsending', () => {
     cleanup();
   });
 
+  it('leser oppdatert person og perioder uten abonnement pa payload-data', () => {
+    const { result: kvitteringInit } = renderHook(() => useKvitteringInit());
+    let renderingAntall = 0;
+    const { result } = renderHook(() => {
+      renderingAntall++;
+      return useFyllAapenInnsending();
+    });
+    const fyllInnsending = result.current;
+    const opprinneligAntall = renderingAntall;
+
+    act(() => {
+      kvitteringInit.current(mottattKvittering as unknown as KvitteringData);
+      useBoundStore.getState().setVedtaksperiodeId('8d50ef20-37b5-4829-ad83-56219e70b375');
+    });
+    expect(renderingAntall).toBe(opprinneligAntall);
+
+    act(() => {
+      const innsending = fyllInnsending(mockSkjema, 'MedArbeidsforhold', false);
+      expect(innsending.success).toBe(true);
+      if (!innsending.success) throw new Error('Expected valid submission');
+      expect(innsending.data.sykmeldtFnr).toBe('25087327879');
+      expect(innsending.data.avsender.orgnr).toBe('911206722');
+      expect(innsending.data.sykmeldingsperioder.length).toBeGreaterThan(0);
+    });
+    expect(renderingAntall).toBe(opprinneligAntall);
+  });
+
   it('should fill the state stuff', async () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 

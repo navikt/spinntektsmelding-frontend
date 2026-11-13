@@ -1,5 +1,5 @@
 import useBoundStore from '../../state/useBoundStore';
-import { shallow } from 'zustand/shallow';
+import { useShallow } from 'zustand/react/shallow';
 import lokalStyling from './Person.module.css';
 import { TextField } from '@navikt/ds-react';
 import Heading2 from '../Heading2/Heading2';
@@ -16,7 +16,14 @@ interface PersonProps {
 }
 
 export default function Person({ erDelvisInnsending }: Readonly<PersonProps>) {
-  const [sykmeldt, avsender] = useBoundStore((state) => [state.sykmeldt, state.avsender], shallow);
+  const sykmeldt = useBoundStore((state) => state.sykmeldt);
+  const avsender = useBoundStore(
+    useShallow((state) => ({
+      navn: state.avsender.navn,
+      orgnr: state.avsender.orgnr,
+      orgNavn: state.avsender.orgNavn
+    }))
+  );
   const {
     formState: { errors },
     register

@@ -46,14 +46,13 @@ async function fillKortAgpIfVisible(page: Page) {
 
 async function openInntektEditingIfNeeded(page: Page, inntektLabel: string) {
   const inntektInput = page.getByLabel(inntektLabel);
-  if (await inntektInput.count()) {
-    return;
-  }
+  const endreInntekt = page.locator('[data-cy="endre-beloep"]');
+  await expect(inntektInput.or(endreInntekt)).toBeVisible();
 
-  const endreButtons = page.getByRole('button', { name: 'Endre' });
-  if (await endreButtons.count()) {
-    await endreButtons.last().click();
+  if (!(await inntektInput.isVisible())) {
+    await endreInntekt.click();
   }
+  await expect(inntektInput).toBeVisible();
 }
 
 test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
@@ -118,6 +117,9 @@ test.describe('Delvis skjema - Utfylling og innsending av skjema', () => {
   test('Changes and submit', async ({ page }) => {
     const formPage = new FormPage(page);
 
+    await expect(
+      page.getByText('Vi trenger ikke informasjon om arbeidsgiverperioden for denne sykmeldingen.', { exact: false })
+    ).toBeVisible();
     await setIngenArbeidsgiverperiodeIfVisible(page);
     await openInntektEditingIfNeeded(page, 'Månedslønn 05.12.2024');
 

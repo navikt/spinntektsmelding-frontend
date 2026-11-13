@@ -1,9 +1,25 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import FravaerEnkeltAnsattforhold from '../../../components/Fravaersperiode/FravaerEnkeltAnsattforhold';
 import { vi } from 'vitest';
+import useBoundStore from '../../../state/useBoundStore';
 
 describe('FravaerEnkeltAnsattforhold', () => {
+  it('oppdaterer synlige feilmeldinger uten at forelderen rendres pa nytt', () => {
+    render(<FravaerEnkeltAnsattforhold fravaerPerioder={[]} setIsDirtyForm={vi.fn()} />);
+
+    act(() => {
+      useBoundStore.getState().leggTilFeilmelding('sykmeldingsperioder', 'Perioden er ugyldig');
+    });
+    expect(screen.queryByText('Perioden er ugyldig')).not.toBeInTheDocument();
+
+    act(() => useBoundStore.getState().setSkalViseFeilmeldinger(true));
+    expect(screen.getByText('Perioden er ugyldig')).toBeInTheDocument();
+
+    act(() => useBoundStore.getState().slettFeilmelding('sykmeldingsperioder'));
+    expect(screen.queryByText('Perioden er ugyldig')).not.toBeInTheDocument();
+  });
+
   it('should render sykmeldingsperioder correctly', () => {
     const sykmeldingsperioder = [
       { fom: new Date(2002, 0, 1), tom: new Date(2002, 0, 15), id: '1' },

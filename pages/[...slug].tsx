@@ -60,6 +60,7 @@ import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
 import { teamLogger } from '@navikt/next-logger/team-log';
+import { useShallow } from 'zustand/react/shallow';
 
 const RequestStatus = {
   fulfilled: 'fulfilled',
@@ -67,33 +68,32 @@ const RequestStatus = {
   pending: 'pending'
 } as const;
 
-function createInvalidUuidProps(uuid: string, erEndring: boolean, faisuEnabled: boolean) {
+function createInvalidUuidProps(uuid: string, erEndringFraKvittering: boolean) {
   return {
     props: {
       slug: uuid,
-      erEndring,
+      erEndringFraKvittering,
       forespurt: null,
       forespurtStatus: 404,
       dataFraBackend: false,
       harGradertSykmelding: false,
       harFlereArbeidsforhold: false,
-      ansettelsesforhold: null,
-      faisuEnabled
+      ansettelsesforhold: null
     }
   };
 }
 
 function resolveForespurtStatus(
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
-  hasEndreQuery: boolean
+  erEndringFraKvittering: boolean
 ) {
   if (forespurtResult.status === RequestStatus.fulfilled) {
     return 200;
   }
 
   if (forespurtResult.status === RequestStatus.rejected) {
-    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.response?.status);
-    return forespurtResult.reason?.response?.status || (hasEndreQuery ? 200 : 500);
+    logger.warn('Feil ved innhenting av forespurt data: %s', forespurtResult.reason?.status);
+    return forespurtResult.reason?.status || (erEndringFraKvittering ? 200 : 500);
   }
 
   return undefined;
@@ -172,41 +172,62 @@ function hasMultipleArbeidsforhold(arbeidsforhold: Ansettelsesforhold | null) {
 
 function shouldRedirectToKvittering(
   forespurt: { erBesvart?: boolean } | null,
-  overskriv: boolean,
-  hasEndreQuery: boolean
+  erOverskriving: boolean,
+  erEndringFraKvittering: boolean
 ) {
-  return Boolean(forespurt?.erBesvart && !overskriv && !hasEndreQuery);
+  return Boolean(forespurt?.erBesvart && !erOverskriving && !erEndringFraKvittering);
 }
 
 function logFetchResults(
   uuid: string,
   forespurtResult: PromiseSettledResult<Awaited<ReturnType<typeof hentForespoerselSSR>>>,
-  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>,
-  faisuEnabled: boolean
+  arbeidsforholdResult: PromiseSettledResult<Awaited<ReturnType<typeof hentArbeidsforholdSSR>>>
 ) {
   logger.info(
     'Innhenting av data for uuid %s fullført. Forespurt status: %s, Arbeidsforhold status: %s',
     uuid,
     forespurtResult.status,
-    faisuEnabled ? arbeidsforholdResult.status : 'disabled'
+    arbeidsforholdResult.status
   );
 
-  if (faisuEnabled && arbeidsforholdResult.status === RequestStatus.rejected) {
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
     logger.warn('Feil ved innhenting av arbeidsforhold: %j', arbeidsforholdResult.reason);
   }
+}
+
+async function fetchBackendData(uuid: string, token: string, erEndringFraKvittering: boolean) {
+  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
+    hentForespoerselSSR(uuid, token),
+    hentArbeidsforholdSSR(uuid, token)
+  ]);
+  if (forespurtResult.status === RequestStatus.rejected) {
+    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
+  }
+  if (arbeidsforholdResult.status === RequestStatus.rejected) {
+    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
+  }
+
+  const forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);
+  logFetchResults(uuid, forespurtResult, arbeidsforholdResult);
+
+  return {
+    forespurt: forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null,
+    ansettelsesforhold: arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null,
+    forespurtStatus,
+    forespurtResult
+  };
 }
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
 const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   slug,
-  erEndring,
+  erEndringFraKvittering,
   forespurt,
   forespurtStatus,
   dataFraBackend,
   harFlereArbeidsforhold: harFlereArbeidsforholdInitial,
-  ansettelsesforhold,
-  faisuEnabled
+  ansettelsesforhold
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [senderInn, setSenderInn] = useState<boolean>(false);
   const lasterData = false;
@@ -219,20 +240,19 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   const sykmeldingsperioder = useBoundStore((state) => state.sykmeldingsperioder);
   const egenmeldingsperioder = useBoundStore((state) => state.egenmeldingsperioder);
   const skjemaFeilet = useBoundStore((state) => state.skjemaFeilet);
-  const [skjemastatus, inngangFraKvittering] = useBoundStore((state) => [
-    state.skjemastatus,
-    state.inngangFraKvittering
-  ]);
+  const [skjemastatus, inngangFraKvittering] = useBoundStore(
+    useShallow((state) => [state.skjemastatus, state.inngangFraKvittering])
+  );
   const arbeidsgiverperioder = useBoundStore((state) => state.arbeidsgiverperioder);
   const arbeidsgiverperiodeKort = useBoundStore((state) => state.arbeidsgiverperiodeKort);
   const setPaakrevdeOpplysninger = useBoundStore((state) => state.setPaakrevdeOpplysninger);
   const begrensetForespoersel = useBoundStore((state) => state.begrensetForespoersel);
   const refusjonEndringer = useBoundStore((state) => state.refusjonEndringer);
   const mottattBestemmendeFravaersdag = useBoundStore((state) => state.mottattBestemmendeFravaersdag);
+  const arbeidsgiverKanFlytteSkjaeringstidspunkt = useBoundStore((state) => !state.skjaeringstidspunkt);
 
   const [
     hentPaakrevdOpplysningstyper,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
     bruttoinntekt,
     beloepArbeidsgiverBetalerISykefravaeret,
     avsender,
@@ -244,35 +264,36 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setBehandlingsdager,
     setArbeidsgiverperiodeDisabled,
     arbeidsgiverperiodeDisabled
-  ] = useBoundStore((state) => [
-    state.hentPaakrevdOpplysningstyper,
-    state.arbeidsgiverKanFlytteSkjæringstidspunkt,
-    state.bruttoinntekt,
-    state.beloepArbeidsgiverBetalerISykefravaeret,
-    state.avsender,
-    state.sykmeldt,
-    state.naturalytelser,
-    state.behandlingsdager,
-    state.selvbestemtType,
-    state.kvitteringData,
-    state.setBehandlingsdager,
-    state.setArbeidsgiverperiodeDisabled,
-    state.arbeidsgiverperiodeDisabled
-  ]);
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.hentPaakrevdOpplysningstyper,
+      state.bruttoinntekt,
+      state.beloepArbeidsgiverBetalerISykefravaeret,
+      state.avsender,
+      state.sykmeldt,
+      state.naturalytelser,
+      state.behandlingsdager,
+      state.selvbestemtType,
+      state.kvitteringData,
+      state.setBehandlingsdager,
+      state.setArbeidsgiverperiodeDisabled,
+      state.arbeidsgiverperiodeDisabled
+    ])
+  );
 
   const storeInitialized = useRef(false);
   const agpValuesInitialized = useRef(false);
 
   const initState = useStateInit();
 
-  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema', faisuEnabled);
+  const sendInnSkjema = useSendInnSkjema(setIngenTilgangOpen, 'Hovedskjema');
   const sendInnArbeidsgiverInitiertSkjema = useSendInnArbeidsgiverInitiertSkjema(
     setIngenTilgangOpen,
     'HovedskjemaArbeidsgiverInitiert',
     skjemastatus
   );
 
-  const opplysningstyper = hentPaakrevdOpplysningstyper();
+  const opplysningstyper = useBoundStore(useShallow((state) => state.hentPaakrevdOpplysningstyper()));
   const skalViseEgenmelding =
     (opplysningstyper.includes(forespoerselType.arbeidsgiverperiode) && !!dataFraBackend) ||
     skjemastatus === SkjemaStatus.SELVBESTEMT;
@@ -509,14 +530,18 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
     agpValuesInitialized.current = true;
 
-    if (!dataFraBackend && !kvitteringData?.agp?.redusertLoennIAgp && (!selvbestemtInnsending || erEndring)) {
+    if (
+      !dataFraBackend &&
+      !kvitteringData?.agp?.redusertLoennIAgp &&
+      (!selvbestemtInnsending || erEndringFraKvittering)
+    ) {
       onSetValue('fullLonn', 'Ja');
     } else if (kvitteringData?.agp?.redusertLoennIAgp) {
       onSetValue('fullLonn', 'Nei');
       onSetValue('agp.redusertLoennIAgp.beloep', kvitteringData.agp.redusertLoennIAgp.beloep);
       onSetValue('agp.redusertLoennIAgp.begrunnelse', kvitteringData.agp.redusertLoennIAgp.begrunnelse);
     }
-  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndring]);
+  }, [kvitteringData?.agp?.redusertLoennIAgp, dataFraBackend, selvbestemtInnsending, erEndringFraKvittering]);
 
   const fullLonn = useWatch({ control, name: 'fullLonn' });
   const redusertLoennIAgp = useWatch({ control, name: 'agp.redusertLoennIAgp' });
@@ -643,14 +668,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       };
 
       try {
-        await sendInnArbeidsgiverInitiertSkjema(
-          true,
-          slug,
-          isDirtyForm || isDirty,
+        await sendInnArbeidsgiverInitiertSkjema({
+          pathSlug: slug,
+          isDirtyForm: isDirtyForm || isDirty,
           formData,
-          begrensetForespoersel,
-          faisuEnabled
-        );
+          erBegrensetForespoersel: begrensetForespoersel
+        });
       } catch (error) {
         logger.warn({ err: error }, 'Uventet feil ved innsending av arbeidsgiverinitiert skjema');
       } finally {
@@ -673,13 +696,12 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     setValue('opplysningstyper', Array.from(new Set(nesteOpplysningstyper)));
 
     try {
-      await sendInnSkjema(
-        true,
-        slug,
-        isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
+      await sendInnSkjema({
+        pathSlug: slug,
+        isDirtyForm: isDirtyForm || (isDirty && countTrue(dirtyFields) > 1),
         formData,
-        begrensetForespoersel
-      );
+        erBegrensetForespoersel: begrensetForespoersel
+      });
     } catch (error) {
       logger.warn({ err: error }, 'Uventet feil ved innsending av skjema');
     } finally {
@@ -699,7 +721,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       altFravaer,
       arbeidsgiverperioder,
       foreslaattBestemmendeFravaersdag,
-      arbeidsgiverKanFlytteSkjæringstidspunkt(),
+      arbeidsgiverKanFlytteSkjaeringstidspunkt,
       begrensetForespoersel
     );
     return parseIsoDate(beregnetBestemmendeFraværsdagISO);
@@ -711,7 +733,7 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
     egenmeldingsperioder,
     arbeidsgiverperioder,
     foreslaattBestemmendeFravaersdag,
-    arbeidsgiverKanFlytteSkjæringstidspunkt,
+    arbeidsgiverKanFlytteSkjaeringstidspunkt,
     begrensetForespoersel,
     mottattBestemmendeFravaersdag
   ]);
@@ -853,7 +875,10 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           </form>
         </FormProvider>
         <IngenTilgang open={ingenTilgangOpen} handleCloseModal={() => setIngenTilgangOpen(false)} />
-        <HentingAvDataFeilet open={skjemaFeilet || forespurtStatus === 500} handleCloseModal={lukkHentingFeiletModal} />
+        <HentingAvDataFeilet
+          open={skjemaFeilet || (forespurtStatus !== undefined && forespurtStatus >= 400)}
+          handleCloseModal={lukkHentingFeiletModal}
+        />
       </PageContent>
     </div>
   );
@@ -874,22 +899,26 @@ function mapArbeidsforhold(ansettelsesforhold: {
 
 export async function getServerSideProps(context: GetServerSidePropsContext<{ slug: string[] }>) {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const faisuEnabled = true;
 
   const { slug, endre, agi } = context.query;
   const uuid = slug?.[0] ?? '';
   const action = slug?.[1];
-  const erEndring = action === 'overskriv';
-  const hasEndreQuery = Boolean(endre);
-  const hasAgiQuery = Boolean(agi);
+  const erOverskriving = action === 'overskriv';
+  const erEndringFraKvittering = Boolean(endre);
+  const erNyArbeidsgiverInitiertInnsending = [
+    'arbeidsgiverInitiertInnsending',
+    'Fisker',
+    'behandlingsdager',
+    'unntattAaRegisteret'
+  ].includes(uuid);
+  const hasAgiQuery = Boolean(agi) || erNyArbeidsgiverInitiertInnsending;
   let forespurt: Awaited<ReturnType<typeof hentForespoerselSSR>> | null = null;
   let forespurtStatus: number | undefined;
-  const overskriv = erEndring;
   let harGradertSykmelding = false;
   let ansettelsesforhold: Ansettelsesforhold | null = null;
 
-  if (!isValidUUID(uuid)) {
-    return createInvalidUuidProps(uuid, erEndring, faisuEnabled);
+  if (!erNyArbeidsgiverInitiertInnsending && !isValidUUID(uuid)) {
+    return createInvalidUuidProps(uuid, erEndringFraKvittering);
   }
 
   const auth = await getValidatedTokenOrRedirect(context, isDevelopment);
@@ -897,26 +926,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     return auth.redirect;
   }
 
-  const [forespurtResult, arbeidsforholdResult] = await Promise.allSettled([
-    !hasAgiQuery ? hentForespoerselSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt')),
-    !hasAgiQuery ? hentArbeidsforholdSSR(uuid, auth.token) : Promise.reject(new Error('Ikke hentet pga selvbestemt'))
-  ]);
-  if (forespurtResult.status === RequestStatus.rejected) {
-    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
-  }
-  if (arbeidsforholdResult.status === RequestStatus.rejected) {
-    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
-  }
+  if (!hasAgiQuery) {
+    const backendData = await fetchBackendData(uuid, auth.token, erEndringFraKvittering);
+    forespurt = backendData.forespurt;
+    ansettelsesforhold = backendData.ansettelsesforhold;
+    forespurtStatus = backendData.forespurtStatus;
 
-  forespurt = forespurtResult.status === RequestStatus.fulfilled ? forespurtResult.value : null;
-  ansettelsesforhold = arbeidsforholdResult.status === RequestStatus.fulfilled ? arbeidsforholdResult.value : null;
-
-  forespurtStatus = resolveForespurtStatus(forespurtResult, hasEndreQuery);
-  logFetchResults(uuid, forespurtResult, arbeidsforholdResult, faisuEnabled);
-
-  const rejectedForespurtResponse = handleRejectedForespurtResult(forespurtResult, context);
-  if (rejectedForespurtResponse) {
-    return rejectedForespurtResponse;
+    const rejectedForespurtResponse = handleRejectedForespurtResult(backendData.forespurtResult, context);
+    if (rejectedForespurtResponse) {
+      return rejectedForespurtResponse;
+    }
+  } else {
+    forespurtStatus = erEndringFraKvittering || erNyArbeidsgiverInitiertInnsending ? 200 : 500;
   }
 
   const harFlereArbeidsforhold = hasMultipleArbeidsforhold(ansettelsesforhold);
@@ -927,21 +948,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ sl
     );
   }
 
-  if (shouldRedirectToKvittering(forespurt, overskriv, hasEndreQuery)) {
+  if (shouldRedirectToKvittering(forespurt, erOverskriving, erEndringFraKvittering)) {
     return createKvitteringRedirect(context, uuid);
   }
 
   return {
     props: {
       slug: uuid,
-      erEndring: hasEndreQuery,
-      forespurt: hasEndreQuery ? null : forespurt,
+      erEndringFraKvittering,
+      forespurt: erEndringFraKvittering ? null : forespurt,
       forespurtStatus: forespurtStatus,
-      dataFraBackend: !!forespurt && !hasEndreQuery,
+      dataFraBackend: !!forespurt && !erEndringFraKvittering,
       harGradertSykmelding,
       harFlereArbeidsforhold,
-      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null,
-      faisuEnabled
+      ansettelsesforhold: harFlereArbeidsforhold && ansettelsesforhold ? ansettelsesforhold : null
     }
   };
 }

@@ -28,6 +28,7 @@ import { useShallow } from 'zustand/react/shallow';
 import NumberField from '../NumberField/NumberField';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
+import useFeilmeldinger from '../../state/useFeilmeldinger';
 
 interface ArbeidsgiverperiodeProps {
   arbeidsgiverperioder: Array<Periode> | undefined;
@@ -52,8 +53,6 @@ export default function Arbeidsgiverperiode({
     setArbeidsgiverperiodeDato,
     endretArbeidsgiverperiode,
     setEndreArbeidsgiverperiode,
-    visFeilmeldingTekst,
-    visFeilmelding,
     tilbakestillArbeidsgiverperiode,
     slettAlleArbeidsgiverperioder,
     begrunnelseRedusertUtbetaling,
@@ -72,8 +71,6 @@ export default function Arbeidsgiverperiode({
       setArbeidsgiverperiodeDato: state.setArbeidsgiverperiodeDato,
       endretArbeidsgiverperiode: state.endretArbeidsgiverperiode,
       setEndreArbeidsgiverperiode: state.setEndreArbeidsgiverperiode,
-      visFeilmeldingTekst: state.visFeilmeldingTekst,
-      visFeilmelding: state.visFeilmelding,
       tilbakestillArbeidsgiverperiode: state.tilbakestillArbeidsgiverperiode,
       slettAlleArbeidsgiverperioder: state.slettAlleArbeidsgiverperioder,
       begrunnelseRedusertUtbetaling: state.begrunnelseRedusertUtbetaling,
@@ -88,6 +85,9 @@ export default function Arbeidsgiverperiode({
       egenmeldingsperioder: state.egenmeldingsperioder
     }))
   );
+
+  const agpFeilmeldinger = useFeilmeldinger('agp.');
+  const arbeidsgiverperiodeFeilmeldinger = useFeilmeldinger('arbeidsgiverperioder');
 
   const {
     control,
@@ -408,10 +408,10 @@ export default function Arbeidsgiverperiode({
             <Periodevelger
               fomTekst='Fra'
               fomID={`agp.perioder.${periodeIndex}.fom`}
-              fomError={visFeilmeldingTekst(`agp.perioder.${periodeIndex}.fom`)}
+              fomError={agpFeilmeldinger[`agp.perioder.${periodeIndex}.fom`] ?? ''}
               tomTekst='Til'
               tomID={`agp.perioder.${periodeIndex}.tom`}
-              tomError={visFeilmeldingTekst(`agp.perioder.${periodeIndex}.tom`)}
+              tomError={agpFeilmeldinger[`agp.perioder.${periodeIndex}.tom`] ?? ''}
               onRangeChange={(oppdatertPeriode) => setArbeidsgiverperiodeDatofelt(oppdatertPeriode, periode.id)}
               defaultRange={periode}
               kanSlettes={periodeIndex > 0}
@@ -450,10 +450,10 @@ export default function Arbeidsgiverperiode({
             <Periodevelger
               fomTekst='Fra'
               fomID={`arbeidsgiverperioder[ny].fom`}
-              fomError={visFeilmeldingTekst(`arbeidsgiverperioder[ny].fom`)}
+              fomError={arbeidsgiverperiodeFeilmeldinger['arbeidsgiverperioder[ny].fom'] ?? ''}
               tomTekst='Til'
               tomID={`arbeidsgiverperioder[ny].tom`}
-              tomError={visFeilmeldingTekst(`arbeidsgiverperioder[ny].tom`)}
+              tomError={arbeidsgiverperiodeFeilmeldinger['arbeidsgiverperioder[ny].tom'] ?? ''}
               onRangeChange={(oppdatertPeriode) =>
                 setArbeidsgiverperiodeDatofelt(oppdatertPeriode, PeriodeType.NY_PERIODE)
               }
@@ -476,9 +476,9 @@ export default function Arbeidsgiverperiode({
           />
         </div>
       )}
-      {visFeilmelding('arbeidsgiverperioder-feil') && (
+      {Object.hasOwn(arbeidsgiverperiodeFeilmeldinger, 'arbeidsgiverperioder-feil') && (
         <Feilmelding id={ensureValidHtmlId('arbeidsgiverperioder-feil')}>
-          {visFeilmeldingTekst('arbeidsgiverperioder-feil')}
+          {arbeidsgiverperiodeFeilmeldinger['arbeidsgiverperioder-feil']}
         </Feilmelding>
       )}
       {advarselOppholdHelg.length > 0 && (
@@ -489,8 +489,8 @@ export default function Arbeidsgiverperiode({
       {advarselLangPeriode.length > 0 && (
         <Feilmelding id={ensureValidHtmlId('arbeidsgiverperiode-lokal-feil')}>{advarselLangPeriode}</Feilmelding>
       )}
-      {visFeilmelding('agp.perioder') && (
-        <Feilmelding id={ensureValidHtmlId('agp.perioder')}>{visFeilmeldingTekst('agp.perioder')}</Feilmelding>
+      {Object.hasOwn(agpFeilmeldinger, 'agp.perioder') && (
+        <Feilmelding id={ensureValidHtmlId('agp.perioder')}>{agpFeilmeldinger['agp.perioder']}</Feilmelding>
       )}
       {advarselKortPeriode.length > 0 && (
         <span className={lokalStyling.arbeidsgiverKortPeriode} id={ensureValidHtmlId('arbeidsgiverperiode-kort-feil')}>

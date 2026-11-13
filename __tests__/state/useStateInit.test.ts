@@ -20,6 +20,19 @@ describe('useStateInit', () => {
     vi.resetAllMocks();
     cleanup();
   });
+  it('rendrer ikke pa nytt nar bare urelatert state endres', () => {
+    const renderinger = vi.fn();
+    renderHook(() => {
+      renderinger();
+      return useStateInit();
+    });
+    const opprinneligAntall = renderinger.mock.calls.length;
+
+    act(() => useBoundStore.getState().setNyInnsending(false));
+
+    expect(renderinger).toHaveBeenCalledTimes(opprinneligAntall);
+  });
+
   it('should fill the state correctly', () => {
     const { result } = renderHook(() => useBoundStore((state) => state));
 

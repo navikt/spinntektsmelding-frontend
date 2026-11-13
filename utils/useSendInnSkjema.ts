@@ -23,16 +23,21 @@ import { LonnIArbeidsgiverperioden } from '../state/state';
 
 type Skjema = z.infer<typeof HovedskjemaSchema>;
 
+type SendInnSkjemaParams = {
+  pathSlug: string;
+  isDirtyForm: boolean;
+  formData: Skjema;
+  erBegrensetForespoersel: boolean;
+};
+
 export default function useSendInnSkjema(
   innsendingFeiletIngenTilgang: (feilet: boolean) => void,
-  analyticsComponent: string,
-  faisuEnabled: boolean
+  analyticsComponent: string
 ) {
   const fyllFeilmeldinger = useBoundStore((state) => state.fyllFeilmeldinger);
   const setSkalViseFeilmeldinger = useBoundStore((state) => state.setSkalViseFeilmeldinger);
   const fyllInnsending = useFyllInnsending();
   const setMottatt = useBoundStore((state) => state.setMottatt);
-  const lonnISykefravaeret = useBoundStore((state) => state.lonnISykefravaeret);
   const errorResponse = useErrorRespons();
   const router = useRouter();
 
@@ -42,13 +47,7 @@ export default function useSendInnSkjema(
     setSkalViseFeilmeldinger(true);
   };
 
-  return async (
-    opplysningerBekreftet: boolean,
-    pathSlug: string,
-    isDirtyForm: boolean,
-    formData: Skjema,
-    erBegrensetForespoersel: boolean
-  ) => {
+  return async ({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel }: SendInnSkjemaParams) => {
     logEvent('skjema fullført', {
       tittel: 'Har trykket send',
       component: analyticsComponent
@@ -71,7 +70,7 @@ export default function useSendInnSkjema(
 
     let skjemaData: FullInnsending;
     try {
-      skjemaData = fyllInnsending(pathSlug, formData, erBegrensetForespoersel, faisuEnabled);
+      skjemaData = fyllInnsending(pathSlug, formData, erBegrensetForespoersel);
     } catch (error) {
       if (!(error instanceof z.ZodError)) {
         throw error;
@@ -111,12 +110,13 @@ export default function useSendInnSkjema(
       begrunnelse: formData.agp?.redusertLoennIAgp?.begrunnelse
     };
 
+    const { lonnISykefravaeret } = useBoundStore.getState();
     const errors = checkCommonValidations(
       fullLonnIArbeidsgiverPerioden,
       harForespurtArbeidsgiverperiode,
       lonnISykefravaeret,
       harRefusjonEndringerStatus,
-      opplysningerBekreftet,
+      formData.bekreft_opplysninger,
       validerteData as SafeParseMinimal<MinimalData>
     );
 

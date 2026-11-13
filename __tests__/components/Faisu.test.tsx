@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { Profiler } from 'react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import Faisu from '../../components/Faisu/Faisu';
@@ -57,6 +58,27 @@ const arbeidsforhold = [
 ];
 
 describe('Faisu', () => {
+  it('ignorerer telefonendringer i storen, men viser oppdatert virksomhetsnavn', () => {
+    const onRender = vi.fn();
+    render(
+      <TestWrapper defaultValues={{ flereArbeidsforhold: { harLikLoenn: 'Nei' } }}>
+        <Profiler id='faisu' onRender={onRender}>
+          <Faisu harGradertSykmeldingOgFlereArbeidsforhold />
+        </Profiler>
+      </TestWrapper>
+    );
+    const opprinneligAntall = onRender.mock.calls.length;
+
+    act(() => useBoundStore.getState().setInnsenderTelefon('12345678'));
+    expect(onRender).toHaveBeenCalledTimes(opprinneligAntall);
+
+    act(() => {
+      useBoundStore.setState({ avsender: { ...useBoundStore.getState().avsender, orgNavn: 'Nytt navn' } });
+    });
+    expect(screen.getByText('Er personen sykmeldt fra alle arbeidsforhold i "Nytt navn"?')).toBeInTheDocument();
+    expect(onRender.mock.calls.length).toBeGreaterThan(opprinneligAntall);
+  });
+
   it('renders nothing when harGradertSykmeldingOgFlereArbeidsforhold is false', () => {
     render(
       <TestWrapper>
