@@ -1,40 +1,83 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# spinntektsmelding-frontend
 
-## Getting Started
+[![Bygg og deploy main](https://github.com/navikt/spinntektsmelding-frontend/actions/workflows/main.yml/badge.svg)](https://github.com/navikt/spinntektsmelding-frontend/actions/workflows/main.yml)
 
-First, install dependencies:
+Frontend for arbeidsgiveres innsending og endring av inntektsmeldinger for sykepenger til Nav.
+Applikasjonen er utviklet med Next.js, React og TypeScript og bruker [Aksel](https://aksel.nav.no/) som designsystem.
+
+Applikasjonen eies og vedlikeholdes av team Helsearbeidsgiver.
+
+## Kom i gang
+
+### Forutsetninger
+
+- Node.js 24, som brukes i CI.
+- pnpm i versjonen angitt i `packageManager` i [package.json](./package.json).
+- Tilgang til Nav-pakker i GitHub Packages. Se registeroppsettet i [.npmrc](./.npmrc).
+
+Ved autentiseringsfeil under installasjon må du konfigurere tilgang til
+[GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+Ikke legg tilgangstoken eller andre hemmeligheter i versjonskontrollerte filer.
+
+### Lokal utvikling
 
 ```bash
 pnpm install
-```
-
-Then, run the development server:
-
-```bash
-npm run dev
-# or
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Applikasjonen kjører på [http://localhost:3000/im-dialog](http://localhost:3000/im-dialog).
+Ruten du åpner, må passe flyten du vil teste, for eksempel
+[initiering](http://localhost:3000/im-dialog/initiering).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Standardkommandoen starter uten Nav-dekoratøren. For å kjøre med dekoratøren:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```bash
+pnpm dev:decorator
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Miljøkonfigurasjon ligger i [.env](./.env), [development.env](./development.env) og
+[production.env](./production.env). URL-er og miljøvariabler som brukes av applikasjonen, er samlet i
+[config/environment.ts](./config/environment.ts). Flyter som krever innlogging og backend, trenger tilgang til
+de aktuelle tjenestene; utviklingsserveren alene erstatter ikke disse.
 
-## Learn More
+Bruk bare syntetiske testdata ved lokal utvikling og testing.
 
-To learn more about Next.js, take a look at the following resources:
+## Test og kvalitetssjekker
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm test
+pnpm lint
+pnpm typecheck
+pnpm build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Testene kjøres med Vitest. Bruk `pnpm test:watch` for å kjøre dem kontinuerlig under utvikling.
 
-## Deploy on Vercel
+## Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Applikasjonen bygges som et containerimage og deployes til [Nais](https://nais.io/) via GitHub Actions:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Push til `main` eller `dev` deployer til `dev-gcp`.
+- Publisering av en GitHub-release starter produksjonsflyten.
+
+Oppsettet ligger i [.github/workflows](./.github/workflows), [naiserator.yaml](./naiserator.yaml) og [nais](./nais).
+
+## Bidra
+
+Opprett en pull request med en beskrivelse av endringen. Kjør relevante tester og kvalitetssjekker før du ber om review.
+Ikke legg personopplysninger eller hemmeligheter i kode, logger, issues eller pull requests.
+
+## Kode delvis generert med kunstig intelligens
+
+Deler av koden i dette repoet kan være generert med kunstig intelligens.
+All kode skal gjennomgås av teamet før den merges, uavhengig av om den er skrevet manuelt eller generert med KI.
+
+## Henvendelser
+
+Spørsmål knyttet til koden eller prosjektet kan stilles som
+[issues på GitHub](https://github.com/navikt/spinntektsmelding-frontend/issues).
+
+### For Nav-ansatte
+
+Interne henvendelser kan rettes til team Helsearbeidsgiver på Slack.
