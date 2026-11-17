@@ -209,8 +209,8 @@ importers:
         specifier: 11.2.10
         version: 11.2.10
       jsdom:
-        specifier: 31.0.0
-        version: 31.0.0
+        specifier: 31.0.1
+        version: 31.0.1
       nanoid:
         specifier: 6.0.2
         version: 6.0.2
@@ -346,7 +346,7 @@ importers:
         version: 8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)
       vitest:
         specifier: ^5.1.0
-        version: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+        version: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
       vitest-fetch-mock:
         specifier: ^0.4.5
         version: 0.4.5(vitest@5.1.0)
@@ -3374,8 +3374,8 @@ packages:
       '@babel/preset-env':
         optional: true
 
-  jsdom@31.0.0:
-    resolution: {integrity: sha512-xAkhD9z1eyFC5+QUi9K24CaZJgdCQ2GOGLW1GdVDoQvkp/AxEH9TQ0pAplPOlIiV92hfcgnFOADZypbjgbBT6Q==}
+  jsdom@31.0.1:
+    resolution: {integrity: sha512-CbhJL8ZQg3eKswxSZth4QO9tW0jPIhmR0vtSXQSbKSfWbwIT6hoRc17wdHIVTQ43KI0mdV5iTJr3281IDgVZ5g==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     peerDependencies:
       '@napi-rs/canvas': ^1.0.13
@@ -4662,10 +4662,6 @@ packages:
   whatwg-mimetype@5.0.0:
     resolution: {integrity: sha512-sXcNcHOC51uPGF0P/D4NVtrkjSU2fNsm9iog4ZvZJsL3rjoDAzXZhkm2MWt1y+PUdggKAYVoMAIYcs78wJ51Cw==}
     engines: {node: '>=20'}
-
-  whatwg-url@17.2.0:
-    resolution: {integrity: sha512-IhLIHNcBrzIixC5XXsbr4DxdjajyA5vQ5RwGZMtrUp+GbtE5Nrsge9QKau7jXrC0aTXLYGV0xiW7Tb4YS2aomw==}
-    engines: {node: ^22.14.0 || >=24.0.0}
 
   whatwg-url@17.3.0:
     resolution: {integrity: sha512-KwOAJrpf+GTgBvcBQJcP38sMF0DsQKdwtG+TxM2pW44P6E5k0hDbWrDmyuJDIF0Uef0aQq0ZoJs+5oI+k8ddhg==}
@@ -5977,7 +5973,7 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
     optionalDependencies:
-      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
 
   '@testing-library/react@16.3.3(@testing-library/dom@10.4.2)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -6243,7 +6239,7 @@ snapshots:
       obug: 3.0.0
       std-env: 4.3.0
       tinyrainbow: 3.2.0
-      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
 
   '@vitest/istanbul-lib-coverage@2.1.0': {}
 
@@ -6275,7 +6271,7 @@ snapshots:
       pathe: 2.0.3
       sirv: 3.0.2
       tinyrainbow: 3.2.0
-      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
 
   '@vitest/utils@5.1.0':
     dependencies:
@@ -6603,7 +6599,7 @@ snapshots:
   data-urls@8.0.0:
     dependencies:
       whatwg-mimetype: 5.0.0
-      whatwg-url: 17.2.0
+      whatwg-url: 17.3.0
     transitivePeerDependencies:
       - '@noble/hashes'
 
@@ -7718,7 +7714,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  jsdom@31.0.0:
+  jsdom@31.0.1:
     dependencies:
       '@exodus/bytes': 1.16.0
       bcp-47: 2.1.2
@@ -9017,13 +9013,13 @@ snapshots:
 
   vitest-fetch-mock@0.4.5(vitest@5.1.0):
     dependencies:
-      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
 
   vitest-sonar-reporter@3.0.0(vitest@5.1.0):
     dependencies:
-      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
+      vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
 
-  vitest@5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)):
+  vitest@5.1.0(@opentelemetry/api@1.9.1)(@types/node@22.20.1)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1)(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.1.0(msw@3.0.5(@types/node@22.20.1)(graphql@16.14.2)(supports-color@7.2.0)(typescript@6.0.3)(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1)))(vite@8.3.8(@types/node@22.20.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
@@ -9044,7 +9040,7 @@ snapshots:
       '@types/node': 22.20.1
       '@vitest/coverage-v8': 5.1.0(vitest@5.1.0)
       '@vitest/ui': 5.1.0(vitest@5.1.0)
-      jsdom: 31.0.0
+      jsdom: 31.0.1
     transitivePeerDependencies:
       - msw
 
@@ -9078,14 +9074,6 @@ snapshots:
       - utf-8-validate
 
   whatwg-mimetype@5.0.0: {}
-
-  whatwg-url@17.2.0:
-    dependencies:
-      '@exodus/bytes': 1.16.0
-      tr46: 7.0.0
-      webidl-conversions: 8.0.1
-    transitivePeerDependencies:
-      - '@noble/hashes'
 
   whatwg-url@17.3.0:
     dependencies:
