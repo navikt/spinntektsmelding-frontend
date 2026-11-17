@@ -80,4 +80,4 @@ Spørsmål knyttet til koden eller prosjektet kan stilles som
 
 ### For Nav-ansatte
 
-Interne henvendelser kan rettes til team Helsearbeidsgiver på Slack.
+Interne henvendelser kan rettes til team Helsearbeidsgiver (#helse-arbeidsgiver) på Slack.

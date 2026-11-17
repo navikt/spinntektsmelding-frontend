@@ -9,9 +9,14 @@ import { Periode } from '../../state/state';
 interface EgenmeldingProps {
   lasterData?: boolean;
   egenmeldingsperioder: Array<Periode> | undefined;
+  unntattAaRegisteret?: boolean;
 }
 
-export default function Egenmelding({ lasterData, egenmeldingsperioder }: Readonly<EgenmeldingProps>) {
+export default function Egenmelding({
+  lasterData,
+  egenmeldingsperioder,
+  unntattAaRegisteret
+}: Readonly<EgenmeldingProps>) {
   const ikkeEgenmeldingPerioder = !egenmeldingsperioder || egenmeldingsperioder.length === 0;
 
   return (
@@ -36,7 +41,17 @@ export default function Egenmelding({ lasterData, egenmeldingsperioder }: Readon
               </div>
             ))}
           {!lasterData && ikkeEgenmeldingPerioder && (
-            <>Den sykmeldte har ikke registrert egenmeldingsperioder for denne sykepengesøknaden.</>
+            <>
+              {!unntattAaRegisteret && (
+                <div>Den sykmeldte har ikke registrert egenmeldingsperioder for denne sykepengesøknaden.</div>
+              )}
+              {unntattAaRegisteret && (
+                <>
+                  <div>Vi har ikke opplysninger om egenmeldingsperioder for den sykmeldte.</div>
+                  <div>Eventuelle egenmeldingsperioder må legges til ved å legge de til i arbeidsgiverperioden.</div>
+                </>
+              )}
+            </>
           )}
         </div>
       </div>
