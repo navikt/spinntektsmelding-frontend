@@ -1,275 +1,92 @@
 ---
+description: "Next.js App Router og Aksel: versjonstilpassede API-er, server-/klientgrenser, data, autentisering, CSS og tilgjengelighet via aksel-builder."
 applyTo: "src/**/*.{tsx,ts}"
 ---
 
-# Next.js with Aksel Design System
-
-## Spacing Rules
-
-**CRITICAL**: Always use Nav DS spacing tokens, never Tailwind padding/margin utilities.
-
-### ✅ Correct Patterns
-
-```tsx
-import { Box, VStack, HGrid } from "@navikt/ds-react";
-
-// Page container
-<main className="max-w-7xl mx-auto">
-  <Box
-    paddingBlock={{ xs: "space-16", md: "space-24" }}
-    paddingInline={{ xs: "space-16", md: "space-40" }}
-  >
-    {children}
-  </Box>
-</main>
-
-// Component with responsive padding
-<Box
-  background="surface-subtle"
-  padding={{ xs: "space-12", sm: "space-16", md: "space-24" }}
-  borderRadius="large"
->
-  <Heading size="large" level="2">Title</Heading>
-  <BodyShort>Content</BodyShort>
-</Box>
-
-// Directional padding
-<Box
-  paddingBlock="space-16"    // Top and bottom
-  paddingInline="space-24"   // Left and right
->
-```
-
-### ❌ Incorrect Patterns
-
-```tsx
-// Never use Tailwind padding/margin
-<div className="p-4 md:p-6">  // ❌ Wrong
-<div className="mx-4 my-2">   // ❌ Wrong
-<Box padding="4">             // ❌ Wrong - no space- prefix
-```
-
-## Spacing Tokens
-
-Available spacing tokens (always with `space-` prefix):
-
-- `space-4` (4px)
-- `space-8` (8px)
-- `space-12` (12px)
-- `space-16` (16px)
-- `space-20` (20px)
-- `space-24` (24px)
-- `space-32` (32px)
-- `space-40` (40px)
-
-## Responsive Design
-
-Mobile-first approach with breakpoints:
-
-- `xs`: 0px (mobile)
-- `sm`: 480px
-- `md`: 768px
-- `lg`: 1024px
-- `xl`: 1280px
-
-```tsx
-<HGrid columns={{ xs: 1, md: 2, lg: 3 }} gap="4">
-  {items.map(item => <Card key={item.id} {...item} />)}
-</HGrid>
-
-<Box
-  padding={{ xs: "space-16", sm: "space-20", md: "space-24" }}
->
-```
-
-## Component Patterns
-
-### Layout Components
-
-```tsx
-import { Box, VStack, HStack, HGrid } from "@navikt/ds-react";
-
-// Vertical stack with spacing
-<VStack gap="4">
-  <Component1 />
-  <Component2 />
-  <Component3 />
-</VStack>
-
-// Horizontal stack
-<HStack gap="4" align="center">
-  <Icon />
-  <Text />
-</HStack>
-
-// Responsive grid
-<HGrid columns={{ xs: 1, md: 2, lg: 3 }} gap="4">
-  {/* Grid items */}
-</HGrid>
-```
-
-### Typography
-
-```tsx
-import { Heading, BodyShort, Label } from "@navikt/ds-react";
-
-<Heading size="large|medium|small" level="1-6">
-  Title
-</Heading>
-
-<BodyShort size="large|medium|small">
-  Regular text content
-</BodyShort>
-
-<BodyShort weight="semibold">
-  Bold text
-</BodyShort>
-
-<Label size="large|medium|small">
-  Input label
-</Label>
-```
-
-### Background Colors
-
-```tsx
-<Box background="surface-default">     {/* White */}
-<Box background="surface-subtle">      {/* Light gray */}
-<Box background="surface-action-subtle">  {/* Light blue */}
-<Box background="surface-success-subtle"> {/* Light green */}
-<Box background="surface-warning-subtle"> {/* Light orange */}
-<Box background="surface-danger-subtle">  {/* Light red */}
-```
-
-## Number Formatting
-
-Always use Norwegian locale for number formatting:
-
-```typescript
-import { formatNumber } from "@/lib/format";
-
-// ✅ Correct
-const formatted = formatNumber(151354); // "151 354"
-
-// ❌ Wrong
-const formatted = num.toLocaleString(); // Uses browser locale
-```
-
-## API Routes (App Router)
-
-```typescript
-import { NextResponse } from "next/server";
-
-// GET endpoint with error handling
-export async function GET() {
-  const { data, error } = await fetchData();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
-}
-
-// POST endpoint
-export async function POST(request: Request) {
-  const body = await request.json();
-
-  // Validation
-  if (!body.requiredField) {
-    return NextResponse.json({ error: "requiredField is missing" }, { status: 400 });
-  }
-
-  const result = await processData(body);
-  return NextResponse.json(result, { status: 201 });
-}
-```
-
-## Authentication
-
-```typescript
-import { getUser } from "@/lib/auth";
-
-// Redirect if not authenticated
-const user = await getUser();
-
-// Return null if not authenticated
-const user = await getUser(false);
-if (!user) {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-}
-```
-
-## Testing
-
-```typescript
-import { formatNumber } from "./format";
-
-describe("formatNumber", () => {
-  it("should format numbers with Norwegian locale", () => {
-    expect(formatNumber(151354)).toBe("151 354");
-  });
-
-  it("should handle decimal numbers", () => {
-    expect(formatNumber(1234.56)).toBe("1 234,56");
-  });
-});
-```
-
-## Server Components (Next.js 16)
-
-```tsx
-// Server Component (default in App Router)
-export default async function Page() {
-  const data = await fetchData(); // Can use async/await
-
-  return (
-    <Box padding="space-24">
-      <Heading size="large" level="1">
-        {data.title}
-      </Heading>
-      <BodyShort>{data.description}</BodyShort>
-    </Box>
-  );
-}
-```
-
-## Client Components
-
-```tsx
-"use client";
-
-import { useState } from "react";
-import { Button } from "@navikt/ds-react";
-
-export function InteractiveComponent() {
-  const [count, setCount] = useState(0);
-
-  return <Button onClick={() => setCount(count + 1)}>Count: {count}</Button>;
-}
-```
-
-## Boundaries
-
-### ✅ Always
-
-- Use Aksel Design System components
-- Use spacing tokens with `space-` prefix
-- Mobile-first responsive design
-- Norwegian number formatting
-- Explicit error handling in API routes
-
-### ⚠️ Ask First
-
-- Adding custom Tailwind utilities
-- Deviating from Aksel patterns
-- Changing authentication flow
-- Modifying data aggregation logic
-
-### 🚫 Never
-
-- Use Tailwind padding/margin utilities (`p-*`, `m-*`)
-- Use numeric spacing without `space-` prefix
-- Ignore accessibility requirements
-- Skip responsive props
-- Add code comments unless explicitly requested
+# Next.js and Aksel
+
+Apply only to Next.js projects; the Aksel section applies only when the project uses
+Aksel. Keep framework guidance and Aksel integration in this single instruction.
+Use the project's installed Next.js and React versions, not an assumed Nav-wide stack.
+
+## Read the matching documentation
+
+Before changing Next.js behavior, read the relevant installed documentation under
+`node_modules/next/dist/docs/` when available. Otherwise use official Next.js docs for
+the installed version. Check enabled features and configuration before applying caching
+or routing advice. For Aksel APIs and implementation workflows, load `aksel-builder`.
+
+## Aksel integration
+
+Load `aksel-builder` and use the Aksel MCP to verify APIs against the project's installed
+versions. If MCP is unavailable, use the skill's Preflight fallback; don't guess imports,
+props, tokens, or icon names. Reference paths below belong to that skill.
+
+- **CSS:** import `@navikt/ds-css` once at the app entry, before application overrides.
+  For Tailwind, follow `references/tokens-styling.md` instead of importing the stylesheet
+  twice. Native Tailwind layout and spacing are valid unless the project restricts them.
+- **Server/client boundary:** keep the root layout server-side. Put interactive providers
+  and locale objects in a client wrapper with `"use client"` first. Use the App Router
+  example in `references/setup-and-imports.md`.
+- **Compound components:** in Server Components, use named parts from the documented
+  component subpath instead of accessing client exports through `Parent.Child`.
+  Confirm installed exports; the MCP props tool does not return an export map.
+- **Theme and language:** `Theme` controls color mode; `Provider` controls locale/portals.
+  Match document `lang`, content, and locale. Semantic tokens work across themes; don't
+  describe a token as a fixed light-mode color.
+- **Accessible composition:** follow `references/accessibility.md` for labels, heading
+  levels, error focus, and keyboard behavior. Aksel does not guarantee the accessibility
+  of the complete page.
+
+## Server and client boundaries
+
+- Prefer Server Components for server data and secrets. Use `"use client"` as the first
+  statement in a separate file for event handlers, state, or browser APIs.
+- Pass serializable data across the boundary; don't pass secrets or arbitrary functions.
+- On current Next.js versions, await request APIs such as `cookies()`, `headers()`,
+  route `params`, and page `searchParams`. Check the installed version's signatures.
+- Keep `metadata` and `generateMetadata` in server files; don't expose private data in
+  titles, descriptions, or social metadata.
+
+## Data, mutations, and authentication
+
+- Reuse the project's server data layer. Validate inputs and authorize access at each
+  Route Handler, Server Action, or data boundary; redirects in Proxy are not sufficient.
+- For Next.js 16, use the `proxy.ts` / `proxy` convention; older projects may still use
+  `middleware.ts`. Don't rename files without checking the installed version.
+- Use the existing auth helper only after reading its implementation. Don't assume that
+  a helper named `getUser` exists or that a boolean argument controls unauthorized access.
+- Route Handlers should return intentional status codes and safe public error messages.
+  Log internal errors through the project's logger without leaking credentials or data.
+- Treat `FormData.get()` as `string | File | null`; validate it instead of casting.
+  If using `useActionState`, the action receives previous state before the payload;
+  check React support and match the action's signature.
+- Select cache/revalidation behavior explicitly from the app's configuration and data
+  requirements. Don't assume framework defaults or introduce a caching library by habit.
+
+## Loading and errors
+
+Keep `loading.tsx` and `error.tsx` in separate files. An error boundary is a Client
+Component with `"use client"` first; provide a useful recovery action and report errors
+through the existing observability setup. Don't display raw server exception messages.
+
+Place Suspense around the part that can stream independently. Keep headings, navigation,
+and other stable content outside a boundary when appropriate; loading states still need
+accessible names and useful layout.
+
+## Project conventions
+
+- Use the repository's package manager, lockfile, scripts, and file naming. Don't impose
+  pnpm, React Query, React Hook Form, or a comments policy across all Nav applications.
+- If React Query already exists, reuse its query keys and client setup, check HTTP status
+  before parsing responses, and invalidate affected queries after successful mutations.
+  Server Components may be sufficient without it.
+- If React Hook Form already exists, use its established validation and submit pattern.
+  For simpler forms, consider the project's existing server-action approach instead.
+- Match the UI locale. For Norwegian number formatting, use
+  `new Intl.NumberFormat("nb-NO").format(value)` or a verified shared helper; don't assume
+  a particular Unicode space in formatting tests.
+- Run relevant existing lint, type, and behavior checks. Cover meaningful behavior and
+  failure paths; don't add test infrastructure for an isolated example.
+- Keep changes scoped. Confirm consequential auth, caching, or dependency changes;
+  preserve unrelated code and explain blockers.

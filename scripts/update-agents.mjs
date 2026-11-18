@@ -6,8 +6,18 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const agents = ['aksel', 'nav-pilot', 'code-review', 'security-champion'];
 const skills = ['aksel-builder'];
+const instructions = ['nextjs-aksel'];
 const source = 'https://github.com/navikt/copilot.git';
 const defaultRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+function runGit(args, options = {}) {
+  return execFileSync('/usr/bin/git', args, {
+    encoding: 'utf8',
+    timeout: 60_000,
+    ...options,
+    env: { ...process.env, PATH: '/usr/bin:/bin' }
+  });
+}
 
 async function readFiles(directory) {
   const files = new Map();
@@ -31,8 +41,7 @@ export async function syncAgents(mode, { root = defaultRoot } = {}) {
     throw new Error('Usage: node scripts/update-agents.mjs <check|update>');
   }
 
-  const revision = execFileSync('git', ['ls-remote', '--exit-code', source, 'refs/heads/main'], {
-    encoding: 'utf8',
+  const revision = runGit(['ls-remote', '--exit-code', source, 'refs/heads/main'], {
     timeout: 30_000
   });
   const sha = revision.split('\t')[0];
@@ -43,18 +52,23 @@ export async function syncAgents(mode, { root = defaultRoot } = {}) {
 
   const snapshot = await mkdtemp(resolve(tmpdir(), 'copilot-sync-'));
   try {
-    const git = (...args) => execFileSync('git', args, { cwd: snapshot, encoding: 'utf8', timeout: 60_000 });
+    const git = (...args) => runGit(args, { cwd: snapshot });
     git('init', '--quiet');
-    git('sparse-checkout', 'set', 'agents', ...skills.map((skill) => `skills/${skill}`));
+    git('sparse-checkout', 'set', 'agents', 'instructions', ...skills.map((skill) => `skills/${skill}`));
     git('fetch', '--quiet', '--depth=1', '--filter=blob:none', source, sha);
     git('-c', 'advice.detachedHead=false', 'checkout', '--quiet', '--detach', 'FETCH_HEAD');
 
     const changes = [];
-    const paths = [...agents.map((agent) => `agents/${agent}.agent.md`), ...skills.map((skill) => `skills/${skill}`)];
+    const paths = [
+      ...agents.map((agent) => `agents/${agent}.agent.md`),
+      ...skills.map((skill) => `skills/${skill}`),
+      ...instructions.map((instruction) => `instructions/${instruction}.instructions.md`)
+    ];
     for (const path of paths) {
       const isSkill = path.startsWith('skills/');
       const definition = await readFile(resolve(snapshot, path, ...(isSkill ? ['SKILL.md'] : [])), 'utf8');
-      if (!/^---\r?\n/.test(definition) || !/^name: .+/m.test(definition)) {
+      const requiredField = path.startsWith('instructions/') ? /^applyTo: .+/m : /^name: .+/m;
+      if (!/^---\r?\n/.test(definition) || !requiredField.test(definition)) {
         throw new Error(`Invalid definition: ${path}`);
       }
       const remoteFiles = isSkill ? await readFiles(resolve(snapshot, path)) : new Map([['', Buffer.from(definition)]]);
@@ -73,8 +87,7 @@ export async function syncAgents(mode, { root = defaultRoot } = {}) {
     }
 
     if (mode === 'update' && changes.length > 0) {
-      const status = execFileSync(
-        'git',
+      const status = runGit(
         [
           'status',
           '--porcelain',
@@ -83,7 +96,7 @@ export async function syncAgents(mode, { root = defaultRoot } = {}) {
           '--',
           ...paths.map((path) => `.github/${path}`)
         ],
-        { cwd: root, encoding: 'utf8' }
+        { cwd: root }
       );
       if (status.trim()) {
         throw new Error(`Refusing to overwrite local changes. Commit or preserve these files first:\n${status}`);

@@ -22,6 +22,8 @@ vi.mock('node:child_process', async (importOriginal) => {
 const agents = ['aksel', 'nav-pilot', 'code-review', 'security-champion'];
 const original = '---\nname: test-agent\n---\nOriginal\n';
 const updated = '---\nname: test-agent\n---\nUpdated\n';
+const originalInstruction = '---\napplyTo: "**/*.tsx"\n---\nOriginal instruction\n';
+const updatedInstruction = '---\napplyTo: "**/*.tsx"\n---\nUpdated instruction\n';
 let workspace;
 let root;
 let upstream;
@@ -29,7 +31,15 @@ let upstream;
 const agentPath = (agent) => join(root, '.github', 'agents', `${agent}.agent.md`);
 const skillPath = (...parts) => join(root, '.github', 'skills', 'aksel-builder', ...parts);
 const sourceSkill = (...parts) => join(upstream, 'skills', 'aksel-builder', ...parts);
-const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf8', stdio: 'pipe' });
+const instructionPath = () => join(root, '.github', 'instructions', 'nextjs-aksel.instructions.md');
+const sourceInstruction = () => join(upstream, 'instructions', 'nextjs-aksel.instructions.md');
+const git = (cwd, ...args) =>
+  execFileSync('/usr/bin/git', args, {
+    cwd,
+    encoding: 'utf8',
+    stdio: 'pipe',
+    env: { ...process.env, PATH: '/usr/bin:/bin' }
+  });
 const commit = (cwd) => {
   git(cwd, 'add', '.');
   git(
@@ -55,6 +65,10 @@ beforeEach(async () => {
   await mkdir(join(upstream, 'agents'), { recursive: true });
   await mkdir(skillPath('references'), { recursive: true });
   await mkdir(sourceSkill('references'), { recursive: true });
+  await mkdir(join(root, '.github', 'instructions'), { recursive: true });
+  await mkdir(join(upstream, 'instructions'), { recursive: true });
+  await writeFile(instructionPath(), originalInstruction);
+  await writeFile(sourceInstruction(), originalInstruction);
   for (const agent of agents) {
     await writeFile(agentPath(agent), original);
     await writeFile(join(upstream, 'agents', `${agent}.agent.md`), agent === 'aksel' ? updated : original);
@@ -73,6 +87,7 @@ beforeEach(async () => {
 
 afterEach(async () => {
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
   await rm(workspace, { recursive: true, force: true });
 });
 
@@ -81,7 +96,7 @@ it('checks without writing and pins the download to the resolved commit', async 
   expect(await syncAgents('check', { root })).toBe(1);
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
   expect(exec.mock.calls).toContainEqual([
-    'git',
+    '/usr/bin/git',
     [
       'fetch',
       '--quiet',
@@ -92,6 +107,13 @@ it('checks without writing and pins the download to the resolved commit', async 
     ],
     expect.objectContaining({ timeout: 60_000 })
   ]);
+});
+
+it('checks and updates without relying on the inherited PATH', async () => {
+  vi.stubEnv('PATH', '/nonexistent');
+  expect(await syncAgents('check', { root })).toBe(1);
+  expect(await syncAgents('update', { root })).toBe(1);
+  expect(await readFile(agentPath('aksel'), 'utf8')).toBe(updated);
 });
 
 it('updates agents and all skill files, adds nested files and removes obsolete files', async () => {
@@ -150,4 +172,41 @@ it.each(['missing', 'invalid'])('does not write any files when a skill definitio
   await expect(syncAgents('update', { root })).rejects.toThrow();
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
   expect(await readFile(skillPath('SKILL.md'), 'utf8')).toBe(original);
+});
+
+it('checks and updates configured instructions without touching other instruction files', async () => {
+  const customPath = join(root, '.github', 'instructions', 'custom.instructions.md');
+  await writeFile(customPath, 'Local project rules\n');
+  await writeFile(sourceInstruction(), updatedInstruction);
+  await writeFile(join(upstream, 'instructions', 'other.instructions.md'), originalInstruction);
+  commit(root);
+  commit(upstream);
+
+  expect(await syncAgents('check', { root })).toBe(2);
+  expect(await readFile(instructionPath(), 'utf8')).toBe(originalInstruction);
+  expect(await syncAgents('update', { root })).toBe(2);
+  expect(await readFile(instructionPath(), 'utf8')).toBe(updatedInstruction);
+  expect(await readFile(customPath, 'utf8')).toBe('Local project rules\n');
+  await expect(readFile(join(root, '.github', 'instructions', 'other.instructions.md'))).rejects.toMatchObject({
+    code: 'ENOENT'
+  });
+  expect(await syncAgents('check', { root })).toBe(0);
+});
+
+it.each([false, true])('preserves local instruction changes (staged: %s)', async (staged) => {
+  await writeFile(instructionPath(), `${originalInstruction}Local customization\n`);
+  if (staged) git(root, 'add', '.github/instructions');
+  await expect(syncAgents('update', { root })).rejects.toThrow('Refusing to overwrite local changes');
+  expect(await readFile(instructionPath(), 'utf8')).toBe(`${originalInstruction}Local customization\n`);
+  expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+});
+
+it('does not write any files when an instruction lacks applyTo', async () => {
+  await writeFile(sourceInstruction(), original);
+  commit(upstream);
+  await expect(syncAgents('update', { root })).rejects.toThrow(
+    'Invalid definition: instructions/nextjs-aksel.instructions.md'
+  );
+  expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+  expect(await readFile(instructionPath(), 'utf8')).toBe(originalInstruction);
 });
