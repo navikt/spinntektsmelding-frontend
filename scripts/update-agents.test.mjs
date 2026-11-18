@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { syncAgents } from './update-agents.mjs';
 
@@ -10,31 +11,29 @@ vi.mock('node:child_process', async (importOriginal) => {
   return {
     ...original,
     execFileSync: (command, args, options) =>
-      command === 'git' && args[0] === 'ls-remote'
-        ? `${'a'.repeat(40)}\trefs/heads/main\n`
-        : original.execFileSync(command, args, options)
+      original.execFileSync(
+        command,
+        args.map((arg) => (arg === 'https://github.com/navikt/copilot.git' ? pathToFileURL(upstream).href : arg)),
+        options
+      )
   };
 });
 
 const agents = ['aksel', 'nav-pilot', 'code-review', 'security-champion'];
-const sha = 'a'.repeat(40);
 const original = '---\nname: test-agent\n---\nOriginal\n';
 const updated = '---\nname: test-agent\n---\nUpdated\n';
+let workspace;
 let root;
-let fetchImpl;
+let upstream;
 
 const agentPath = (agent) => join(root, '.github', 'agents', `${agent}.agent.md`);
-const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' });
-
-beforeEach(async () => {
-  root = await mkdtemp(join(tmpdir(), 'copilot-agents-test-'));
-  await mkdir(join(root, '.github', 'agents'), { recursive: true });
-  for (const agent of agents) {
-    await writeFile(agentPath(agent), original);
-  }
-  git('init');
-  git('add', '.github/agents');
+const skillPath = (...parts) => join(root, '.github', 'skills', 'aksel-builder', ...parts);
+const sourceSkill = (...parts) => join(upstream, 'skills', 'aksel-builder', ...parts);
+const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf8', stdio: 'pipe' });
+const commit = (cwd) => {
+  git(cwd, 'add', '.');
   git(
+    cwd,
     '-c',
     'user.name=Test',
     '-c',
@@ -44,50 +43,111 @@ beforeEach(async () => {
     'commit',
     '--no-gpg-sign',
     '-m',
-    'Initial'
+    'Test fixture'
   );
-  fetchImpl = vi.fn(async (url) => ({
-    ok: true,
-    text: async () => (url.endsWith('/aksel.agent.md') ? updated : original)
-  }));
+};
+
+beforeEach(async () => {
+  workspace = await mkdtemp(join(tmpdir(), 'copilot-agents-test-'));
+  root = join(workspace, 'project');
+  upstream = join(workspace, 'upstream');
+  await mkdir(join(root, '.github', 'agents'), { recursive: true });
+  await mkdir(join(upstream, 'agents'), { recursive: true });
+  await mkdir(skillPath('references'), { recursive: true });
+  await mkdir(sourceSkill('references'), { recursive: true });
+  for (const agent of agents) {
+    await writeFile(agentPath(agent), original);
+    await writeFile(join(upstream, 'agents', `${agent}.agent.md`), agent === 'aksel' ? updated : original);
+  }
+  for (const directory of [skillPath(), sourceSkill()]) {
+    await writeFile(join(directory, 'SKILL.md'), original);
+    await writeFile(join(directory, 'references', 'existing.md'), 'Original reference\n');
+  }
+  git(root, 'init', '--initial-branch=main');
+  git(upstream, 'init', '--initial-branch=main');
+  git(upstream, 'config', 'uploadpack.allowFilter', 'true');
+  commit(root);
+  commit(upstream);
   vi.spyOn(console, 'log').mockImplementation(() => {});
 });
 
 afterEach(async () => {
   vi.restoreAllMocks();
-  await rm(root, { recursive: true, force: true });
+  await rm(workspace, { recursive: true, force: true });
 });
 
-it('checks without writing and pins all downloads to the resolved commit', async () => {
-  expect(await syncAgents('check', { root, fetchImpl })).toBe(1);
+it('checks without writing and pins the download to the resolved commit', async () => {
+  const exec = vi.spyOn(await import('node:child_process'), 'execFileSync');
+  expect(await syncAgents('check', { root })).toBe(1);
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
-  expect(fetchImpl.mock.calls.map(([url]) => url)).toEqual(
-    agents.map((agent) => `https://raw.githubusercontent.com/navikt/copilot/${sha}/agents/${agent}.agent.md`)
-  );
+  expect(exec.mock.calls).toContainEqual([
+    'git',
+    [
+      'fetch',
+      '--quiet',
+      '--depth=1',
+      '--filter=blob:none',
+      'https://github.com/navikt/copilot.git',
+      git(upstream, 'rev-parse', 'HEAD').trim()
+    ],
+    expect.objectContaining({ timeout: 60_000 })
+  ]);
 });
 
-it('updates only changed agents and reports no changes on the next check', async () => {
-  expect(await syncAgents('update', { root, fetchImpl })).toBe(1);
+it('updates agents and all skill files, adds nested files and removes obsolete files', async () => {
+  await writeFile(sourceSkill('SKILL.md'), updated);
+  await writeFile(sourceSkill('references', 'existing.md'), 'Updated reference\n');
+  await mkdir(sourceSkill('references', 'nested'));
+  await writeFile(sourceSkill('references', 'nested', 'new.md'), 'New reference\n');
+  await writeFile(skillPath('obsolete.md'), 'Old reference\n');
+  commit(root);
+  commit(upstream);
+
+  expect(await syncAgents('check', { root })).toBe(5);
+  expect(await readFile(skillPath('obsolete.md'), 'utf8')).toBe('Old reference\n');
+  expect(await syncAgents('update', { root })).toBe(5);
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(updated);
   expect(await readFile(agentPath('nav-pilot'), 'utf8')).toBe(original);
-  expect(await syncAgents('check', { root, fetchImpl })).toBe(0);
+  expect(await readFile(skillPath('SKILL.md'), 'utf8')).toBe(updated);
+  expect(await readFile(skillPath('references', 'existing.md'), 'utf8')).toBe('Updated reference\n');
+  expect(await readFile(skillPath('references', 'nested', 'new.md'), 'utf8')).toBe('New reference\n');
+  await expect(readFile(skillPath('obsolete.md'))).rejects.toMatchObject({ code: 'ENOENT' });
+  expect(await syncAgents('check', { root })).toBe(0);
 });
 
-it.each([false, true])('preserves local changes (staged: %s)', async (staged) => {
+it.each([false, true])('preserves local agent changes (staged: %s)', async (staged) => {
   await writeFile(agentPath('aksel'), `${original}Local customization\n`);
-  if (staged) git('add', '.github/agents/aksel.agent.md');
-  await expect(syncAgents('update', { root, fetchImpl })).rejects.toThrow('Refusing to overwrite local changes');
+  if (staged) git(root, 'add', '.github/agents/aksel.agent.md');
+  await expect(syncAgents('update', { root })).rejects.toThrow('Refusing to overwrite local changes');
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(`${original}Local customization\n`);
 });
 
-it.each(['http', 'content'])('does not write any files when a later download fails: %s', async (failure) => {
-  fetchImpl.mockImplementation(async (url) => ({
-    ok: !(failure === 'http' && url.endsWith('/security-champion.agent.md')),
-    status: 404,
-    text: async () => (url.endsWith('/security-champion.agent.md') ? '<html>Error</html>' : updated)
-  }));
-  await expect(syncAgents('update', { root, fetchImpl })).rejects.toThrow(
-    failure === 'http' ? 'Download failed (404)' : 'Invalid agent definition'
-  );
+it.each(['modified', 'staged', 'deleted', 'untracked', 'ignored'])(
+  'preserves local skill changes: %s',
+  async (kind) => {
+    const path = skillPath('references', 'existing.md');
+    if (kind === 'deleted') {
+      await rm(path);
+    } else if (kind === 'untracked' || kind === 'ignored') {
+      await writeFile(skillPath('local.md'), 'Local reference\n');
+      if (kind === 'ignored') await writeFile(join(root, '.git', 'info', 'exclude'), 'local.md\n');
+    } else {
+      await writeFile(path, 'Local reference\n');
+      if (kind === 'staged') git(root, 'add', '.github/skills');
+    }
+    await expect(syncAgents('update', { root })).rejects.toThrow('Refusing to overwrite local changes');
+    expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+    if (kind === 'untracked' || kind === 'ignored') {
+      expect(await readFile(skillPath('local.md'), 'utf8')).toBe('Local reference\n');
+    }
+  }
+);
+
+it.each(['missing', 'invalid'])('does not write any files when a skill definition is %s', async (failure) => {
+  if (failure === 'missing') await rm(sourceSkill('SKILL.md'));
+  else await writeFile(sourceSkill('SKILL.md'), '<html>Error</html>');
+  commit(upstream);
+  await expect(syncAgents('update', { root })).rejects.toThrow();
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+  expect(await readFile(skillPath('SKILL.md'), 'utf8')).toBe(original);
 });
