@@ -1215,7 +1215,7 @@ describe('getServerSideProps', () => {
       const error = new Error('Arbeidsforhold unavailable');
       vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce(forespurt);
       vi.mocked(hentArbeidsforholdSSR.default).mockRejectedValueOnce(error);
-      const errorSpy = vi.spyOn(logger, 'error');
+      const errorSpy = vi.spyOn(logger, 'info');
 
       try {
         const result = await getServerSideProps(createContext());
