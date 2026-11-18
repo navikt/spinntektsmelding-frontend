@@ -201,10 +201,10 @@ async function fetchBackendData(uuid: string, token: string, erEndringFraKvitter
     hentArbeidsforholdSSR(uuid, token)
   ]);
   if (forespurtResult.status === RequestStatus.rejected) {
-    logger.error('Henting av forespurt data feilet: %j', forespurtResult.reason);
+    logger.warn('Henting av forespurt data feilet: %j', forespurtResult.reason);
   }
   if (arbeidsforholdResult.status === RequestStatus.rejected) {
-    logger.error('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
+    logger.warn('Henting av arbeidsforhold feilet: %j', arbeidsforholdResult.reason);
   }
 
   const forespurtStatus = resolveForespurtStatus(forespurtResult, erEndringFraKvittering);

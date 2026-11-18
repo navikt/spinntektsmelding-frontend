@@ -1215,7 +1215,7 @@ describe('getServerSideProps', () => {
       const error = new Error('Arbeidsforhold unavailable');
       vi.mocked(hentForespoerselSSR.default).mockResolvedValueOnce(forespurt);
       vi.mocked(hentArbeidsforholdSSR.default).mockRejectedValueOnce(error);
-      const errorSpy = vi.spyOn(logger, 'error');
+      const warnSpy = vi.spyOn(logger, 'warn');
 
       try {
         const result = await getServerSideProps(createContext());
@@ -1227,9 +1227,9 @@ describe('getServerSideProps', () => {
         expect(result).toHaveProperty('props.harFlereArbeidsforhold', false);
         expect(hentForespoerselSSR.default).toHaveBeenCalledOnce();
         expect(hentArbeidsforholdSSR.default).toHaveBeenCalledOnce();
-        expect(errorSpy).toHaveBeenCalledWith('Henting av arbeidsforhold feilet: %j', error);
+        expect(warnSpy).toHaveBeenCalledWith('Henting av arbeidsforhold feilet: %j', error);
       } finally {
-        errorSpy.mockRestore();
+        warnSpy.mockRestore();
       }
     });
   });

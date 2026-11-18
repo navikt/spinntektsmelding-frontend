@@ -104,7 +104,7 @@ const InitieringFritatt: NextPage = () => {
     }
     const mottatteArbeidsforhold = EndepunktArbeidsforholdSchema.safeParse(arbeidsforholdData);
     if (!mottatteArbeidsforhold.success && harArbeidsforhold) {
-      logger.error(
+      logger.info(
         `Validering av innsendte skjemadata feilet: ${JSON.stringify(
           mottatteArbeidsforhold.error.issues ?? 'Ingen issues funnet'
         )}`
@@ -120,7 +120,7 @@ const InitieringFritatt: NextPage = () => {
 
   const submitError: SubmitErrorHandler<Skjema> = (formErrors) => {
     const formData = methods.getValues();
-    logger.error(
+    logger.info(
       {
         skjemadata: {
           organisasjonsnummer: formData.organisasjonsnummer,
@@ -176,7 +176,7 @@ const InitieringFritatt: NextPage = () => {
       personnummer: sykmeldt.fnr
     });
     if (!validertePersondata.success) {
-      logger.error('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
+      logger.info('Validering av skjemadata feilet: %j', validertePersondata.error.issues);
       return;
     }
 

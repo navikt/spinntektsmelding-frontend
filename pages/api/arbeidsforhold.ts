@@ -155,7 +155,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     });
 
     if (!soeknadResponse.ok) {
-      logger.error('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
+      logger.warn('Feil ved henting av sykepengesøknader ' + soeknadResponse.statusText);
       return res.status(soeknadResponse.status).json({ error: 'Feil ved kontroll av tilgang til sykepengesøknader' });
     }
 
@@ -177,7 +177,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
     });
 
     if (!forespoerselIdListe.ok) {
-      logger.error('Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
+      logger.warn('Feil ved henting av forespørselIder ' + forespoerselIdListe.statusText);
       return res.status(forespoerselIdListe.status).json({ error: 'Feil ved henting av forespørselIder' });
     }
 

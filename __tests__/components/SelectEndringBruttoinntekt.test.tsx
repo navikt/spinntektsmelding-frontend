@@ -47,7 +47,7 @@ vi.mock('react-hook-form', () => ({
     },
     setValue: () => vi.fn(),
     formState: () => vi.fn(),
-    watch: () => vi.fn(),
+    watch: mockWatch,
     register: vi.fn()
   }),
   Controller: () => [],
@@ -105,5 +105,11 @@ describe('SelectEndringBruttoinntekt', () => {
     const { container } = render(<SelectEndringBruttoinntekt {...props} />);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
+  });
+
+  it('should render only valid reason values from the watched form state', () => {
+    render(<SelectEndringBruttoinntekt {...props} />);
+    const values = screen.getAllByRole<HTMLOptionElement>('option').map((option) => option.value);
+    expect(values.sort()).toEqual(['', ...Object.values(begrunnelseEndringBruttoinntekt)].sort());
   });
 });

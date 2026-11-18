@@ -328,16 +328,16 @@ describe('InitieringFritatt page', () => {
       );
 
       await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
-      const logError = vi.spyOn(logger, 'error');
+      const logInfo = vi.spyOn(logger, 'info');
       fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
       if (!fulltNavn) {
         await waitFor(() =>
-          expect(logError).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
+          expect(logInfo).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
         );
         expect(fakeStore.initPerson).not.toHaveBeenCalled();
         expect(mockedRouter.push).not.toHaveBeenCalled();
-        logError.mockRestore();
+        logInfo.mockRestore();
         return;
       }
 
@@ -361,7 +361,7 @@ describe('InitieringFritatt page', () => {
       expect(fakeStore.setHarGradertSykmelding).not.toHaveBeenCalled();
       // navigation
       await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
-      logError.mockRestore();
+      logInfo.mockRestore();
     }
   );
 
@@ -500,16 +500,16 @@ describe('InitieringFritatt page', () => {
     await user.click(await screen.findByRole('radio', { name: /en annen periode/ }));
     await user.click(await screen.findByRole('checkbox', { name: /01.01.2023 - 10.01.2023/ }));
 
-    const logError = vi.spyOn(logger, 'error');
+    const logInfo = vi.spyOn(logger, 'info');
     fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
 
     if (!fulltNavn) {
       await waitFor(() =>
-        expect(logError).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
+        expect(logInfo).toHaveBeenCalledWith('Validering av skjemadata feilet: %j', expect.any(Array))
       );
       expect(fakeStore.initPerson).not.toHaveBeenCalled();
       expect(mockedRouter.push).not.toHaveBeenCalled();
-      logError.mockRestore();
+      logInfo.mockRestore();
       return;
     }
 
@@ -523,7 +523,7 @@ describe('InitieringFritatt page', () => {
     expect(fakeStore.setSelvbestemtType).toHaveBeenCalledWith('MedArbeidsforhold');
     expect(fakeStore.setVedtaksperiodeId).toHaveBeenCalledWith(uuid);
     expect(fakeStore.setHarGradertSykmelding).toHaveBeenCalledWith(true);
-    logError.mockRestore();
+    logInfo.mockRestore();
   });
 
   it('clears refund choices when changing the period choice and resetting the form', async () => {

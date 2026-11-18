@@ -92,7 +92,7 @@ const InitieringAnnet: NextPage = () => {
         mottatteSykepengesoeknader?.success ? mottatteSykepengesoeknader.data : undefined
       );
     } else {
-      logger.error(
+      logger.info(
         '[initieringAnnet] Submit stoppet: ugyldige arbeidsforholdsdata ' + JSON.stringify(mottatteData?.error.issues)
       );
     }
@@ -169,7 +169,7 @@ const InitieringAnnet: NextPage = () => {
         <form
           className={lokalStyling.form}
           onSubmit={handleSubmit(submitForm, (formErrors) => {
-            logger.error(
+            logger.info(
               '[initieringAnnet] Submit stoppet: skjemaet er ugyldig' +
                 JSON.stringify({
                   values: methods.getValues(),

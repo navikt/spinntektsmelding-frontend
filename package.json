@@ -4,6 +4,8 @@
   "private": true,
   "packageManager": "pnpm@12.9.1+sha512.06b055fff5cd20dc12781de173ced3310ce0951bf2ec620211a16045d5444d5c93a663210764ef29a653a610459ba0368f0e74f84d80c54723cf95aae7bc0d6d",
   "scripts": {
+    "agents:check": "node scripts/update-agents.mjs check",
+    "agents:update": "node scripts/update-agents.mjs update",
     "dev:decorator": "next dev --webpack | pino-pretty --messageKey=message",
     "dev:decoratorless": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --webpack | pino-pretty",
     "dev": "cross-env NEXT_PUBLIC_DISABLE_DECORATOR=true next dev --webpack | pino-pretty",
