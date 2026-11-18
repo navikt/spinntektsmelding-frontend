@@ -68,6 +68,23 @@ Oppsettet ligger i [.github/workflows](./.github/workflows), [naiserator.yaml](.
 Opprett en pull request med en beskrivelse av endringen. Kjør relevante tester og kvalitetssjekker før du ber om review.
 Ikke legg personopplysninger eller hemmeligheter i kode, logger, issues eller pull requests.
 
+### Oppdatere Copilot-agenter
+
+De fire prosjektagentene i [.github/agents](./.github/agents) kan synkroniseres med
+[navikt/copilot](https://github.com/navikt/copilot):
+
+```bash
+pnpm agents:check
+pnpm agents:update
+```
+
+Kommandoene krever nettilgang, Node.js og Git, men ingen ekstra pakker.
+Sjekken endrer ingenting og avslutter med kode 0 når alt er oppdatert, 1 når oppdateringer finnes og 2 ved feil.
+Oppdateringen erstatter endrede agentfiler med originalene fra samme commit på kildens `main`-gren.
+Alle nedlastinger kontrolleres før filer skrives. Filer med lokale Git-endringer blir ikke overskrevet;
+commit eller bevar endringene først. Committede tilpasninger blir erstattet ved oppdatering.
+Gjennomgå diffen før du committer. Personlige agenter utenfor prosjektet blir ikke endret.
+
 ## Kode delvis generert med kunstig intelligens
 
 Deler av koden i dette repoet kan være generert med kunstig intelligens.
