@@ -68,10 +68,11 @@ Oppsettet ligger i [.github/workflows](./.github/workflows), [naiserator.yaml](.
 Opprett en pull request med en beskrivelse av endringen. Kjør relevante tester og kvalitetssjekker før du ber om review.
 Ikke legg personopplysninger eller hemmeligheter i kode, logger, issues eller pull requests.
 
-### Oppdatere Copilot-agenter og skills
+### Oppdatere Copilot-agenter, skills og instructions
 
-De fire prosjektagentene i [.github/agents](./.github/agents) og `aksel-builder` i
-[.github/skills](./.github/skills) kan synkroniseres med
+De fire prosjektagentene i [.github/agents](./.github/agents), `aksel-builder` i
+[.github/skills](./.github/skills) og `nextjs-aksel.instructions.md` i
+[.github/instructions](./.github/instructions) kan synkroniseres med
 [navikt/copilot](https://github.com/navikt/copilot):
 
 ```bash
@@ -79,13 +80,15 @@ pnpm agents:check
 pnpm agents:update
 ```
 
-Kommandoene krever nettilgang, Node.js og Git, men ingen ekstra pakker.
+Kommandoene krever nettilgang, Node.js og Git på `/usr/bin/git` (macOS/Linux), men ingen ekstra pakker.
+Git kjøres med fast `PATH` satt til `/usr/bin:/bin`, uavhengig av skallets `PATH`.
 Sjekken endrer ingenting og avslutter med kode 0 når alt er oppdatert, 1 når oppdateringer finnes og 2 ved feil.
 Oppdateringen erstatter endrede filer med originalene fra samme commit på kildens `main`-gren.
 Hele skill-mappen synkroniseres, inkludert referanser, nye filer og sletting av utgåtte filer.
 Andre skills installeres ikke automatisk; utvalget styres av `skills` i [skriptet](./scripts/update-agents.mjs).
-Alle nedlastinger kontrolleres før filer skrives. Lokale Git-endringer i de valgte agentene eller
-skill-mappene, inkludert usporede og ignorerte filer, stopper oppdateringen;
+Instructions velges tilsvarende i `instructions`; andre instruksjonsfiler blir ikke endret.
+Alle nedlastinger kontrolleres før filer skrives. Lokale Git-endringer i de valgte agentene,
+instruksjonsfilene eller skill-mappene, inkludert usporede og ignorerte filer, stopper oppdateringen;
 commit eller bevar endringene først. Committede tilpasninger blir erstattet ved oppdatering.
 Gjennomgå diffen før du committer. Personlige agenter utenfor prosjektet blir ikke endret.
 
