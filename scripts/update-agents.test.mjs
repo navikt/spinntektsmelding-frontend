@@ -91,6 +91,23 @@ afterEach(async () => {
   await rm(workspace, { recursive: true, force: true });
 });
 
+it('rejects an invalid mode before running git', async () => {
+  const exec = vi.spyOn(await import('node:child_process'), 'execFileSync');
+
+  await expect(syncAgents('invalid', { root })).rejects.toThrow('Usage: node scripts/update-agents.mjs <check|update>');
+  expect(exec).not.toHaveBeenCalled();
+});
+
+it.each(['', 'abc123', 'g'.repeat(40)])('rejects an invalid remote commit SHA: %j', async (sha) => {
+  const exec = vi
+    .spyOn(await import('node:child_process'), 'execFileSync')
+    .mockReturnValueOnce(`${sha}\trefs/heads/main\n`);
+
+  await expect(syncAgents('update', { root })).rejects.toThrow('GitHub returned an invalid commit SHA.');
+  expect(exec).toHaveBeenCalledTimes(1);
+  expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+});
+
 it('checks without writing and pins the download to the resolved commit', async () => {
   const exec = vi.spyOn(await import('node:child_process'), 'execFileSync');
   expect(await syncAgents('check', { root })).toBe(1);
@@ -114,6 +131,16 @@ it('checks and updates without relying on the inherited PATH', async () => {
   expect(await syncAgents('check', { root })).toBe(1);
   expect(await syncAgents('update', { root })).toBe(1);
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(updated);
+});
+
+it('does not write or check local git status when everything is up to date', async () => {
+  await writeFile(join(upstream, 'agents', 'aksel.agent.md'), original);
+  commit(upstream);
+  const exec = vi.spyOn(await import('node:child_process'), 'execFileSync');
+
+  expect(await syncAgents('update', { root })).toBe(0);
+  expect(exec.mock.calls.some(([, args]) => args[0] === 'status')).toBe(false);
+  expect(git(root, 'status', '--porcelain')).toBe('');
 });
 
 it('updates agents and all skill files, adds nested files and removes obsolete files', async () => {
@@ -172,6 +199,19 @@ it.each(['missing', 'invalid'])('does not write any files when a skill definitio
   await expect(syncAgents('update', { root })).rejects.toThrow();
   expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
   expect(await readFile(skillPath('SKILL.md'), 'utf8')).toBe(original);
+});
+
+it.each(['missing', 'invalid'])('does not write any files when an agent definition is %s', async (failure) => {
+  const path = join(upstream, 'agents', 'nav-pilot.agent.md');
+  if (failure === 'missing') await rm(path);
+  else await writeFile(path, '---\ndescription: Missing name\n---\n');
+  commit(upstream);
+
+  await expect(syncAgents('update', { root })).rejects.toThrow(
+    failure === 'missing' ? /ENOENT/ : 'Invalid definition: agents/nav-pilot.agent.md'
+  );
+  expect(await readFile(agentPath('aksel'), 'utf8')).toBe(original);
+  expect(await readFile(agentPath('nav-pilot'), 'utf8')).toBe(original);
 });
 
 it('checks and updates configured instructions without touching other instruction files', async () => {
