@@ -54,6 +54,22 @@ pnpm build
 
 Testene kjøres med Vitest. Bruk `pnpm test:watch` for å kjøre dem kontinuerlig under utvikling.
 
+## Tracing og logger
+
+Nais aktiverer OpenTelemetry automatisk for Node.js via [naiserator.yaml](./naiserator.yaml).
+Serverlogger skal bruke `logger` fra `@navikt/next-logger`, også ved API- og proxy-feil.
+Loggeren legger automatisk til `trace_id`, `span_id` og `trace_flags` fra aktiv span,
+slik at logger og traces kan kobles sammen i Grafana. Uten aktiv span utelates feltene.
+Ikke registrer en ekstra OpenTelemetry-SDK ved siden av Nais-agenten.
+Ikke logg tokens, request-/response-body eller personopplysninger.
+
+Begge innsendingsflytene oppretter Faro-spannen `send_inntektsmelding` i
+[utils/postInnsending.ts](./utils/postInnsending.ts). Den dekker POST-kallet og behandling
+av resultatet, inkludert navigering ved suksess, men ikke lokal skjemavalidering.
+Spannen er aktiv når HTTP-kallet starter, slik at nettverkskallet kan arve trace-konteksten.
+Kun HTTP-status registreres som attributt; feil markeres uten responsinnhold eller feilmelding.
+Innsending fungerer også når Faro er deaktivert.
+
 ## Deploy
 
 Applikasjonen bygges som et containerimage og deployes til [Nais](https://nais.io/) via GitHub Actions:

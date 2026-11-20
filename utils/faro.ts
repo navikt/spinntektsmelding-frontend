@@ -4,6 +4,10 @@ import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 import env from '../config/environment';
 
 let faro: Faro | null = null;
+export function getFaroTracing() {
+  return faro?.api.getOTEL();
+}
+
 export function initInstrumentation(): void {
   if (typeof window === 'undefined' || faro !== null) return;
 

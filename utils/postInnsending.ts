@@ -49,13 +49,22 @@ export async function postInnsending<B = unknown, S = unknown>({
   setErrorResponse,
   setShowErrorList
 }: PostInnsendingOptions<B, S>): Promise<void> {
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then((data) =>
-      handleResponse<S>(
+  const { getFaroTracing } = await import('./faro');
+  const otel = getFaroTracing();
+  const span = otel?.trace.getTracer('spinntektsmelding-frontend').startSpan('send_inntektsmelding');
+
+  const send = async () => {
+    try {
+      const data = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      span?.setAttribute('http.response.status_code', data.status);
+      if (data.status !== 200 && data.status !== 201) {
+        span?.setStatus({ code: 2 });
+      }
+      await handleResponse<S>(
         data,
         {
           analyticsComponent,
@@ -66,9 +75,22 @@ export async function postInnsending<B = unknown, S = unknown>({
           setShowErrorList
         },
         body
-      )
-    )
-    .catch((err) => handleNetworkError(err, { setErrorResponse, setShowErrorList }));
+      );
+      if (data.status === 200 || data.status === 201) {
+        span?.setStatus({ code: 1 });
+      }
+    } catch (err) {
+      span?.setStatus({ code: 2 });
+      handleNetworkError(err, { setErrorResponse, setShowErrorList });
+    } finally {
+      span?.end();
+    }
+  };
+
+  if (otel && span) {
+    return otel.context.with(otel.trace.setSpan(otel.context.active(), span), send);
+  }
+  return send();
 }
 
 async function handleResponse<S>(

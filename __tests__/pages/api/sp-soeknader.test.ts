@@ -141,7 +141,6 @@ describe('API Route: /api/sp-soeknader', () => {
 
   it('returnerer 500 når nødvendig proxy-konfigurasjon mangler', () => {
     vi.stubEnv('HENT-SOEKNADER', undefined);
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const response = createResponse();
 
     handler(createRequest(), response);
@@ -149,10 +148,9 @@ describe('API Route: /api/sp-soeknader', () => {
     expect(response.status).toHaveBeenCalledWith(500);
     expect(response.json).toHaveBeenCalledWith({ error: 'Server configuration error' });
     expect(mockLoggerInfo).not.toHaveBeenCalled();
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Missing required environment variables:',
-      expect.objectContaining({ message: 'Missing required environment variable: HENT-SOEKNADER' })
+    expect(logger.error).toHaveBeenCalledWith(
+      { err: expect.objectContaining({ message: 'Missing required environment variable: HENT-SOEKNADER' }) },
+      'Missing required environment variables'
     );
-    consoleErrorSpy.mockRestore();
   });
 });

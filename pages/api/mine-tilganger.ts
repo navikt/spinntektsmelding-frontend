@@ -73,7 +73,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       setTimeout(() => res.status(200).json(simpleTree), 100);
       return;
     } catch (error) {
-      console.error('Failed to parse mock data:', error);
+      logger.error({ err: error }, 'Failed to parse mock data');
       return res.status(500).json({ error: 'Failed to parse mock data' });
     }
   }

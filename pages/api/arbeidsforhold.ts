@@ -40,7 +40,7 @@ function handleDevelopmentRequest(res: NextApiResponse<unknown>): NextApiRespons
     const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     return res.status(200).json(data);
   } catch (error) {
-    console.error('Failed to parse mock data:', error);
+    logger.error({ err: error }, 'Failed to parse mock data');
     return res.status(500).json({ error: 'Failed to parse mock data' });
   }
 }
@@ -194,7 +194,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
 
     return res.status(soeknadResponse.status).json(soeknadResponseData);
   } catch (error) {
-    console.error('Missing required environment variables or error:', error);
+    logger.error({ err: error }, 'Missing required environment variables or error');
     return res.status(500).json({ error: 'Server configuration error' });
   }
 };

@@ -1,10 +1,12 @@
+import { logger } from '@navikt/next-logger';
+
 const handleProxyInit = (proxy: any) => {
   /**
    * Check the list of bindable events in the `http-proxy` specification.
    * @see https://www.npmjs.com/package/http-proxy#listening-for-proxy-events
    */
   proxy.on('error', function (err: any, _req: any, res: any) {
-    console.error('Proxy error', err);
+    logger.error({ err }, 'Proxy error');
     res.writeHead(500, {
       'Content-Type': 'text/plain'
     });

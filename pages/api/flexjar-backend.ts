@@ -56,7 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
         ]
       });
     } catch (error) {
-      console.error('Missing required environment variables:', error);
+      logger.error({ err: error }, 'Missing required environment variables');
       return res.status(500).json({ error: 'Server configuration error' });
     }
   } else {

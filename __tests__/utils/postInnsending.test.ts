@@ -12,6 +12,25 @@ vi.mock('@navikt/next-logger', () => ({ logger: { warn: (...args: any[]) => warn
 const teamLoggerWarnSpy = vi.hoisted(() => vi.fn());
 vi.mock('@navikt/next-logger/team-log', () => ({ teamLogger: { warn: teamLoggerWarnSpy } }));
 
+const { getFaroTracing, span, otel, spanContext } = vi.hoisted(() => {
+  const span = { setAttribute: vi.fn(), setStatus: vi.fn(), end: vi.fn() };
+  const tracer = { startSpan: vi.fn(() => span) };
+  const spanContext = {};
+  const otel = {
+    trace: {
+      getTracer: vi.fn(() => tracer),
+      setSpan: vi.fn(() => spanContext)
+    },
+    context: {
+      active: vi.fn(() => ({})),
+      with: vi.fn((_context: unknown, callback: () => Promise<void>) => callback())
+    }
+  };
+  return { getFaroTracing: vi.fn(), span, otel, spanContext };
+});
+
+vi.mock('../../utils/faro', () => ({ getFaroTracing }));
+
 // Helper to build fetch Response mock
 function buildResponse(status: number, jsonData?: any): Response {
   return {
@@ -31,6 +50,8 @@ describe('postInnsending', () => {
   let setShowErrorList: any;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+    getFaroTracing.mockReturnValue(otel);
     unauthorized = vi.fn();
     success = vi.fn();
     mapValidationErrors = vi.fn((feil, _errors: ErrorResponse[]) =>
@@ -62,6 +83,94 @@ describe('postInnsending', () => {
 
     expect(success).toHaveBeenCalledWith({ ok: true });
     expect(unauthorized).not.toHaveBeenCalled();
+    expect(otel.trace.getTracer).toHaveBeenCalledWith('spinntektsmelding-frontend');
+    expect(otel.trace.getTracer().startSpan).toHaveBeenCalledWith('send_inntektsmelding');
+    expect(otel.context.with).toHaveBeenCalledWith(spanContext, expect.any(Function));
+    expect(span.setAttribute).toHaveBeenCalledExactlyOnceWith('http.response.status_code', 201);
+    expect(span.setStatus).toHaveBeenLastCalledWith({ code: 1 });
+    expect(span.end).toHaveBeenCalledTimes(1);
+  });
+
+  it('sender inn uten tracing når Faro ikke er initialisert eller tracing er deaktivert', async () => {
+    getFaroTracing.mockReturnValue(undefined);
+    global.fetch = vi.fn().mockResolvedValue(buildResponse(201, { ok: true }));
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(success).toHaveBeenCalledWith({ ok: true });
+    expect(otel.trace.getTracer).not.toHaveBeenCalled();
+    expect(span.end).not.toHaveBeenCalled();
+  });
+
+  it('avslutter spannen først etter asynkron suksessbehandling', async () => {
+    global.fetch = vi.fn().mockResolvedValue(buildResponse(201));
+    success.mockImplementation(async () => {
+      await Promise.resolve();
+      expect(span.end).not.toHaveBeenCalled();
+    });
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(success).toHaveBeenCalledTimes(1);
+    expect(span.end).toHaveBeenCalledTimes(1);
+  });
+
+  it('markerer nettverksfeil uten å registrere feilmelding eller skjemainnhold i spannen', async () => {
+    global.fetch = vi.fn().mockRejectedValue(new Error('Sensitive server details'));
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(span.setStatus).toHaveBeenCalledExactlyOnceWith({ code: 2 });
+    expect(span.setAttribute).not.toHaveBeenCalled();
+    expect(span.end).toHaveBeenCalledTimes(1);
+  });
+
+  it('avslutter spannen med feilstatus når suksessbehandlingen feiler', async () => {
+    global.fetch = vi.fn().mockResolvedValue(buildResponse(201));
+    success.mockRejectedValue(new Error('Synthetic navigation failure'));
+
+    await postInnsending({
+      url,
+      body,
+      analyticsComponent: 'comp',
+      onUnauthorized: unauthorized,
+      onSuccess: success,
+      mapValidationErrors,
+      setErrorResponse,
+      setShowErrorList
+    });
+
+    expect(setErrorResponse).toHaveBeenCalledTimes(1);
+    expect(span.setStatus).toHaveBeenCalledExactlyOnceWith({ code: 2 });
+    expect(span.end).toHaveBeenCalledTimes(1);
   });
 
   it('kaller onUnauthorized ved 401', async () => {
@@ -80,6 +189,8 @@ describe('postInnsending', () => {
 
     expect(unauthorized).toHaveBeenCalledTimes(1);
     expect(success).not.toHaveBeenCalled();
+    expect(span.setStatus).toHaveBeenLastCalledWith({ code: 2 });
+    expect(span.end).toHaveBeenCalledTimes(1);
   });
 
   it.each([
@@ -138,6 +249,9 @@ describe('postInnsending', () => {
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     const errs = setErrorResponse.mock.calls[0][0];
     expect(errs[0].error).toContain('akkurat nå en feil');
+    expect(span.setAttribute).toHaveBeenCalledExactlyOnceWith('http.response.status_code', 500);
+    expect(span.setStatus).toHaveBeenLastCalledWith({ code: 2 });
+    expect(span.end).toHaveBeenCalledTimes(1);
   });
 
   it('returnerer valideringsfeil ved 400 BadRequest', async () => {
