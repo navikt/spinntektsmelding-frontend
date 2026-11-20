@@ -705,8 +705,8 @@ describe('API Route: /api/mine-tilganger', () => {
       );
     });
 
-    it('should not fail the request when teamLogger throws an Error', async () => {
-      setupSuccess([{ orgnr: '1', altinn3Tilganger: [], underenheter: [] }]);
+    it('should log sanitized data without failing the request when teamLogger throws an Error', async () => {
+      setupSuccess([{ orgnr: '123456789', altinn3Tilganger: [], underenheter: [] }]);
       mockTeamLoggerInfo.mockImplementationOnce(() => {
         throw new Error('logg feilet');
       });
@@ -715,9 +715,9 @@ describe('API Route: /api/mine-tilganger', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockLoggerWarn).toHaveBeenCalledWith(
-        expect.objectContaining({ err: expect.any(Error) }),
-        expect.stringContaining('logg feilet')
+        'Forespørsel om mine-tilganger {"antallOrganisasjoner":1,"altinn3Tilganger":[{"orgnr":"[redacted]","altinn3Tilganger":[]}]}'
       );
+      expect(mockLoggerWarn).not.toHaveBeenCalledWith(expect.stringContaining('123456789'));
       expect(statusMock).toHaveBeenCalledWith(200);
     });
 
@@ -732,8 +732,7 @@ describe('API Route: /api/mine-tilganger', () => {
       await handler(mockReq as NextApiRequest, mockRes as NextApiResponse);
 
       expect(mockLoggerWarn).toHaveBeenCalledWith(
-        expect.objectContaining({ err: 'string-feil' }),
-        expect.stringContaining('string-feil')
+        'Forespørsel om mine-tilganger {"antallOrganisasjoner":1,"altinn3Tilganger":[{"orgnr":"1","altinn3Tilganger":[]}]}'
       );
       expect(statusMock).toHaveBeenCalledWith(200);
     });
