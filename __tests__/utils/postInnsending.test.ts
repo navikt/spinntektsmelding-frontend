@@ -48,6 +48,7 @@ describe('postInnsending', () => {
   let mapValidationErrors: any;
   let setErrorResponse: any;
   let setShowErrorList: any;
+  let options: Parameters<typeof postInnsending>[0];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -63,14 +64,7 @@ describe('postInnsending', () => {
     );
     setErrorResponse = vi.fn();
     setShowErrorList = vi.fn();
-    warnSpy.mockClear();
-    teamLoggerWarnSpy.mockReset();
-  });
-
-  it('kaller onSuccess ved 201 og parser json', async () => {
-    global.fetch = vi.fn().mockResolvedValue(buildResponse(201, { ok: true }));
-
-    await postInnsending({
+    options = {
       url,
       body,
       analyticsComponent: 'comp',
@@ -79,7 +73,15 @@ describe('postInnsending', () => {
       mapValidationErrors,
       setErrorResponse,
       setShowErrorList
-    });
+    };
+    warnSpy.mockClear();
+    teamLoggerWarnSpy.mockReset();
+  });
+
+  it('kaller onSuccess ved 201 og parser json', async () => {
+    global.fetch = vi.fn().mockResolvedValue(buildResponse(201, { ok: true }));
+
+    await postInnsending(options);
 
     expect(success).toHaveBeenCalledWith({ ok: true });
     expect(unauthorized).not.toHaveBeenCalled();
@@ -95,16 +97,7 @@ describe('postInnsending', () => {
     getFaroTracing.mockReturnValue(undefined);
     global.fetch = vi.fn().mockResolvedValue(buildResponse(201, { ok: true }));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(success).toHaveBeenCalledWith({ ok: true });
     expect(otel.trace.getTracer).not.toHaveBeenCalled();
@@ -131,16 +124,7 @@ describe('postInnsending', () => {
           ? vi.fn().mockResolvedValue(buildResponse(201, { ok: true }))
           : vi.fn().mockRejectedValue(new Error('ECONNRESET'));
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(fetch).toHaveBeenCalledExactlyOnceWith(url, {
         method: 'POST',
@@ -175,16 +159,7 @@ describe('postInnsending', () => {
       expect(span.end).not.toHaveBeenCalled();
     });
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(success).toHaveBeenCalledTimes(1);
     expect(span.end).toHaveBeenCalledTimes(1);
@@ -193,16 +168,7 @@ describe('postInnsending', () => {
   it('markerer nettverksfeil uten å registrere feilmelding eller skjemainnhold i spannen', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('Sensitive server details'));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     expect(span.setStatus).toHaveBeenCalledExactlyOnceWith({ code: 2 });
@@ -214,16 +180,7 @@ describe('postInnsending', () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(201));
     success.mockRejectedValue(new Error('Synthetic navigation failure'));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     expect(span.setStatus).toHaveBeenCalledExactlyOnceWith({ code: 2 });
@@ -233,16 +190,7 @@ describe('postInnsending', () => {
   it('kaller onUnauthorized ved 401', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(401));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(unauthorized).toHaveBeenCalledTimes(1);
     expect(success).not.toHaveBeenCalled();
@@ -261,16 +209,7 @@ describe('postInnsending', () => {
     });
     global.fetch = vi.fn().mockResolvedValue(response);
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
       {
@@ -289,24 +228,35 @@ describe('postInnsending', () => {
     expect(teamLoggerWarnSpy).not.toHaveBeenCalled();
   });
 
-  it('returnerer serverfeil (500) med setErrorResponse', async () => {
-    global.fetch = vi.fn().mockResolvedValue(buildResponse(500));
+  it.each([500, 503])('returnerer serverfeil (%s) med setErrorResponse', async (status) => {
+    global.fetch = vi.fn().mockResolvedValue(buildResponse(status));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     const errs = setErrorResponse.mock.calls[0][0];
     expect(errs[0].error).toContain('akkurat nå en feil');
-    expect(span.setAttribute).toHaveBeenCalledExactlyOnceWith('http.response.status_code', 500);
+    expect(span.setAttribute).toHaveBeenCalledExactlyOnceWith('http.response.status_code', status);
+    expect(span.setStatus).toHaveBeenLastCalledWith({ code: 2 });
+    expect(span.end).toHaveBeenCalledTimes(1);
+  });
+
+  it('viser serverfeil når responsinnholdet ikke kan leses', async () => {
+    const response = new Response('utilgjengelig respons', { status: 503 });
+    vi.spyOn(response, 'text').mockRejectedValue(new Error('Response body unavailable'));
+    global.fetch = vi.fn().mockResolvedValue(response);
+
+    await postInnsending(options);
+
+    expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
+      {
+        value: 'Innsending av skjema feilet',
+        error: 'Det er akkurat nå en feil i systemet hos oss. Vennligst prøv igjen om en stund.',
+        property: 'server'
+      }
+    ]);
+    expect(success).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith('Feil ved innsending av skjema - 500 ');
     expect(span.setStatus).toHaveBeenLastCalledWith({ code: 2 });
     expect(span.end).toHaveBeenCalledTimes(1);
   });
@@ -318,16 +268,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledTimes(1);
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
@@ -349,16 +290,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body: requestBody,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending({ ...options, body: requestBody });
 
     expect(teamLoggerWarnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenLastCalledWith(
@@ -384,16 +316,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledWith(
       { error: 'Feil under validering.', valideringsfeil: ['livet er for kjipt', 'det regner hele året'] },
@@ -412,16 +335,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledWith(
       { error: '', valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler'] },
@@ -439,16 +353,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledWith(
       { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
@@ -466,16 +371,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledWith(
       { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
@@ -495,16 +391,7 @@ describe('postInnsending', () => {
       text: async () => 'ikke json'
     } as any);
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalledWith(
       { error: 'Validering av skjema feilet', valideringsfeil: ['Validering av skjema feilet'] },
@@ -526,16 +413,7 @@ describe('postInnsending', () => {
     const jsonSpy = vi.spyOn(response, 'json');
     global.fetch = vi.fn().mockResolvedValue(response);
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(textSpy).toHaveBeenCalledTimes(1);
     expect(jsonSpy).not.toHaveBeenCalled();
@@ -553,16 +431,7 @@ describe('postInnsending', () => {
       })
     );
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(mapValidationErrors).toHaveBeenCalled();
     expect(setErrorResponse).toHaveBeenCalled();
@@ -579,16 +448,7 @@ describe('postInnsending', () => {
         throw new Error('Teamlogger utilgjengelig');
       });
 
-      await postInnsending({
-        url,
-        body: { nummer },
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending({ ...options, body: { nummer } });
 
       expect(teamLoggerWarnSpy).toHaveBeenCalledWith(expect.stringContaining(nummer));
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"nummer":"[redacted]"'));
@@ -599,16 +459,7 @@ describe('postInnsending', () => {
   it('logger 404 feil', async () => {
     global.fetch = vi.fn().mockResolvedValue(buildResponse(404));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(warnSpy).toHaveBeenCalled();
   });
@@ -622,16 +473,7 @@ describe('postInnsending', () => {
       text: async () => ''
     } as any);
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(success).toHaveBeenCalledWith(null); // fallback når parsing feiler
   });
@@ -639,16 +481,7 @@ describe('postInnsending', () => {
   it('håndterer network error', async () => {
     global.fetch = vi.fn().mockRejectedValue(new Error('ECONNRESET'));
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalled();
     expect(setShowErrorList).toHaveBeenCalledWith(true);
@@ -663,16 +496,7 @@ describe('postInnsending', () => {
       text: async () => ''
     } as any);
 
-    await postInnsending({
-      url,
-      body,
-      analyticsComponent: 'comp',
-      onUnauthorized: unauthorized,
-      onSuccess: success,
-      mapValidationErrors,
-      setErrorResponse,
-      setShowErrorList
-    });
+    await postInnsending(options);
 
     expect(setErrorResponse).toHaveBeenCalledTimes(1);
     expect(setErrorResponse.mock.calls[0][0][0].property).toBe('server');
@@ -688,16 +512,7 @@ describe('postInnsending', () => {
         })
       );
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(mapValidationErrors).toHaveBeenCalledWith(
         { error: 'Backend feilet', valideringsfeil: ['Felt er ugyldig'] },
@@ -716,16 +531,7 @@ describe('postInnsending', () => {
         })
       );
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(mapValidationErrors).toHaveBeenCalledWith(
         { error: 'Backend feilet', valideringsfeil: ['Backend feilet'] },
@@ -743,16 +549,7 @@ describe('postInnsending', () => {
         })
       );
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(mapValidationErrors).toHaveBeenCalledWith(
         { error: '', valideringsfeil: ['Felt 1 er ugyldig', 'Felt 2 mangler'] },
@@ -771,16 +568,7 @@ describe('postInnsending', () => {
         })
       );
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(mapValidationErrors).toHaveBeenCalledWith(
         { error: 'Mangler valideringsfeil', valideringsfeil: ['Mangler valideringsfeil'] },
@@ -797,16 +585,7 @@ describe('postInnsending', () => {
         })
       );
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(mapValidationErrors).not.toHaveBeenCalled();
       expect(setErrorResponse).toHaveBeenCalledTimes(1);
@@ -828,16 +607,7 @@ describe('postInnsending', () => {
       const textSpy = vi.spyOn(response, 'text');
       global.fetch = vi.fn().mockResolvedValue(response);
 
-      await postInnsending({
-        url,
-        body,
-        analyticsComponent: 'comp',
-        onUnauthorized: unauthorized,
-        onSuccess: success,
-        mapValidationErrors,
-        setErrorResponse,
-        setShowErrorList
-      });
+      await postInnsending(options);
 
       expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
         {
