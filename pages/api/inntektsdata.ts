@@ -36,7 +36,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<InntektsdataResponse>
       logger.info('inntektsdata mock data loaded');
       return res.status(200).json(data);
     } catch (error) {
-      console.error('Failed to parse mock data:', error);
+      logger.error({ err: error }, 'Failed to parse mock data');
       return res.status(500).json({ error: 'Failed to parse mock data' });
     }
   } else if (env === 'production') {
@@ -53,7 +53,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<InntektsdataResponse>
         ]
       });
     } catch (error) {
-      console.error('Missing required environment variables:', error);
+      logger.error({ err: error }, 'Missing required environment variables');
       return res.status(500).json({ error: 'Server configuration error' });
     }
   }

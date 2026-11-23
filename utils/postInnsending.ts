@@ -3,7 +3,7 @@ import logEvent from './logEvent';
 import ResponseBackendErrorSchema from '../schema/ResponseBackendErrorSchema';
 import { ErrorResponse } from './useErrorResponse';
 import { z } from 'zod';
-import { teamLogger } from '@navikt/next-logger/team-log';
+import { safeTeamLogger } from './safeTeamLogger';
 
 export type BackendValidationError = z.infer<typeof ResponseBackendErrorSchema>;
 
@@ -49,13 +49,25 @@ export async function postInnsending<B = unknown, S = unknown>({
   setErrorResponse,
   setShowErrorList
 }: PostInnsendingOptions<B, S>): Promise<void> {
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(body),
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then((data) =>
-      handleResponse<S>(
+  const faro = await import('./faro').catch(() => {
+    logger.warn('Kunne ikke laste Faro - sender inn uten tracing');
+    return undefined;
+  });
+  const otel = faro?.getFaroTracing();
+  const span = otel?.trace.getTracer('spinntektsmelding-frontend').startSpan('send_inntektsmelding');
+
+  const send = async () => {
+    try {
+      const data = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      span?.setAttribute('http.response.status_code', data.status);
+      if (data.status !== 200 && data.status !== 201) {
+        span?.setStatus({ code: 2 });
+      }
+      await handleResponse<S>(
         data,
         {
           analyticsComponent,
@@ -66,9 +78,22 @@ export async function postInnsending<B = unknown, S = unknown>({
           setShowErrorList
         },
         body
-      )
-    )
-    .catch((err) => handleNetworkError(err, { setErrorResponse, setShowErrorList }));
+      );
+      if (data.status === 200 || data.status === 201) {
+        span?.setStatus({ code: 1 });
+      }
+    } catch (err) {
+      span?.setStatus({ code: 2 });
+      handleNetworkError(err, { setErrorResponse, setShowErrorList });
+    } finally {
+      span?.end();
+    }
+  };
+
+  if (otel && span) {
+    return otel.context.with(otel.trace.setSpan(otel.context.active(), span), send);
+  }
+  return send();
 }
 
 async function handleResponse<S>(
@@ -144,7 +169,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest ' + data.statusText + ' ' + JSON.stringify(feil));
-        safeTeamLoggerWarn(
+        safeTeamLogger.warn(
           'Feil ved innsending av skjema - 400 - BadRequest ' +
             data.statusText +
             ' ' +
@@ -160,7 +185,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
         options.setErrorResponse(mappedErrors);
         options.setShowErrorList(true);
         logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText);
-        safeTeamLoggerWarn(
+        safeTeamLogger.warn(
           'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
             data.statusText +
             ' ' +
@@ -177,7 +202,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
       options.setErrorResponse(mappedErrors);
       options.setShowErrorList(true);
       logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + data.statusText);
-      safeTeamLoggerWarn(
+      safeTeamLogger.warn(
         'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
           data.statusText +
           ' ' +
@@ -194,7 +219,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
     options.setErrorResponse(mappedErrors);
     options.setShowErrorList(true);
     logger.warn('Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' + err);
-    safeTeamLoggerWarn(
+    safeTeamLogger.warn(
       'Feil ved innsending av skjema - 400 - BadRequest, uventet respons ' +
         err +
         ' ' +
@@ -277,7 +302,7 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
         logger.warn(
           'Feil ved innsending av skjema - ' + data.status + ' - ' + data.statusText + ' ' + JSON.stringify(feil)
         );
-        safeTeamLoggerWarn(
+        safeTeamLogger.warn(
           'Feil ved innsending av skjema - ' +
             data.status +
             ' - ' +
@@ -292,7 +317,7 @@ async function handleDefaultResponse<S>(data: Response, options: PostInnsendingR
     }
   } catch (err) {
     logger.warn('Feil ved innsending av skjema - uventet respons ' + err);
-    safeTeamLoggerWarn(
+    safeTeamLogger.warn(
       'Feil ved innsending av skjema - uventet respons ' + err + ' ' + responseText + ' ' + JSON.stringify(body)
     );
   }
@@ -326,14 +351,5 @@ async function safeText(resp: Response): Promise<string> {
     return await resp.text();
   } catch {
     return '';
-  }
-}
-
-function safeTeamLoggerWarn(message: string) {
-  try {
-    teamLogger.warn(message);
-  } catch (e) {
-    const sanitizedMessage = message.replace(/\b(?:\d{11}|\d{9}|\d{8})\b/g, '[redacted]');
-    logger.warn(sanitizedMessage);
   }
 }

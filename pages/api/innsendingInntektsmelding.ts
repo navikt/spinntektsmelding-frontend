@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { logger } from '@navikt/next-logger';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
 import handleProxyInit from '../../utils/api/handleProxyInit';
@@ -36,7 +37,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<FeilRespons>) => {
         ]
       });
     } catch (error) {
-      console.error('Missing required environment variables:', error);
+      logger.error({ err: error }, 'Missing required environment variables');
       return res.status(500).json({ error: 'Server configuration error', valideringsfeil: [] });
     }
   } else {

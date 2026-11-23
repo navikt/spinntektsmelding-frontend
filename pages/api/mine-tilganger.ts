@@ -6,7 +6,7 @@ import { EndepunktAltinnTilganger } from '../../schema/EndepunktAltinnTilgangerS
 import safelyParseJSON from '../../utils/safelyParseJson';
 import path from 'node:path';
 import { logger } from '@navikt/next-logger';
-import { teamLogger } from '@navikt/next-logger/team-log';
+import { safeTeamLogger } from '../../utils/safeTeamLogger';
 import { requireEnv } from '../../utils/api/validateEnv';
 
 export const config = {
@@ -73,7 +73,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
       setTimeout(() => res.status(200).json(simpleTree), 100);
       return;
     } catch (error) {
-      console.error('Failed to parse mock data:', error);
+      logger.error({ err: error }, 'Failed to parse mock data');
       return res.status(500).json({ error: 'Failed to parse mock data' });
     }
   }
@@ -124,17 +124,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<unknown>) => {
   const altinn3Tilganger = samleAltinn3Tilganger(accessData.hierarki);
   const antallTilganger = altinn3Tilganger.filter((t) => t.altinn3Tilganger.length > 0).length;
   logger.info({ antallOrganisasjoner, antallTilganger }, 'Mine-tilganger hentet');
-  try {
-    teamLogger.info(
-      {
-        antallOrganisasjoner,
-        altinn3Tilganger
-      },
-      'Forespørsel om mine-tilganger'
-    );
-  } catch (e) {
-    logger.warn({ err: e }, 'teamLogger feilet: ' + (e instanceof Error ? e.message : String(e)));
-  }
+  safeTeamLogger.info(
+    {
+      antallOrganisasjoner,
+      altinn3Tilganger
+    },
+    'Forespørsel om mine-tilganger'
+  );
 
   return res.status(accessResponse.status).json(accessData.hierarki || []);
 };

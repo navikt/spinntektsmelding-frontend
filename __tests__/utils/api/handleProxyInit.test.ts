@@ -1,8 +1,18 @@
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
+import { logger } from '@navikt/next-logger';
 import handleProxyInit from '../../../utils/api/handleProxyInit';
-// import handleProxyInit from './handleProxyInit';
+
+vi.mock('@navikt/next-logger', () => ({
+  logger: {
+    error: vi.fn()
+  }
+}));
 
 describe('handleProxyInit', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should handle proxy error event', () => {
     const proxy = {
       on: vi.fn((event, callback) => {
@@ -13,6 +23,7 @@ describe('handleProxyInit', () => {
           };
           const err = new Error('Test error');
           callback(err, null, res);
+          expect(logger.error).toHaveBeenCalledWith({ err }, 'Proxy error');
           expect(res.writeHead).toHaveBeenCalledWith(500, { 'Content-Type': 'text/plain' });
           expect(res.end).toHaveBeenCalledWith('Something went wrong.');
         }

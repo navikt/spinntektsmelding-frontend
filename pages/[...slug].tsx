@@ -59,7 +59,7 @@ import hentArbeidsforholdSSR from '../utils/hentArbeidsforholdSSR';
 import Faisu from '../components/Faisu/Faisu';
 import { Ansettelsesforhold } from '../schema/AnsettelsesforholdSchema';
 import fetchArbeidsforhold from '../utils/fetchArbeidsforhold';
-import { teamLogger } from '@navikt/next-logger/team-log';
+import { safeTeamLogger } from '../utils/safeTeamLogger';
 import { useShallow } from 'zustand/react/shallow';
 
 const RequestStatus = {
@@ -464,17 +464,9 @@ const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = (
       }
 
       if (fom.getTime() >= tom.getTime()) {
-        try {
-          teamLogger.warn(
-            `Feil ved innhenting av arbeidsforhold for ${fnr} i ${orgnr}, fom ${fom.toISOString()} er etter tom ${tom.toISOString()}`
-          );
-        } catch (e) {
-          logger.warn(
-            { err: e },
-            'teamLogger feilet ved feil ved innhenting av arbeidsforhold: ' +
-              (e instanceof Error ? e.message : String(e))
-          );
-        }
+        safeTeamLogger.warn(
+          `Feil ved innhenting av arbeidsforhold for ${fnr} i ${orgnr}, fom ${fom.toISOString()} er etter tom ${tom.toISOString()}`
+        );
       }
 
       let erAktiv = true;
