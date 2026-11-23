@@ -49,8 +49,11 @@ export async function postInnsending<B = unknown, S = unknown>({
   setErrorResponse,
   setShowErrorList
 }: PostInnsendingOptions<B, S>): Promise<void> {
-  const { getFaroTracing } = await import('./faro');
-  const otel = getFaroTracing();
+  const faro = await import('./faro').catch(() => {
+    logger.warn('Kunne ikke laste Faro - sender inn uten tracing');
+    return undefined;
+  });
+  const otel = faro?.getFaroTracing();
   const span = otel?.trace.getTracer('spinntektsmelding-frontend').startSpan('send_inntektsmelding');
 
   const send = async () => {

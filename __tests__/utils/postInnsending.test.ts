@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { postInnsending } from '../../utils/postInnsending';
 import { ErrorResponse } from '../../utils/useErrorResponse';
 
@@ -109,6 +109,63 @@ describe('postInnsending', () => {
     expect(success).toHaveBeenCalledWith({ ok: true });
     expect(otel.trace.getTracer).not.toHaveBeenCalled();
     expect(span.end).not.toHaveBeenCalled();
+  });
+
+  describe('når Faro-modulen ikke kan lastes', () => {
+    beforeEach(() => {
+      vi.resetModules();
+      vi.doMock('../../utils/faro', () => {
+        throw new Error('Failed to fetch dynamically imported module');
+      });
+    });
+
+    afterEach(() => {
+      vi.doMock('../../utils/faro', () => ({ getFaroTracing }));
+      vi.resetModules();
+    });
+
+    it.each(['suksess', 'nettverksfeil'])('sender POST og beholder håndtering av %s', async (resultat) => {
+      const { postInnsending } = await import('../../utils/postInnsending');
+      global.fetch =
+        resultat === 'suksess'
+          ? vi.fn().mockResolvedValue(buildResponse(201, { ok: true }))
+          : vi.fn().mockRejectedValue(new Error('ECONNRESET'));
+
+      await postInnsending({
+        url,
+        body,
+        analyticsComponent: 'comp',
+        onUnauthorized: unauthorized,
+        onSuccess: success,
+        mapValidationErrors,
+        setErrorResponse,
+        setShowErrorList
+      });
+
+      expect(fetch).toHaveBeenCalledExactlyOnceWith(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      expect(warnSpy).toHaveBeenCalledWith('Kunne ikke laste Faro - sender inn uten tracing');
+      expect(otel.context.with).not.toHaveBeenCalled();
+      expect(span.end).not.toHaveBeenCalled();
+      if (resultat === 'suksess') {
+        expect(success).toHaveBeenCalledExactlyOnceWith({ ok: true });
+        expect(setErrorResponse).not.toHaveBeenCalled();
+        expect(setShowErrorList).not.toHaveBeenCalled();
+      } else {
+        expect(success).not.toHaveBeenCalled();
+        expect(setErrorResponse).toHaveBeenCalledExactlyOnceWith([
+          {
+            value: 'Innsending av skjema feilet',
+            error: 'Det oppstod et nettverksproblem ved innsending. Vennligst prøv igjen.',
+            property: 'server'
+          }
+        ]);
+        expect(setShowErrorList).toHaveBeenCalledWith(true);
+      }
+    });
   });
 
   it('avslutter spannen først etter asynkron suksessbehandling', async () => {
