@@ -141,7 +141,7 @@ export default function RefusjonArbeidsgiver({
                 Arbeidsgiver kan velge mellom to alternativer. Betale lønn til den sykemeldte og få dette refundert fra
                 Nav, eller at Nav betaler sykepengene direkte til den sykemeldte. Dette gjelder ikke under
                 arbeidsgiverperiode.{' '}
-                <LenkeEksternt href='https://www.nav.no/arbeidsgiver/forskuttere-sykepenger'>
+                <LenkeEksternt href='https://www.nav.no/arbeidsgiver/sykepenger-etter-arbeidsgiverperioden#forskuttere'>
                   Les mer om refusjon
                 </LenkeEksternt>
                 .
