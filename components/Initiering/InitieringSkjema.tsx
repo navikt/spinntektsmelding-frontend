@@ -21,7 +21,7 @@ export interface InitieringSkjemaProps {
 
 const skjemaFnrSchema = z.object({
   identitetsnummer: PersonnummerSchema,
-  aarsakInnsending: z.enum(['UtenArbeidsforhold', 'MedArbeidsforhold', 'Behandlingsdager', 'Fisker'], {
+  aarsakInnsending: z.enum(SelvbestemtTypeConst, {
     error: 'Du må velge en årsak til at du vil opprette inntektsmelding.'
   })
 });
@@ -64,15 +64,23 @@ export default function InitieringSkjema({
     setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
     switch (skjemaData.aarsakInnsending) {
       case SelvbestemtTypeConst.UtenArbeidsforhold:
+        setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.UtenArbeidsforhold);
         router.push('/initieringFritatt', { scroll: false });
         return;
       case SelvbestemtTypeConst.Fisker:
+        setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.Fisker);
         router.push('/initieringFiskere', { scroll: false });
         return;
       case SelvbestemtTypeConst.Behandlingsdager:
+        setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.Behandlingsdager);
         router.push('/initieringBehandlingsdager', { scroll: false });
         return;
+      case SelvbestemtTypeConst.MedArbeidsforhold:
+        setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.MedArbeidsforhold);
+        router.push('/initieringAnnet', { scroll: false });
+        return;
       default:
+        setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.MedArbeidsforhold);
         router.push('/initieringAnnet', { scroll: false });
     }
   };
