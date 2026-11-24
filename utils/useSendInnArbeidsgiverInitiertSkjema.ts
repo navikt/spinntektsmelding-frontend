@@ -120,7 +120,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       logger.warn(
         `Feil ved validering av skjema - Åpen innsending ${JSON.stringify(validerteData.error)} ${JSON.stringify(errors)}`
       );
-      logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: analyticsComponent });
+      logEvent('skjemavalidering feilet', { tittel: 'Validering feilet', component: analyticsComponent });
       return false;
     }
 

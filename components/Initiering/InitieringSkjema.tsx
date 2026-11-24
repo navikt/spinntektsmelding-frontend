@@ -13,6 +13,7 @@ import formatRHFFeilmeldinger from '../../utils/formatRHFFeilmeldinger';
 import FeilListe from '../Feilsammendrag/FeilListe';
 import VelgAarsak from '../VelgAarsak/VelgAarsak';
 import lokalStyling from '../../styles/initiering.module.css';
+import logEvent from '../../utils/logEvent';
 
 export interface InitieringSkjemaProps {
   nyeSelvbestemteAlternativer: boolean;
@@ -62,6 +63,12 @@ export default function InitieringSkjema({
   const submitForm: SubmitHandler<SkjemaFnr> = (skjemaData) => {
     setIdentitetsnummer(skjemaData.identitetsnummer);
     setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
+    logEvent('skjemaspørsmål besvart', {
+      skjemanavn: 'InitieringSkjema',
+      skjemaId: 'InitieringSkjema',
+      spørsmål: 'Årsak til at du vil opprette inntektsmelding.',
+      svar: skjemaData.aarsakInnsending
+    });
     switch (skjemaData.aarsakInnsending) {
       case SelvbestemtTypeConst.UtenArbeidsforhold:
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.UtenArbeidsforhold);
@@ -93,7 +100,7 @@ export default function InitieringSkjema({
           <VelgAarsak
             legend='Årsak til at du vil opprette inntektsmelding.'
             name='aarsakInnsending'
-            visNyeAlternativer={alternativer.visNyeAlternativer}
+            visNyeAlternativer={true || alternativer.visNyeAlternativer}
           />
           <TextField
             label='Ansattes fødselsnummer'

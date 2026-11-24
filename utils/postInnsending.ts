@@ -146,7 +146,7 @@ async function handle500Response<S>(data: Response, options: PostInnsendingRunti
       property: 'server'
     }
   ]);
-  logEvent('skjema innsending feilet', {
+  logEvent('skjemainnsending feilet', {
     tittel: 'Innsending feilet - serverfeil',
     component: options.analyticsComponent
   });
@@ -157,7 +157,7 @@ async function handle400Response<S>(data: Response, options: PostInnsendingRunti
   const responseText = await safeText(data);
   try {
     const resultat: unknown = JSON.parse(responseText);
-    logEvent('skjema innsending feilet', {
+    logEvent('skjemainnsending feilet', {
       tittel: 'Innsending feilet - valideringsfeil',
       component: options.analyticsComponent
     });
@@ -262,7 +262,7 @@ function handle403Response<S>(options: PostInnsendingRuntimeOptions<S>) {
     }
   ]);
   options.setShowErrorList(true);
-  logEvent('skjema innsending feilet', {
+  logEvent('skjemainnsending feilet', {
     tittel: 'Innsending feilet - mangler rettigheter',
     component: options.analyticsComponent
   });
@@ -270,7 +270,7 @@ function handle403Response<S>(options: PostInnsendingRuntimeOptions<S>) {
 }
 
 function handle401Response(analyticsComponent: string, onUnauthorized: () => void) {
-  logEvent('skjema innsending feilet', {
+  logEvent('skjemainnsending feilet', {
     tittel: 'Innsending feilet - ingen tilgang',
     component: analyticsComponent
   });
@@ -279,7 +279,7 @@ function handle401Response(analyticsComponent: string, onUnauthorized: () => voi
 
 async function handleDefaultResponse<S>(data: Response, options: PostInnsendingRuntimeOptions<S>, body: unknown) {
   const responseText = await safeText(data);
-  logEvent('skjema innsending feilet', {
+  logEvent('skjemainnsending feilet', {
     tittel: 'Innsending feilet',
     component: options.analyticsComponent
   });

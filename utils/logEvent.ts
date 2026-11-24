@@ -13,9 +13,10 @@ type validEventNames =
   | 'knapp klikket'
   | 'skjema åpnet'
   | 'skjema fullført'
+  | 'skjemaspørsmål besvart'
   | 'skjema spørsmål besvart'
-  | 'skjema innsending feilet'
-  | 'skjema validering feilet'
+  | 'skjemainnsending feilet'
+  | 'skjemavalidering feilet'
   | 'modal åpnet'
   | 'modal lukket'
   | 'filtervalg'; //Bruk kun navn fra taksonomien

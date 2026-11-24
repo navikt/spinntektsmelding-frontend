@@ -2,3 +2,7 @@
   display: block;
   margin-bottom: 0.5rem;
 }
+
+.toggleButton {
+  width: fit-content;
+}
