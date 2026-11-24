@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from '@navikt/ds-react';
+import { Radio, RadioGroup, ReadMore } from '@navikt/ds-react';
 import type { ComponentProps, ComponentType, ReactNode } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
@@ -116,6 +116,46 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
               >
                 Arbeidsforholdet er meldt ut gjennom A-meldingen før inntektsmeldingen skal sendes
               </Radio>
+              <ReadMore header='Dette regnes som helsemessige begrensninger'>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                >
+                  Vi skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten
+                </Radio>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                  description='Dette gjelder når arbeidsforholdet ikke rapporteres i a-meldingen'
+                >
+                  F.eks. Ambassadepersonell, Deltaker i VTA-tiltak, Fisker med hyre
+                </Radio>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                >
+                  Lønnsendring etter arbeid i helg mellom sykmeldinger
+                </Radio>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                >
+                  Kontrollundersøkelse som varer mer enn 24 timer
+                </Radio>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                  description='Arbeidstaker skulle vært tilbake etter permittering '
+                >
+                  Permitteringen er avsluttet under sykefraværet
+                </Radio>
+                <Radio
+                  value={SelvbestemtTypeConst.MedArbeidsforhold}
+                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                >
+                  Ingen av situasjonene passer
+                </Radio>
+              </ReadMore>
             </>
           ) : null}
         </RadioGroup>
