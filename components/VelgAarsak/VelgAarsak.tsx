@@ -53,28 +53,63 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
           >
             Enkeltstående behandlingsdager
           </RadioMedFormatertBeskrivelse>
-          <Radio
-            value={SelvbestemtTypeConst.UtenArbeidsforhold}
-            id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
-            description='Ansatte i tiltaket varig tilrettelagt arbeid, ambassadepersonell, utenlandsk sykmelding er ikke digitalisert eller ansatt ikke har tilgang til å sende digital sykmelding/søknad.'
-          >
-            Ansatte som ikke er registrert i Aa-registeret, eller ikke kan sende digital søknad om sykepenger
-          </Radio>
-          <Radio
-            value={SelvbestemtTypeConst.Fisker}
-            id={ensureValidHtmlId(field.name + '_Fisker')}
-            description='Personer bosatt i Norge og som har fiske eller fangst i havet som hovednæring (blad B) eller binæring (blad A).'
-          >
-            Fisker med hyre
-          </Radio>
-          {visNyeAlternativer ? nyeAlternativer : null}
-          <Radio
-            value={SelvbestemtTypeConst.MedArbeidsforhold}
-            id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-            description='Søknadsperioden er ikke en del av arbeidsgiverperioden, eller det er andre grunner til at Nav ikke har etterspurt en inntektsmelding. Det må være sendt inn en digital søknad om sykepenger fra den ansatte for å kunne sende denne inntektsmeldingen.'
-          >
-            Annen årsak
-          </Radio>
+          {!visNyeAlternativer ? (
+            <>
+              <Radio
+                value={SelvbestemtTypeConst.UtenArbeidsforhold}
+                id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
+                description='Ansatte i tiltaket varig tilrettelagt arbeid, ambassadepersonell, utenlandsk sykmelding er ikke digitalisert eller ansatt ikke har tilgang til å sende digital sykmelding/søknad.'
+              >
+                Ansatte som ikke er registrert i Aa-registeret, eller ikke kan sende digital søknad om sykepenger
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.Fisker}
+                id={ensureValidHtmlId(field.name + '_Fisker')}
+                description='Personer bosatt i Norge og som har fiske eller fangst i havet som hovednæring (blad B) eller binæring (blad A).'
+              >
+                Fisker med hyre
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.MedArbeidsforhold}
+                id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                description='Søknadsperioden er ikke en del av arbeidsgiverperioden, eller det er andre grunner til at Nav ikke har etterspurt en inntektsmelding. Det må være sendt inn en digital søknad om sykepenger fra den ansatte for å kunne sende denne inntektsmeldingen.'
+              >
+                Annen årsak
+              </Radio>
+            </>
+          ) : null}
+          {visNyeAlternativer ? (
+            <>
+              <Radio
+                value={SelvbestemtTypeConst.Under16DagerUtenOpptjeningstid}
+                id={ensureValidHtmlId(field.name + '_Under16DagerUtenOpptjeningstid')}
+                description='Beskrivelse av det nye alternativet.'
+              >
+                Fraværet er under 16 dager og det er ikke fire ukers opptjeningstid
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.Over16DagerMedEgenmeldingsdager}
+                id={ensureValidHtmlId(field.name + '_Over16DagerMedEgenmeldingsdager')}
+              >
+                Fraværet er over 16 dager når alle egenmeldingsdagene regnes med
+              </Radio>
+              <Radio value={SelvbestemtTypeConst.PapirSoeknad} id={ensureValidHtmlId(field.name + '_PapirSoeknad')}>
+                Den ansatte har sendt norsk eller utenlandsk søknad om sykepenger på papir
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.Behandlingsdager}
+                id={ensureValidHtmlId(field.name + '_Behandlingsdager')}
+              >
+                Arbeidsgiverperioden består kun av behandlingsdager
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.BehandlingsdagerMedAnnetSykefravaer}
+                id={ensureValidHtmlId(field.name + '_BehandlingsdagerMedAnnetSykefravaer')}
+              >
+                Arbeidsgiverperioden består av en kombinasjon av behandlingsdager og annet sykefravær
+              </Radio>
+            </>
+          ) : null}
         </RadioGroup>
       )}
     />
