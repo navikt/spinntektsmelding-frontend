@@ -43,6 +43,7 @@
     "react-dom": "19.3.1",
     "react-hook-form": "7.92.0",
     "swr": "2.5.1",
+    "unleash-client": "6.12.2",
     "use-sync-external-store": "1.7.0",
     "zod": "4.6.7",
     "zustand": "5.1.0"
