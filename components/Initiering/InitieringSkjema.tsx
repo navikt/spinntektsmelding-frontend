@@ -62,19 +62,19 @@ export default function InitieringSkjema({
   const submitForm: SubmitHandler<SkjemaFnr> = (skjemaData) => {
     setIdentitetsnummer(skjemaData.identitetsnummer);
     setAarsakSelvbestemtInnsending(skjemaData.aarsakInnsending);
-    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.UtenArbeidsforhold) {
-      router.push('/initieringFritatt', { scroll: false });
-      return;
+    switch (skjemaData.aarsakInnsending) {
+      case SelvbestemtTypeConst.UtenArbeidsforhold:
+        router.push('/initieringFritatt', { scroll: false });
+        return;
+      case SelvbestemtTypeConst.Fisker:
+        router.push('/initieringFiskere', { scroll: false });
+        return;
+      case SelvbestemtTypeConst.Behandlingsdager:
+        router.push('/initieringBehandlingsdager', { scroll: false });
+        return;
+      default:
+        router.push('/initieringAnnet', { scroll: false });
     }
-    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.Fisker) {
-      router.push('/initieringFiskere', { scroll: false });
-      return;
-    }
-    if (skjemaData.aarsakInnsending === SelvbestemtTypeConst.Behandlingsdager) {
-      router.push('/initieringBehandlingsdager', { scroll: false });
-      return;
-    }
-    router.push('/initieringAnnet', { scroll: false });
   };
 
   const feilmeldinger = formatRHFFeilmeldinger(errors);
