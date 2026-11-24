@@ -11,7 +11,11 @@ export const SelvbestemtTypeConst = {
   Over16DagerMedEgenmeldingsdager: 'Over16DagerMedEgenmeldingsdager',
   PapirSoeknad: 'PapirSoeknad',
   Reisetilskudd: 'Reisetilskudd',
-  UtmeldtAaRegisteret: 'UtmeldtAaRegisteret'
+  UtmeldtAaRegisteret: 'UtmeldtAaRegisteret',
+  Annet: 'Annet',
+  ArbeidIHelg: 'ArbeidIHelg',
+  Kontrollundersoekelse: 'Kontrollundersoekelse',
+  TilbakeEtterPermitering: 'TilbakeEtterPermitering'
 } as const;
 
 export type SelvbestemtType = (typeof SelvbestemtTypeConst)[keyof typeof SelvbestemtTypeConst];

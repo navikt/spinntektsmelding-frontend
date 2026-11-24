@@ -1,6 +1,6 @@
-import { Radio, RadioGroup, ReadMore } from '@navikt/ds-react';
+import { Button } from '@navikt/ds-react';
 import { RadioCard, RadioCardGroup } from '@navikt/ds-react/PREVIEW';
-import type { ComponentProps, ComponentType, ReactNode } from 'react';
+import { useState, type ComponentProps, type ComponentType, type ReactNode } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import findErrorInRHFErrors from '../../utils/findErrorInRHFErrors';
@@ -8,6 +8,7 @@ import ensureValidHtmlId from '../../utils/ensureValidHtmlId';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
 
 import lokalStyling from './VelgAarsak.module.css';
+import { ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons';
 
 // Wrapper for Radio component to allow ReactNode as description, instead of just string. Greit å huske på om formateringen skulle slutte å fungere som forventet.
 const RadioMedFormatertBeskrivelse = RadioCard as ComponentType<
@@ -21,12 +22,18 @@ interface VelgAarsakProps {
 }
 
 export default function VelgAarsak({ legend, name, visNyeAlternativer = false }: Readonly<VelgAarsakProps>) {
-  const nyeAlternativer: ReactNode[] = [];
   const {
     formState: { errors }
   } = useFormContext();
 
+  const [visUtvidedeKategorier, setVisUtvidedeKategorier] = useState(false);
+
   const error = findErrorInRHFErrors(name, errors);
+
+  const handleToggleUtvidedeKategorier = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setVisUtvidedeKategorier(!visUtvidedeKategorier);
+  };
 
   return (
     <Controller
@@ -120,46 +127,53 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
               >
                 Arbeidsforholdet er meldt ut gjennom A-meldingen før inntektsmeldingen skal sendes
               </RadioCard>
-              <ReadMore header='Vis flere situasjoner (6)'>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                >
-                  Vi skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten
-                </RadioCard>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                  description='Dette gjelder når arbeidsforholdet ikke rapporteres i a-meldingen'
-                >
-                  F.eks. Ambassadepersonell, Deltaker i VTA-tiltak, Fisker med hyre
-                </RadioCard>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                >
-                  Lønnsendring etter arbeid i helg mellom sykmeldinger
-                </RadioCard>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                >
-                  Kontrollundersøkelse som varer mer enn 24 timer
-                </RadioCard>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                  description='Arbeidstaker skulle vært tilbake etter permittering '
-                >
-                  Permitteringen er avsluttet under sykefraværet
-                </RadioCard>
-                <RadioCard
-                  value={SelvbestemtTypeConst.MedArbeidsforhold}
-                  id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
-                >
-                  Ingen av situasjonene passer
-                </RadioCard>
-              </ReadMore>
+              {visUtvidedeKategorier && (
+                <>
+                  <RadioCard
+                    value={SelvbestemtTypeConst.MedArbeidsforhold}
+                    id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                  >
+                    Vi skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten
+                  </RadioCard>
+                  <RadioCard
+                    value={SelvbestemtTypeConst.UtenArbeidsforhold}
+                    id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
+                    description='Dette gjelder når arbeidsforholdet ikke rapporteres i a-meldingen'
+                  >
+                    F.eks. Ambassadepersonell, Deltaker i VTA-tiltak, Fisker med hyre
+                  </RadioCard>
+                  <RadioCard
+                    value={SelvbestemtTypeConst.ArbeidIHelg}
+                    id={ensureValidHtmlId(field.name + '_ArbeidIHelg')}
+                  >
+                    Lønnsendring etter arbeid i helg mellom sykmeldinger
+                  </RadioCard>
+                  <RadioCard
+                    value={SelvbestemtTypeConst.Kontrollundersoekelse}
+                    id={ensureValidHtmlId(field.name + '_Kontrollundersoekelse')}
+                  >
+                    Kontrollundersøkelse som varer mer enn 24 timer
+                  </RadioCard>
+                  <RadioCard
+                    value={SelvbestemtTypeConst.TilbakeEtterPermitering}
+                    id={ensureValidHtmlId(field.name + '_TilbakeEtterPermitering')}
+                    description='Arbeidstaker skulle vært tilbake etter permittering '
+                  >
+                    Permitteringen er avsluttet under sykefraværet
+                  </RadioCard>
+                  <RadioCard value={SelvbestemtTypeConst.Annet} id={ensureValidHtmlId(field.name + '_Annet')}>
+                    Ingen av situasjonene passer
+                  </RadioCard>
+                </>
+              )}
+              <Button
+                variant='tertiary'
+                onClick={handleToggleUtvidedeKategorier}
+                icon={visUtvidedeKategorier ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                className={lokalStyling.toggleButton}
+              >
+                {visUtvidedeKategorier ? 'Vis færre situasjoner' : 'Vis flere situasjoner (6)'}
+              </Button>
             </>
           ) : null}
         </RadioCardGroup>

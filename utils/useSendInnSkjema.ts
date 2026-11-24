@@ -84,7 +84,7 @@ export default function useSendInnSkjema(
     );
     const validerteData = FullInnsendingSchema.safeParse(skjemaData);
     if (validerteData.success === false) {
-      logEvent('skjema validering feilet', {
+      logEvent('skjemavalidering feilet', {
         tittel: 'Validering feilet',
         component: analyticsComponent
       });
@@ -136,7 +136,7 @@ export default function useSendInnSkjema(
         }
       ];
 
-      logEvent('skjema validering feilet', {
+      logEvent('skjemavalidering feilet', {
         tittel: 'Ugyldig UUID ved innsending',
         component: analyticsComponent
       });
