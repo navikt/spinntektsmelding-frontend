@@ -52,9 +52,9 @@ jobs:
 
           ### Tolkning av lenkesjekken
           - HTTP 404/410: siden finnes ikke eller er fjernet; kontroller om lenken skal oppdateres.
-          - HTTP 401/403: krever innlogging eller blokkerer automatiske foresporsler.
-          - HTTP 429, 5xx og timeout: kan skyldes midlertidige feil; prov igjen.
-          - Redirects folges. Fragmenter (`#anker`) og dynamisk sammensatte URL-er sjekkes ikke.
+          - HTTP 401/403: krever innlogging eller blokkerer automatiske forespørsler.
+          - HTTP 429, 5xx og timeout: kan skyldes midlertidige feil; prøv igjen.
+          - Redirects følges. Fragmenter (`#anker`) og dynamisk sammensatte URL-er sjekkes ikke.
           - Alle feil rapporteres og gir en feilet sjekk; ingen feilkoder godtas som vellykkede svar.
           EOF
       - name: Last opp lenkerapport
