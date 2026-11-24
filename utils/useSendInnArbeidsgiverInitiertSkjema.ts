@@ -19,6 +19,7 @@ import {
 import { LonnIArbeidsgiverperioden } from '../state/state';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { nullstillSelvbestemtAlternativer } from './selvbestemtAlternativerSnapshot';
 
 type ValiderteAapenInnsending = ReturnType<ReturnType<typeof useFyllAapenInnsending>>;
 type Skjema = z.infer<typeof HovedskjemaSchema>;
@@ -140,6 +141,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       analyticsComponent,
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async (body) => {
+        nullstillSelvbestemtAlternativer();
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
         setMottatt(new Date());
         if (skjemastatus === SkjemaStatus.SELVBESTEMT) {

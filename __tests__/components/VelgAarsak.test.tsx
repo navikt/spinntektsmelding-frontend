@@ -62,6 +62,12 @@ describe('VelgAarsak', () => {
     expect(description?.querySelector('em')).toHaveTextContent('Annen årsak');
   });
 
+  it.each([false, true])('beholder dagens fire alternativer med flaggverdi %s', (visNyeAlternativer) => {
+    render(<VelgAarsak legend={legend} name={name} visNyeAlternativer={visNyeAlternativer} />);
+
+    expect(screen.getAllByRole('radio')).toHaveLength(4);
+  });
+
   it.skip('allows selecting a radio option', async () => {
     render(<VelgAarsak legend={legend} name={name} />);
 

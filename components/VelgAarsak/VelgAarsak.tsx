@@ -16,9 +16,11 @@ const RadioMedFormatertBeskrivelse = Radio as ComponentType<
 interface VelgAarsakProps {
   legend: string;
   name: string;
+  visNyeAlternativer?: boolean;
 }
 
-export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) {
+export default function VelgAarsak({ legend, name, visNyeAlternativer = false }: Readonly<VelgAarsakProps>) {
+  const nyeAlternativer: ReactNode[] = [];
   const {
     formState: { errors }
   } = useFormContext();
@@ -65,6 +67,7 @@ export default function VelgAarsak({ legend, name }: Readonly<VelgAarsakProps>) 
           >
             Fisker med hyre
           </Radio>
+          {visNyeAlternativer ? nyeAlternativer : null}
           <Radio
             value={SelvbestemtTypeConst.MedArbeidsforhold}
             id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
