@@ -44,6 +44,8 @@ jobs:
             './**/*.html'
           fail: true
           failIfEmpty: true
+          format: markdown
+          jobSummary: true
           output: lychee/report.md
       - name: Forklar resultatene
         if: always()
