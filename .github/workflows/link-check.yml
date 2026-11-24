@@ -1,0 +1,68 @@
+name: Sjekk eksterne lenker
+
+on:
+  pull_request:
+  schedule:
+    - cron: '23 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Lenker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Sjekk eksterne lenker i kildekode og dokumentasjon
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8
+        with:
+          lycheeVersion: v0.24.2
+          args: >-
+            --verbose
+            --no-progress
+            --scheme http
+            --scheme https
+            --exclude-all-private
+            --exclude-path '(^|/)(node_modules|__tests__|tests|\.next|build|coverage|pages/api)(/|$)'
+            --max-retries 2
+            --timeout 20
+            --max-concurrency 4
+            --host-concurrency 2
+            --host-request-interval 500ms
+            --
+            './**/*.ts'
+            './**/*.tsx'
+            './**/*.md'
+            './**/*.html'
+          fail: true
+          failIfEmpty: true
+          format: markdown
+          jobSummary: true
+          output: lychee/report.md
+      - name: Forklar resultatene
+        if: always()
+        run: |
+          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+
+          ### Tolkning av lenkesjekken
+          - HTTP 404/410: siden finnes ikke eller er fjernet; kontroller om lenken skal oppdateres.
+          - HTTP 401/403: krever innlogging eller blokkerer automatiske forespørsler.
+          - HTTP 429, 5xx og timeout: kan skyldes midlertidige feil; prøv igjen.
+          - Redirects følges. Fragmenter (`#anker`) og dynamisk sammensatte URL-er sjekkes ikke.
+          - Alle feil rapporteres og gir en feilet sjekk; ingen feilkoder godtas som vellykkede svar.
+          EOF
+      - name: Last opp lenkerapport
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: lenkerapport
+          path: lychee/report.md
+          if-no-files-found: error

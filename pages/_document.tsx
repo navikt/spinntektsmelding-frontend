@@ -45,7 +45,6 @@ function CustomDocument(props: Readonly<CustomDocumentProps>) {
         <script
           defer
           src='https://cdn.nav.no/team-researchops/sporing/sporing.js'
-          data-host-url='https://umami.nav.no'
           data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
           data-domains={process.env.NEXT_PUBLIC_UMAMI_DATA_DOMAINS}
         />
