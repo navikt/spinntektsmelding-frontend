@@ -34,27 +34,27 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
       rules={{ required: 'Du må velge årsaken til at du vil sende inn her.' }}
       render={({ field }) => (
         <RadioGroup {...field} legend={legend} error={error} id={ensureValidHtmlId(name)}>
-          <RadioMedFormatertBeskrivelse
-            value={SelvbestemtTypeConst.Behandlingsdager}
-            id={ensureValidHtmlId(field.name + '_Behandlingsdager')}
-            description={
-              <>
-                <span className={lokalStyling.toppsetning}>
-                  Ansatt som har godkjent sykmelding og sendt søknad for enkeltstående behandlingsdager.
-                </span>{' '}
-                <span>
-                  Inneholder arbeidsgiverperioden en kombinasjon av behandlingsdager og annet sykefravær slik at den
-                  varer i 16 dager, må du velge <em>Annen årsak</em> og knytte inntektsmeldingen til søknaden for det
-                  ordinære sykefraværet og legge til behandlingsdagene og eventuelle egenmeldingsdager i
-                  arbeidsgiverperioden.
-                </span>
-              </>
-            }
-          >
-            Enkeltstående behandlingsdager
-          </RadioMedFormatertBeskrivelse>
           {!visNyeAlternativer ? (
             <>
+              <RadioMedFormatertBeskrivelse
+                value={SelvbestemtTypeConst.Behandlingsdager}
+                id={ensureValidHtmlId(field.name + '_Behandlingsdager')}
+                description={
+                  <>
+                    <span className={lokalStyling.toppsetning}>
+                      Ansatt som har godkjent sykmelding og sendt søknad for enkeltstående behandlingsdager.
+                    </span>{' '}
+                    <span>
+                      Inneholder arbeidsgiverperioden en kombinasjon av behandlingsdager og annet sykefravær slik at den
+                      varer i 16 dager, må du velge <em>Annen årsak</em> og knytte inntektsmeldingen til søknaden for
+                      det ordinære sykefraværet og legge til behandlingsdagene og eventuelle egenmeldingsdager i
+                      arbeidsgiverperioden.
+                    </span>
+                  </>
+                }
+              >
+                Enkeltstående behandlingsdager
+              </RadioMedFormatertBeskrivelse>
               <Radio
                 value={SelvbestemtTypeConst.UtenArbeidsforhold}
                 id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
@@ -83,7 +83,6 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
               <Radio
                 value={SelvbestemtTypeConst.Under16DagerUtenOpptjeningstid}
                 id={ensureValidHtmlId(field.name + '_Under16DagerUtenOpptjeningstid')}
-                description='Beskrivelse av det nye alternativet.'
               >
                 Fraværet er under 16 dager og det er ikke fire ukers opptjeningstid
               </Radio>
@@ -107,6 +106,15 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
                 id={ensureValidHtmlId(field.name + '_BehandlingsdagerMedAnnetSykefravaer')}
               >
                 Arbeidsgiverperioden består av en kombinasjon av behandlingsdager og annet sykefravær
+              </Radio>
+              <Radio value={SelvbestemtTypeConst.Reisetilskudd} id={ensureValidHtmlId(field.name + '_Reisetilskudd')}>
+                Sykmelding med reisetilskudd
+              </Radio>
+              <Radio
+                value={SelvbestemtTypeConst.UtmeldtAaRegisteret}
+                id={ensureValidHtmlId(field.name + '_UtmeldtAaRegisteret')}
+              >
+                Arbeidsforholdet er meldt ut gjennom A-meldingen før inntektsmeldingen skal sendes
               </Radio>
             </>
           ) : null}
