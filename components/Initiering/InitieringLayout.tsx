@@ -9,7 +9,7 @@ type InitieringLayoutProps = Readonly<{
   children: ReactNode;
   bannertittel?: string;
   sidetittel?: string;
-  nyeSelvbestemteAlternativer: boolean;
+  nyeSelvbestemteAlternativer?: boolean;
 }>;
 
 export default function InitieringLayout({
