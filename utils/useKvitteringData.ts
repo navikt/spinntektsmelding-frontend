@@ -59,13 +59,12 @@ export function useKvitteringData({
       naturalytelser: ssrData?.skjema.naturalytelser?.filter((ytelse) => ytelse.sluttdato),
       redusertLoennIAgp: ssrData?.skjema.agp?.redusertLoennIAgp,
       refusjon: ssrData?.skjema.refusjon,
-      mottatt: kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt,
+      mottatt: ssrData?.mottatt,
       avsender: ssrData?.avsender,
       sykmeldt: ssrData?.sykmeldt
     });
   }, [
     dataFraBackend,
-    kvittering?.kvitteringEkstern?.mottatt,
     ssrData,
     kvitteringData,
     sykmeldingsperioder,

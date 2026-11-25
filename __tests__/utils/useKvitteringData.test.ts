@@ -37,7 +37,6 @@ describe('useKvitteringData refusjon', () => {
     }
   } satisfies NonNullable<MottattKvittering['kvitteringNavNo']>['skjema'];
   const kvittering: MottattKvittering = {
-    kvitteringEkstern: null,
     kvitteringNavNo: {
       mottatt: '2024-06-03T10:00:00+02:00',
       sykmeldt: { navn: 'Test', fnr: '12345678901' },
@@ -87,7 +86,6 @@ describe('useKvitteringData mottatt', () => {
         dataFraBackend: true,
         storeData,
         kvittering: {
-          kvitteringEkstern: null,
           kvitteringNavNo: {
             mottatt,
             sykmeldt: { navn: 'Test', fnr: '12345678901' },
@@ -118,11 +116,11 @@ describe('useKvitteringData mottatt', () => {
       useKvitteringData({
         dataFraBackend: true,
         storeData,
-        kvittering: { kvitteringEkstern, kvitteringNavNo: null }
+        kvittering: { visGeneriskKvittering: true, kvitteringNavNo: null }
       })
     );
 
-    expect(result.current.innsendingTidspunkt).toBe(forventet);
+    expect(result.current.innsendingTidspunkt).toBe('');
   });
 
   it('leaves the received date empty when it is missing', () => {

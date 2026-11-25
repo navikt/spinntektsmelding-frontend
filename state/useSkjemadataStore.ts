@@ -1,7 +1,7 @@
 import { StateCreator } from 'zustand';
 import { produce } from 'immer';
 import { CompleteState } from './useBoundStore';
-import { KvitteringEksternSchema, KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
+import { KvitteringNavNoSchema } from '../schema/MottattKvitteringSchema';
 import z from 'zod';
 import FullInnsendingSchema from '../schema/FullInnsendingSchema';
 import AapenInnsendingSchema from '../schema/AapenInnsendingSchema';
@@ -13,7 +13,6 @@ export enum SkjemaStatus {
   SELVBESTEMT = 'SELVBESTEMT'
 }
 
-type KvitteringEkstern = z.infer<typeof KvitteringEksternSchema>;
 type KvitteringFullInnsending = z.infer<typeof FullInnsendingSchema>;
 type KvitteringSelvbestemtInnsending = z.infer<typeof AapenInnsendingSchema>;
 

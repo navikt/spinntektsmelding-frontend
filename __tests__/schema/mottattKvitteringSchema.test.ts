@@ -35,8 +35,8 @@ describe('MottattKvitteringSchema', () => {
 
   it('should validate MottattKvitteringSchema', () => {
     const data = {
-      kvitteringEkstern: kvittering.kvitteringEkstern,
-      kvitteringNavNo: null
+      kvitteringNavNo: null,
+      visGeneriskKvittering: true
     };
     expect(MottattKvitteringSchema.safeParse(data).success).toBe(true);
   });
