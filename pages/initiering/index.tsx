@@ -9,7 +9,7 @@ import { hentNyeSelvbestemteAlternativer } from '../../utils/unleash.server';
 
 const InitieringSkjema = dynamic<InitieringSkjemaProps>(() => import('../../components/Initiering/InitieringSkjema'), {
   ssr: false,
-  loading: () => <p role='status'>Forbereder skjemaet...</p>
+  loading: () => <output>Forbereder skjemaet...</output>
 });
 
 export const getServerSideProps: GetServerSideProps<InitieringSkjemaProps> = async ({ res, query }) => {

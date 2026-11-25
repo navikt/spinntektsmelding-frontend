@@ -73,6 +73,7 @@ export default function InitieringSkjema({
       case SelvbestemtTypeConst.Kontrollundersoekelse:
       case SelvbestemtTypeConst.UtmeldtAaRegisteret:
       case SelvbestemtTypeConst.BehandlingsdagerMedAnnetSykefravaer:
+      case SelvbestemtTypeConst.PapirSoeknad:
       case SelvbestemtTypeConst.UtenArbeidsforhold:
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.UtenArbeidsforhold);
         router.push('/initieringFritatt', { scroll: false });
