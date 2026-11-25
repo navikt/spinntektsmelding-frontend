@@ -14,7 +14,6 @@ type validEventNames =
   | 'skjema åpnet'
   | 'skjema fullført'
   | 'skjemaspørsmål besvart'
-  | 'skjema spørsmål besvart'
   | 'skjemainnsending feilet'
   | 'skjemavalidering feilet'
   | 'modal åpnet'

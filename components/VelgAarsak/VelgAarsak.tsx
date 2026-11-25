@@ -147,8 +147,9 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
               >
                 Arbeidsforholdet er avsluttet i Aa-registeret
               </RadioCard>
-              {visUtvidedeKategorier &&
-                utvidedeKategorier.map((kategori) => (
+              {utvidedeKategorier
+                .filter((kategori) => visUtvidedeKategorier || kategori.value === field.value)
+                .map((kategori) => (
                   <RadioCard
                     key={kategori.value}
                     value={kategori.value}
