@@ -96,13 +96,17 @@ export default function InitieringSkjema({
     }
   };
 
+  const legendVelgAarsak = alternativer.visNyeAlternativer
+    ? 'Velg situasjonen som passer'
+    : 'Årsak til at du vil opprette inntektsmelding';
+
   const feilmeldinger = formatRHFFeilmeldinger(errors);
   return (
     <>
       <FormProvider {...methods}>
         <form className={`${lokalStyling.form} ${lokalStyling.startForm}`} onSubmit={handleSubmit(submitForm)}>
           <VelgAarsak
-            legend='Årsak til at du vil opprette inntektsmelding.'
+            legend={legendVelgAarsak}
             name='aarsakInnsending'
             visNyeAlternativer={alternativer.visNyeAlternativer}
           />

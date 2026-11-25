@@ -19,7 +19,7 @@ export default function InitieringLayout({
   nyeSelvbestemteAlternativer = false
 }: InitieringLayoutProps) {
   const tittelTekst = nyeSelvbestemteAlternativer
-    ? 'Hvorfor sender du inntektsmelding uten at Nav har bedt om det?'
+    ? 'Hvorfor må du sende inn inntektsmelding uten at Nav har bedt om det?'
     : 'Opprett inntektsmelding for et sykefravær';
 
   return (
