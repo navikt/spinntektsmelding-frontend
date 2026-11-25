@@ -41,18 +41,18 @@ export default function useKvitteringInit() {
   const setGammeltSkjaeringstidspunkt = useBoundStore((state) => state.setGammeltSkjaeringstidspunkt);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
-  const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const setMottattBestemmendeFravaersdag = useBoundStore((state) => state.setMottattBestemmendeFravaersdag);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
+  const setVisGeneriskKvittering = useBoundStore((state) => state.setVisGeneriskKvittering);
 
   return (kvitteringData: KvitteringInit) => {
     if (!kvitteringData) return;
 
-    if (kvitteringData.kvitteringEkstern) {
-      setSkjemaKvitteringEksterntSystem(kvitteringData.kvitteringEkstern);
+    if (kvitteringData.visGeneriskKvittering) {
+      setVisGeneriskKvittering(true);
       return;
     }
 

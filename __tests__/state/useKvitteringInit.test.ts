@@ -274,7 +274,7 @@ describe('useKvitteringInit', () => {
       kvitteringInit(eksterntSystem as unknown as KvitteringData);
     });
 
-    expect(result.current.kvitteringEksterntSystem).toEqual(eksterntSystem.kvitteringEkstern);
+    expect(result.current.visGeneriskKvittering).toBe(true);
   });
 
   it('should set the refusjon sluttdato in the correct place', async () => {

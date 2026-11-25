@@ -13,8 +13,6 @@ import { useRouter } from 'next/router';
 
 import useBoundStore from '../../state/useBoundStore';
 
-import formatDate from '../../utils/formatDate';
-import formatTime from '../../utils/formatTime';
 import { useEffect, useEffectEvent, useRef } from 'react';
 import { isValid } from 'date-fns';
 import env from '../../config/environment';
@@ -59,7 +57,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
   const hentPaakrevdOpplysningstyper = useBoundStore((state) => state.hentPaakrevdOpplysningstyper);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
-  const kvitteringEksterntSystem = useBoundStore((state) => state.kvitteringEksterntSystem);
+  const visGeneriskKvittering = useBoundStore((state) => state.visGeneriskKvittering);
   const gammeltSkjaeringstidspunkt = useBoundStore((state) => state.gammeltSkjaeringstidspunkt);
   const kvitteringData = useBoundStore((state) => state.kvitteringData);
   const setArbeidsgiverperiodeDisabled = useBoundStore((state) => state.setArbeidsgiverperiodeDisabled);
@@ -90,13 +88,6 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       await router.push(`/${kvittid}?endre=true`, `/${kvittid}`);
     }
   };
-
-  let innsendingTidspunkt = mottatt && isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
-
-  if (kvitteringEksterntSystem?.mottatt) {
-    const mottatt = new Date(kvitteringEksterntSystem.mottatt);
-    innsendingTidspunkt = isValid(mottatt) ? ` - ${formatDate(mottatt)} kl. ${formatTime(mottatt)}` : '';
-  }
 
   const paakrevdeOpplysninger = hentPaakrevdOpplysningstyper();
 
@@ -131,7 +122,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       naturalytelser,
       arbeidsgiverperioder,
       mottatt,
-      kvitteringEksterntSystem,
+      visGeneriskKvittering,
       gammeltSkjaeringstidspunkt,
       kvitteringData
     }
@@ -156,6 +147,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
     onKvitteringInit();
   }, []);
 
+  const visningGeneriskKvittering = dataFraBackend ? kvittering?.visGeneriskKvittering === true : visGeneriskKvittering;
+
   return (
     <div className={styles.container}>
       <Head>
@@ -167,15 +160,8 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
 
       <PageContent title='Kvittering - innsendt inntektsmelding'>
         <div className={`main-content ${styles.padded}`}>
-          {kvitteringEksterntSystem?.avsenderSystem && (
-            <KvitteringAnnetSystem
-              arkivreferanse={kvitteringEksterntSystem.referanse}
-              eksterntSystem={kvitteringEksterntSystem.avsenderSystem}
-              mottattDato={innsendingTidspunkt}
-              kvitteringId={kvittid}
-            />
-          )}
-          {!kvitteringEksterntSystem?.avsenderSystem && (
+          {visningGeneriskKvittering && <KvitteringAnnetSystem kvitteringId={kvittid} />}
+          {!visningGeneriskKvittering && (
             <>
               <KvitteringHeader onEndre={clickEndre} />
 
@@ -210,7 +196,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
           <KvitteringFooter
             innsendingTidspunkt={aktivInnsendingTidspunkt}
             saksoversiktUrl={env.saksoversiktUrl}
-            onEndre={kvitteringEksterntSystem?.avsenderSystem ? undefined : clickEndre}
+            onEndre={visningGeneriskKvittering ? undefined : clickEndre}
           />
         </div>
         <KvitteringFeil kvitteringStatus={kvitteringStatus} />
@@ -233,7 +219,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext<{ kv
   return getKvitteringServerSideProps<MottattKvittering>({
     context,
     fetchKvittering: hentKvitteringsdataSSR,
-    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!(data?.kvitteringNavNo || data?.kvitteringEkstern),
+    checkDataFraBackend: (data, fromSubmit) => !fromSubmit && !!(data?.kvitteringNavNo || data?.visGeneriskKvittering),
     errorLogMessage: 'Error fetching kvittering:'
   });
 }

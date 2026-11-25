@@ -11,9 +11,9 @@ const storeData = {
   sykmeldingsperioder: [],
   arbeidsgiverperioder: [],
   mottatt: undefined,
-  kvitteringEksterntSystem: undefined,
   gammeltSkjaeringstidspunkt: undefined,
-  kvitteringData: undefined
+  kvitteringData: undefined,
+  visGeneriskKvittering: false
 };
 
 describe('useKvitteringData refusjon', () => {
@@ -119,18 +119,6 @@ describe('useKvitteringData mottatt', () => {
         dataFraBackend: true,
         storeData,
         kvittering: { kvitteringEkstern, kvitteringNavNo: null }
-      })
-    );
-
-    expect(result.current.innsendingTidspunkt).toBe(forventet);
-  });
-
-  it('reads mottatt from a stored external receipt', () => {
-    const { result } = renderHook(() =>
-      useKvitteringData({
-        dataFraBackend: false,
-        storeData: { ...storeData, kvitteringEksterntSystem: kvitteringEkstern },
-        kvittering: null
       })
     );
 

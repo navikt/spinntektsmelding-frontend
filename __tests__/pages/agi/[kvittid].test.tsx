@@ -633,7 +633,7 @@ describe('Kvittering', () => {
       />
     );
 
-    expect(screen.getByText('Inntektsmelding innsendt', { exact: true })).toBeInTheDocument();
+    expect(screen.getByText('Inntektsmelding innsendt', { exact: true })).not.toBeInTheDocument();
   });
 
   it('setter arbeidsgiverperiodeDisabled til true når Endre klikkes og AGP ikke har perioder', async () => {

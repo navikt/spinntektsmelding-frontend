@@ -6,11 +6,7 @@ import KvitteringAnnetSystem from '../../components/KvitteringAnnetSystem/Kvitte
 describe('KvitteringAnnetSystem', () => {
   it('should render the component with the correct props', () => {
     const props = {
-      arkivreferanse: '123456',
-      lenkeTilKvittering: 'Kvittering',
-      lenkeTilKvitteringHref: 'https://example.com/kvittering',
-      eksterntSystem: 'Eksternt system',
-      mottattDato: '2025-01-01'
+      kvitteringId: 'D6D62C67-3456-41B9-9032-4B4FADC30754'
     };
 
     const { getByText } = render(
@@ -19,31 +15,11 @@ describe('KvitteringAnnetSystem', () => {
 
     expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
     expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
-    expect(getByText(props.lenkeTilKvittering)).toHaveAttribute('href', props.lenkeTilKvitteringHref);
-  });
-
-  it('should render the component without optional props', () => {
-    const props = {
-      eksterntSystem: 'Eksternt system'
-    };
-
-    const { getByText, queryByText } = render(
-      <KvitteringAnnetSystem {...(props as React.ComponentProps<typeof KvitteringAnnetSystem>)} />
-    );
-
-    expect(getByText('Mottatt inntektsmelding')).toBeInTheDocument();
-    expect(getByText('Denne inntektsmeldingen er mottatt fra et eksternt system')).toBeInTheDocument();
-    expect(queryByText('Arkivreferanse:')).toBeNull();
-    expect(queryByText('Eventuell lenke til kvittering')).toBeNull();
   });
 
   it('should have no accessibility violations', async () => {
     const props = {
-      arkivreferanse: '123456',
-      lenkeTilKvittering: 'Kvittering',
-      lenkeTilKvitteringHref: 'https://example.com/kvittering',
-      eksterntSystem: 'Eksternt system',
-      mottattDato: '2025-01-01'
+      kvitteringId: 'D6D62C67-3456-41B9-9032-4B4FADC30754'
     };
     const { container } = render(
       <KvitteringAnnetSystem {...(props as React.ComponentProps<typeof KvitteringAnnetSystem>)} />

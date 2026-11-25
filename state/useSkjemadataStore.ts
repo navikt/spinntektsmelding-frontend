@@ -27,7 +27,6 @@ export interface SkjemadataState {
   setMottatt: (mottatt: string | Date) => void;
   setSkjemaFeilet: () => void;
   setInngangFraKvittering: () => void;
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => void;
   setSkjemaStatus: (status: SkjemaStatus) => void;
   setSelvbestemtType: (type: SelvbestemtType) => void;
   setKvitteringData: (data: KvitteringData) => void;
@@ -37,6 +36,7 @@ export interface SkjemadataState {
   setBegrensetForespoersel: (begrenset: boolean) => void;
   setHarGradertSykmelding: (harGradertSykmelding: boolean) => void;
   setSoeknadIder: (soeknadIder: string[]) => void;
+  setVisGeneriskKvittering: (vis: boolean) => void;
   soeknadIder?: string[];
   henterInntektsdata: boolean;
   mottatt?: Date;
@@ -44,7 +44,6 @@ export interface SkjemadataState {
   skjemaType?: Array<Opplysningstype>;
   inngangFraKvittering: boolean;
   direkteInngangKvittering: boolean;
-  kvitteringEksterntSystem?: KvitteringEkstern;
   skjemastatus: SkjemaStatus;
   kvitteringData?: KvitteringData;
   vedtaksperiodeId?: string;
@@ -52,6 +51,7 @@ export interface SkjemadataState {
   behandlingsdager?: string[];
   selvbestemtType: SelvbestemtType;
   begrensetForespoersel: boolean;
+  visGeneriskKvittering: boolean;
   harGradertSykmelding: boolean;
 }
 
@@ -68,10 +68,18 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
   selvbestemtType: 'MedArbeidsforhold',
   begrensetForespoersel: false,
   harGradertSykmelding: false,
+  visGeneriskKvittering: false,
   setNyInnsending: (endring: boolean) => {
     set(
       produce((state: SkjemadataState) => {
         state.nyInnsending = endring;
+      })
+    );
+  },
+  setVisGeneriskKvittering: (vis: boolean) => {
+    set(
+      produce((state: SkjemadataState) => {
+        state.visGeneriskKvittering = vis;
       })
     );
   },
@@ -95,13 +103,6 @@ const useSkjemadataStore: StateCreator<CompleteState, [], [], SkjemadataState> =
     set(
       produce((state: SkjemadataState) => {
         state.inngangFraKvittering = true;
-      })
-    );
-  },
-  setSkjemaKvitteringEksterntSystem: (eksterntSystem: KvitteringEkstern) => {
-    set(
-      produce((state: SkjemadataState) => {
-        state.kvitteringEksterntSystem = eksterntSystem;
       })
     );
   },

@@ -6,11 +6,6 @@ import lokalStyling from './KvitteringAnnetSystem.module.css';
 import environment from '../../config/environment';
 
 interface KvitteringAnnetSystemProps {
-  arkivreferanse?: string;
-  lenkeTilKvittering?: string;
-  lenkeTilKvitteringHref?: string;
-  eksterntSystem: string;
-  mottattDato?: string;
   kvitteringId: string;
 }
 
@@ -30,12 +25,6 @@ export default function KvitteringAnnetSystem(props: Readonly<KvitteringAnnetSys
           Du kan <Link href={`${basePath}/${props.kvitteringId}/overskriv`}>sende den inn på nytt.</Link> Skjemaet er da
           ikke fylt med data fra siste innsending.
         </BodyShort>
-
-        {props.lenkeTilKvittering && (
-          <BodyShort>
-            <Link href={props.lenkeTilKvitteringHref}>{props.lenkeTilKvittering}</Link>[Eventuell lenke til kvittering]
-          </BodyShort>
-        )}
       </div>
     </>
   );

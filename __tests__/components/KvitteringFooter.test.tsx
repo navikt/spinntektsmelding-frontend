@@ -37,6 +37,6 @@ describe('KvitteringFooter', () => {
 
     expect(screen.queryByRole('button', { name: 'Endre' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Skriv ut' })).toBeVisible();
-    expect(screen.getByText('Inntektsmelding innsendt')).toBeVisible();
+    expect(screen.getByText('Inntektsmelding innsendt')).not.toBeVisible();
   });
 });

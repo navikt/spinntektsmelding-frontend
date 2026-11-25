@@ -62,6 +62,7 @@ export const KvitteringEksternSchema = z.object({
 });
 
 export const MottattKvitteringSchema = z.object({
-  kvitteringEkstern: KvitteringEksternSchema.nullable(),
-  kvitteringNavNo: KvitteringNavNoSchema.nullable()
+  kvitteringEkstern: KvitteringEksternSchema.nullable().optional(),
+  kvitteringNavNo: KvitteringNavNoSchema.nullable(),
+  visGeneriskKvittering: z.boolean().optional()
 });

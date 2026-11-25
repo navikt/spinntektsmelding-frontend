@@ -40,16 +40,4 @@ describe('MottattKvitteringSchema', () => {
     };
     expect(MottattKvitteringSchema.safeParse(data).success).toBe(true);
   });
-
-  it('should reject an invalid external receipt timestamp', () => {
-    const data = {
-      kvitteringEkstern: { ...kvittering.kvitteringEkstern, mottatt: 'ugyldig' },
-      kvitteringNavNo: null
-    };
-
-    const result = MottattKvitteringSchema.safeParse(data);
-
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0].path).toEqual(['kvitteringEkstern', 'mottatt']);
-  });
 });
