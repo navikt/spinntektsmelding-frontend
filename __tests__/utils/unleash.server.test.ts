@@ -62,7 +62,7 @@ describe('server-side Unleash', () => {
     expect(createClient).toHaveBeenCalledTimes(2);
     expect(client.destroy).toHaveBeenCalledTimes(2);
     expect(vi.getTimerCount()).toBe(0);
-    expect(client.isEnabled).toHaveBeenCalledWith('inntektsmelding-selvbestemt-alternativer', {}, false);
+    expect(client.isEnabled).toHaveBeenCalledWith('frontend-inntektsmelding-selvbestemt-alternativer', {}, false);
   });
 
   it.each(['UNLEASH_SERVER_API_URL', 'UNLEASH_SERVER_API_TOKEN'])('deaktiverer nye valg uten %s', async (missing) => {

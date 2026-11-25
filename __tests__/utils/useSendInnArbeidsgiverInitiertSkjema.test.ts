@@ -123,7 +123,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Validering feilet',
       component: analyticsComponent
     });
@@ -220,7 +220,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
-    expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemainnsending feilet', {
       tittel: 'Innsending feilet - serverfeil',
       component: analyticsComponent
     });
@@ -279,7 +279,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
     expect(response!).toBe(false);
     expect(postInnsending).not.toHaveBeenCalled();
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Validering feilet',
       component: analyticsComponent
     });
