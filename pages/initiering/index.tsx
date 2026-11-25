@@ -23,17 +23,29 @@ export const getServerSideProps: GetServerSideProps<InitieringSkjemaProps> = asy
 };
 
 const Initiering: NextPage<InitieringSkjemaProps> = (props) => (
-  <InitieringLayout bannertittel='Inntektsmelding sykepenger' sidetittel='Inntektsmelding'>
-    <InfoCard data-color='info'>
-      <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
-        <InfoCard.Title>Du vil normalt få et varsel når Nav trenger inntektsmelding.</InfoCard.Title>
-      </InfoCard.Header>
-      <InfoCard.Content>
-        Vi sender ut varsel når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om sykepenger. Hvis
-        du ikke fått denne oppgaven og du mener at du skal levere inntektsmelding så er det mulig å opprette den
-        manuelt.
-      </InfoCard.Content>
-    </InfoCard>
+  <InitieringLayout
+    bannertittel='Inntektsmelding sykepenger'
+    sidetittel='Inntektsmelding'
+    nyeSelvbestemteAlternativer={props.nyeSelvbestemteAlternativer}
+  >
+    {props.nyeSelvbestemteAlternativer && (
+      <>
+        Nav ber vanligvis om inntektsmelding når arbeidsgiverperioden er over og den ansatte har søkt om sykepenger.
+        Situasjonene under er unntak der du må sende uten at Nav har bedt om det.
+      </>
+    )}
+    {!props.nyeSelvbestemteAlternativer && (
+      <InfoCard data-color='info'>
+        <InfoCard.Header icon={<InformationSquareIcon aria-hidden />}>
+          <InfoCard.Title>Du vil normalt få et varsel når Nav trenger inntektsmelding.</InfoCard.Title>
+        </InfoCard.Header>
+        <InfoCard.Content>
+          Vi sender ut varsel når arbeidsgiverperioden er ferdig og den sykmeldte har sendt inn søknad om sykepenger.
+          Hvis du ikke fått denne oppgaven og du mener at du skal levere inntektsmelding så er det mulig å opprette den
+          manuelt.
+        </InfoCard.Content>
+      </InfoCard>
+    )}
     <InitieringSkjema {...props} />
   </InitieringLayout>
 );
