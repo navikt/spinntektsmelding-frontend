@@ -127,7 +127,7 @@ describe('useSendInnSkjema', () => {
       await result.current({ pathSlug, isDirtyForm, formData, erBegrensetForespoersel: false });
     });
 
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Validering feilet',
       component: analyticsComponent
     });
@@ -222,7 +222,7 @@ describe('useSendInnSkjema', () => {
     });
 
     expect(response).toBe(false);
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Ugyldig UUID ved innsending',
       component: analyticsComponent
     });

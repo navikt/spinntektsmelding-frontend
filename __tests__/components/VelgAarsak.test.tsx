@@ -62,10 +62,76 @@ describe('VelgAarsak', () => {
     expect(description?.querySelector('em')).toHaveTextContent('Annen årsak');
   });
 
-  it.each([false, true])('beholder dagens fire alternativer med flaggverdi %s', (visNyeAlternativer) => {
-    render(<VelgAarsak legend={legend} name={name} visNyeAlternativer={visNyeAlternativer} />);
+  it('beholder dagens fire alternativer når flagget er av', () => {
+    render(<VelgAarsak legend={legend} name={name} visNyeAlternativer={false} />);
 
     expect(screen.getAllByRole('radio')).toHaveLength(4);
+    expect(screen.queryByRole('button', { name: /Vis flere situasjoner/ })).not.toBeInTheDocument();
+  });
+
+  it('viser de sju nye hovedalternativene når flagget er på', () => {
+    render(<VelgAarsak legend={legend} name={name} visNyeAlternativer />);
+
+    const alternativer = [
+      ['Fraværet er under 16 dager og det er ikke fire ukers opptjeningstid', 'Under16DagerUtenOpptjeningstid'],
+      ['Fraværet er over 16 dager når alle egenmeldingsdagene regnes med', 'Over16DagerMedEgenmeldingsdager'],
+      ['Den ansatte har sendt norsk eller utenlandsk søknad om sykepenger på papir', 'PapirSoeknad'],
+      ['Arbeidsgiverperioden består kun av behandlingsdager', 'Behandlingsdager'],
+      [
+        'Arbeidsgiverperioden består av en kombinasjon av behandlingsdager og annet sykefravær',
+        'BehandlingsdagerMedAnnetSykefravaer'
+      ],
+      ['Sykmelding med reisetilskudd', 'Reisetilskudd'],
+      ['Arbeidsforholdet er avsluttet i Aa-registeret', 'UtmeldtAaRegisteret']
+    ];
+
+    expect(screen.getByRole('radiogroup', { name: legend })).toBeInTheDocument();
+    expect(screen.getAllByRole('radio')).toHaveLength(alternativer.length);
+    for (const [label, value] of alternativer) {
+      expect(screen.getByRole('radio', { name: label })).toHaveAttribute('value', value);
+    }
+    expect(screen.queryByRole('radio', { name: 'Fisker med hyre' })).not.toBeInTheDocument();
+  });
+
+  it('viser og skjuler de utvidede alternativene med riktig antall i knappeteksten', async () => {
+    const user = userEvent.setup();
+    render(<VelgAarsak legend={legend} name={name} visNyeAlternativer />);
+
+    const alternativer = [
+      [
+        'Du skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten',
+        'MedArbeidsforhold'
+      ],
+      ['Arbeidsforholdet rapporteres ikke i Aa-registeret', 'UtenArbeidsforhold'],
+      ['Kontrollundersøkelse som varer mer enn 24 timer', 'Kontrollundersoekelse'],
+      ['Ingen av situasjonene passer', 'Annet']
+    ];
+    const antallHovedalternativer = screen.getAllByRole('radio').length;
+    const visFlere = screen.getByRole('button', { name: `Vis flere situasjoner (${alternativer.length})` });
+
+    for (const [label] of alternativer) {
+      expect(screen.queryByRole('radio', { name: label })).not.toBeInTheDocument();
+    }
+
+    await user.click(visFlere);
+
+    expect(screen.getAllByRole('radio')).toHaveLength(antallHovedalternativer + alternativer.length);
+    for (const [label, value] of alternativer) {
+      expect(screen.getByRole('radio', { name: label })).toHaveAttribute('value', value);
+    }
+    expect(
+      screen.getByRole('radio', { name: 'Arbeidsforholdet rapporteres ikke i Aa-registeret' })
+    ).toHaveAccessibleDescription(
+      'For eksempel ambassadeansatte, fisker med hyre eller varig tilrettelagt arbeid i ordinær virksomhet'
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Vis færre situasjoner' }));
+
+    expect(screen.getAllByRole('radio')).toHaveLength(antallHovedalternativer);
+    for (const [label] of alternativer) {
+      expect(screen.queryByRole('radio', { name: label })).not.toBeInTheDocument();
+    }
+    expect(screen.getByRole('button', { name: `Vis flere situasjoner (${alternativer.length})` })).toBeInTheDocument();
   });
 
   it.skip('allows selecting a radio option', async () => {

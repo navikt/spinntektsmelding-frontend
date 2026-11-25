@@ -67,15 +67,15 @@ describe('Initiering Page', () => {
 
   it('beholder flaggverdien ved nye serverprops og tilbake-navigering', async () => {
     const page = render(<Initiering nyeSelvbestemteAlternativer={true} />);
-    await screen.findByRole('radio', { name: 'Fisker med hyre' });
+    await screen.findByRole('radio', { name: 'Fraværet er under 16 dager og det er ikke fire ukers opptjeningstid' });
     page.rerender(<Initiering nyeSelvbestemteAlternativer={false} />);
 
     expect(vi.mocked(VelgAarsak).mock.calls.at(-1)?.[0].visNyeAlternativer).toBe(true);
     page.unmount();
     render(<Initiering nyeSelvbestemteAlternativer={false} />);
-    await screen.findByRole('radio', { name: 'Fisker med hyre' });
+    await screen.findByRole('radio', { name: 'Fraværet er under 16 dager og det er ikke fire ukers opptjeningstid' });
     expect(vi.mocked(VelgAarsak).mock.calls.at(-1)?.[0].visNyeAlternativer).toBe(true);
-    expect(screen.getAllByRole('radio')).toHaveLength(4);
+    expect(screen.getAllByRole('radio')).toHaveLength(7);
   });
 
   it('henter flagget pa serveren og hindrer delt caching av sideprops', async () => {
