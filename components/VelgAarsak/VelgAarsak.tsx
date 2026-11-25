@@ -35,6 +35,26 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
     setVisUtvidedeKategorier(!visUtvidedeKategorier);
   };
 
+  const utvidedeKategorier = [
+    {
+      value: SelvbestemtTypeConst.MedArbeidsforhold,
+      label: 'Du skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten'
+    },
+    {
+      value: SelvbestemtTypeConst.UtenArbeidsforhold,
+      label: 'Arbeidsforholdet rapporteres ikke i Aa-registeret',
+      description: 'For eksempel ambassadeansatte, fisker med hyre eller varig tilrettelagt arbeid i ordinær virksomhet'
+    },
+    {
+      value: SelvbestemtTypeConst.Kontrollundersoekelse,
+      label: 'Kontrollundersøkelse som varer mer enn 24 timer'
+    },
+    {
+      value: SelvbestemtTypeConst.Annet,
+      label: 'Ingen av situasjonene passer'
+    }
+  ];
+
   return (
     <Controller
       name={name}
@@ -125,54 +145,28 @@ export default function VelgAarsak({ legend, name, visNyeAlternativer = false }:
                 value={SelvbestemtTypeConst.UtmeldtAaRegisteret}
                 id={ensureValidHtmlId(field.name + '_UtmeldtAaRegisteret')}
               >
-                Arbeidsforholdet er meldt ut gjennom A-meldingen før inntektsmeldingen skal sendes
+                Arbeidsforholdet er avsluttet i Aa-registeret
               </RadioCard>
-              {visUtvidedeKategorier && (
-                <>
+              {visUtvidedeKategorier &&
+                utvidedeKategorier.map((kategori) => (
                   <RadioCard
-                    value={SelvbestemtTypeConst.MedArbeidsforhold}
-                    id={ensureValidHtmlId(field.name + '_MedArbeidsforhold')}
+                    key={kategori.value}
+                    value={kategori.value}
+                    id={ensureValidHtmlId(field.name + '_' + kategori.value)}
+                    description={kategori.description}
                   >
-                    Vi skal endre innsendt inntektsmelding, men den ligger ikke tilgjengelig i saksoversikten
+                    {kategori.label}
                   </RadioCard>
-                  <RadioCard
-                    value={SelvbestemtTypeConst.UtenArbeidsforhold}
-                    id={ensureValidHtmlId(field.name + '_UtenArbeidsforhold')}
-                    description='Dette gjelder når arbeidsforholdet ikke rapporteres i a-meldingen'
-                  >
-                    F.eks. Ambassadepersonell, Deltaker i VTA-tiltak, Fisker med hyre
-                  </RadioCard>
-                  <RadioCard
-                    value={SelvbestemtTypeConst.ArbeidIHelg}
-                    id={ensureValidHtmlId(field.name + '_ArbeidIHelg')}
-                  >
-                    Lønnsendring etter arbeid i helg mellom sykmeldinger
-                  </RadioCard>
-                  <RadioCard
-                    value={SelvbestemtTypeConst.Kontrollundersoekelse}
-                    id={ensureValidHtmlId(field.name + '_Kontrollundersoekelse')}
-                  >
-                    Kontrollundersøkelse som varer mer enn 24 timer
-                  </RadioCard>
-                  <RadioCard
-                    value={SelvbestemtTypeConst.TilbakeEtterPermitering}
-                    id={ensureValidHtmlId(field.name + '_TilbakeEtterPermitering')}
-                    description='Arbeidstaker skulle vært tilbake etter permittering '
-                  >
-                    Permitteringen er avsluttet under sykefraværet
-                  </RadioCard>
-                  <RadioCard value={SelvbestemtTypeConst.Annet} id={ensureValidHtmlId(field.name + '_Annet')}>
-                    Ingen av situasjonene passer
-                  </RadioCard>
-                </>
-              )}
+                ))}
               <Button
                 variant='tertiary'
                 onClick={handleToggleUtvidedeKategorier}
                 icon={visUtvidedeKategorier ? <ChevronUpIcon /> : <ChevronDownIcon />}
                 className={lokalStyling.toggleButton}
               >
-                {visUtvidedeKategorier ? 'Vis færre situasjoner' : 'Vis flere situasjoner (6)'}
+                {visUtvidedeKategorier
+                  ? 'Vis færre situasjoner'
+                  : `Vis flere situasjoner (${utvidedeKategorier.length})`}
               </Button>
             </>
           ) : null}
