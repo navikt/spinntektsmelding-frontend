@@ -70,6 +70,9 @@ export default function InitieringSkjema({
       svar: skjemaData.aarsakInnsending
     });
     switch (skjemaData.aarsakInnsending) {
+      case SelvbestemtTypeConst.Kontrollundersoekelse:
+      case SelvbestemtTypeConst.UtmeldtAaRegisteret:
+      case SelvbestemtTypeConst.BehandlingsdagerMedAnnetSykefravaer:
       case SelvbestemtTypeConst.UtenArbeidsforhold:
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.UtenArbeidsforhold);
         router.push('/initieringFritatt', { scroll: false });
@@ -100,7 +103,7 @@ export default function InitieringSkjema({
           <VelgAarsak
             legend='Årsak til at du vil opprette inntektsmelding.'
             name='aarsakInnsending'
-            visNyeAlternativer={true || alternativer.visNyeAlternativer}
+            visNyeAlternativer={alternativer.visNyeAlternativer}
           />
           <TextField
             label='Ansattes fødselsnummer'
