@@ -72,7 +72,6 @@ export default function InitieringSkjema({
     switch (skjemaData.aarsakInnsending) {
       case SelvbestemtTypeConst.Kontrollundersoekelse:
       case SelvbestemtTypeConst.UtmeldtAaRegisteret:
-      case SelvbestemtTypeConst.BehandlingsdagerMedAnnetSykefravaer:
       case SelvbestemtTypeConst.PapirSoeknad:
       case SelvbestemtTypeConst.UtenArbeidsforhold:
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.UtenArbeidsforhold);
@@ -86,6 +85,7 @@ export default function InitieringSkjema({
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.Behandlingsdager);
         router.push('/initieringBehandlingsdager', { scroll: false });
         return;
+      case SelvbestemtTypeConst.BehandlingsdagerMedAnnetSykefravaer:
       case SelvbestemtTypeConst.MedArbeidsforhold:
         setAarsakSelvbestemtInnsending(SelvbestemtTypeConst.MedArbeidsforhold);
         router.push('/initieringAnnet', { scroll: false });

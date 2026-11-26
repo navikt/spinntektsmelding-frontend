@@ -43,6 +43,25 @@ describe('server-side Unleash', () => {
     vi.unstubAllEnvs();
   });
 
+  it('aktiverer alltid nye valg lokalt uten Unleash-konfigurasjon', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+    vi.stubEnv('UNLEASH_SERVER_API_URL', '');
+    vi.stubEnv('UNLEASH_SERVER_API_TOKEN', '');
+    const { hentNyeSelvbestemteAlternativer } = await import('../../utils/unleash.server');
+
+    expect(await hentNyeSelvbestemteAlternativer()).toBe(true);
+    expect(createClient).not.toHaveBeenCalled();
+  });
+
+  it('bruker fortsatt Unleash-flagget i produksjon', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    client.isEnabled.mockReturnValue(false);
+    const { hentNyeSelvbestemteAlternativer } = await import('../../utils/unleash.server');
+
+    expect(await hentNyeSelvbestemteAlternativer()).toBe(false);
+    expect(client.isEnabled).toHaveBeenCalledWith('frontend-inntektsmelding-selvbestemt-alternativer', {}, false);
+  });
+
   it('henter flagget ved lasting og stopper klienten etter hver evaluering', async () => {
     const { hentNyeSelvbestemteAlternativer } = await import('../../utils/unleash.server');
 
