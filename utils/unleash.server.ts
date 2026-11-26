@@ -57,6 +57,8 @@ async function initialiserUnleash(): Promise<Unleash | undefined> {
 }
 
 export async function hentNyeSelvbestemteAlternativer(): Promise<boolean> {
+  if (process.env.NODE_ENV === 'development') return true;
+
   const client = await initialiserUnleash();
   if (!client) return false;
 
