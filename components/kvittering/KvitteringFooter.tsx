@@ -16,7 +16,7 @@ export default function KvitteringFooter({
 }: Readonly<KvitteringFooterProps>) {
   return (
     <>
-      <BodyShort>Inntektsmelding innsendt{innsendingTidspunkt}</BodyShort>
+      {innsendingTidspunkt && <BodyShort>Inntektsmelding innsendt{innsendingTidspunkt}</BodyShort>}
       <HStack justify='space-between' className={lokalStyling.buttonWrapper + ' skjul-fra-print'}>
         <HStack gap='space-64'>
           {onEndre && <ButtonEndre onClick={onEndre} />}

@@ -19,10 +19,10 @@
         "beloep": 65000.0,
         "inntektsdato": "2023-01-02",
         "naturalytelser": [],
-        "endringAarsak": null,
         "endringAarsaker": [{ "aarsak": "Bonus" }]
       },
-      "refusjon": { "beloepPerMaaned": null, "endringer": [], "sluttdato": null }
+      "naturalytelser": [],
+      "refusjon": { "beloepPerMaaned": 0, "endringer": [] }
     },
     "mottatt": "2023-08-23T13:04:51.580106881+02:00"
   }

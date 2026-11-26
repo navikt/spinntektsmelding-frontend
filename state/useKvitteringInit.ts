@@ -41,18 +41,18 @@ export default function useKvitteringInit() {
   const setGammeltSkjaeringstidspunkt = useBoundStore((state) => state.setGammeltSkjaeringstidspunkt);
   const setInngangFraKvittering = useBoundStore((state) => state.setInngangFraKvittering);
   const setOpprinneligNyMaanedsinntekt = useBoundStore((state) => state.setOpprinneligNyMaanedsinntekt);
-  const setSkjemaKvitteringEksterntSystem = useBoundStore((state) => state.setSkjemaKvitteringEksterntSystem);
   const setForeslaattBestemmendeFravaersdag = useBoundStore((state) => state.setForeslaattBestemmendeFravaersdag);
   const setMottattBestemmendeFravaersdag = useBoundStore((state) => state.setMottattBestemmendeFravaersdag);
   const setHarRefusjonEndringer = useBoundStore((state) => state.setHarRefusjonEndringer);
   const setSkjaeringstidspunkt = useBoundStore((state) => state.setSkjaeringstidspunkt);
   const setKvitteringData = useBoundStore((state) => state.setKvitteringData);
+  const setVisGeneriskKvittering = useBoundStore((state) => state.setVisGeneriskKvittering);
 
   return (kvitteringData: KvitteringInit) => {
     if (!kvitteringData) return;
 
-    if (kvitteringData.kvitteringEkstern) {
-      setSkjemaKvitteringEksterntSystem(kvitteringData.kvitteringEkstern);
+    setVisGeneriskKvittering(kvitteringData.visGeneriskKvittering === true);
+    if (kvitteringData.visGeneriskKvittering === true) {
       return;
     }
 
@@ -127,7 +127,7 @@ export default function useKvitteringInit() {
         jsonData.skjema.refusjon?.beloepPerMaaned !== undefined && jsonData.skjema.refusjon?.beloepPerMaaned !== null
           ? 'Ja'
           : 'Nei',
-      beloep: jsonData.skjema.refusjon?.beloepPerMaaned
+      beloep: jsonData.skjema.refusjon?.beloepPerMaaned ?? undefined
     });
 
     let refusjonEndringer = jsonData.skjema.refusjon?.endringer
@@ -196,13 +196,7 @@ export default function useKvitteringInit() {
       fom: parseIsoDate(periode.fom),
       tom: parseIsoDate(periode.tom)
     }));
-    const egenmeldingPerioder = jsonData.skjema.agp?.egenmeldinger
-      ? jsonData.skjema.agp.egenmeldinger.map((periode) => ({
-          fom: parseIsoDate(periode.fom),
-          tom: parseIsoDate(periode.tom)
-        }))
-      : [];
-    const fravaerPerioder = finnFravaersperioder(sykmeldingPerioder, egenmeldingPerioder);
+    const fravaerPerioder = finnFravaersperioder(sykmeldingPerioder);
     const arbeidsgiverperioder = jsonData.skjema.agp?.perioder
       ? jsonData.skjema.agp.perioder.map((periode) => ({
           fom: parseIsoDate(periode.fom),

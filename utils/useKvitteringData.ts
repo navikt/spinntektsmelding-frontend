@@ -4,7 +4,7 @@ import { MottattKvittering } from '../state/useKvitteringInit';
 import { SkjemadataState } from '../state/useSkjemadataStore';
 import { KvitteringVisning, lagKvitteringVisning } from './lagKvitteringVisning';
 
-interface StoreData extends Pick<SkjemadataState, 'mottatt' | 'kvitteringEksterntSystem' | 'kvitteringData'> {
+interface StoreData extends Pick<SkjemadataState, 'mottatt' | 'visGeneriskKvittering' | 'kvitteringData'> {
   bruttoinntekt: Inntekt;
   sykmeldingsperioder: Periode[] | undefined;
   naturalytelser?: Naturalytelse[];
@@ -30,7 +30,7 @@ export function useKvitteringData({
     naturalytelser,
     arbeidsgiverperioder,
     mottatt,
-    kvitteringEksterntSystem,
+    visGeneriskKvittering,
     gammeltSkjaeringstidspunkt,
     kvitteringData
   } = storeData;
@@ -46,7 +46,7 @@ export function useKvitteringData({
         naturalytelser,
         redusertLoennIAgp: kvitteringData?.agp?.redusertLoennIAgp,
         refusjon: kvitteringData?.refusjon,
-        mottatt: kvitteringEksterntSystem?.mottatt ?? mottatt
+        mottatt: visGeneriskKvittering ? undefined : mottatt
       });
     }
 
@@ -59,13 +59,12 @@ export function useKvitteringData({
       naturalytelser: ssrData?.skjema.naturalytelser?.filter((ytelse) => ytelse.sluttdato),
       redusertLoennIAgp: ssrData?.skjema.agp?.redusertLoennIAgp,
       refusjon: ssrData?.skjema.refusjon,
-      mottatt: kvittering?.kvitteringEkstern?.mottatt ?? ssrData?.mottatt,
+      mottatt: ssrData?.mottatt,
       avsender: ssrData?.avsender,
       sykmeldt: ssrData?.sykmeldt
     });
   }, [
     dataFraBackend,
-    kvittering?.kvitteringEkstern?.mottatt,
     ssrData,
     kvitteringData,
     sykmeldingsperioder,
@@ -74,6 +73,6 @@ export function useKvitteringData({
     gammeltSkjaeringstidspunkt,
     naturalytelser,
     mottatt,
-    kvitteringEksterntSystem?.mottatt
+    visGeneriskKvittering
   ]);
 }

@@ -274,7 +274,24 @@ describe('useKvitteringInit', () => {
       kvitteringInit(eksterntSystem as unknown as KvitteringData);
     });
 
-    expect(result.current.kvitteringEksterntSystem).toEqual(eksterntSystem.kvitteringEkstern);
+    expect(result.current.visGeneriskKvittering).toBe(true);
+  });
+
+  it.each([false, undefined])('resets the generic receipt flag when initializing a regular receipt with %s', (flag) => {
+    const { result } = renderHook(() => useKvitteringInit());
+
+    act(() => {
+      result.current({ kvitteringNavNo: null, visGeneriskKvittering: true });
+    });
+    expect(useBoundStore.getState().visGeneriskKvittering).toBe(true);
+
+    act(() => {
+      result.current({
+        ...(mottattKvittering as unknown as KvitteringData),
+        visGeneriskKvittering: flag
+      });
+    });
+    expect(useBoundStore.getState().visGeneriskKvittering).toBe(false);
   });
 
   it('should set the refusjon sluttdato in the correct place', async () => {

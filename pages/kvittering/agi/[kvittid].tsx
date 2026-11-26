@@ -166,7 +166,7 @@ const Kvittering: NextPage<InferGetServerSidePropsType<typeof getServerSideProps
       lagredeSykmeldingsperioder,
       lagredeEgenmeldingsperioder
     );
-    kvitteringInit({ kvitteringNavNo: kvittering, kvitteringEkstern: null });
+    kvitteringInit({ kvitteringNavNo: kvittering });
     // Må lagre data som kan endres i hovedskjema - Slutt
     if (ingenArbeidsgiverperioder) {
       setArbeidsgiverperiodeDisabled(true);
@@ -273,7 +273,7 @@ function prepareForInitiering(
     throw new Error('Kan ikke initialisere AGI-kvitteringen uten inntektsdata');
   }
 
-  const kvittering: KvitteringNavNoInit = {
+  const kvittering = {
     sykmeldt: KvitteringNavNoInitSchema.shape.sykmeldt.parse({
       navn: personData.navn,
       fnr: personData.identitetsnummer

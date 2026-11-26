@@ -11,13 +11,16 @@ const storeData = {
   sykmeldingsperioder: [],
   arbeidsgiverperioder: [],
   mottatt: undefined,
-  kvitteringEksterntSystem: undefined,
   gammeltSkjaeringstidspunkt: undefined,
-  kvitteringData: undefined
+  kvitteringData: undefined,
+  visGeneriskKvittering: false
 };
 
 describe('useKvitteringData refusjon', () => {
   const skjema = {
+    forespoerselId: '550e8400-e29b-41d4-a716-446655440000',
+    avsenderTlf: '12345678',
+    flereArbeidsforhold: null,
     agp: null,
     refusjon: {
       beloepPerMaaned: 0,
@@ -37,7 +40,6 @@ describe('useKvitteringData refusjon', () => {
     }
   } satisfies NonNullable<MottattKvittering['kvitteringNavNo']>['skjema'];
   const kvittering: MottattKvittering = {
-    kvitteringEkstern: null,
     kvitteringNavNo: {
       mottatt: '2024-06-03T10:00:00+02:00',
       sykmeldt: { navn: 'Test', fnr: '12345678901' },
@@ -79,7 +81,6 @@ describe('useKvitteringData mottatt', () => {
   const mottatt = '2026-10-23T13:30:00+02:00';
   const dato = new Date(mottatt);
   const forventet = ` - ${formatDate(dato)} kl. ${formatTime(dato)}`;
-  const kvitteringEkstern = { avsenderSystem: 'AltinnPortal', referanse: 'AR123456', mottatt };
 
   it('reads mottatt from the receipt root rather than skjema', () => {
     const { result } = renderHook(() =>
@@ -87,13 +88,15 @@ describe('useKvitteringData mottatt', () => {
         dataFraBackend: true,
         storeData,
         kvittering: {
-          kvitteringEkstern: null,
           kvitteringNavNo: {
             mottatt,
             sykmeldt: { navn: 'Test', fnr: '12345678901' },
             avsender: { navn: 'Test', orgnr: '123456789', orgNavn: 'Test', tlf: '12345678' },
             sykmeldingsperioder: [],
             skjema: {
+              forespoerselId: '550e8400-e29b-41d4-a716-446655440000',
+              avsenderTlf: '12345678',
+              flereArbeidsforhold: null,
               agp: null,
               refusjon: null,
               naturalytelser: [],
@@ -113,28 +116,16 @@ describe('useKvitteringData mottatt', () => {
     expect(result.current.innsendingTidspunkt).toBe(forventet);
   });
 
-  it('reads mottatt from an external backend receipt', () => {
+  it('leaves the received date empty for a generic backend receipt', () => {
     const { result } = renderHook(() =>
       useKvitteringData({
         dataFraBackend: true,
         storeData,
-        kvittering: { kvitteringEkstern, kvitteringNavNo: null }
+        kvittering: { visGeneriskKvittering: true, kvitteringNavNo: null }
       })
     );
 
-    expect(result.current.innsendingTidspunkt).toBe(forventet);
-  });
-
-  it('reads mottatt from a stored external receipt', () => {
-    const { result } = renderHook(() =>
-      useKvitteringData({
-        dataFraBackend: false,
-        storeData: { ...storeData, kvitteringEksterntSystem: kvitteringEkstern },
-        kvittering: null
-      })
-    );
-
-    expect(result.current.innsendingTidspunkt).toBe(forventet);
+    expect(result.current.innsendingTidspunkt).toBe('');
   });
 
   it('leaves the received date empty when it is missing', () => {

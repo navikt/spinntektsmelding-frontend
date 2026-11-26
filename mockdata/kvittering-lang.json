@@ -33,7 +33,6 @@
             "tom": "2023-03-06"
           }
         ],
-        "egenmeldinger": [],
         "redusertLoennIAgp": {
           "beloep": 30000,
           "begrunnelse": "LovligFravaer"
@@ -62,6 +61,5 @@
       "mottatt": "2023-04-26T08:01:31.170336157+02:00"
     }
   },
-  "kvitteringEkstern": null,
   "kvitteringDokument": null
 }

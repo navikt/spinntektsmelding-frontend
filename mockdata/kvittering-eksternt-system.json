@@ -1,8 +1,5 @@
 {
-  "kvitteringEkstern": {
-    "avsenderSystem": "AltinnPortal",
-    "referanse": "AR123456",
-    "mottatt": "2023-09-19T08:08:29.639368431Z"
-  },
-  "kvitteringDokument": null
+  "kvitteringNavNo": null,
+  "kvitteringDokument": null,
+  "visGeneriskKvittering": true
 }

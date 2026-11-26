@@ -13,7 +13,6 @@
       "avsenderTlf": "+4712345678",
       "agp": {
         "perioder": [{ "fom": "2024-01-31", "tom": "2024-02-15" }],
-        "egenmeldinger": [{ "fom": "2024-01-31", "tom": "2024-01-31" }],
         "redusertLoennIAgp": { "beloep": 30000.0, "begrunnelse": "Permittering" }
       },
       "inntekt": {
@@ -25,6 +24,5 @@
       "refusjon": { "beloepPerMaaned": 46000.0, "endringer": [], "sluttdato": "2024-06-01" }
     },
     "mottatt": "2024-06-25T09:46:00.601757+02:00"
-  },
-  "kvitteringEkstern": null
+  }
 }

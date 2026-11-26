@@ -18,10 +18,11 @@ export const KvitteringNavNoSchema = z.object({
   avsender: MottattAvsenderSchema,
   sykmeldingsperioder: z.array(ApiPeriodeSchema),
   skjema: z.object({
+    forespoerselId: z.uuid(),
+    avsenderTlf: TelefonNummerSchema,
     agp: z
       .object({
         perioder: z.array(ApiPeriodeSchema),
-        egenmeldinger: z.array(ApiPeriodeSchema),
         redusertLoennIAgp: z
           .object({
             beloep: z.number().min(0),
@@ -30,38 +31,54 @@ export const KvitteringNavNoSchema = z.object({
           .nullable()
       })
       .nullable(),
-    inntekt: z.object({
-      beloep: z.number(),
-      endringAarsak: ApiEndringAarsakSchema.optional(),
-      inntektsdato: z.iso.date(),
-      naturalytelser: ApiNaturalytelserSchema,
-      endringAarsaker: z.array(ApiEndringAarsakSchema)
-    }),
+    inntekt: z
+      .object({
+        beloep: z.number(),
+        endringAarsak: ApiEndringAarsakSchema.nullish(),
+        inntektsdato: z.iso.date(),
+        naturalytelser: ApiNaturalytelserSchema.nullish(),
+        endringAarsaker: z.array(ApiEndringAarsakSchema).nullish()
+      })
+      .nullable(),
     refusjon: z
       .object({
-        beloepPerMaaned: z.number(),
+        beloepPerMaaned: z.number().nullable(),
         endringer: z.array(RefusjonEndringSchema)
       })
       .nullable(),
-    naturalytelser: ApiNaturalytelserSchema
+    naturalytelser: ApiNaturalytelserSchema.nullish(),
+    flereArbeidsforhold: z
+      .object({
+        harLikLoenn: z.boolean(),
+        erSykmeldtFraAlle: z.boolean(),
+        arbeidsforhold: z.array(
+          z.object({
+            inkludertISykefravaer: z.boolean(),
+            yrkesbeskrivelse: z.string(),
+            stillingsprosent: z.number().min(0).max(100),
+            inntekt: z.number().min(0)
+          })
+        )
+      })
+      .nullable()
+      .default(null)
   }),
   mottatt: z.iso.datetime({ offset: true })
 });
 
 export const KvitteringNavNoInitSchema = KvitteringNavNoSchema.extend({
+  skjema: KvitteringNavNoSchema.shape.skjema.partial({
+    forespoerselId: true,
+    avsenderTlf: true,
+    flereArbeidsforhold: true
+  }),
   avsender: AvsenderSchema.extend({
     navn: AvsenderSchema.shape.navn.optional(),
     tlf: TelefonNummerSchema
   })
 });
 
-export const KvitteringEksternSchema = z.object({
-  avsenderSystem: z.string(),
-  referanse: z.string(),
-  mottatt: z.iso.datetime({ offset: true })
-});
-
 export const MottattKvitteringSchema = z.object({
-  kvitteringEkstern: KvitteringEksternSchema.nullable(),
-  kvitteringNavNo: KvitteringNavNoSchema.nullable()
+  kvitteringNavNo: KvitteringNavNoSchema.nullable(),
+  visGeneriskKvittering: z.boolean().optional()
 });

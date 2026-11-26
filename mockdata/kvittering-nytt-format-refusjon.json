@@ -13,7 +13,6 @@
       "avsenderTlf": "12345678",
       "agp": {
         "perioder": [{ "fom": "2024-09-01", "tom": "2024-09-16" }],
-        "egenmeldinger": [],
         "redusertLoennIAgp": { "beloep": 1235.0, "begrunnelse": "BeskjedGittForSent" }
       },
       "inntekt": {
@@ -64,6 +63,5 @@
     "bekreftOpplysninger": true,
     "tidspunkt": "2025-01-07T16:04:19.123709854+01:00",
     "forespurtData": ["arbeidsgiverperiode", "inntekt", "refusjon"]
-  },
-  "kvitteringEkstern": null
+  }
 }
