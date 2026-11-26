@@ -18,6 +18,9 @@ const storeData = {
 
 describe('useKvitteringData refusjon', () => {
   const skjema = {
+    forespoerselId: '550e8400-e29b-41d4-a716-446655440000',
+    avsenderTlf: '12345678',
+    flereArbeidsforhold: null,
     agp: null,
     refusjon: {
       beloepPerMaaned: 0,
@@ -78,7 +81,6 @@ describe('useKvitteringData mottatt', () => {
   const mottatt = '2026-10-23T13:30:00+02:00';
   const dato = new Date(mottatt);
   const forventet = ` - ${formatDate(dato)} kl. ${formatTime(dato)}`;
-  const kvitteringEkstern = { avsenderSystem: 'AltinnPortal', referanse: 'AR123456', mottatt };
 
   it('reads mottatt from the receipt root rather than skjema', () => {
     const { result } = renderHook(() =>
@@ -92,6 +94,9 @@ describe('useKvitteringData mottatt', () => {
             avsender: { navn: 'Test', orgnr: '123456789', orgNavn: 'Test', tlf: '12345678' },
             sykmeldingsperioder: [],
             skjema: {
+              forespoerselId: '550e8400-e29b-41d4-a716-446655440000',
+              avsenderTlf: '12345678',
+              flereArbeidsforhold: null,
               agp: null,
               refusjon: null,
               naturalytelser: [],
@@ -111,7 +116,7 @@ describe('useKvitteringData mottatt', () => {
     expect(result.current.innsendingTidspunkt).toBe(forventet);
   });
 
-  it('reads mottatt from an external backend receipt', () => {
+  it('leaves the received date empty for a generic backend receipt', () => {
     const { result } = renderHook(() =>
       useKvitteringData({
         dataFraBackend: true,

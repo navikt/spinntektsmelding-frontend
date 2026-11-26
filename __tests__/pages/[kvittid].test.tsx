@@ -164,8 +164,12 @@ describe('kvittering', () => {
 
   it('does not render FAISU for a normalized receipt without the field', () => {
     const source = kvitteringsdataBackend.selvbestemtInntektsmelding;
-    const kvitteringData = KvitteringNavNoSchema.shape.skjema.parse(source);
-    expect(kvitteringData).not.toHaveProperty('flereArbeidsforhold');
+    const kvitteringData = KvitteringNavNoSchema.shape.skjema.parse({
+      ...source,
+      forespoerselId: '8d50ef20-37b5-4829-ad83-56219e70b375',
+      avsenderTlf: source.avsender.tlf
+    });
+    expect(kvitteringData.flereArbeidsforhold).toBeNull();
     useBoundStore.setState({ kvitteringData });
 
     render(<Kvittering kvittid={source.id} kvittering={null} dataFraBackend={false} kvitteringStatus={200} />);

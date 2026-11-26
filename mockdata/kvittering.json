@@ -15,7 +15,6 @@
       "avsenderTlf": "12345678",
       "agp": {
         "perioder": [{ "fom": "2023-02-17", "tom": "2023-03-04" }],
-        "egenmeldinger": [{ "fom": "2023-02-17", "tom": "2023-02-19" }],
         "redusertLoennIAgp": { "beloep": 99999.0, "begrunnelse": "StreikEllerLockout" }
       },
       "inntekt": {
@@ -38,6 +37,5 @@
       "mottatt": "2023-04-13T15:27:59.504446905+02:00"
     }
   },
-  "kvitteringEkstern": null,
   "kvitteringDokument": null
 }

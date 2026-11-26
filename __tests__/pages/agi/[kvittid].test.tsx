@@ -15,7 +15,7 @@ import kvitteringsdataBackend from '../../../mockdata/kvittering-selvbestemt-for
 import { SelvbestemtInntektsmeldingSchema } from '../../../schema/SelvbestemtKvitteringSchema';
 import AapenInnsendingSchema from '../../../schema/AapenInnsendingSchema';
 import FullInnsendingSchema from '../../../schema/FullInnsendingSchema';
-import { KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
+import { KvitteringNavNoInitSchema, KvitteringNavNoSchema } from '../../../schema/MottattKvitteringSchema';
 import parseIsoDate from '../../../utils/parseIsoDate';
 import { serverSideContext } from '../../utils/serverSideContext';
 import type { ComponentProps } from 'react';
@@ -233,7 +233,7 @@ describe('Kvittering', () => {
         : format === 'aapen'
           ? AapenInnsendingSchema.parse(innsendt)
           : KvitteringNavNoSchema.shape.skjema.parse({
-              ...source,
+              ...innsendt,
               refusjon: { beloepPerMaaned: 5000, endringer: [] }
             });
     const sykmeldingsperioder = source.sykmeldingsperioder.map((periode, index) => ({
@@ -266,13 +266,13 @@ describe('Kvittering', () => {
       sykmeldingsperioder.map(({ fom, tom }) => ({ fom, tom }))
     );
     expect(state.kvitteringData?.agp).toMatchObject({
-      egenmeldinger: format === 'navNo' ? source.agp?.egenmeldinger : egenmeldinger,
+      egenmeldinger,
       redusertLoennIAgp: source.agp?.redusertLoennIAgp ?? null
     });
     expect(state.kvitteringData?.inntekt?.beloep).toBe(source.inntekt.beloep);
     expect(state.kvitteringData?.inntekt?.endringAarsaker).toEqual(source.inntekt.endringAarsaker);
     expect(state.kvitteringData?.refusjon?.endringer).toEqual([]);
-    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(KvitteringNavNoInitSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
     expect(state.mottatt).toEqual(new Date(source.mottatt));
   });
 
@@ -341,7 +341,7 @@ describe('Kvittering', () => {
     expect(state.kvitteringData?.inntekt).toMatchObject(source.inntekt);
     expect(state.kvitteringData?.naturalytelser).toEqual(source.naturalytelser);
     expect(state.kvitteringData?.refusjon).toBeNull();
-    expect(KvitteringNavNoSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
+    expect(KvitteringNavNoInitSchema.shape.skjema.safeParse(state.kvitteringData).success).toBe(true);
     expect(state.mottatt).toEqual(new Date(source.mottatt));
   });
 
