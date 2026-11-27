@@ -40,6 +40,23 @@ import ButtonBack from '../../components/Initiering/ButtonBack';
 
 type SkjemaData = z.infer<typeof InitieringSchema>;
 
+const hentFeilmeldingHenting = (
+  tilgangerFeil: boolean,
+  arbeidsforholdFeil: boolean,
+  soeknaderFeil: boolean
+): string | undefined => {
+  if (tilgangerFeil) {
+    return 'Kunne ikke hente tilganger. Prøv igjen senere.';
+  }
+  if (arbeidsforholdFeil) {
+    return 'Kunne ikke hente arbeidsforhold. Prøv igjen senere.';
+  }
+  if (soeknaderFeil) {
+    return 'Kunne ikke hente sykepengesøknader. Prøv igjen senere.';
+  }
+  return undefined;
+};
+
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
   const initPerson = useBoundStore((state) => state.initPerson);
@@ -101,8 +118,8 @@ const InitieringFritatt: NextPage = () => {
   } = useInitieringData(sykmeldt.fnr, orgnr, setError, true);
 
   const visningArbeidsgiverTilganger = useMemo(() => {
-    const organisasjonsnumre = arbeidsforhold.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
-    return arbeidsgiverTilganger.filter((tilgang) => organisasjonsnumre.includes(tilgang.orgnrUnderenhet));
+    const organisasjonsnumre = new Set(arbeidsforhold.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet));
+    return arbeidsgiverTilganger.filter((tilgang) => organisasjonsnumre.has(tilgang.orgnrUnderenhet));
   }, [arbeidsforhold, arbeidsgiverTilganger]);
   const grunnlagsFeil = tilgangerError || arbeidsforholdError;
   const arbeidsgivervalgKlart =
@@ -125,13 +142,11 @@ const InitieringFritatt: NextPage = () => {
     !soeknaderFeil &&
     (spData !== undefined || spError?.status === 404)
   );
-  const feilmeldingHenting = tilgangerError
-    ? 'Kunne ikke hente tilganger. Prøv igjen senere.'
-    : arbeidsforholdError
-      ? 'Kunne ikke hente arbeidsforhold. Prøv igjen senere.'
-      : arbeidsgivervalgKlart && valgtArbeidsgiver && soeknaderFeil
-        ? 'Kunne ikke hente sykepengesøknader. Prøv igjen senere.'
-        : undefined;
+  const feilmeldingHenting = hentFeilmeldingHenting(
+    Boolean(tilgangerError),
+    Boolean(arbeidsforholdError),
+    Boolean(arbeidsgivervalgKlart && valgtArbeidsgiver && soeknaderFeil)
+  );
 
   const harArbeidsforhold = Boolean(
     spData && (spData.soeknaderArbeidstaker.length > 0 || spData.forespoersler.length > 0) && arbeidsforholdData
@@ -337,7 +352,7 @@ const InitieringFritatt: NextPage = () => {
             </LocalAlert>
           )}
           {arbeidsgivervalgKlart && visningArbeidsgiverTilganger.length === 0 && (
-            <p role='status'>Ingen tilgjengelige arbeidsgivere for den ansatte.</p>
+            <output>Ingen tilgjengelige arbeidsgivere for den ansatte.</output>
           )}
           {arbeidsgivervalgKlart && arbeidsgivervalgSynkronisert && visningArbeidsgiverTilganger.length > 0 && (
             <div>
