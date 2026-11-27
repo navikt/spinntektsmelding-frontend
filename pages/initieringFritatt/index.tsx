@@ -36,6 +36,7 @@ import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHenti
 import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { mapArbeidsgiverTilganger } from '../../utils/initieringArbeidsgivere';
+import ButtonBack from '../../components/Initiering/ButtonBack';
 
 type SkjemaData = z.infer<typeof InitieringSchema>;
 
@@ -259,7 +260,14 @@ const InitieringFritatt: NextPage = () => {
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [visUtenKobling, spLoading, spData, spError, arbeidsforholdData, arbeidsforhold.length]);
+  }, [visUtenKobling, spLoading, spData, spError, arbeidsforhold.length]);
+
+  const visningArbeidsforhold = arbeidsforhold?.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
+
+  const visningArbeidsgiverTilganger = visningArbeidsforhold
+    ? arbeidsgiverTilganger.filter((tilgang) => visningArbeidsforhold.includes(tilgang.orgnrUnderenhet))
+    : arbeidsgiverTilganger;
+
   return (
     <InitieringLayout>
       <FormProvider {...methods}>
@@ -272,10 +280,10 @@ const InitieringFritatt: NextPage = () => {
             </div>
           </div>
           {!tilganger && !tilgangerError && <Loading />}
-          {arbeidsgiverTilganger && (
+          {visningArbeidsgiverTilganger && (
             <div>
               <SelectArbeidsgiver
-                arbeidsforhold={arbeidsgiverTilganger}
+                arbeidsforhold={visningArbeidsgiverTilganger}
                 id='organisasjonsnummer'
                 register={register}
                 error={errors.organisasjonsnummer?.message as string}
@@ -319,9 +327,7 @@ const InitieringFritatt: NextPage = () => {
             </>
           )}
           <div className={lokalStyling.knapperad}>
-            <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
-              Tilbake
-            </Button>
+            <ButtonBack onClick={() => history.back()} />
             <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
               Neste
             </Button>

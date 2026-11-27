@@ -229,17 +229,17 @@ describe('InitieringFritatt page', () => {
     const user = userEvent.setup();
     const { rerender } = render(<InitieringFritatt />);
 
-    await user.click(screen.getByLabelText(/Hvilken underenhet/));
-    await user.click(
-      await screen.findByRole('option', {
-        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
-      })
-    );
+    await user.click(screen.getByRole('combobox', { name: /Hvilken underenhet/ }));
+    expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    expect(screen.getByText('Ingen søketreff')).toBeInTheDocument();
 
     vi.mocked(useArbeidsforhold).mockReturnValue({
       data: {
         fulltNavn: 'Ukjent navn',
-        underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' }]
+        underenheter: [
+          { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+          { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+        ]
       },
       error: undefined,
       isLoading: false,
@@ -247,6 +247,11 @@ describe('InitieringFritatt page', () => {
       mutate: vi.fn()
     });
     rerender(<InitieringFritatt />);
+    await user.click(
+      await screen.findByRole('option', {
+        name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
+      })
+    );
     await user.click(screen.getByRole('button', { name: 'Neste' }));
 
     await waitFor(() => expect(mockedRouter.push).toHaveBeenCalledWith('/unntattAaRegisteret'));
@@ -300,36 +305,56 @@ describe('InitieringFritatt page', () => {
   });
 
   it.each([
-    { fulltNavn: 'Ukjent navn', underenheter: [] },
-    { fulltNavn: '', underenheter: [] },
-    {
-      fulltNavn: 'Ukjent navn',
-      underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' }]
-    }
-  ])(
-    'submits without arbeidsforhold using tilganger with name "$fulltNavn" and units $underenheter',
-    async ({ fulltNavn, underenheter }) => {
+    { underenheter: [] },
+    { underenheter: [{ orgnrUnderenhet: '315609267', virksomhetsnavn: 'Organisation without access' }] }
+  ])('blocks submission when no employment matches the access list: %j', async ({ underenheter }) => {
+    vi.mocked(useArbeidsforhold).mockReturnValue({
+      data: { fulltNavn: 'Ukjent navn', underenheter },
+      error: undefined,
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
+    vi.mocked(useSykepengesoeknader).mockReturnValue({
+      data: undefined,
+      error: { status: 404 },
+      isLoading: false,
+      isValidating: false,
+      mutate: vi.fn()
+    });
+    const user = userEvent.setup();
+    render(<InitieringFritatt />);
+
+    await user.click(screen.getByRole('combobox', { name: /Hvilken underenhet/ }));
+    expect(screen.queryByRole('option')).not.toBeInTheDocument();
+    expect(screen.getByText('Ingen søketreff')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Neste' }));
+
+    expect(await screen.findAllByText('Organisasjon er ikke valgt.')).toHaveLength(2);
+    expect(fakeStore.initPerson).not.toHaveBeenCalled();
+    expect(mockedRouter.push).not.toHaveBeenCalled();
+  });
+
+  it.each(['Ukjent navn', ''])(
+    'uses the sole matching employer when there are no sickness-benefit periods and the name is "%s"',
+    async (fulltNavn) => {
       const mockData = {
         fulltNavn,
         fnr: testFnr.GyldigeFraDolly.TestPerson1,
-        underenheter
+        underenheter: [{ orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Outdated Org' }]
       };
       (useArbeidsforhold as unknown as Mock).mockReturnValue({ data: mockData, error: undefined });
       (useSykepengesoeknader as unknown as Mock).mockReturnValue({ data: undefined, error: { status: 404 } });
       const user = userEvent.setup();
       render(<InitieringFritatt />);
-      // choose the nested unit
-      await waitFor(() => screen.getByLabelText(/Hvilken underenhet/));
-      await user.click(screen.getByLabelText(/Hvilken underenhet/));
-      await user.click(
-        await screen.findByRole('option', {
-          name: `Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`
-        })
-      );
 
-      await waitFor(() => screen.getByRole('button', { name: 'Neste' }));
+      expect(screen.getByText(`Orgnr. ${testOrganisasjoner[0].organizationNumber} - Child Org`)).toBeInTheDocument();
+      expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(`Orgnr. ${testOrganisasjoner[1].organizationNumber} - Child Org 2`)
+      ).not.toBeInTheDocument();
       const logInfo = vi.spyOn(logger, 'info');
-      fireEvent.click(screen.getByRole('button', { name: 'Neste' }));
+      await user.click(screen.getByRole('button', { name: 'Neste' }));
 
       if (!fulltNavn) {
         await waitFor(() =>
@@ -367,7 +392,13 @@ describe('InitieringFritatt page', () => {
 
   it('stops submission when the selected organisation is no longer in tilganger', async () => {
     vi.mocked(useArbeidsforhold).mockReturnValue({
-      data: { fulltNavn: 'Ukjent navn', underenheter: [] },
+      data: {
+        fulltNavn: 'Ukjent navn',
+        underenheter: [
+          { orgnrUnderenhet: testOrganisasjoner[0].organizationNumber, virksomhetsnavn: 'Child Org' },
+          { orgnrUnderenhet: testOrganisasjoner[1].organizationNumber, virksomhetsnavn: 'Child Org 2' }
+        ]
+      },
       error: undefined,
       isLoading: false,
       isValidating: false,

@@ -34,6 +34,7 @@ import useInitieringData from '../../utils/useInitieringData';
 import InitieringPeriodevelger from '../../components/Initiering/InitieringPeriodevelger';
 import initierMedArbeidsforhold from '../../utils/initierMedArbeidsforhold';
 import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
+import ButtonBack from '../../components/Initiering/ButtonBack';
 
 const InitieringAnnet: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -240,14 +241,7 @@ const InitieringAnnet: NextPage = () => {
             </>
           )}
           <div className={lokalStyling.knapperad}>
-            <Button
-              type='button'
-              variant='tertiary'
-              className={lokalStyling.primaryKnapp}
-              onClick={() => history.back()}
-            >
-              Tilbake
-            </Button>
+            <ButtonBack onClick={() => history.back()} />
             <Button
               variant='primary'
               className={lokalStyling.primaryKnapp}

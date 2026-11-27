@@ -24,6 +24,7 @@ import { InitieringAnnetSchema } from '../../schema/InitieringAnnetSchema';
 import { collectNestedOrgs } from '../../utils/collectNestedOrgs';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import ButtonBack from '../../components/Initiering/ButtonBack';
 
 const InitieringFritatt: NextPage = () => {
   const sykmeldt = useBoundStore((state) => state.sykmeldt);
@@ -142,14 +143,7 @@ const InitieringFritatt: NextPage = () => {
           )}
 
           <div className={lokalStyling.knapperad}>
-            <Button
-              type='button'
-              variant='tertiary'
-              className={lokalStyling.primaryKnapp}
-              onClick={() => history.back()}
-            >
-              Tilbake
-            </Button>
+            <ButtonBack onClick={() => history.back()} />
             <Button
               variant='primary'
               className={lokalStyling.primaryKnapp}
