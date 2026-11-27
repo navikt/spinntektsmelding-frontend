@@ -98,6 +98,8 @@ const InitieringFritatt: NextPage = () => {
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
 
+  console.log('orgnr:', orgnr);
+
   const arbeidsgiverTilganger = useMemo(() => mapArbeidsgiverTilganger(tilganger), [tilganger]);
 
   const {
