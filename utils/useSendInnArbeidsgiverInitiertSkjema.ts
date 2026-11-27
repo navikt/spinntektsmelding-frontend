@@ -19,6 +19,7 @@ import {
 import { LonnIArbeidsgiverperioden } from '../state/state';
 import { z } from 'zod';
 import { HovedskjemaSchema } from '../schema/HovedskjemaSchema';
+import { nullstillSelvbestemtAlternativer } from './selvbestemtAlternativerSnapshot';
 
 type ValiderteAapenInnsending = ReturnType<ReturnType<typeof useFyllAapenInnsending>>;
 type Skjema = z.infer<typeof HovedskjemaSchema>;
@@ -119,7 +120,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       logger.warn(
         `Feil ved validering av skjema - Åpen innsending ${JSON.stringify(validerteData.error)} ${JSON.stringify(errors)}`
       );
-      logEvent('skjema validering feilet', { tittel: 'Validering feilet', component: analyticsComponent });
+      logEvent('skjemavalidering feilet', { tittel: 'Validering feilet', component: analyticsComponent });
       return false;
     }
 
@@ -140,6 +141,7 @@ export default function useSendInnArbeidsgiverInitiertSkjema(
       analyticsComponent,
       onUnauthorized: () => innsendingFeiletIngenTilgang(true),
       onSuccess: async (body) => {
+        nullstillSelvbestemtAlternativer();
         if (body?.selvbestemtId) pathSlug = body.selvbestemtId;
         setMottatt(new Date());
         if (skjemastatus === SkjemaStatus.SELVBESTEMT) {

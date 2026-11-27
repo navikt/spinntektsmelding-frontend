@@ -9,13 +9,19 @@ type InitieringLayoutProps = Readonly<{
   children: ReactNode;
   bannertittel?: string;
   sidetittel?: string;
+  nyeSelvbestemteAlternativer?: boolean;
 }>;
 
 export default function InitieringLayout({
   children,
   bannertittel = 'Inntektsmelding',
-  sidetittel = 'Inntektsmelding sykepenger'
+  sidetittel = 'Inntektsmelding sykepenger',
+  nyeSelvbestemteAlternativer = false
 }: InitieringLayoutProps) {
+  const tittelTekst = nyeSelvbestemteAlternativer
+    ? 'Hvorfor må du sende inn inntektsmelding uten at Nav har bedt om det?'
+    : 'Opprett inntektsmelding for et sykefravær';
+
   return (
     <div className={styles.container}>
       <Head>
@@ -26,7 +32,7 @@ export default function InitieringLayout({
       <BannerUtenVelger tittelMedUnderTittel={bannertittel} />
       <PageContent title={sidetittel}>
         <div className={styles.padded}>
-          <Heading1 id='mainTitle'>Opprett inntektsmelding for et sykefravær</Heading1>
+          <Heading1 id='mainTitle'>{tittelTekst}</Heading1>
           {children}
         </div>
       </PageContent>

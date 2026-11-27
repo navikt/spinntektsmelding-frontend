@@ -9,6 +9,10 @@ import useBoundStore from '../../state/useBoundStore';
 import mockRouter from 'next-router-mock';
 import useFyllAapenInnsending from '../../state/useFyllAapenInnsending';
 import { postInnsending } from '../../utils/postInnsending';
+import {
+  hentLaasteSelvbestemtAlternativer,
+  nullstillSelvbestemtAlternativer
+} from '../../utils/selvbestemtAlternativerSnapshot';
 
 vi.mock('next/router', () => require('next-router-mock'));
 vi.mock('../../state/useBoundStore');
@@ -61,6 +65,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   };
 
   afterEach(() => {
+    nullstillSelvbestemtAlternativer();
     vi.resetAllMocks();
     cleanup();
   });
@@ -118,7 +123,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Validering feilet',
       component: analyticsComponent
     });
@@ -140,6 +145,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
   ])(
     'should show submitted data at $receiptPath with FAISU $flereArbeidsforhold',
     async ({ status, receiptPath, flereArbeidsforhold }) => {
+      hentLaasteSelvbestemtAlternativer(true);
       setupMockStore();
       (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
         vi.fn().mockReturnValue({
@@ -181,10 +187,12 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
         query: { fromSubmit: 'true' },
         asPath: `${receiptPath}/f32852af-888e-4d0c-ad67-081f22ee5c12`
       });
+      expect(hentLaasteSelvbestemtAlternativer(false)).toBe(false);
     }
   );
 
   it('should handle server error 500', async () => {
+    hentLaasteSelvbestemtAlternativer(true);
     setupMockStore();
     (useFyllAapenInnsending as unknown as Mock).mockReturnValue(
       vi.fn().mockReturnValue({
@@ -212,10 +220,11 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
       await result.current({ pathSlug, isDirtyForm: true, formData: defaultFormData, erBegrensetForespoersel: false });
     });
 
-    expect(logEvent).toHaveBeenCalledWith('skjema innsending feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemainnsending feilet', {
       tittel: 'Innsending feilet - serverfeil',
       component: analyticsComponent
     });
+    expect(hentLaasteSelvbestemtAlternativer(false)).toBe(true);
   });
 
   it('should handle unauthorized error 401', async () => {
@@ -270,7 +279,7 @@ describe('useSendInnArbeidsgiverInitiertSkjema', () => {
 
     expect(response!).toBe(false);
     expect(postInnsending).not.toHaveBeenCalled();
-    expect(logEvent).toHaveBeenCalledWith('skjema validering feilet', {
+    expect(logEvent).toHaveBeenCalledWith('skjemavalidering feilet', {
       tittel: 'Validering feilet',
       component: analyticsComponent
     });

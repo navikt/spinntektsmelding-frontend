@@ -36,6 +36,7 @@ import FeilVedHentingAvPersondata from '../../components/Initiering/FeilVedHenti
 import InitieringRefusjon from '../../components/Initiering/InitieringRefusjon';
 import useMineTilganger from '../../utils/useMineTilganger';
 import { mapArbeidsgiverTilganger } from '../../utils/initieringArbeidsgivere';
+import ButtonBack from '../../components/Initiering/ButtonBack';
 
 type SkjemaData = z.infer<typeof InitieringSchema>;
 
@@ -74,6 +75,8 @@ const InitieringFritatt: NextPage = () => {
   const { data: tilganger, error: tilgangerError } = useMineTilganger(setError);
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
+
+  console.log('orgnr:', orgnr);
 
   const arbeidsgiverTilganger = useMemo(() => mapArbeidsgiverTilganger(tilganger), [tilganger]);
 
@@ -319,9 +322,7 @@ const InitieringFritatt: NextPage = () => {
             </>
           )}
           <div className={lokalStyling.knapperad}>
-            <Button variant='tertiary' className={lokalStyling.primaryKnapp} onClick={() => history.back()}>
-              Tilbake
-            </Button>
+            <ButtonBack onClick={() => history.back()} />
             <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
               Neste
             </Button>

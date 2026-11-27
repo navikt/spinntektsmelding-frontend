@@ -41,6 +41,7 @@ spec:
     enabled: true
     sidecar:
       enabled: true
+      autoLogin: true
   observability:
     autoInstrumentation:
       enabled: true

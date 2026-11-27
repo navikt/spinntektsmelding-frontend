@@ -70,6 +70,34 @@ Spannen er aktiv når HTTP-kallet starter, slik at nettverkskallet kan arve trac
 Kun HTTP-status registreres som attributt; feil markeres uten responsinnhold eller feilmelding.
 Innsending fungerer også når Faro er deaktivert.
 
+## Selvbestemte alternativer og Unleash
+
+Flagget `frontend-inntektsmelding-selvbestemt-alternativer` styrer alle nye radiovalg i
+[VelgAarsak](./components/VelgAarsak/VelgAarsak.tsx). Dagens fire valg vises alltid.
+Ingen nye valg legges til med denne endringen. Nye valg defineres i den lokale
+`nyeAlternativer`-listen inne i komponenten. Bare den låste flaggverdien sendes inn
+som `visNyeAlternativer`; oppdater samtidig skjemavalidering og navigering for den nye årsaken.
+
+Unleash evalueres kun på serveren med den offisielle Node-SDK-en. Den bruker
+`UNLEASH_SERVER_API_URL`, `UNLEASH_SERVER_API_TOKEN` og `UNLEASH_SERVER_API_ENV` fra
+Nais. Ikke eksponer tokenet med `NEXT_PUBLIC_`. Ved lasting hentes konfigurasjonen
+én gang, uten bakgrunnspolling eller innsending av SDK-metrikker. Klienten stoppes
+etter evalueringen. Evalueringen venter maksimalt 1,5 sekund. Ved manglende
+konfigurasjon eller flagg, driftsavbrudd eller evalueringsfeil er nye valg deaktivert;
+tidligere serververdier eller SDK-cache brukes ikke som reserveverdi.
+Flagget skal ha en på/av-strategi som gjelder alle; løsningen sender ingen persondata til Unleash.
+
+Skjemaet leser flaggverdien én gang ved oppstart, uten abonnement eller lyttere.
+Skjemafeltene rendres bare i nettleseren, slik at den lagrede verdien leses før
+radiovalgene vises. Flaggverdien lagres i `sessionStorage` per nettleserfane.
+Navigering tilbake og oppdatering av siden beholder verdien. Fullført selvbestemt
+innsending nullstiller den. En eksplisitt ny inntektsmelding kan startes med
+`/im-dialog/initiering?ny=true`; parameteren fjernes når det nye øyeblikksbildet er opprettet.
+Dersom `sessionStorage` ikke kan leses eller skrives, deaktiveres nye alternativer
+og en advarsel logges. Skjemaet fungerer fortsatt med dagens fire valg, også ved sidelasting.
+En allerede lagret skjemasesjon beholder sin låste verdi, også dersom et senere
+serverkall til Unleash feiler.
+
 ## Deploy
 
 Applikasjonen bygges som et containerimage og deployes til [Nais](https://nais.io/) via GitHub Actions:
