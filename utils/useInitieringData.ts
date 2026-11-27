@@ -78,6 +78,7 @@ export default function useInitieringData(
     spData,
     spError: sykepengesoeknaderResponse.error,
     spIsLoading: sykepengesoeknaderResponse.isLoading,
+    spIsValidating: sykepengesoeknaderResponse.isValidating,
     forespoersler: parsedSpData?.forespoersler ?? [],
     soeknaderArbeidstaker: parsedSpData?.soeknaderArbeidstaker ?? [],
     sykepengePerioder

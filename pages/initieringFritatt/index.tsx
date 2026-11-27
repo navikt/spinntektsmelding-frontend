@@ -72,7 +72,12 @@ const InitieringFritatt: NextPage = () => {
 
   const visFeilmeldingliste = feilmeldinger && feilmeldinger.length > 0;
 
-  const { data: tilganger, error: tilgangerError } = useMineTilganger(setError);
+  const {
+    data: tilganger,
+    error: tilgangerError,
+    isLoading: tilgangerLoading,
+    isValidating: tilgangerValidating
+  } = useMineTilganger(setError);
 
   const orgnr = useWatch({ name: 'organisasjonsnummer', control: methods.control });
 
@@ -80,6 +85,9 @@ const InitieringFritatt: NextPage = () => {
 
   const {
     data: arbeidsforholdData,
+    error: arbeidsforholdError,
+    isLoading: arbeidsforholdLoading,
+    isValidating: arbeidsforholdValidating,
     arbeidsforhold,
     fulltNavn,
     orgNavnMangler,
@@ -87,9 +95,43 @@ const InitieringFritatt: NextPage = () => {
     spData,
     spError,
     spIsLoading: spLoading,
+    spIsValidating: spValidating,
     forespoersler,
     sykepengePerioder
   } = useInitieringData(sykmeldt.fnr, orgnr, setError, true);
+
+  const visningArbeidsgiverTilganger = useMemo(() => {
+    const organisasjonsnumre = arbeidsforhold.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
+    return arbeidsgiverTilganger.filter((tilgang) => organisasjonsnumre.includes(tilgang.orgnrUnderenhet));
+  }, [arbeidsforhold, arbeidsgiverTilganger]);
+  const grunnlagsFeil = tilgangerError || arbeidsforholdError;
+  const arbeidsgivervalgKlart =
+    !grunnlagsFeil &&
+    !tilgangerLoading &&
+    !tilgangerValidating &&
+    !arbeidsforholdLoading &&
+    !arbeidsforholdValidating &&
+    tilganger !== undefined &&
+    arbeidsforholdData !== undefined;
+  const arbeidsgivervalgSynkronisert =
+    visningArbeidsgiverTilganger.length !== 1 || orgnr === visningArbeidsgiverTilganger[0].orgnrUnderenhet;
+  const valgtArbeidsgiver = visningArbeidsgiverTilganger.find((arbeidsgiver) => arbeidsgiver.orgnrUnderenhet === orgnr);
+  const soeknaderFeil = spError && spError.status !== 404;
+  const skjemaKlart = Boolean(
+    arbeidsgivervalgKlart &&
+    valgtArbeidsgiver &&
+    !spLoading &&
+    !spValidating &&
+    !soeknaderFeil &&
+    (spData !== undefined || spError?.status === 404)
+  );
+  const feilmeldingHenting = tilgangerError
+    ? 'Kunne ikke hente tilganger. Prøv igjen senere.'
+    : arbeidsforholdError
+      ? 'Kunne ikke hente arbeidsforhold. Prøv igjen senere.'
+      : arbeidsgivervalgKlart && valgtArbeidsgiver && soeknaderFeil
+        ? 'Kunne ikke hente sykepengesøknader. Prøv igjen senere.'
+        : undefined;
 
   const harArbeidsforhold = Boolean(
     spData && (spData.soeknaderArbeidstaker.length > 0 || spData.forespoersler.length > 0) && arbeidsforholdData
@@ -101,6 +143,10 @@ const InitieringFritatt: NextPage = () => {
   const submitForm: SubmitHandler<Skjema> = (formData: Skjema) => {
     if (!tilganger) {
       logger.warn('Fritatt fra aa-registeret. Innsending avbrutt: mangler tilgangsdata (data er undefined)');
+      return;
+    }
+    if (!skjemaKlart) {
+      logger.warn('Innsending avbrutt: opplysninger er ikke ferdig hentet');
       return;
     }
     const mottatteArbeidsforhold = EndepunktArbeidsforholdSchema.safeParse(arbeidsforholdData);
@@ -240,17 +286,15 @@ const InitieringFritatt: NextPage = () => {
     setValue(field, value, { shouldValidate: true, shouldDirty: true });
   });
 
-  const visningArbeidsforhold = arbeidsforhold?.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
-
-  const visningArbeidsgiverTilganger = visningArbeidsforhold
-    ? arbeidsgiverTilganger.filter((tilgang) => visningArbeidsforhold.includes(tilgang.orgnrUnderenhet))
-    : arbeidsgiverTilganger;
-
   useEffect(() => {
-    if (visningArbeidsgiverTilganger?.length === 1) {
+    if (
+      arbeidsgivervalgKlart &&
+      visningArbeidsgiverTilganger.length === 1 &&
+      orgnr !== visningArbeidsgiverTilganger[0].orgnrUnderenhet
+    ) {
       onSetValue('organisasjonsnummer', visningArbeidsgiverTilganger[0].orgnrUnderenhet);
     }
-  }, [visningArbeidsgiverTilganger]);
+  }, [arbeidsgivervalgKlart, visningArbeidsgiverTilganger, orgnr]);
 
   const onResetField = useEffectEvent((field: keyof Skjema) => {
     resetField(field, { defaultValue: undefined });
@@ -261,12 +305,17 @@ const InitieringFritatt: NextPage = () => {
     (spData?.soeknaderArbeidstaker && spData?.soeknaderArbeidstaker.length > 0);
 
   useEffect(() => {
-    if ((!visUtenKobling && !spLoading && spData) || spError?.status === 404) {
+    onResetField('sykepengePeriodeId');
+    onResetField('endreRefusjon');
+  }, [orgnr]);
+
+  useEffect(() => {
+    if (skjemaKlart && ((!visUtenKobling && spData) || spError?.status === 404)) {
       onSetValue('forespurtSykepengePeriodeId', 'utenKobling');
     } else {
       onResetField('forespurtSykepengePeriodeId');
     }
-  }, [visUtenKobling, spLoading, spData, spError, arbeidsforhold.length]);
+  }, [skjemaKlart, orgnr, visUtenKobling, spData, spError]);
 
   return (
     <InitieringLayout>
@@ -279,8 +328,18 @@ const InitieringFritatt: NextPage = () => {
               <p>{sykmeldt.fnr}</p>
             </div>
           </div>
-          {!tilganger && !tilgangerError && <Loading />}
-          {visningArbeidsgiverTilganger && (
+          {(!arbeidsgivervalgKlart || !arbeidsgivervalgSynkronisert) && !grunnlagsFeil && <Loading />}
+          {feilmeldingHenting && (
+            <LocalAlert status='error'>
+              <LocalAlert.Header>
+                <LocalAlert.Title>{feilmeldingHenting}</LocalAlert.Title>
+              </LocalAlert.Header>
+            </LocalAlert>
+          )}
+          {arbeidsgivervalgKlart && visningArbeidsgiverTilganger.length === 0 && (
+            <p role='status'>Ingen tilgjengelige arbeidsgivere for den ansatte.</p>
+          )}
+          {arbeidsgivervalgKlart && arbeidsgivervalgSynkronisert && visningArbeidsgiverTilganger.length > 0 && (
             <div>
               <SelectArbeidsgiver
                 arbeidsforhold={visningArbeidsgiverTilganger}
@@ -292,8 +351,8 @@ const InitieringFritatt: NextPage = () => {
               />
             </div>
           )}
-          {spLoading && <Loading />}
-          {(harArbeidsforhold || harSoeknaderEllerForespoersler) && (
+          {arbeidsgivervalgKlart && valgtArbeidsgiver && !skjemaKlart && !soeknaderFeil && <Loading />}
+          {skjemaKlart && (harArbeidsforhold || harSoeknaderEllerForespoersler) && (
             <>
               {harArbeidsforhold && (
                 <>
@@ -328,9 +387,11 @@ const InitieringFritatt: NextPage = () => {
           )}
           <div className={lokalStyling.knapperad}>
             <ButtonBack onClick={() => history.back()} />
-            <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
-              Neste
-            </Button>
+            {skjemaKlart && (
+              <Button variant='primary' className={lokalStyling.primaryKnapp} loading={isLoading}>
+                Neste
+              </Button>
+            )}
             <ButtonTilbakestill onClick={() => reset()} />
           </div>
         </form>

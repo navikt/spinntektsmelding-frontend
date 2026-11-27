@@ -71,6 +71,11 @@ const activeOrgnr = {
   underenheter: [{ orgnrUnderenhet: '810007842', virksomhetsnavn: 'ANSTENDIG PIGGSVIN BARNEHAGE' }]
 };
 
+const activeOrgnrEnkel = {
+  ...activeOrgnr,
+  underenheter: [{ orgnrUnderenhet: '314418778', virksomhetsnavn: 'STABIL LIVLIG HUND DA' }]
+};
+
 test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   test.describe.configure({ mode: 'serial' });
 
@@ -382,6 +387,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt ambassadepersonell e.l. med varig lønnsendring', async ({ page }) => {
+    await page.route('*/**/api/aktiveorgnr', (route) => route.fulfill({ status: 200, json: activeOrgnrEnkel }));
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 404, contentType: 'application/json', body: JSON.stringify({}) })
     );
@@ -477,6 +483,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt ambassadepersonell e.l. som skulle brukt "annen årsak"', async ({ page }) => {
+    await page.route('*/**/api/aktiveorgnr', (route) => route.fulfill({ status: 200, json: activeOrgnrEnkel }));
     // fill personnummer and next
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(spSoeknader) })
@@ -584,6 +591,7 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
   });
 
   test('selvbestemt ambassadepersonell e.l. som skulle sendt inn ikke forespurt im', async ({ page }) => {
+    await page.route('*/**/api/aktiveorgnr', (route) => route.fulfill({ status: 200, json: activeOrgnrEnkel }));
     // fill personnummer and next
     await page.route('*/**/api/sp-soeknader', (r) =>
       r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(spSoeknader) })
@@ -772,5 +780,72 @@ test.describe('Utfylling og innsending av selvbestemt skjema', () => {
     // confirm receipt page
     await expect(page.locator("h2:has-text('Kvittering - innsendt inntektsmelding')")).toBeVisible();
     await expect(page).toHaveURL('/im-dialog/kvittering/agi/f32852af-888e-4d0c-ad67-081f22ee5c12');
+  });
+
+  test('venter på ferdige arbeidsgivervalg og deretter søknadssvar før innsending', async ({ page }) => {
+    let frigiTilganger!: () => void;
+    let frigiSoeknader!: () => void;
+    const tilgangerKlare = new Promise<void>((resolve) => {
+      frigiTilganger = resolve;
+    });
+    const soeknaderKlare = new Promise<void>((resolve) => {
+      frigiSoeknader = resolve;
+    });
+    const arbeidsforhold = {
+      ...activeOrgnr,
+      underenheter: [
+        ...activeOrgnr.underenheter,
+        { orgnrUnderenhet: '810007982', virksomhetsnavn: 'ANSTENDIG PIGGSVIN SYKEHJEM' }
+      ]
+    };
+    await page.route('*/**/api/aktiveorgnr', (route) => route.fulfill({ status: 200, json: arbeidsforhold }));
+    await page.route('*/**/api/mine-tilganger', async (route) => {
+      await tilgangerKlare;
+      await route.fulfill({ status: 200, json: mineTilganger.hierarki });
+    });
+    await page.route('*/**/api/sp-soeknader', async (route) => {
+      await soeknaderKlare;
+      await route.fulfill({ status: 404, json: {} });
+    });
+
+    try {
+      await page.getByLabel('Ansattes fødselsnummer').fill('25087327879');
+      await page
+        .getByRole('radio', {
+          name: 'Ansatte som ikke er registrert i Aa-registeret, eller ikke kan sende digital søknad om sykepenger',
+          exact: true
+        })
+        .check();
+      const arbeidsforholdResponse = page.waitForResponse('*/**/api/aktiveorgnr');
+      await page.getByRole('button', { name: 'Neste' }).click();
+      await page.waitForURL('**/initieringFritatt');
+      await arbeidsforholdResponse;
+
+      await expect(page.getByRole('combobox')).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'Neste' })).toHaveCount(0);
+
+      frigiTilganger();
+      const arbeidsgivervalg = page.getByRole('combobox', { name: /Hvilken underenhet/ });
+      await expect(arbeidsgivervalg).toBeVisible();
+      await arbeidsgivervalg.click();
+      await expect(page.getByRole('option')).toHaveCount(2);
+      const soeknadsRequest = page.waitForRequest('*/**/api/sp-soeknader');
+      await page
+        .getByRole('option', {
+          name: 'Orgnr. 810007842 - ANSTENDIG PIGGSVIN BARNEHAGE',
+          exact: true
+        })
+        .click();
+      expect((await soeknadsRequest).postDataJSON()).toEqual({ fnr: '25087327879', orgnummer: '810007842' });
+      await expect(page.getByRole('button', { name: 'Neste' })).toHaveCount(0);
+      await expect(page.getByRole('radio')).toHaveCount(0);
+
+      frigiSoeknader();
+      await page.getByRole('button', { name: 'Neste' }).click();
+      await expect(page).toHaveURL(/\/unntattAaRegisteret$/);
+    } finally {
+      frigiTilganger();
+      frigiSoeknader();
+    }
   });
 });
