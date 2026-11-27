@@ -38,6 +38,7 @@ import parseIsoDate from '../../utils/parseIsoDate';
 import SkjemaInitieringSchema from '../../schema/SkjemaInitieringSchema';
 import { finnAntallDagerMellomSykmeldingsperioder } from '../../utils/finnAntallDagerMellomSykmeldingsperioder';
 import { SelvbestemtTypeConst } from '../../schema/konstanter/selvbestemtType';
+import ButtonBack from '../../components/Initiering/ButtonBack';
 
 type SykepengePeriode = {
   id: string;
@@ -351,14 +352,7 @@ const InitieringBehandlingsdager: NextPage = () => {
             </>
           )}
           <div className={lokalStyling.knapperad}>
-            <Button
-              type='button'
-              variant='tertiary'
-              className={lokalStyling.primaryKnapp}
-              onClick={() => history.back()}
-            >
-              Tilbake
-            </Button>
+            <ButtonBack onClick={() => history.back()} />
             <Button
               variant='primary'
               className={lokalStyling.primaryKnapp}

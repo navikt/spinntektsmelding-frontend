@@ -11,7 +11,9 @@ export default function useSykepengesoeknader(
   setError: UseFormSetError<any> | undefined
 ) {
   return useSWRImmutable(
-    [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer],
+    identitetsnummer && orgNummer && orgNummer !== '-'
+      ? [environment.hentSykepengesoknaderUrl, identitetsnummer, orgNummer]
+      : null,
     ([url, identitetsnummer, orgNummer]) =>
       fetcherSykepengesoeknader(!!identitetsnummer && !!orgNummer ? url : null, identitetsnummer, orgNummer),
     {

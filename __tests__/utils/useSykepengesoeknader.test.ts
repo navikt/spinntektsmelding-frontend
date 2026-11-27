@@ -94,6 +94,31 @@ describe('useSykepengesoeknader', () => {
     expect(lastUseSWRArgs.options).toMatchObject(commonSWRFormOptions);
   });
 
+  it.each([
+    { fnr: undefined, orgnr: testOrganisasjoner[0].organizationNumber },
+    { fnr: '', orgnr: testOrganisasjoner[0].organizationNumber },
+    { fnr: testFnr.GyldigeFraDolly.TestPerson1, orgnr: '' },
+    { fnr: testFnr.GyldigeFraDolly.TestPerson1, orgnr: '-' }
+  ])('does not start a request without valid parameters: %j', ({ fnr, orgnr }) => {
+    useSykepengesoeknader(fnr, orgnr, undefined);
+
+    expect(lastUseSWRArgs.key).toBeNull();
+    expect(fetcherSykepengesoeknader).not.toHaveBeenCalled();
+  });
+
+  it('activates the request when an employer is selected', () => {
+    useSykepengesoeknader(testFnr.GyldigeFraDolly.TestPerson1, '', undefined);
+    expect(lastUseSWRArgs.key).toBeNull();
+
+    useSykepengesoeknader(testFnr.GyldigeFraDolly.TestPerson1, testOrganisasjoner[0].organizationNumber, undefined);
+
+    expect(lastUseSWRArgs.key).toEqual([
+      envUrl,
+      testFnr.GyldigeFraDolly.TestPerson1,
+      testOrganisasjoner[0].organizationNumber
+    ]);
+  });
+
   it('builds error handler with proper config and redirects on unauthorized', () => {
     const setError = vi.fn();
 
