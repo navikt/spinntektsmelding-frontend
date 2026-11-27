@@ -240,11 +240,17 @@ const InitieringFritatt: NextPage = () => {
     setValue(field, value, { shouldValidate: true, shouldDirty: true });
   });
 
+  const visningArbeidsforhold = arbeidsforhold?.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
+
+  const visningArbeidsgiverTilganger = visningArbeidsforhold
+    ? arbeidsgiverTilganger.filter((tilgang) => visningArbeidsforhold.includes(tilgang.orgnrUnderenhet))
+    : arbeidsgiverTilganger;
+
   useEffect(() => {
-    if (arbeidsgiverTilganger?.length === 1) {
-      onSetValue('organisasjonsnummer', arbeidsgiverTilganger[0].orgnrUnderenhet);
+    if (visningArbeidsgiverTilganger?.length === 1) {
+      onSetValue('organisasjonsnummer', visningArbeidsgiverTilganger[0].orgnrUnderenhet);
     }
-  }, [arbeidsgiverTilganger]);
+  }, [visningArbeidsgiverTilganger]);
 
   const onResetField = useEffectEvent((field: keyof Skjema) => {
     resetField(field, { defaultValue: undefined });
@@ -261,12 +267,6 @@ const InitieringFritatt: NextPage = () => {
       onResetField('forespurtSykepengePeriodeId');
     }
   }, [visUtenKobling, spLoading, spData, spError, arbeidsforhold.length]);
-
-  const visningArbeidsforhold = arbeidsforhold?.map((arbeidsforhold) => arbeidsforhold.orgnrUnderenhet);
-
-  const visningArbeidsgiverTilganger = visningArbeidsforhold
-    ? arbeidsgiverTilganger.filter((tilgang) => visningArbeidsforhold.includes(tilgang.orgnrUnderenhet))
-    : arbeidsgiverTilganger;
 
   return (
     <InitieringLayout>
